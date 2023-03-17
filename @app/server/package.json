@@ -50,9 +50,12 @@
   },
   "devDependencies": {
     "@types/node": "^18.14.2",
+    "autoprefixer": "^10.4.14",
     "graphql": "^15.8.0",
     "jest": "^29.4.3",
     "mock-req": "^0.2.0",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.7",
     "ts-node": "^10.9.1"
   },
   "optionalDependencies": {
