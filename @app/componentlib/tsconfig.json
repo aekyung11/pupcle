@@ -14,9 +14,6 @@
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../componentlib"
-    },
-    {
       "path": "../graphql"
     },
     {
