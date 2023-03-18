@@ -10,11 +10,6 @@ if (!JWT_SECRET) {
 
 declare module "express-serve-static-core" {
   interface Request {
-    /**
-     * True if either the request 'Origin' header matches our ROOT_URL, or if
-     * there was no 'Origin' header (in which case we must give the benefit of
-     * the doubt; for example for normal resource GETs).
-     */
     tokenPayload?: Express.User;
   }
 }
