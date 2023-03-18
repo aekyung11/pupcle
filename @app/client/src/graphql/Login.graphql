@@ -1,9 +1,21 @@
-mutation Login($username: String!, $password: String!) {
-  login(input: { username: $username, password: $password }) {
+mutation Login(
+  $username: String!
+  $password: String!
+  $useAccessToken: Boolean
+) {
+  login(
+    input: {
+      username: $username
+      password: $password
+      useAccessToken: $useAccessToken
+    }
+  ) {
     user {
       id
       username
       name
     }
+    access_token
+    token_type
   }
 }

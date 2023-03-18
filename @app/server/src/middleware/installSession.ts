@@ -78,6 +78,11 @@ export default async (app: Express) => {
    * different authentication method such as bearer tokens.
    */
   const wrappedSessionMiddleware: RequestHandler = (req, res, next) => {
+    // https://stackoverflow.com/questions/21264911/prevent-expressjs-from-creating-a-session-when-requests-contain-an-authorization
+    if (req.headers.authorization) {
+      return next();
+    }
+
     if (req.isSameOrigin) {
       sessionMiddleware(req, res, next);
     } else {

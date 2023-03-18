@@ -297,10 +297,13 @@ type InviteToOrganizationPayload {
 
 input LoginInput {
   password: String!
+  useAccessToken: Boolean
   username: String!
 }
 
 type LoginPayload {
+  access_token: String
+  token_type: String
   user: User!
 }
 

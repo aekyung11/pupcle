@@ -19,7 +19,7 @@ export interface OurGraphQLContext {
   pgClient: PoolClient;
   sessionId: string | null;
   rootPgPool: Pool;
-  login(user: any): Promise<void>;
+  login(user: any, useAccessToken: boolean): Promise<void>;
   logout(): Promise<void>;
 }
 
@@ -256,9 +256,12 @@ export function getPostGraphileOptions({
         rootPgPool,
 
         // Use this to tell Passport.js we're logged in
-        login: (user: any) =>
+        login: (user: any, useAccessToken: boolean) =>
+          // https://stackoverflow.com/questions/21264911/prevent-expressjs-from-creating-a-session-when-requests-contain-an-authorization
           new Promise<void>((resolve, reject) => {
-            req.login(user, (err) => (err ? reject(err) : resolve()));
+            req.login(user, { session: !useAccessToken }, (err) =>
+              err ? reject(err) : resolve()
+            );
           }),
 
         logout: () => {

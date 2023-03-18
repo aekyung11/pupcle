@@ -22,6 +22,13 @@ export default (app: Express) => {
     ) {
       // Bypass CSRF for GraphiQL
       next();
+    } else if (
+      req.method === "POST" &&
+      req.path === "/graphql" &&
+      req.headers.origin === undefined
+    ) {
+      // Bypass CSRF if not a browser
+      return next();
     } else {
       csrfProtection(req, res, next);
     }

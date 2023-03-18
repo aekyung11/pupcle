@@ -2,6 +2,7 @@ import installCSRFProtection from "./installCSRFProtection";
 import installCypressServerCommand from "./installCypressServerCommand";
 import installDatabasePools from "./installDatabasePools";
 import installErrorHandler from "./installErrorHandler";
+import installExpressJwt from "./installExpressJwt";
 import installForceSSL from "./installForceSSL";
 import installHelmet from "./installHelmet";
 import installLogging from "./installLogging";
@@ -18,6 +19,7 @@ export {
   installCypressServerCommand,
   installDatabasePools,
   installErrorHandler,
+  installExpressJwt,
   installForceSSL,
   installHelmet,
   installLogging,

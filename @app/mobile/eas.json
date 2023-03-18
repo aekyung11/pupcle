@@ -1,0 +1,19 @@
+{
+  "build": {
+    "release": {},
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ROOT_URL": "https://staging-my-project-here.com"
+      }
+    },
+    "staging": {
+      "releaseChannel": "staging",
+      "distribution": "internal",
+      "env": {
+        "ROOT_URL": "https://staging-my-project-here.com"
+      }
+    }
+  }
+}

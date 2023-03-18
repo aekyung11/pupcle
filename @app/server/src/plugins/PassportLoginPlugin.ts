@@ -1,7 +1,13 @@
 import { gql, makeExtendSchemaPlugin, Resolvers } from "graphile-utils";
+import jwt from "jsonwebtoken";
 
 import { OurGraphQLContext } from "../graphile.config";
 import { ERROR_MESSAGE_OVERRIDES } from "../utils/handleErrors";
+
+const { JWT_SECRET } = process.env;
+if (!JWT_SECRET) {
+  throw new Error("Server misconfigured");
+}
 
 const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
   const typeDefs = gql`
@@ -20,10 +26,13 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
     input LoginInput {
       username: String!
       password: String!
+      useAccessToken: Boolean
     }
 
     type LoginPayload {
       user: User! @pgField
+      access_token: String
+      token_type: String
     }
 
     type LogoutPayload {
@@ -130,7 +139,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
             );
 
             // Tell Passport.js we're logged in
-            await login({ session_id: details.session_id });
+            await login({ session_id: details.session_id }, false); // TODO: app sign up needs useAccessToken
           }
 
           // Fetch the data that was requested from GraphQL, and return it
@@ -169,7 +178,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
       },
       async login(_mutation, args, context: OurGraphQLContext, resolveInfo) {
         const { selectGraphQLResultFromTable } = resolveInfo.graphile;
-        const { username, password } = args.input;
+        const { username, password, useAccessToken } = args.input;
         const { rootPgPool, login, pgClient } = context;
         try {
           // Call our login function to find out if the username/password combination exists
@@ -188,7 +197,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
 
           if (session.uuid) {
             // Tell Passport.js we're logged in
-            await login({ session_id: session.uuid });
+            await login({ session_id: session.uuid }, useAccessToken || false);
           }
 
           // Get session_id from PG
@@ -207,9 +216,19 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
               );
             }
           );
-          return {
-            data: row,
-          };
+          return useAccessToken
+            ? {
+                data: row,
+                access_token: jwt.sign(
+                  { session_id: session.uuid },
+                  JWT_SECRET,
+                  { expiresIn: "180d" } // TODO: refresh
+                ),
+                token_type: "bearer",
+              }
+            : {
+                data: row,
+              };
         } catch (e: any) {
           const code = e.extensions?.code ?? e.code;
           const safeErrorCodes = ["LOCKD", "CREDS"];

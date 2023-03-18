@@ -16,6 +16,7 @@ ARG ROOT_URL
 COPY package.json yarn.lock .yarnrc.yml /app/
 COPY .yarn/ /app/.yarn/
 COPY @app/ /app/@app/
+RUN rm -rf /app/@app/mobile
 WORKDIR /app/
 RUN yarn workspaces focus --all
 

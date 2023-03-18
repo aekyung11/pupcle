@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, RequestHandler } from "express";
 import { get } from "lodash";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
@@ -24,8 +24,22 @@ export default async (app: Express) => {
   getWebsocketMiddlewares(app).push(passportInitializeMiddleware);
 
   const passportSessionMiddleware = passport.session();
-  app.use(passportSessionMiddleware);
-  getWebsocketMiddlewares(app).push(passportSessionMiddleware);
+
+  const wrappedPassportSessionMiddleware: RequestHandler = (req, res, next) => {
+    // https://stackoverflow.com/questions/21264911/prevent-expressjs-from-creating-a-session-when-requests-contain-an-authorization
+    if (req.headers.authorization) {
+      return next();
+    }
+
+    if (req.isSameOrigin) {
+      passportSessionMiddleware(req, res, next);
+    } else {
+      next();
+    }
+  };
+
+  app.use(wrappedPassportSessionMiddleware);
+  getWebsocketMiddlewares(app).push(wrappedPassportSessionMiddleware);
 
   app.get("/logout", (req, res) => {
     req.logout(() => {

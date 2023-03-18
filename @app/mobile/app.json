@@ -5,17 +5,17 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "my-project-here",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "my.project.here.mobile.dev"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +25,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "native.tsx",
+        "native.jsx",
+        "native.ts",
+        "native.js",
+        "jsx",
+        "js",
+        "json",
+        "ts",
+        "tsx",
+        "graphql",
+        "gql"
+      ]
     }
   }
 }

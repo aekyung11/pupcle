@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native",
+    "lib": ["dom", "esnext"],
+    "target": "es5",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "typeRoots": ["src/types"]
+  },
+  "exclude": ["node_modules", "./node_modules", "./node_modules/*"],
+  "references": [
+    { "path": "../config" },
+    { "path": "../graphql" },
+    { "path": "../componentlib" },
+    { "path": "../components" },
+    { "path": "../lib" }
+  ]
+}
