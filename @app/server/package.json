@@ -35,6 +35,7 @@
     "express-session": "^1.17.3",
     "graphile-build": "^4.13.0",
     "graphile-build-pg": "^4.13.0",
+    "graphile-upsert-plugin": "^1.0.0",
     "graphile-utils": "^4.13.0",
     "graphile-worker": "^0.13.0",
     "helmet": "^6.0.1",

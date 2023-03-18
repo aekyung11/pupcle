@@ -3,6 +3,8 @@ import GraphilePro from "@graphile/pro"; // Requires license key
 import PgSimplifyInflectorPlugin from "@graphile-contrib/pg-simplify-inflector";
 import { Request, Response } from "express";
 import { NodePlugin } from "graphile-build";
+import PgMutationUpsertPlugin from "graphile-upsert-plugin";
+import PgMutationUpsertPluginBatch from "graphile-upsert-plugin/batch-allow-empty";
 import { resolve } from "path";
 import { Pool, PoolClient } from "pg";
 import { makePluginHook, Middleware, PostGraphileOptions } from "postgraphile";
@@ -183,6 +185,9 @@ export function getPostGraphileOptions({
 
       // Adds custom orders to our GraphQL schema
       OrdersPlugin,
+
+      PgMutationUpsertPlugin,
+      PgMutationUpsertPluginBatch,
     ],
 
     /*

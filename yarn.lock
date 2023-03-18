@@ -401,6 +401,7 @@ __metadata:
     express-session: ^1.17.3
     graphile-build: ^4.13.0
     graphile-build-pg: ^4.13.0
+    graphile-upsert-plugin: ^1.0.0
     graphile-utils: ^4.13.0
     graphile-worker: ^0.13.0
     graphql: ^15.8.0
@@ -11197,6 +11198,17 @@ __metadata:
   bin:
     graphile-migrate: dist/cli.js
   checksum: 4b9371a0774182ef8b3a844d64c76c5f2a711b72a90c30c18aa64715cd3a98037899fcacc9465e8454990bfc600ef093fd2a7be18f2dbc5410de4ce42d9db086
+  languageName: node
+  linkType: hard
+
+"graphile-upsert-plugin@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "graphile-upsert-plugin@npm:1.0.0"
+  dependencies:
+    debug: ^4.1.0
+  peerDependencies:
+    graphile-build-pg: ^4.1.0-alpha.0
+  checksum: 2055be61f5707f2e99f76d06d0458958f6b2421536bab46e325e4dd81b6ea65f39e9728793b3b6493afb475f0f56103c562f135b40ca6d360c8c0c587a73208d
   languageName: node
   linkType: hard
 

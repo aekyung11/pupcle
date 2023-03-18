@@ -550,6 +550,22 @@ type Mutation {
     input: UpdateUserInput!
   ): UpdateUserPayload
 
+  """Upserts a single `UserEmail`."""
+  upsertUserEmail(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertUserEmailInput!
+  ): UpsertUserEmailPayload
+
+  """Upserts a batch of `UserEmails`."""
+  upsertUserEmailBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertUserEmailBatchInput!
+  ): UpsertUserEmailBatchPayload
+
   """
   Once you have received a verification token for your email, you may call this mutation with that token to make your email verified.
   """
@@ -1063,6 +1079,80 @@ type UpdateUserPayload {
     """The method to use when ordering `User`."""
     orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
   ): UsersEdge
+}
+
+"""All input for the upsert `UserEmail` batch mutation."""
+input UpsertUserEmailBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `UserEmails` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  userEmails: [UserEmailInput]!
+}
+
+"""The output of our upsert `UserEmail` batch mutation."""
+type UpsertUserEmailBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `UserEmail`."""
+  user: User
+
+  """An edge for our `UserEmail`. May be used by Relay 1."""
+  userEmailEdge(
+    """The method to use when ordering `UserEmail`."""
+    orderBy: [UserEmailsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserEmailsEdge
+
+  """The `UserEmails` that was upserted by this mutation."""
+  userEmails: [UserEmail]
+}
+
+"""All input for the upsert `UserEmail` mutation."""
+input UpsertUserEmailInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `UserEmail` to be upserted by this mutation."""
+  userEmail: UserEmailInput!
+}
+
+"""The output of our upsert `UserEmail` mutation."""
+type UpsertUserEmailPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `UserEmail`."""
+  user: User
+
+  """The `UserEmail` that were upserted by this mutation."""
+  userEmail: UserEmail
+
+  """An edge for our `UserEmail`. May be used by Relay 1."""
+  userEmailEdge(
+    """The method to use when ordering `UserEmail`."""
+    orderBy: [UserEmailsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserEmailsEdge
 }
 
 """A user who can log in to the application."""
