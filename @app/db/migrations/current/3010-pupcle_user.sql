@@ -1,3 +1,5 @@
+grant usage on schema app_public to :DATABASE_AUTHENTICATOR;
+
 create table app_public.user_entries (
   user_id                               uuid not null primary key references app_public.users on delete cascade,
   pupcle_balance                        int not null default 0,
