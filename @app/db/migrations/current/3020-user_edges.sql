@@ -21,6 +21,10 @@ create table app_public.user_edges (
 );
 alter table app_public.user_edges enable row level security;
 
+create index on app_public.user_edges (daily_records_shared);
+create index on app_public.user_edges (from_user_id, daily_records_shared);
+create index on app_public.user_edges (to_user_id);
+
 create policy select_own on app_public.user_edges for select using (from_user_id = app_public.current_user_id());
 -- NOTE: `insert` is not granted, because we'll handle that separately
 create policy update_own on app_public.user_edges for update using (from_user_id = app_public.current_user_id());
@@ -50,3 +54,8 @@ create trigger _200_unfriend
   execute procedure app_public.tg_user_edges__unfriend();
 comment on function app_public.tg_user_edges__unfriend() is
   E'Ensures that every user record has an associated user_entries record.';
+
+create function app_public.current_user_shared_friend_ids() returns setof uuid as $$
+  select to_user_id from app_public.user_edges
+    where from_user_id = app_public.current_user_id() and daily_records_shared = 'SUMMARY';
+$$ language sql stable security definer set search_path = pg_catalog, public, pg_temp;

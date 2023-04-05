@@ -106,6 +106,44 @@ type CreateOrganizationPayload {
   query: Query
 }
 
+"""All input for the create `Pet` mutation."""
+input CreatePetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Pet` to be created by this mutation."""
+  pet: PetInput!
+}
+
+"""The output of our create `Pet` mutation."""
+type CreatePetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Pet` that was created by this mutation."""
+  pet: Pet
+
+  """An edge for our `Pet`. May be used by Relay 1."""
+  petEdge(
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
 """All input for the create `UserEmail` mutation."""
 input CreateUserEmailInput {
   """
@@ -144,8 +182,34 @@ type CreateUserEmailPayload {
   ): UserEmailsEdge
 }
 
+"""A `UUID` edge in the connection."""
+type CurrentUserSharedFriendIdEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `UUID` at the end of the edge."""
+  node: UUID
+}
+
+"""A connection to a list of `UUID` values."""
+type CurrentUserSharedFriendIdsConnection {
+  """
+  A list of edges which contains the `UUID` and cursor to aid in pagination.
+  """
+  edges: [CurrentUserSharedFriendIdEdge!]!
+
+  """A list of `UUID` objects."""
+  nodes: [UUID]!
+
+  """The count of *all* `UUID` you could get from the connection."""
+  totalCount: Int!
+}
+
 """A location in a connection that can be used for resuming pagination."""
 scalar Cursor
+
+"""The day, does not include a time."""
+scalar Date
 
 """
 A point in time as described by the [ISO
@@ -175,6 +239,43 @@ type DeleteOrganizationPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+}
+
+"""All input for the `deletePet` mutation."""
+input DeletePetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""The output of our delete `Pet` mutation."""
+type DeletePetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedPetNodeId: ID
+
+  """The `Pet` that was deleted by this mutation."""
+  pet: Pet
+
+  """An edge for our `Pet`. May be used by Relay 1."""
+  petEdge(
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
 }
 
 """All input for the `deleteUserAuthentication` mutation."""
@@ -235,6 +336,9 @@ type DeleteUserEdgePayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `UserEdge`."""
+  toUser: User
 
   """The `UserEdge` that was deleted by this mutation."""
   userEdge: UserEdge
@@ -430,6 +534,14 @@ type Mutation {
     input: CreateOrganizationInput!
   ): CreateOrganizationPayload
 
+  """Creates a single `Pet`."""
+  createPet(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePetInput!
+  ): CreatePetPayload
+
   """Creates a single `UserEmail`."""
   createUserEmail(
     """
@@ -447,6 +559,14 @@ type Mutation {
     """
     input: DeleteOrganizationInput!
   ): DeleteOrganizationPayload
+
+  """Deletes a single `Pet` using a unique key."""
+  deletePet(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePetInput!
+  ): DeletePetPayload
 
   """Deletes a single `UserAuthentication` using a unique key."""
   deleteUserAuthentication(
@@ -593,6 +713,14 @@ type Mutation {
     input: UpdateOrganizationInput!
   ): UpdateOrganizationPayload
 
+  """Updates a single `Pet` using a unique key and a patch."""
+  updatePet(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePetInput!
+  ): UpdatePetPayload
+
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
     """
@@ -616,6 +744,22 @@ type Mutation {
     """
     input: UpdateUserEntryInput!
   ): UpdateUserEntryPayload
+
+  """Upserts a single `Pet`."""
+  upsertPet(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPetInput!
+  ): UpsertPetPayload
+
+  """Upserts a batch of `Pets`."""
+  upsertPetBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPetBatchInput!
+  ): UpsertPetBatchPayload
 
   """Upserts a single `UserEmail`."""
   upsertUserEmail(
@@ -833,10 +977,139 @@ type PageInfo {
   startCursor: Cursor
 }
 
+type Pet {
+  avatarUrl: String
+  createdAt: Datetime!
+  dob: Date!
+  gender: PetGender!
+  id: UUID!
+  injections: JSON
+  kind: PetKind!
+  name: String!
+  neutered: Boolean!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
+  userId: UUID!
+  vaccinations: JSON
+  weight: Weight
+}
+
+"""
+A condition to be used against `Pet` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PetCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `kind` field."""
+  kind: PetKind
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+enum PetGender {
+  """female"""
+  F
+
+  """male"""
+  M
+}
+
+"""An input for mutations affecting `Pet`"""
+input PetInput {
+  avatarUrl: String
+  dob: Date!
+  gender: PetGender!
+  injections: JSON
+  kind: PetKind!
+  name: String!
+  neutered: Boolean!
+  vaccinations: JSON
+  weight: WeightInput
+}
+
+enum PetKind {
+  """Dog"""
+  DOG
+}
+
+"""Represents an update to a `Pet`. Fields that are set will be updated."""
+input PetPatch {
+  avatarUrl: String
+  dob: Date
+  gender: PetGender
+  injections: JSON
+  name: String
+  neutered: Boolean
+  vaccinations: JSON
+  weight: WeightInput
+}
+
+"""A connection to a list of `Pet` values."""
+type PetsConnection {
+  """
+  A list of edges which contains the `Pet` and cursor to aid in pagination.
+  """
+  edges: [PetsEdge!]!
+
+  """A list of `Pet` objects."""
+  nodes: [Pet!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Pet` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Pet` edge in the connection."""
+type PetsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Pet` at the end of the edge."""
+  node: Pet!
+}
+
+"""Methods to use when ordering `Pet`."""
+enum PetsOrderBy {
+  ID_ASC
+  ID_DESC
+  KIND_ASC
+  KIND_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
 """The root query type which gives access points into the data universe."""
 type Query {
   """The currently logged in user (or null if not logged in)."""
   currentUser: User
+  currentUserSharedFriendIds(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+  ): CurrentUserSharedFriendIdsConnection
   organization(id: UUID!): Organization
   organizationBySlug(slug: String!): Organization
 
@@ -874,6 +1147,36 @@ type Query {
     """The method to use when ordering `Organization`."""
     orderBy: [OrganizationsOrderBy!] = [PRIMARY_KEY_ASC]
   ): OrganizationsConnection
+  pet(id: UUID!): Pet
+
+  """Reads and enables pagination through a set of `Pet`."""
+  pets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PetCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsConnection
   user(id: UUID!): User
   userAuthentication(id: UUID!): UserAuthentication
   userByUsername(username: String!): User
@@ -1176,6 +1479,47 @@ type UpdateOrganizationPayload {
   query: Query
 }
 
+"""All input for the `updatePet` mutation."""
+input UpdatePetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+
+  """
+  An object where the defined keys will be set on the `Pet` being updated.
+  """
+  patch: PetPatch!
+}
+
+"""The output of our update `Pet` mutation."""
+type UpdatePetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Pet` that was updated by this mutation."""
+  pet: Pet
+
+  """An edge for our `Pet`. May be used by Relay 1."""
+  petEdge(
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
 """All input for the `updateUserEdge` mutation."""
 input UpdateUserEdgeInput {
   """
@@ -1207,6 +1551,9 @@ type UpdateUserEdgePayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `UserEdge`."""
+  toUser: User
 
   """The `UserEdge` that was updated by this mutation."""
   userEdge: UserEdge
@@ -1297,6 +1644,80 @@ type UpdateUserPayload {
     """The method to use when ordering `User`."""
     orderBy: [UsersOrderBy!] = [PRIMARY_KEY_ASC]
   ): UsersEdge
+}
+
+"""All input for the upsert `Pet` batch mutation."""
+input UpsertPetBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `Pets` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  pets: [PetInput]!
+}
+
+"""The output of our upsert `Pet` batch mutation."""
+type UpsertPetBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """An edge for our `Pet`. May be used by Relay 1."""
+  petEdge(
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsEdge
+
+  """The `Pets` that was upserted by this mutation."""
+  pets: [Pet]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
+"""All input for the upsert `Pet` mutation."""
+input UpsertPetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Pet` to be upserted by this mutation."""
+  pet: PetInput!
+}
+
+"""The output of our upsert `Pet` mutation."""
+type UpsertPetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Pet` that were upserted by this mutation."""
+  pet: Pet
+
+  """An edge for our `Pet`. May be used by Relay 1."""
+  petEdge(
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `Pet`."""
+  user: User
 }
 
 """All input for the upsert `UserEmail` batch mutation."""
@@ -1420,6 +1841,35 @@ type User {
     """The method to use when ordering `OrganizationMembership`."""
     orderBy: [OrganizationMembershipsOrderBy!] = [PRIMARY_KEY_ASC]
   ): OrganizationMembershipsConnection!
+
+  """Reads and enables pagination through a set of `Pet`."""
+  pets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PetCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Pet`."""
+    orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PetsConnection!
   updatedAt: Datetime!
 
   """Reads and enables pagination through a set of `UserAuthentication`."""
@@ -1441,6 +1891,35 @@ type User {
 
   """Reads and enables pagination through a set of `UserEdge`."""
   userEdgesByFromUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: UserEdgeCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `UserEdge`."""
+    orderBy: [UserEdgesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): UserEdgesConnection!
+
+  """Reads and enables pagination through a set of `UserEdge`."""
+  userEdgesByToUserId(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -1587,6 +2066,9 @@ type UserEdge {
   """Reads a single `User` that is related to this `UserEdge`."""
   fromUser: User
   fromUserId: UUID!
+
+  """Reads a single `User` that is related to this `UserEdge`."""
+  toUser: User
   toUserId: UUID!
   updatedAt: Datetime!
 }
@@ -1596,8 +2078,14 @@ A condition to be used against `UserEdge` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input UserEdgeCondition {
+  """Checks for equality with the object’s `dailyRecordsShared` field."""
+  dailyRecordsShared: ShareLevel
+
   """Checks for equality with the object’s `fromUserId` field."""
   fromUserId: UUID
+
+  """Checks for equality with the object’s `toUserId` field."""
+  toUserId: UUID
 }
 
 """
@@ -1635,11 +2123,15 @@ type UserEdgesEdge {
 
 """Methods to use when ordering `UserEdge`."""
 enum UserEdgesOrderBy {
+  DAILY_RECORDS_SHARED_ASC
+  DAILY_RECORDS_SHARED_DESC
   FROM_USER_ID_ASC
   FROM_USER_ID_DESC
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  TO_USER_ID_ASC
+  TO_USER_ID_DESC
 }
 
 """Information about a user's email address."""
@@ -1858,4 +2350,20 @@ type VerifyEmailPayload {
   """
   query: Query
   success: Boolean
+}
+
+type Weight {
+  unit: WeightUnit
+  value: Float
+}
+
+"""An input for mutations affecting `Weight`"""
+input WeightInput {
+  unit: WeightUnit
+  value: Float
+}
+
+enum WeightUnit {
+  KG
+  LBS
 }
