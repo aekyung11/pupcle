@@ -19,18 +19,19 @@
   "dependencies": {
     "@app/componentlib": "0.0.0",
     "dotenv": "^16.0.3",
-    "expo": "~48.0.9",
+    "expo": "~48.0.10",
     "expo-dev-client": "^2.1.5",
     "expo-secure-store": "^12.1.1",
     "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.3",
     "react": "18.2.0",
-    "react-native": "0.71.4",
+    "react-native": "0.71.6",
     "uuid": "3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",
+    "@babel/preset-typescript": "^7.21.0",
     "babel-plugin-inline-dotenv": "^1.7.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "babel-preset-expo": "^9.3.0",
