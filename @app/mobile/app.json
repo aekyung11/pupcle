@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "My_Project_Here",
-    "slug": "My_Project_Here",
+    "name": "PupCle",
+    "slug": "pupcle",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "my-project-here",
+    "scheme": "pupcle",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "my.project.here.mobile.dev"
+      "bundleIdentifier": "com.pupcle.mobile.dev"
     },
     "android": {
       "adaptiveIcon": {

@@ -1,10 +1,10 @@
 export default ({ config }) => {
   if (process.env.EAS_BUILD_PROFILE === "staging") {
-    config.ios.bundleIdentifier = "my.project.here.mobile.staging";
-    config.name = "My_Project_Here Staging";
+    config.ios.bundleIdentifier = "com.pupcle.mobile.staging";
+    config.name = "PupCle Staging";
   } else if (process.env.EAS_BUILD_PROFILE === "development") {
-    config.ios.bundleIdentifier = "my.project.here.mobile.dev";
-    config.name = "My_Project_Here Dev";
+    config.ios.bundleIdentifier = "com.pupcle.mobile.dev";
+    config.name = "PupCle Dev";
   }
   return config;
 };

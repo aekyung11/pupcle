@@ -75,3 +75,25 @@ To stop the database, use the command below:
 ```fish
 ~> UID=(id -u) yarn docker compose stop db
 ```
+
+---
+
+## Mobile
+
+Install Xcode in the app store if you don't have it.  
+꼭 Xcode를 먼저 설치하기.
+
+Run yarn in mobile.  
+모바일 용 yarn 실행하기.
+
+```fish
+~> cd @app/mobile
+~> yarn
+```
+
+if you don't have cocoapods, install it first.  
+만약 cocoapods이 설치되어 있지 않다면, 설치 먼저 할 것.
+
+```
+~> brew install cocoapods
+```
