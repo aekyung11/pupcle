@@ -59,3 +59,34 @@ create function app_public.current_user_shared_friend_ids() returns setof uuid a
   select to_user_id from app_public.user_edges
     where from_user_id = app_public.current_user_id() and daily_records_shared = 'SUMMARY';
 $$ language sql stable security definer set search_path = pg_catalog, public, pg_temp;
+
+create table app_public.friend_requests (
+  from_user_id          uuid not null references app_public.users on delete cascade,
+  to_user_id            uuid not null references app_public.users on delete cascade,
+  primary key (from_user_id, to_user_id),
+  -- null: not accepted, true: accepted, false: rejected
+  -- accepted              boolean default null,
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz not null default now()
+);
+alter table app_public.friend_requests enable row level security;
+
+-- enables select * where to_user_id = myself
+create index on app_public.friend_requests (to_user_id);
+
+create policy select_from_me on app_public.friend_requests for select using (from_user_id = app_public.current_user_id());
+create policy select_to_me on app_public.friend_requests for select using (to_user_id = app_public.current_user_id());
+create policy insert_from_me on app_public.friend_requests for insert with check (from_user_id = app_public.current_user_id());
+-- create policy update_to_me on app_public.friend_requests for update using (to_user_id = app_public.current_user_id());
+create policy delete_from_me on app_public.friend_requests for delete using (from_user_id = app_public.current_user_id());
+create policy delete_to_me on app_public.friend_requests for delete using (to_user_id = app_public.current_user_id());
+
+grant select on app_public.friend_requests to :DATABASE_VISITOR;
+grant insert(from_user_id, to_user_id) on app_public.friend_requests to :DATABASE_VISITOR;
+-- grant update(accepted) on app_public.friend_requests to :DATABASE_VISITOR;
+grant delete on app_public.friend_requests to :DATABASE_VISITOR;
+
+create trigger _100_timestamps
+  before insert or update on app_public.friend_requests
+  for each row
+  execute procedure app_private.tg__timestamps();

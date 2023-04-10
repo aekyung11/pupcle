@@ -10,6 +10,7 @@ import { Pool, PoolClient } from "pg";
 import { makePluginHook, Middleware, PostGraphileOptions } from "postgraphile";
 import { makePgSmartTagsFromFilePlugin } from "postgraphile/plugins";
 
+import FriendsPlugin from "./plugins/FriendsPlugin";
 import OrdersPlugin from "./plugins/Orders";
 import PassportLoginPlugin from "./plugins/PassportLoginPlugin";
 import PrimaryKeyMutationsOnlyPlugin from "./plugins/PrimaryKeyMutationsOnlyPlugin";
@@ -185,6 +186,9 @@ export function getPostGraphileOptions({
 
       // Adds custom orders to our GraphQL schema
       OrdersPlugin,
+
+      // Adds friend-related mutations
+      FriendsPlugin,
 
       PgMutationUpsertPlugin,
       PgMutationUpsertPluginBatch,

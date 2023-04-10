@@ -1,3 +1,5 @@
+drop table if exists app_public.friend_requests;
+
 drop function if exists app_public.current_user_shared_friend_ids();
 drop trigger if exists _200_unfriend on app_public.user_edges;
 drop function if exists app_public.tg_user_edges__unfriend();

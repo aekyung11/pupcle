@@ -1,3 +1,23 @@
+"""All input for the `acceptFriendRequest` mutation."""
+input AcceptFriendRequestInput {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  fromUserId: UUID!
+}
+
+"""The output of our `acceptFriendRequest` mutation."""
+type AcceptFriendRequestPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  fromUser: User!
+}
+
 """All input for the `acceptInvitationToOrganization` mutation."""
 input AcceptInvitationToOrganizationInput {
   """
@@ -72,6 +92,47 @@ type ConfirmAccountDeletionPayload {
   """
   query: Query
   success: Boolean
+}
+
+"""All input for the create `FriendRequest` mutation."""
+input CreateFriendRequestInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `FriendRequest` to be created by this mutation."""
+  friendRequest: FriendRequestInput!
+}
+
+"""The output of our create `FriendRequest` mutation."""
+type CreateFriendRequestPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `FriendRequest` that was created by this mutation."""
+  friendRequest: FriendRequest
+
+  """An edge for our `FriendRequest`. May be used by Relay 1."""
+  friendRequestEdge(
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsEdge
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  fromUser: User
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  toUser: User
 }
 
 """All input for the `createOrganization` mutation."""
@@ -216,6 +277,47 @@ A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
+
+"""All input for the `deleteFriendRequest` mutation."""
+input DeleteFriendRequestInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  fromUserId: UUID!
+  toUserId: UUID!
+}
+
+"""The output of our delete `FriendRequest` mutation."""
+type DeleteFriendRequestPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedFriendRequestNodeId: ID
+
+  """The `FriendRequest` that was deleted by this mutation."""
+  friendRequest: FriendRequest
+
+  """An edge for our `FriendRequest`. May be used by Relay 1."""
+  friendRequestEdge(
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsEdge
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  fromUser: User
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  toUser: User
+}
 
 """All input for the `deleteOrganization` mutation."""
 input DeleteOrganizationInput {
@@ -411,6 +513,74 @@ type ForgotPasswordPayload {
   query: Query
 }
 
+type FriendRequest {
+  createdAt: Datetime!
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  fromUser: User
+  fromUserId: UUID!
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  toUser: User
+  toUserId: UUID!
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `FriendRequest` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input FriendRequestCondition {
+  """Checks for equality with the object’s `fromUserId` field."""
+  fromUserId: UUID
+
+  """Checks for equality with the object’s `toUserId` field."""
+  toUserId: UUID
+}
+
+"""An input for mutations affecting `FriendRequest`"""
+input FriendRequestInput {
+  fromUserId: UUID!
+  toUserId: UUID!
+}
+
+"""A connection to a list of `FriendRequest` values."""
+type FriendRequestsConnection {
+  """
+  A list of edges which contains the `FriendRequest` and cursor to aid in pagination.
+  """
+  edges: [FriendRequestsEdge!]!
+
+  """A list of `FriendRequest` objects."""
+  nodes: [FriendRequest!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `FriendRequest` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `FriendRequest` edge in the connection."""
+type FriendRequestsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `FriendRequest` at the end of the edge."""
+  node: FriendRequest!
+}
+
+"""Methods to use when ordering `FriendRequest`."""
+enum FriendRequestsOrderBy {
+  FROM_USER_ID_ASC
+  FROM_USER_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  TO_USER_ID_ASC
+  TO_USER_ID_DESC
+}
+
 """All input for the `inviteToOrganization` mutation."""
 input InviteToOrganizationInput {
   """
@@ -496,6 +666,14 @@ type MakeEmailPrimaryPayload {
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
+  """Use this mutation to accept a friend request made to yourself."""
+  acceptFriendRequest(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: AcceptFriendRequestInput!
+  ): AcceptFriendRequestPayload
+
   """
   If someone invited you by your email address then you must include the code that was emailed to you, otherwise you may accept the invitation directly using the UUID. If successful, you will be a member of the organization.
   """
@@ -524,6 +702,14 @@ type Mutation {
     input: ConfirmAccountDeletionInput!
   ): ConfirmAccountDeletionPayload
 
+  """Creates a single `FriendRequest`."""
+  createFriendRequest(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateFriendRequestInput!
+  ): CreateFriendRequestPayload
+
   """
   An `Organization` is a great way of sharing access to resources between multiple users without compromising security. When you create an organization you will have the 'owner' and 'billing contact' roles. You may invite other users and redistribute these roles.
   """
@@ -549,6 +735,14 @@ type Mutation {
     """
     input: CreateUserEmailInput!
   ): CreateUserEmailPayload
+
+  """Deletes a single `FriendRequest` using a unique key."""
+  deleteFriendRequest(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFriendRequestInput!
+  ): DeleteFriendRequestPayload
 
   """
   Only the 'owner' may delete an organization. This operation cannot be undone, so be sure that it is what you intend.
@@ -744,6 +938,22 @@ type Mutation {
     """
     input: UpdateUserEntryInput!
   ): UpdateUserEntryPayload
+
+  """Upserts a single `FriendRequest`."""
+  upsertFriendRequest(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertFriendRequestInput!
+  ): UpsertFriendRequestPayload
+
+  """Upserts a batch of `FriendRequests`."""
+  upsertFriendRequestBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertFriendRequestBatchInput!
+  ): UpsertFriendRequestBatchPayload
 
   """Upserts a single `Pet`."""
   upsertPet(
@@ -1110,6 +1320,36 @@ type Query {
     """
     offset: Int
   ): CurrentUserSharedFriendIdsConnection
+  friendRequest(fromUserId: UUID!, toUserId: UUID!): FriendRequest
+
+  """Reads and enables pagination through a set of `FriendRequest`."""
+  friendRequests(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FriendRequestCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsConnection
   organization(id: UUID!): Organization
   organizationBySlug(slug: String!): Organization
 
@@ -1646,6 +1886,86 @@ type UpdateUserPayload {
   ): UsersEdge
 }
 
+"""All input for the upsert `FriendRequest` batch mutation."""
+input UpsertFriendRequestBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `FriendRequests` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  friendRequests: [FriendRequestInput]!
+}
+
+"""The output of our upsert `FriendRequest` batch mutation."""
+type UpsertFriendRequestBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """An edge for our `FriendRequest`. May be used by Relay 1."""
+  friendRequestEdge(
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsEdge
+
+  """The `FriendRequests` that was upserted by this mutation."""
+  friendRequests: [FriendRequest]
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  fromUser: User
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  toUser: User
+}
+
+"""All input for the upsert `FriendRequest` mutation."""
+input UpsertFriendRequestInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `FriendRequest` to be upserted by this mutation."""
+  friendRequest: FriendRequestInput!
+}
+
+"""The output of our upsert `FriendRequest` mutation."""
+type UpsertFriendRequestPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `FriendRequest` that were upserted by this mutation."""
+  friendRequest: FriendRequest
+
+  """An edge for our `FriendRequest`. May be used by Relay 1."""
+  friendRequestEdge(
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsEdge
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  fromUser: User
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `FriendRequest`."""
+  toUser: User
+}
+
 """All input for the upsert `Pet` batch mutation."""
 input UpsertPetBatchInput {
   """
@@ -1799,6 +2119,64 @@ type User {
   """Optional avatar URL."""
   avatarUrl: String
   createdAt: Datetime!
+
+  """Reads and enables pagination through a set of `FriendRequest`."""
+  friendRequestsByFromUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FriendRequestCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsConnection!
+
+  """Reads and enables pagination through a set of `FriendRequest`."""
+  friendRequestsByToUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FriendRequestCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `FriendRequest`."""
+    orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FriendRequestsConnection!
   hasPassword: Boolean
 
   """Unique identifier for the user."""
