@@ -7,14 +7,23 @@ import {
   useCurrentUserUpdatedSubscription,
   useLogoutMutation,
 } from "@app/graphql";
-import { Avatar, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Col,
+  Dropdown,
+  Layout,
+  Menu,
+  Row,
+  Typography,
+} from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
 import { useCallback } from "react";
 
-import { ErrorAlert, H3, StandardWidth, Warn } from ".";
+import { ErrorAlert, StandardWidth, Warn } from ".";
 import { Redirect } from "./Redirect";
 
 const { Header, Content, Footer } = Layout;
@@ -91,8 +100,8 @@ function CurrentUserUpdatedSubscription() {
 
 export function SharedLayout({
   title,
-  titleHref,
-  titleHrefAs,
+  // titleHref,
+  // titleHrefAs,
   noPad = false,
   noHandleErrors = false,
   query,
@@ -161,117 +170,177 @@ export function SharedLayout({
   const { data, loading, error } = query;
 
   return (
-    <Layout>
+    <Layout style={{ minWidth: "768px" }}>
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
-      <Header
-        style={{
-          boxShadow: "0 2px 8px #f0f1f2",
-          zIndex: 1,
-          overflow: "hidden",
-        }}
-      >
-        <Head>
-          <title>{title ? `${title} — ${projectName}` : projectName}</title>
-        </Head>
-        <Row justify="space-between">
-          <Col span={6}>
-            <Link href="/">{projectName}</Link>
-          </Col>
-          <Col span={12}>
-            <H3
+      {title === "Sign in" || title === "Register" ? null : (
+        <Header
+          style={{
+            boxShadow: "0 2px 8px #f5f5f5", // TODO: f5f5f5 -> pupcleGray로 지정
+            zIndex: 1,
+            overflow: "hidden",
+            height: "6rem",
+            borderRadius: "0 0 50px 50px",
+          }}
+        >
+          <Head>
+            <style>
+              @import
+              url(`https://fonts.googleapis.com/css2?family=Poppins:wght@100@200@300@400@500@600@700@800&display=swap`);
+            </style>
+            {/* 100: thin, 200: extralight, 300: light, 400: regular, 500: medium, 600: semibold, 700: bold, 800: extrabold */}
+            <title>{title ? `${title} — ${projectName}` : projectName}</title>
+          </Head>
+          <Row
+            style={{ display: "flex", height: "6rem", alignItems: "center" }}
+          >
+            <Col
+              span={5}
+              style={{ display: "flex", justifyContent: "flex-start" }}
+            >
+              <Link href="/">
+                {/* <Link href="/{projectName}"> */}
+                <img
+                  src="/logo.png"
+                  style={{ height: "min(2.8rem, 4vw)", minHeight: "2rem" }}
+                />
+              </Link>
+            </Col>
+            <Col
+              span={15}
               style={{
-                margin: 0,
-                padding: 0,
-                textAlign: "center",
-                lineHeight: "64px",
+                display: "flex",
+                justifyContent: "space-evenly",
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "min(20px, 14px + 0.5vw)",
+                fontWeight: 400,
+                overflow: "scroll",
               }}
             >
-              {titleHref ? (
-                <Link
-                  href={titleHref}
-                  as={titleHrefAs}
-                  data-cy="layout-header-titlelink"
-                >
-                  {title}
-                </Link>
-              ) : (
-                title
-              )}
-            </H3>
-          </Col>
-          <Col span={6} style={{ textAlign: "right" }}>
-            {data && data.currentUser ? (
-              <Dropdown
-                overlay={
-                  <Menu>
-                    {data.currentUser.organizationMemberships.nodes.map(
-                      ({ organization, isOwner }) => (
-                        <Menu.Item key={organization?.id}>
-                          <Link
-                            href={`/o/[slug]`}
-                            as={`/o/${organization?.slug}`}
-                          >
-                            {organization?.name}
-                            {isOwner ? (
-                              <span>
-                                {" "}
-                                <CrownOutlined />
-                              </span>
-                            ) : (
-                              ""
-                            )}
-                          </Link>
-                        </Menu.Item>
-                      )
-                    )}
-                    <Menu.Item key="_create-organization">
-                      <Link
-                        href="/create-organization"
-                        data-cy="layout-link-create-organization"
-                      >
-                        Create organization
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="_settings">
-                      <Link href="/settings" data-cy="layout-link-settings">
-                        <Warn okay={data.currentUser.isVerified}>Settings</Warn>
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="_logout">
-                      <a onClick={handleLogout}>Logout</a>
-                    </Menu.Item>
-                  </Menu>
-                }
+              <a
+                href="/home"
+                style={{ color: title === "home" ? "#7FB3E8" : "black" }}
               >
-                <span
-                  data-cy="layout-dropdown-user"
-                  style={{ whiteSpace: "nowrap" }}
+                HOME
+              </a>
+              <a
+                href="/calender"
+                style={{ color: title === "calender" ? "#7FB3E8" : "black" }}
+              >
+                CALENDER
+              </a>
+              <a
+                href="/mission"
+                style={{ color: title === "mission" ? "#7FB3E8" : "black" }}
+              >
+                MISSION
+              </a>
+              <a
+                href="/maps"
+                style={{ color: title === "maps" ? "#7FB3E8" : "black" }}
+              >
+                MAPS
+              </a>
+              <a
+                href="/circle"
+                style={{ color: title === "circle" ? "#7FB3E8" : "black" }}
+              >
+                CIRCLE
+              </a>
+            </Col>
+            <Col
+              span={4}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              {data && data.currentUser ? (
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      {data.currentUser.organizationMemberships.nodes.map(
+                        ({ organization, isOwner }) => (
+                          <Menu.Item key={organization?.id}>
+                            <Link
+                              href={`/o/[slug]`}
+                              as={`/o/${organization?.slug}`}
+                            >
+                              {organization?.name}
+                              {isOwner ? (
+                                <span>
+                                  {" "}
+                                  <CrownOutlined />
+                                </span>
+                              ) : (
+                                ""
+                              )}
+                            </Link>
+                          </Menu.Item>
+                        )
+                      )}
+                      <Menu.Item key="_create-organization">
+                        <Link
+                          href="/create-organization"
+                          data-cy="layout-link-create-organization"
+                        >
+                          Create organization
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="_settings">
+                        <Link href="/settings" data-cy="layout-link-settings">
+                          <Warn okay={data.currentUser.isVerified}>
+                            Settings
+                          </Warn>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="_logout">
+                        <a onClick={handleLogout}>Logout</a>
+                      </Menu.Item>
+                    </Menu>
+                  }
                 >
-                  <Avatar>
-                    {(data.currentUser.name && data.currentUser.name[0]) || "?"}
-                  </Avatar>
-                  <Warn
-                    okay={data.currentUser.isVerified}
-                    data-cy="header-unverified-warning"
+                  <span
+                    data-cy="layout-dropdown-user"
+                    style={{ whiteSpace: "nowrap" }}
                   >
-                    <span style={{ marginLeft: 8, marginRight: 8 }}>
-                      {data.currentUser.name}
-                    </span>
-                    <DownOutlined />
-                  </Warn>
-                </span>
-              </Dropdown>
-            ) : forbidsLoggedIn ? null : (
-              <Link
-                href={`/login?next=${encodeURIComponent(currentUrl)}`}
-                data-cy="header-login-button"
-              >
-                Sign in
-              </Link>
-            )}
-          </Col>
-        </Row>
-      </Header>
+                    <Avatar>
+                      {(data.currentUser.name && data.currentUser.name[0]) ||
+                        "?"}
+                    </Avatar>
+                    <Warn
+                      okay={data.currentUser.isVerified}
+                      data-cy="header-unverified-warning"
+                    >
+                      <span style={{ marginLeft: 8, marginRight: 8 }}>
+                        {data.currentUser.name}
+                      </span>
+                      <DownOutlined />
+                    </Warn>
+                  </span>
+                </Dropdown>
+              ) : forbidsLoggedIn ? null : (
+                <Button
+                  href={`/login?next=${encodeURIComponent(currentUrl)}`}
+                  style={{
+                    display: "flex",
+                    height: "min(40px, 2rem + 0.5vw)",
+                    width: "min(106px, 80px + 2vw)",
+                    alignItems: "center",
+                    backgroundColor: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
+                    borderRadius: "20px",
+                    borderStyle: "none",
+                    color: "white",
+                    justifyContent: "center",
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "min(20px, 14px + 0.5vw)",
+                    fontWeight: 500,
+                  }}
+                >
+                  Login
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Header>
+      )}
+
       <Content style={{ minHeight: contentMinHeight }}>
         {renderChildren({
           error,
@@ -279,40 +348,42 @@ export function SharedLayout({
           currentUser: data && data.currentUser,
         })}
       </Content>
-      <Footer>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text>
-            Copyright &copy; {new Date().getFullYear()} {companyName}. All
-            rights reserved.
-            {process.env.T_AND_C_URL ? (
-              <span>
-                {" "}
-                <a
-                  style={{ textDecoration: "underline" }}
-                  href={process.env.T_AND_C_URL}
-                >
-                  Terms and conditions
-                </a>
-              </span>
-            ) : null}
-          </Text>
-          <Text>
-            Powered by{" "}
-            <a
-              style={{ textDecoration: "underline" }}
-              href="https://graphile.org/postgraphile"
-            >
-              PostGraphile
-            </a>
-          </Text>
-        </div>
-      </Footer>
+      {title === "Sign in" || title === "Register" ? null : (
+        <Footer>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text>
+              Copyright &copy; {new Date().getFullYear()} {companyName}. All
+              rights reserved.
+              {process.env.T_AND_C_URL ? (
+                <span>
+                  {" "}
+                  <a
+                    style={{ textDecoration: "underline" }}
+                    href={process.env.T_AND_C_URL}
+                  >
+                    Terms and conditions
+                  </a>
+                </span>
+              ) : null}
+            </Text>
+            <Text>
+              Powered by{" "}
+              <a
+                style={{ textDecoration: "underline" }}
+                href="https://graphile.org/postgraphile"
+              >
+                PostGraphile
+              </a>
+            </Text>
+          </div>
+        </Footer>
+      )}
     </Layout>
   );
 }

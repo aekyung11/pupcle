@@ -6,8 +6,8 @@ import { GraphQLError } from "graphql";
 import { useCallback, useState } from "react";
 import * as yup from "yup";
 
-const usernameFieldPlaceholder = "Email address";
-const passwordFieldPlaceholder = "Password";
+const usernameFieldPlaceholder = "";
+const passwordFieldPlaceholder = "";
 const submitLabel = "Sign in";
 
 const validationSchema = yup.object({
