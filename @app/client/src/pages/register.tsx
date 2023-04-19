@@ -230,7 +230,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                     marginTop: "32px",
                   }}
                 >
-                  Check your pet's condition easily
+                  Check your pet&apos;s condition easily
                 </span>
               </Row>
               <Row style={{ maxWidth: "450px" }}>
