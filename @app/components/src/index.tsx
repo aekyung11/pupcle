@@ -1,6 +1,7 @@
 export * from "./ButtonLink";
 export * from "./ErrorAlert";
 export * from "./ErrorOccurred";
+export * from "./FormikIconCheckBox";
 export * from "./FourOhFour";
 export * from "./organizationHooks";
 export * from "./OrganizationSettingsLayout";

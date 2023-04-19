@@ -368,7 +368,6 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             // htmlType="submit"
                             // disabled={submitDisabled}
                             data-cy="loginpage-button-submit"
-                            disabled={!isValid}
                           >
                             {submitLabel}
                           </SubmitButton>

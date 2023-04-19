@@ -1,7 +1,9 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { ApolloError, useApolloClient } from "@apollo/client";
+import { useRegisterForm } from "@app/componentlib";
 import {
   AuthRestrict,
+  FormikIconCheckBox,
   PasswordStrength,
   Redirect,
   SharedLayout,
@@ -16,8 +18,10 @@ import {
   setPasswordInfo,
   tailFormItemLayout,
 } from "@app/lib";
-import { Alert, Button, Col, Form, Input, InputRef, Row, Tooltip } from "antd";
+import { Alert, Button, Col, InputRef, Row, Tooltip } from "antd";
 import { useForm } from "antd/lib/form/Form";
+import { Formik } from "formik";
+import { Checkbox, Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import Link from "next/link";
 import Router from "next/router";
@@ -35,89 +39,26 @@ import { isSafe } from "./login";
 interface RegisterProps {
   next: string | null;
 }
-
+// TODO: cell number
 /**
  * The registration page just renders the standard layout and embeds the
  * registration form.
  */
 const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
-  const [error, setError] = useState<Error | ApolloError | null>(null);
-  const [passwordStrength, setPasswordStrength] = useState<number>(0);
-  const [passwordSuggestions, setPasswordSuggestions] = useState<string[]>([]);
   const next: string = isSafe(rawNext) ? rawNext! : "/";
   const query = useSharedQuery();
-
-  const [register] = useRegisterMutation({});
   const client = useApolloClient();
-  const [confirmDirty, setConfirmDirty] = useState(false);
-  const [form] = useForm();
 
-  const handleSubmit = useCallback(
-    async (values: Store) => {
-      try {
-        await register({
-          variables: {
-            username: values.username,
-            email: values.email,
-            password: values.password,
-            name: values.name,
-          },
-        });
-        // Success: refetch
-        resetWebsocketConnection();
-        client.resetStore();
-        Router.push(next);
-      } catch (e: any) {
-        const code = getCodeFromError(e);
-        const exception = getExceptionFromError(e);
-        const fields = exception?.extensions?.fields ?? exception?.fields;
-        if (code === "WEAKP") {
-          form.setFields([
-            {
-              name: "password",
-              value: form.getFieldValue("password"),
-              errors: [
-                "The server believes this passphrase is too weak, please make it stronger",
-              ],
-            },
-          ]);
-        } else if (code === "EMTKN") {
-          form.setFields([
-            {
-              name: "email",
-              value: form.getFieldValue("email"),
-              errors: [
-                "An account with this email address has already been registered, consider using the 'Forgot passphrase' function.",
-              ],
-            },
-          ]);
-        } else if (code === "NUNIQ" && fields && fields[0] === "username") {
-          form.setFields([
-            {
-              name: "username",
-              value: form.getFieldValue("username"),
-              errors: [
-                "An account with this username has already been registered, please try a different username.",
-              ],
-            },
-          ]);
-        } else if (code === "23514") {
-          form.setFields([
-            {
-              name: "username",
-              value: form.getFieldValue("username"),
-              errors: [
-                "This username is not allowed; usernames must be between 2 and 24 characters long (inclusive), must start with a letter, and must contain only alphanumeric characters and underscores.",
-              ],
-            },
-          ]);
-        } else {
-          setError(e);
-        }
-      }
-    },
-    [form, register, client, next]
-  );
+  const postResult = useCallback(async () => {
+    resetWebsocketConnection();
+    client.resetStore();
+    Router.push(next);
+  }, [client, next]);
+
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useRegisterForm(postResult);
+
+  const [confirmDirty, setConfirmDirty] = useState(false);
 
   const handleConfirmBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
@@ -127,50 +68,14 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
     [setConfirmDirty, confirmDirty]
   );
 
-  const compareToFirstPassword = useCallback(
-    async (_rule: any, value: any) => {
-      if (value && value !== form.getFieldValue("password")) {
-        throw "Make sure your passphrase is the same in both passphrase boxes.";
-      }
-    },
-    [form]
-  );
-
   const focusElement = useRef<InputRef>(null);
   useEffect(
     () => void (focusElement.current && focusElement.current!.focus()),
     [focusElement]
   );
 
-  const [passwordIsFocussed, setPasswordIsFocussed] = useState(false);
-  const [passwordIsDirty, setPasswordIsDirty] = useState(false);
-  const setPasswordFocussed = useCallback(() => {
-    setPasswordIsFocussed(true);
-  }, [setPasswordIsFocussed]);
-  const setPasswordNotFocussed = useCallback(() => {
-    setPasswordIsFocussed(false);
-  }, [setPasswordIsFocussed]);
-  const handleValuesChange = useCallback(
-    (changedValues: any) => {
-      setPasswordInfo(
-        { setPasswordStrength, setPasswordSuggestions },
-        changedValues
-      );
-      setPasswordIsDirty(form.isFieldTouched("password"));
-      if (changedValues.confirm) {
-        if (form.isFieldTouched("password")) {
-          form.validateFields(["password"]);
-        }
-      } else if (changedValues.password) {
-        if (form.isFieldTouched("confirm")) {
-          form.validateFields(["confirm"]);
-        }
-      }
-    },
-    [form]
-  );
-
   const code = getCodeFromError(error);
+
   return (
     <SharedLayout
       title="Register"
@@ -314,314 +219,295 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                     style={{ width: "36px", marginBottom: "3px" }}
                   />
                 </Row>
-                <Form>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
-                      }}
-                    >
-                      Name
-                    </span>
-                    <QuestionCircleOutlined
-                      style={{
-                        color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingRight: "16px",
-                      }}
-                    />
-                  </Row>
-                  <Form.Item
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your name",
-                        whitespace: true,
-                      },
-                    ]}
-                  >
-                    <Input
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                      autoComplete="name"
-                      // ref={focusElement}
-                      data-cy="registerpage-input-name"
-                    />
-                  </Form.Item>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
-                      }}
-                    >
-                      Username
-                    </span>
-                    <QuestionCircleOutlined
-                      style={{
-                        color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingRight: "16px",
-                      }}
-                    />
-                  </Row>
-                  <Form.Item
-                    name="username"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your username.",
-                        whitespace: true,
-                      },
-                      {
-                        min: 2,
-                        message: "Username must be at least 2 characters long.",
-                      },
-                      {
-                        max: 24,
-                        message:
-                          "Username must be no more than 24 characters long.",
-                      },
-                      {
-                        pattern: /^([a-zA-Z]|$)/,
-                        message: "Username must start with a letter.",
-                      },
-                      {
-                        pattern: /^([^_]|_[^_]|_$)*$/,
-                        message:
-                          "Username must not contain two underscores next to each other.",
-                      },
-                      {
-                        pattern: /^[a-zA-Z0-9_]*$/,
-                        message:
-                          "Username must contain only alphanumeric characters and underscores.",
-                      },
-                    ]}
-                  >
-                    <Input
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                      autoComplete="username"
-                      // ref={focusElement}
-                      data-cy="registerpage-input-username"
-                    />
-                  </Form.Item>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
-                      }}
-                    >
-                      Email
-                    </span>
-                    <QuestionCircleOutlined
-                      style={{
-                        color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingRight: "16px",
-                      }}
-                    />
-                  </Row>
-                  <Form.Item
-                    name="email"
-                    rules={[
-                      {
-                        type: "email",
-                        message: "The input is not valid E-mail.",
-                      },
-                      {
-                        required: true,
-                        message: "Please input your E-mail.",
-                      },
-                    ]}
-                  >
-                    <Input
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                      // ref={focusElement}
-                      data-cy="registerpage-input-email"
-                    />
-                  </Form.Item>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
-                      }}
-                    >
-                      Cell number (Optional)
-                    </span>
-                  </Row>
-                  <Form.Item
-                    name="cellnumber"
-                    rules={[
-                      {
-                        required: false,
-                      },
-                    ]}
-                  >
-                    <Input
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                      }}
-                      // ref={focusElement}
-                      data-cy="registerpage-input-cellnumber"
-                    />
-                  </Form.Item>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
-                      }}
-                    >
-                      Password
-                    </span>
-                  </Row>
-                  <Form.Item
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your passphrase.",
-                      },
-                    ]}
-                  >
-                    <Input
-                      type="password"
-                      autoComplete="new-password"
-                      data-cy="registerpage-input-password"
-                      onFocus={setPasswordFocussed}
-                      onBlur={setPasswordNotFocussed}
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                    />
-                  </Form.Item>
-                  {error ? (
-                    <Form.Item label="Error">
-                      <Alert
-                        type="error"
-                        message={`Registration failed`}
-                        description={
-                          <span>
-                            {extractError(error).message}
-                            {code ? (
+                <Formik
+                  validationSchema={validationSchema}
+                  initialValues={initialValues}
+                  onSubmit={handleSubmit}
+                >
+                  {({ isValid }) => (
+                    <Form>
+                      <Row
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingLeft: "16px",
+                          }}
+                        >
+                          Name
+                        </span>
+                        <QuestionCircleOutlined
+                          style={{
+                            color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingRight: "16px",
+                          }}
+                        />
+                      </Row>
+                      <Form.Item name="name">
+                        <Input
+                          name="name"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="name"
+                          ref={focusElement}
+                          data-cy="registerpage-input-name"
+                        />
+                      </Form.Item>
+                      <Row
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingLeft: "16px",
+                          }}
+                        >
+                          Username
+                        </span>
+                        <QuestionCircleOutlined
+                          style={{
+                            color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingRight: "16px",
+                          }}
+                        />
+                      </Row>
+                      <Form.Item name="username">
+                        <Input
+                          name="username"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="username"
+                          // ref={focusElement}
+                          data-cy="registerpage-input-username"
+                        />
+                      </Form.Item>
+                      <Row
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingLeft: "16px",
+                          }}
+                        >
+                          Email
+                        </span>
+                        <QuestionCircleOutlined
+                          style={{
+                            color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingRight: "16px",
+                          }}
+                        />
+                      </Row>
+                      <Form.Item name="email">
+                        <Input
+                          name="email"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          // ref={focusElement}
+                          data-cy="registerpage-input-email"
+                        />
+                      </Form.Item>
+                      <Row
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingLeft: "16px",
+                          }}
+                        >
+                          Cell number (Optional)
+                        </span>
+                      </Row>
+                      <Form.Item name="cellnumber">
+                        <Input
+                          name="cellnumber"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                          }}
+                          // ref={focusElement}
+                          data-cy="registerpage-input-cellnumber"
+                        />
+                      </Form.Item>
+                      <Row
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            paddingLeft: "16px",
+                          }}
+                        >
+                          Password
+                        </span>
+                      </Row>
+                      <Form.Item name="password">
+                        <Input
+                          name="password"
+                          type="password"
+                          autoComplete="new-password"
+                          data-cy="registerpage-input-password"
+                          // onFocus={setPasswordFocussed}
+                          // onBlur={setPasswordNotFocussed}
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                        />
+                      </Form.Item>
+                      {error ? (
+                        <Form.Item name="_error">
+                          <Alert
+                            type="error"
+                            message={`Registration failed`}
+                            description={
                               <span>
-                                {" "}
-                                (Error code: <code>ERR_{code}</code>)
+                                {extractError(error).message}
+                                {code ? (
+                                  <span>
+                                    {" "}
+                                    (Error code: <code>ERR_{code}</code>)
+                                  </span>
+                                ) : null}
                               </span>
-                            ) : null}
+                            }
+                          />
+                        </Form.Item>
+                      ) : null}
+                      <Form.Item
+                        name="_submit"
+                        style={{ marginBottom: "12px" }}
+                      >
+                        <SubmitButton
+                          style={{
+                            backgroundColor: "#7FB3E8",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 600,
+                            color: "white",
+                            textAlign: "center",
+                            marginTop: "2rem",
+                          }}
+                          htmlType="submit"
+                          data-cy="registerpage-submit-button"
+                        >
+                          {submitLabel}
+                        </SubmitButton>
+                      </Form.Item>
+                      <Form.Item
+                        name="agreedToTerms"
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <FormikIconCheckBox
+                            name="agreedToTerms"
+                            style={{
+                              display: "flex",
+                              borderStyle: "none",
+                              padding: "0px",
+                              width: "14px",
+                              height: "14px",
+                              marginRight: "4px",
+                            }}
+                          />
+                          <span
+                            style={{
+                              fontFamily: "Poppins, sans-serif",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                              color: "#8F9092",
+                            }}
+                          >
+                            <a
+                              href="/terms"
+                              style={{ color: "#7FB3E8", fontWeight: 600 }}
+                            >
+                              서비스 이용약관
+                            </a>
+                            에 동의합니다
                           </span>
-                        }
-                      />
-                    </Form.Item>
-                  ) : null}
-                  <Form.Item>
-                    <Button
-                      style={{
-                        backgroundColor: "#7FB3E8",
-                        height: "40px",
-                        width: "100%",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        color: "white",
-                        textAlign: "center",
-                        marginTop: "2rem",
-                      }}
-                      htmlType="submit"
-                      data-cy="registerpage-submit-button"
-                    >
-                      Create an account
-                    </Button>
-                  </Form.Item>
-                  <Row>{/* TODO: Checkbox -> agree to terms */}</Row>
-                </Form>
+                        </div>
+                      </Form.Item>
+                    </Form>
+                  )}
+                </Formik>
               </div>
             </Col>
           </Row>
