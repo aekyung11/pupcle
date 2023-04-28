@@ -1,9 +1,13 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useSocialInfoForm } from "@app/componentlib";
-import { AuthRestrict, SharedLayout } from "@app/components";
+import {
+  AuthRestrict,
+  FramedAvatarUpload,
+  SharedLayout,
+} from "@app/components";
 import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import { Alert, Button, Col, InputRef, Row } from "antd";
+import { Alert, Button, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
@@ -66,6 +70,14 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
 
   const code = getCodeFromError(error);
 
+  const handleAvatarUpload = useCallback(async () => {
+    try {
+      message.success("Successfully updated profile picture");
+    } catch (e) {
+      message.error("Error updating profile picture");
+    }
+  }, []);
+
   return (
     <>
       <Row
@@ -109,6 +121,11 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                 style={{ width: "36px", marginBottom: "3px" }}
               />
             </Row>
+            <FramedAvatarUpload
+              user={currentUser}
+              disabled={false}
+              onUpload={handleAvatarUpload}
+            />
             <Formik
               validationSchema={validationSchema}
               initialValues={initialValues}

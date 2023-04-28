@@ -131,9 +131,31 @@ services:
     networks:
       - default
     command:
-      postgres -c logging_collector=on -c log_destination=stderr -c
-      log_directory=/var/lib/postgresql/data/logs -c log_rotation_age=60 -c
-      log_truncate_on_rotation=on -c log_filename=server_log.hour.%H%M
+      postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/var/lib/postgresql/data/logs -c
+      log_rotation_age=60 -c log_truncate_on_rotation=on -c log_filename=server_log.hour.%H%M
+
+  minio:
+    image: minio/minio:RELEASE.2023-04-20T17-56-55Z
+    env_file:
+      - docker/.env
+
+    volumes:
+      - ./docker/minio-data:/data
+
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    command: server --console-address ":9001" /data
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+    networks:
+      - default
 
 networks:
   default:

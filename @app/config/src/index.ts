@@ -6,6 +6,10 @@ const packageJson = require("../../../package.json");
 export const fromEmail =
   '"PostGraphile Starter" <no-reply@examples.graphile.org>';
 export const awsRegion = "us-east-1";
+export const uploadBucket = process.env.AWS_BUCKET_UPLOAD;
+export const s3Host = process.env.S3_HOST;
+export const s3AccessKeyId = process.env.S3_ACCESS_KEY_ID;
+export const s3SecretKey = process.env.S3_SECRET_KEY;
 export const projectName = packageJson.projectName.replace(/[-_]/g, " ");
 export const companyName = projectName; // For copyright ownership
 export const emailLegalText =

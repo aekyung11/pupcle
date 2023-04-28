@@ -3,6 +3,7 @@ export * from "./ErrorAlert";
 export * from "./ErrorOccurred";
 export * from "./FormikIconCheckBox";
 export * from "./FourOhFour";
+export * from "./FramedAvatarUpload";
 export * from "./organizationHooks";
 export * from "./OrganizationSettingsLayout";
 export * from "./PasswordStrength";

@@ -1,3 +1,4 @@
+import { s3Host } from "@app/config";
 import { Express } from "express";
 import type { HelmetOptions } from "helmet" assert { "resolution-mode": "import" };
 
@@ -24,6 +25,11 @@ export default async function installHelmet(app: Express) {
           // an https:// page, so we have to translate explicitly for
           // it.
           ROOT_URL.replace(/^http/, "ws"),
+          s3Host!,
+        ],
+        "img-src": [
+          ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
+          s3Host!,
         ],
       },
     },

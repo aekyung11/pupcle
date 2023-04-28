@@ -10,6 +10,7 @@ import { Pool, PoolClient } from "pg";
 import { makePluginHook, Middleware, PostGraphileOptions } from "postgraphile";
 import { makePgSmartTagsFromFilePlugin } from "postgraphile/plugins";
 
+import CreateUploadUrlPlugin from "./plugins/CreateUploadUrlPlugin";
 import FriendsPlugin from "./plugins/FriendsPlugin";
 import OrdersPlugin from "./plugins/Orders";
 import PassportLoginPlugin from "./plugins/PassportLoginPlugin";
@@ -189,6 +190,8 @@ export function getPostGraphileOptions({
 
       // Adds friend-related mutations
       FriendsPlugin,
+
+      CreateUploadUrlPlugin,
 
       PgMutationUpsertPlugin,
       PgMutationUpsertPluginBatch,

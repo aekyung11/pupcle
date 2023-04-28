@@ -22,3 +22,6 @@ yarn-error.log
 
 # macOS
 .DS_Store
+
+# minio
+docker/minio-data/

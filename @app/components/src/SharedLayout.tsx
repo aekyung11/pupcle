@@ -198,10 +198,6 @@ export function SharedLayout({
           }}
         >
           <Head>
-            <style>
-              @import
-              url(`https://fonts.googleapis.com/css2?family=Poppins:wght@100@200@300@400@500@600@700@800&display=swap`);
-            </style>
             {/* 100: thin, 200: extralight, 300: light, 400: regular, 500: medium, 600: semibold, 700: bold, 800: extrabold */}
             <title>{title ? `${title} — ${projectName}` : projectName}</title>
           </Head>
