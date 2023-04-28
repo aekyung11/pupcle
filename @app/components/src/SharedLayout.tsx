@@ -153,7 +153,22 @@ export function SharedLayout({
           <Redirect href={"/"} />
         </StandardWidth>
       );
-    } else if (
+    }
+    if (
+      data?.currentUser &&
+      !data.currentUser.nickname &&
+      !currentUrl.startsWith("/onboarding/")
+    ) {
+      // user must set a nickname
+      return (
+        <Redirect
+          href={`/onboarding/social-info?next=${encodeURIComponent(
+            router.asPath
+          )}`}
+        />
+      );
+    }
+    if (
       data &&
       data.currentUser === null &&
       !loading &&
