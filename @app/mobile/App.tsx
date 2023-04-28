@@ -82,11 +82,11 @@ function LoginTest() {
 
       <View>
         <Button
-          title="Get my name"
+          title="Get my nickname"
           onPress={() => shared()}
           disabled={!userToken}
         />
-        <Text>My name: {sharedData?.currentUser?.name}</Text>
+        <Text>My nickname: {sharedData?.currentUser?.nickname}</Text>
       </View>
     </>
   );

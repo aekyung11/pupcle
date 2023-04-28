@@ -115,7 +115,7 @@ async function runCommand(
       username = "testuser",
       email = `${username}@example.com`,
       verified = false,
-      name = username,
+      nickname = username,
       avatarUrl = null,
       password = "TestUserPassword",
     } = payload;
@@ -126,7 +126,7 @@ async function runCommand(
       username,
       email,
       verified,
-      name,
+      nickname,
       avatarUrl,
       password,
     });
@@ -144,7 +144,7 @@ async function runCommand(
       username = "testuser",
       email = `${username}@example.com`,
       verified = false,
-      name = username,
+      nickname = username,
       avatarUrl = null,
       password = "TestUserPassword",
       next = "/",
@@ -154,14 +154,14 @@ async function runCommand(
       username,
       email,
       verified,
-      name,
+      nickname,
       avatarUrl,
       password,
     });
     const otherUser = await reallyCreateUser(rootPgPool, {
       username: "testuser_other",
       email: "testuser_other@example.com",
-      name: "testuser_other",
+      nickname: "testuser_other",
       verified: true,
       password: "DOESNT MATTER",
     });
@@ -243,14 +243,14 @@ async function reallyCreateUser(
     username,
     email,
     verified,
-    name,
+    nickname,
     avatarUrl,
     password,
   }: {
     username?: string;
     email?: string;
     verified?: boolean;
-    name?: string;
+    nickname?: string;
     avatarUrl?: string;
     password?: string;
   }
@@ -262,11 +262,11 @@ async function reallyCreateUser(
         username := $1,
         email := $2,
         email_is_verified := $3,
-        name := $4,
+        nickname := $4,
         avatar_url := $5,
         password := $6
       )`,
-    [username, email, verified, name, avatarUrl, password]
+    [username, email, verified, nickname, avatarUrl, password]
   );
   return user;
 }

@@ -301,7 +301,10 @@ export function SharedLayout({
                     style={{ whiteSpace: "nowrap" }}
                   >
                     <Avatar>
-                      {(data.currentUser.name && data.currentUser.name[0]) ||
+                      {(data.currentUser.nickname &&
+                        data.currentUser.nickname[0]) ||
+                        (data.currentUser.userEntry?.name &&
+                          data.currentUser.userEntry?.name[0]) ||
                         "?"}
                     </Avatar>
                     <Warn
@@ -309,7 +312,8 @@ export function SharedLayout({
                       data-cy="header-unverified-warning"
                     >
                       <span style={{ marginLeft: 8, marginRight: 8 }}>
-                        {data.currentUser.name}
+                        {data.currentUser.nickname ||
+                          data.currentUser.userEntry?.name}
                       </span>
                       <DownOutlined />
                     </Warn>

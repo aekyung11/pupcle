@@ -49,7 +49,7 @@ export default Settings_Profile;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface FormValues {
   username: string;
-  name: string;
+  nickname: string;
 }
 
 interface ProfileSettingsFormProps {
@@ -77,7 +77,7 @@ function ProfileSettingsForm({
             id: user.id,
             patch: {
               username: values.username,
-              name: values.name,
+              nickname: values.nickname,
             },
           },
         });
@@ -111,15 +111,15 @@ function ProfileSettingsForm({
         {...formItemLayout}
         form={form}
         onFinish={handleSubmit}
-        initialValues={{ name: user.name, username: user.username }}
+        initialValues={{ nickname: user.nickname, username: user.username }}
       >
         <Form.Item
           label="Name"
-          name="name"
+          name="nickname"
           rules={[
             {
               required: true,
-              message: "Please enter your name",
+              message: "Please enter your nickname",
             },
           ]}
         >

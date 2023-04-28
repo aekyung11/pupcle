@@ -6,7 +6,7 @@ export async function reallyCreateUser(
   client: PoolClient,
   username: string | null,
   email: string | null,
-  name: string | null,
+  nickname: string | null,
   avatarUrl: string | null,
   password: string | null,
   emailIsVerified: boolean = false
@@ -19,12 +19,12 @@ export async function reallyCreateUser(
         username => $1,
         email => $2,
         email_is_verified => $3,
-        name => $4,
+        nickname => $4,
         avatar_url => $5,
         password => $6
       ) new_user
       `,
-    [username, email, emailIsVerified, name, avatarUrl, password]
+    [username, email, emailIsVerified, nickname, avatarUrl, password]
   );
   return row;
 }
@@ -48,7 +48,7 @@ test("can register user with a password", () =>
         "id": "[ID]",
         "is_admin": false,
         "is_verified": false,
-        "name": "Test One",
+        "nickname": "Test One",
         "updated_at": "[DATE]",
         "username": "testuser",
       }
@@ -90,7 +90,7 @@ test("can register user with just a username and email", () =>
         "id": "[ID]",
         "is_admin": false,
         "is_verified": false,
-        "name": null,
+        "nickname": null,
         "updated_at": "[DATE]",
         "username": "testuser",
       }

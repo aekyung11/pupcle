@@ -7,11 +7,15 @@ fragment SharedLayout_Query on Query {
 
 fragment SharedLayout_User on User {
   id
-  name
+  nickname
   username
   avatarUrl
   isAdmin
   isVerified
+  userEntry {
+    userId
+    name
+  }
   organizationMemberships(first: 20) {
     nodes {
       id

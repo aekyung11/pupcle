@@ -1486,7 +1486,7 @@ type Query {
 input RegisterInput {
   avatarUrl: String
   email: String!
-  name: String
+  nickname: String
   password: String!
   username: String!
 }
@@ -2186,8 +2186,8 @@ type User {
   isAdmin: Boolean!
   isVerified: Boolean!
 
-  """Public-facing name (or pseudonym) of the user."""
-  name: String
+  """Public-facing nickname (or pseudonym) of the user."""
+  nickname: String
 
   """
   Reads and enables pagination through a set of `OrganizationMembership`.
@@ -2631,6 +2631,7 @@ type UserEntry {
   address: JSON
   agreedToTerms: Boolean!
   createdAt: Datetime!
+  name: String
   pupcleBalance: Int!
   receiveFriendRequestNotifications: Boolean!
   receiveGeneralNotifications: Boolean!
@@ -2660,6 +2661,7 @@ Represents an update to a `UserEntry`. Fields that are set will be updated.
 input UserEntryPatch {
   address: JSON
   agreedToTerms: Boolean
+  name: String
   receiveFriendRequestNotifications: Boolean
   receiveGeneralNotifications: Boolean
   receiveInviteNotifications: Boolean
@@ -2672,8 +2674,8 @@ input UserPatch {
   """Optional avatar URL."""
   avatarUrl: String
 
-  """Public-facing name (or pseudonym) of the user."""
-  name: String
+  """Public-facing nickname (or pseudonym) of the user."""
+  nickname: String
 
   """Public-facing username (or 'handle') of the user."""
   username: String

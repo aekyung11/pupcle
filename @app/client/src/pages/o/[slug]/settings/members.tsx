@@ -255,7 +255,7 @@ const OrganizationMemberListItem: FC<OrganizationMemberListItemProps> = (
       actions={[
         organization.currentUserIsOwner && node.user?.id !== currentUser?.id ? (
           <Popconfirm
-            title={`Are you sure you want to remove ${node.user?.name} from ${organization.name}?`}
+            title={`Are you sure you want to remove ${node.user?.nickname} from ${organization.name}?`}
             onConfirm={handleRemove}
             okText="Yes"
             cancelText="No"
@@ -266,7 +266,7 @@ const OrganizationMemberListItem: FC<OrganizationMemberListItemProps> = (
         ) : null,
         organization.currentUserIsOwner && node.user?.id !== currentUser?.id ? (
           <Popconfirm
-            title={`Are you sure you want to transfer ownership of ${organization.name} to ${node.user?.name}?`}
+            title={`Are you sure you want to transfer ownership of ${organization.name} to ${node.user?.nickname}?`}
             onConfirm={handleTransfer}
             okText="Yes"
             cancelText="No"
@@ -277,7 +277,7 @@ const OrganizationMemberListItem: FC<OrganizationMemberListItemProps> = (
         ) : null,
         organization.currentUserIsOwner && !node.isBillingContact ? (
           <Popconfirm
-            title={`Are you sure you want to make ${node.user?.name} the billing contact for ${organization.name}?`}
+            title={`Are you sure you want to make ${node.user?.nickname} the billing contact for ${organization.name}?`}
             onConfirm={handleBillingTransfer}
             okText="Yes"
             cancelText="No"
@@ -290,7 +290,7 @@ const OrganizationMemberListItem: FC<OrganizationMemberListItemProps> = (
     >
       <List.Item.Meta
         //avatar={...}
-        title={node.user?.name}
+        title={node.user?.nickname}
         description={
           <div>
             <Text>{node.user?.username}</Text>

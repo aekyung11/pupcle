@@ -11,7 +11,7 @@
 create table app_public.users (
   id uuid primary key default gen_random_uuid(),
   username citext not null unique check(length(username) >= 2 and length(username) <= 24 and username ~ '^[a-zA-Z]([_]?[a-zA-Z0-9])+$'),
-  name text,
+  nickname text,
   avatar_url text check(avatar_url ~ '^https?://[^/]+'),
   is_admin boolean not null default false,
   is_verified boolean not null default false,
@@ -31,7 +31,7 @@ create policy select_all on app_public.users for select using (true);
 create policy update_self on app_public.users for update using (id = app_public.current_user_id());
 grant select on app_public.users to :DATABASE_VISITOR;
 -- NOTE: `insert` is not granted, because we'll handle that separately
-grant update(username, name, avatar_url) on app_public.users to :DATABASE_VISITOR;
+grant update(username, nickname, avatar_url) on app_public.users to :DATABASE_VISITOR;
 -- NOTE: `delete` is not granted, because we require confirmation via request_account_deletion/confirm_account_deletion
 
 comment on table app_public.users is
@@ -41,8 +41,8 @@ comment on column app_public.users.id is
   E'Unique identifier for the user.';
 comment on column app_public.users.username is
   E'Public-facing username (or ''handle'') of the user.';
-comment on column app_public.users.name is
-  E'Public-facing name (or pseudonym) of the user.';
+comment on column app_public.users.nickname is
+  E'Public-facing nickname (or pseudonym) of the user.';
 comment on column app_public.users.avatar_url is
   E'Optional avatar URL.';
 comment on column app_public.users.is_admin is

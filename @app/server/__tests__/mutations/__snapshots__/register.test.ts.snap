@@ -10,7 +10,7 @@ exports[`Register 2`] = `
         "id": "[id-1]",
         "isAdmin": false,
         "isVerified": false,
-        "name": "Test User",
+        "nickname": "Test User",
         "updatedAt": "[timestamp-1]",
         "username": "[username-1]",
       },

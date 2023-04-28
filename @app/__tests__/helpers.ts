@@ -110,7 +110,7 @@ export const createUsers = async function createUsers(
         username := $1,
         email := $2,
         email_is_verified := $3,
-        name := $4,
+        nickname := $4,
         avatar_url := $5,
         password := $6
       )`,

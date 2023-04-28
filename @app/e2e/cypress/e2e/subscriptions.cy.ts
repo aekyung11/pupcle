@@ -11,7 +11,7 @@ context("Subscriptions", () => {
     // Setup
     cy.serverCommand("createUser", {
       username: "testuser",
-      name: "Test User",
+      nickname: "Test User",
       verified: false,
       password: PASSWORD,
     });

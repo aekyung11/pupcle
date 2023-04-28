@@ -14,18 +14,18 @@ afterAll(teardown);
 test("Register", async () => {
   await runGraphQLQuery(
     // GraphQL query goes here:
-    `mutation Register($username: String!, $password: String!, $name: String!, $email: String!) {
+    `mutation Register($username: String!, $password: String!, $nickname: String!, $email: String!) {
       register(
         input: {
           username: $username
           password: $password
-          name: $name
+          nickname: $nickname
           email: $email
         }
       ) {
         user {
           id
-          name
+          nickname
           avatarUrl
           createdAt
           isAdmin
@@ -41,13 +41,13 @@ test("Register", async () => {
     {
       username: "testuser",
       password: "SECURE_PASSWORD",
-      name: "Test User",
+      nickname: "Test User",
       email: "test.user@example.org",
     },
 
     // Additional props to add to `req` (e.g. `user: {session_id: '...'}`)
     {
-      login: jest.fn((_user, cb) => process.nextTick(cb)),
+      login: jest.fn((_user, _options, cb) => process.nextTick(cb)),
     },
 
     // This function runs all your test assertions:
@@ -63,7 +63,7 @@ test("Register", async () => {
           "id": "[id-1]",
           "isAdmin": false,
           "isVerified": false,
-          "name": "Test User",
+          "nickname": "Test User",
           "updatedAt": "[timestamp-1]",
           "username": "[username-1]",
         }

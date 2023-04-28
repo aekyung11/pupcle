@@ -27,7 +27,7 @@ type Chainable<Subject = any> = Cypress.Chainable<Subject>;
 type User = {
   id: string;
   username: string;
-  name: string;
+  nickname: string;
   is_admin: boolean;
   is_verified: boolean;
 };
@@ -69,7 +69,7 @@ function serverCommand(
     username?: string;
     email?: string;
     verified?: boolean;
-    name?: string;
+    nickname?: string;
     password?: string;
     next?: string;
   }
@@ -114,7 +114,7 @@ function serverCommand(command: string, payload?: any): any {
 function login(payload?: {
   next?: string;
   username?: string;
-  name?: string;
+  nickname?: string;
   verified?: boolean;
   password?: string;
   orgs?: [[string, string] | [string, string, boolean]];

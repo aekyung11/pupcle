@@ -12,7 +12,7 @@ create function app_private.really_create_user(
   username citext,
   email text,
   email_is_verified bool,
-  name text,
+  nickname text,
   avatar_url text,
   password text default null
 ) returns app_public.users as $$
@@ -28,8 +28,8 @@ begin
   end if;
 
   -- Insert the new user
-  insert into app_public.users (username, name, avatar_url) values
-    (v_username, name, avatar_url)
+  insert into app_public.users (username, nickname, avatar_url) values
+    (v_username, nickname, avatar_url)
     returning * into v_user;
 
 	-- Add the user's email
@@ -50,7 +50,7 @@ begin
 end;
 $$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
 
-comment on function app_private.really_create_user(username citext, email text, email_is_verified bool, name text, avatar_url text, password text) is
+comment on function app_private.really_create_user(username citext, email text, email_is_verified bool, nickname text, avatar_url text, password text) is
   E'Creates a user account. All arguments are optional, it trusts the calling method to perform sanitisation.';
 
 /**********/
@@ -114,7 +114,7 @@ begin
     username => v_username,
     email => v_email,
     email_is_verified => f_email_is_verified,
-    name => v_name,
+    nickname => v_name,
     avatar_url => v_avatar_url
   );
 
@@ -229,7 +229,7 @@ begin
         where user_authentication_id = v_matched_authentication_id;
       update app_public.users
         set
-          name = coalesce(users.name, v_name),
+          nickname = coalesce(users.nickname, v_name),
           avatar_url = coalesce(users.avatar_url, v_avatar_url)
         where id = v_matched_user_id
         returning  * into v_user;

@@ -13,7 +13,7 @@ mutation Login(
     user {
       id
       username
-      name
+      nickname
     }
     access_token
     token_type

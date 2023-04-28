@@ -9,7 +9,7 @@ context("Login", () => {
     // Setup
     cy.serverCommand("createUser", {
       username: "testuser",
-      name: "Test User",
+      nickname: "Test User",
       verified: true,
       password: PASSWORD,
     });
@@ -32,7 +32,7 @@ context("Login", () => {
     // Setup
     cy.serverCommand("createUser", {
       username: "testuser",
-      name: "Test User",
+      nickname: "Test User",
       verified: true,
       password: PASSWORD,
     });

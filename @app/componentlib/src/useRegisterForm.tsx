@@ -3,6 +3,7 @@ import {
   RegisterInput,
   RegisterMutation,
   useRegisterMutation,
+  useUpdateUserEntryMutation,
 } from "@app/graphql";
 import { getCodeFromError, getExceptionFromError } from "@app/lib";
 import { FormikConfig } from "formik";
@@ -53,6 +54,7 @@ export function useRegisterForm(
 ) {
   const [error, setError] = useState<Error | ApolloError | null>(null);
   const [register] = useRegisterMutation();
+  const [updateUserEntry] = useUpdateUserEntryMutation();
   const initialValues: RegisterFormInput = {
     name: "",
     username: "",
@@ -64,9 +66,21 @@ export function useRegisterForm(
     async (values, { setErrors }) => {
       setError(null);
       try {
+        const { name, ...rest } = values;
         const result = await register({
-          variables: values,
+          variables: rest,
         });
+        const userId = result.data?.register?.user.id;
+        if (userId) {
+          await updateUserEntry({
+            variables: {
+              userId,
+              patch: {
+                name,
+              },
+            },
+          });
+        }
 
         const postResultReturn = postResult(result);
         if (postResultReturn instanceof Promise) {
@@ -110,7 +124,7 @@ export function useRegisterForm(
         }
       }
     },
-    [register, postResult]
+    [register, postResult, updateUserEntry]
   );
 
   return {

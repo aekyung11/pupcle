@@ -1,0 +1,17 @@
+mutation UpdateUserEntry($userId: UUID!, $patch: UserEntryPatch!) {
+  updateUserEntry(input: { userId: $userId, patch: $patch }) {
+    clientMutationId
+    userEntry {
+      userId
+      name
+      address
+      agreedToTerms
+      receiveFriendRequestNotifications
+      receiveGeneralNotifications
+      receiveInviteNotifications
+      receiveInviteNotifications
+      receiveMarketingNotifications
+      receivePersonalNotifications
+    }
+  }
+}

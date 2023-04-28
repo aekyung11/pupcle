@@ -15,7 +15,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
       username: String!
       email: String!
       password: String!
-      name: String
+      nickname: String
       avatarUrl: String
     }
 
@@ -98,7 +98,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
     Mutation: {
       async register(_mutation, args, context: OurGraphQLContext, resolveInfo) {
         const { selectGraphQLResultFromTable } = resolveInfo.graphile;
-        const { username, password, email, name, avatarUrl } = args.input;
+        const { username, password, email, nickname, avatarUrl } = args.input;
         const { rootPgPool, login, pgClient } = context;
         try {
           // Create a user and create a session for it in the proccess
@@ -111,7 +111,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
                 username => $1,
                 email => $2,
                 email_is_verified => false,
-                name => $3,
+                nickname => $3,
                 avatar_url => $4,
                 password => $5
               ) users where not (users is null)
@@ -122,7 +122,7 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
             )
             select new_user.id as user_id, new_session.uuid as session_id
             from new_user, new_session`,
-            [username, email, name, avatarUrl, password]
+            [username, email, nickname, avatarUrl, password]
           );
 
           if (!details || !details.user_id) {

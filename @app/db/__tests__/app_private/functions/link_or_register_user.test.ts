@@ -43,7 +43,7 @@ describe("when account doesn't already exist", () => {
       );
       expect(user).toBeTruthy();
       expect(user.username).toEqual("GHU123");
-      expect(user.name).toEqual("GitHub User123456");
+      expect(user.nickname).toEqual("GitHub User123456");
       expect(user.avatar_url).toEqual("http://example.com/avatar.jpg");
       expect(user.is_admin).toEqual(false);
       expect(user.is_verified).toEqual(true);
@@ -54,7 +54,7 @@ describe("when account doesn't already exist", () => {
           "id": "[ID]",
           "is_admin": false,
           "is_verified": true,
-          "name": "GitHub User123456",
+          "nickname": "GitHub User123456",
           "updated_at": "[DATE]",
           "username": "GHU123",
         }
@@ -75,7 +75,7 @@ describe("when account doesn't already exist", () => {
       );
       expect(user).toBeTruthy();
       expect(user.username).toMatch(/^user(?:[1-9][0-9]+)?$/);
-      expect(user.name).toEqual(null);
+      expect(user.nickname).toEqual(null);
       expect(user.avatar_url).toEqual(null);
       expect(user.is_admin).toEqual(false);
       expect(user.is_verified).toEqual(true);

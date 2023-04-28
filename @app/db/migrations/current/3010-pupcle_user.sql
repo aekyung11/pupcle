@@ -2,6 +2,7 @@ grant usage on schema app_public to :DATABASE_AUTHENTICATOR;
 
 create table app_public.user_entries (
   user_id                               uuid not null primary key references app_public.users on delete cascade,
+  name                             text,
   pupcle_balance                        int not null default 0,
   total_pupcles_earned                  int not null default 0,
   address                               jsonb,
@@ -23,6 +24,7 @@ grant select on app_public.user_entries to :DATABASE_VISITOR;
 grant update(
   address,
   agreed_to_terms,
+  name,
   receive_general_notifications,
   receive_marketing_notifications,
   receive_personal_notifications,
