@@ -1,0 +1,23 @@
+mutation CreatePet($input: CreatePetInput!) {
+  createPet(input: $input) {
+    clientMutationId
+    pet {
+      id
+      avatarUrl
+      createdAt
+      dob
+      gender
+      injections
+      kind
+      name
+      neutered
+      updatedAt
+      userId
+      vaccinations
+      weight {
+        value
+        unit
+      }
+    }
+  }
+}

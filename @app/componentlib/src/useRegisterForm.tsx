@@ -99,6 +99,7 @@ export function useRegisterForm(
           exception = getExceptionFromError(e);
           fields = exception?.extensions?.fields ?? exception?.fields;
         }
+
         if (code === "WEAKP") {
           setErrors({
             password:

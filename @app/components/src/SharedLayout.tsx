@@ -169,6 +169,20 @@ export function SharedLayout({
       );
     }
     if (
+      data?.currentUser &&
+      !(data.currentUser.pets.totalCount > 0) &&
+      !currentUrl.startsWith("/onboarding/")
+    ) {
+      // user must add a pet
+      return (
+        <Redirect
+          href={`/onboarding/pet-profile?next=${encodeURIComponent(
+            router.asPath
+          )}`}
+        />
+      );
+    }
+    if (
       data &&
       data.currentUser === null &&
       !loading &&

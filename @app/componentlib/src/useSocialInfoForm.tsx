@@ -70,7 +70,9 @@ export function useSocialInfoForm(
             code = getCodeFromError(e);
             exception = getExceptionFromError(e);
             fields = exception?.extensions?.fields ?? exception?.fields;
-          } else if (code === "NUNIQ" && fields && fields[0] === "username") {
+          }
+
+          if (code === "NUNIQ" && fields && fields[0] === "username") {
             setErrors({
               username:
                 "An account with this username has already been registered, please try a different username.",

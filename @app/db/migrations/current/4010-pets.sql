@@ -38,6 +38,7 @@ create table app_public.pets (
   user_id       uuid not null references app_public.users on delete cascade,
   kind          text not null references app_public.pet_kind,
   name          text not null,
+  -- TODO: maybe change this to sex
   gender        text not null references app_public.pet_gender,
   dob           date not null,
   weight        app_public.weight,

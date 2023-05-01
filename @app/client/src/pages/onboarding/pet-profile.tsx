@@ -1,52 +1,48 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useSocialInfoForm } from "@app/componentlib";
-import {
-  AuthRestrict,
-  FramedAvatarUpload,
-  SharedLayout,
-} from "@app/components";
+import { usePetInfoForm } from "@app/componentlib";
+import { AuthRestrict, Link, SharedLayout } from "@app/components";
 import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import { Alert, Button, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Link from "next/link";
 import Router from "next/router";
-import React, { FC, useCallback, useEffect, useRef } from "react";
+import * as React from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 
 import { isSafe } from "../login";
 
-interface SocialInfoPageProps {
+interface PetProfilePageProps {
   next: string | null;
 }
 
-const SocialInfoPage: NextPage<SocialInfoPageProps> = ({ next: rawNext }) => {
+const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
   const query = useSharedQuery();
   const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
 
   return (
     <SharedLayout
-      title="Social Info"
+      title="pet-profile"
       query={query}
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
       {query.data?.currentUser && (
-        <SocialInfoPageInner
+        <PetProfilePageInner
           next={next}
           currentUser={query.data?.currentUser}
-        ></SocialInfoPageInner>
+        ></PetProfilePageInner>
       )}
     </SharedLayout>
   );
 };
 
-interface SocialInfoPageInnerProps {
+interface PetProfilePageInnerProps {
   next: string;
   currentUser: SharedLayout_UserFragment;
 }
 
-const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
+const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
   currentUser,
   next,
 }) => {
@@ -55,12 +51,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
   }, [next]);
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useSocialInfoForm(
-      currentUser.id,
-      postResult,
-      currentUser.nickname,
-      currentUser.username
-    );
+    usePetInfoForm(currentUser.id, postResult);
 
   const focusElement = useRef<InputRef>(null);
   useEffect(
@@ -121,11 +112,11 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                 style={{ width: "36px", marginBottom: "3px" }}
               />
             </Row>
-            <FramedAvatarUpload
+            {/* <FramedAvatarUpload
               user={currentUser}
               disabled={false}
               onUpload={handleAvatarUpload}
-            />
+            /> */}
             <Formik
               validationSchema={validationSchema}
               initialValues={initialValues}
@@ -147,37 +138,29 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                         paddingLeft: "16px",
                       }}
                     >
-                      Nickname
+                      Name
                     </span>
-                    <QuestionCircleOutlined
-                      style={{
-                        color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingRight: "16px",
-                      }}
-                    />
+                    <Form.Item name="name">
+                      <Input
+                        name="name"
+                        // size="large"
+                        style={{
+                          backgroundColor: "#f5f5f5",
+                          height: "40px",
+                          borderRadius: "20px",
+                          borderStyle: "none",
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          padding: "0 1.5rem",
+                        }}
+                        autoComplete="name"
+                        ref={focusElement}
+                        data-cy="petprofilepage-input-name"
+                      />
+                    </Form.Item>
                   </Row>
-                  <Form.Item name="nickname">
-                    <Input
-                      name="nickname"
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                      autoComplete="nickname name"
-                      ref={focusElement}
-                      data-cy="registerpage-input-name"
-                    />
-                  </Form.Item>
+
                   <Row
                     style={{
                       display: "flex",
@@ -192,37 +175,29 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                         paddingLeft: "16px",
                       }}
                     >
-                      ID
+                      DOB
                     </span>
-                    <QuestionCircleOutlined
-                      style={{
-                        color: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingRight: "16px",
-                      }}
-                    />
+                    <Form.Item name="dob">
+                      <Input
+                        name="dob"
+                        // size="large"
+                        style={{
+                          backgroundColor: "#f5f5f5",
+                          height: "40px",
+                          borderRadius: "20px",
+                          borderStyle: "none",
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          padding: "0 1.5rem",
+                        }}
+                        autoComplete="dob"
+                        // ref={focusElement}
+                        data-cy="petprofilepage-input-dob"
+                      />
+                    </Form.Item>
                   </Row>
-                  <Form.Item name="username">
-                    <Input
-                      name="username"
-                      // size="large"
-                      style={{
-                        backgroundColor: "#f5f5f5",
-                        height: "40px",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        padding: "0 1.5rem",
-                      }}
-                      autoComplete="username"
-                      // ref={focusElement}
-                      data-cy="registerpage-input-username"
-                    />
-                  </Form.Item>
+
                   {error ? (
                     <Form.Item name="_error">
                       <Alert
@@ -273,4 +248,4 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
   );
 };
 
-export default SocialInfoPage;
+export default PetProfilePage;

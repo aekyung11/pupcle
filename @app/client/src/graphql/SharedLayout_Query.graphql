@@ -12,6 +12,9 @@ fragment SharedLayout_User on User {
   avatarUrl
   isAdmin
   isVerified
+  pets {
+    totalCount
+  }
   userEntry {
     userId
     name
