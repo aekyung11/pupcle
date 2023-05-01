@@ -209,6 +209,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                     </span>
                   </Row>
                   <Formik
+                    validateOnBlur
                     validationSchema={validationSchema}
                     initialValues={initialValues}
                     onSubmit={handleSubmit}

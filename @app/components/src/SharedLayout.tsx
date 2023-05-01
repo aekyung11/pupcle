@@ -224,7 +224,7 @@ export function SharedLayout({
                 fontFamily: "Poppins, sans-serif",
                 fontSize: "min(20px, 14px + 0.5vw)",
                 fontWeight: 400,
-                overflow: "scroll",
+                // overflow: "scroll",
               }}
             >
               <a
@@ -263,73 +263,153 @@ export function SharedLayout({
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
               {data && data.currentUser ? (
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      {data.currentUser.organizationMemberships.nodes.map(
-                        ({ organization, isOwner }) => (
-                          <Menu.Item key={organization?.id}>
-                            <Link
-                              href={`/o/[slug]`}
-                              as={`/o/${organization?.slug}`}
-                            >
-                              {organization?.name}
-                              {isOwner ? (
-                                <span>
-                                  {" "}
-                                  <CrownOutlined />
-                                </span>
-                              ) : (
-                                ""
-                              )}
-                            </Link>
-                          </Menu.Item>
-                        )
-                      )}
-                      <Menu.Item key="_create-organization">
-                        <Link
-                          href="/create-organization"
-                          data-cy="layout-link-create-organization"
-                        >
-                          Create organization
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="_settings">
-                        <Link href="/settings" data-cy="layout-link-settings">
-                          <Warn okay={data.currentUser.isVerified}>
-                            Settings
-                          </Warn>
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="_logout">
-                        <a onClick={handleLogout}>Logout</a>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <span
-                    data-cy="layout-dropdown-user"
-                    style={{ whiteSpace: "nowrap" }}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        {data.currentUser.organizationMemberships.nodes.map(
+                          ({ organization, isOwner }) => (
+                            <Menu.Item key={organization?.id}>
+                              <Link
+                                href={`/o/[slug]`}
+                                as={`/o/${organization?.slug}`}
+                              >
+                                {organization?.name}
+                                {isOwner ? (
+                                  <span>
+                                    {" "}
+                                    <CrownOutlined />
+                                  </span>
+                                ) : (
+                                  ""
+                                )}
+                              </Link>
+                            </Menu.Item>
+                          )
+                        )}
+                        <Menu.Item key="_account">
+                          <Link href="/account" data-cy="layout-link-account">
+                            Account
+                          </Link>
+                        </Menu.Item>
+                        <Menu.Item key="_pup-notes">
+                          <Link
+                            href="/pup-notes"
+                            data-cy="layout-link-pup-notes"
+                          >
+                            My Pup&apos;s Notes
+                          </Link>
+                        </Menu.Item>
+                        <Menu.Item key="_friends">
+                          <Link href="/friends" data-cy="layout-link-friends">
+                            Friends
+                          </Link>
+                        </Menu.Item>
+                        <Menu.Item key="_settings">
+                          <Link href="/settings" data-cy="layout-link-settings">
+                            <Warn okay={data.currentUser.isVerified}>
+                              Settings
+                            </Warn>
+                          </Link>
+                        </Menu.Item>
+                        <Menu.Item key="_notification">
+                          <Link
+                            href="/notification"
+                            data-cy="layout-link-notification"
+                          >
+                            Notification
+                          </Link>
+                        </Menu.Item>
+                        {/* <Menu.Item key="_logout">
+                          <a onClick={handleLogout}>Logout</a>
+                        </Menu.Item> */}
+                      </Menu>
+                    }
                   >
-                    <Avatar>
-                      {(data.currentUser.nickname &&
-                        data.currentUser.nickname[0]) ||
-                        (data.currentUser.userEntry?.name &&
-                          data.currentUser.userEntry?.name[0]) ||
-                        "?"}
-                    </Avatar>
-                    <Warn
-                      okay={data.currentUser.isVerified}
-                      data-cy="header-unverified-warning"
+                    <span
+                      data-cy="layout-dropdown-user"
+                      style={{
+                        whiteSpace: "nowrap",
+                        marginRight: "min(24px, calc(8px + 1.5vw))",
+                        position: "relative",
+                        top: "min(calc(0.5vw + 5px), 18px)",
+                      }}
                     >
-                      <span style={{ marginLeft: 8, marginRight: 8 }}>
-                        {data.currentUser.nickname ||
-                          data.currentUser.userEntry?.name}
-                      </span>
-                      <DownOutlined />
-                    </Warn>
-                  </span>
-                </Dropdown>
+                      <Warn
+                        okay={data.currentUser.isVerified}
+                        data-cy="header-unverified-warning"
+                      >
+                        <img
+                          src="/hamburger.png"
+                          style={{
+                            height: "min(2rem, 4vw)",
+                            minHeight: "1.5rem",
+                          }}
+                        />
+                      </Warn>
+
+                      {/* <Avatar>
+                      {(data.currentUser.name && data.currentUser.name[0]) ||
+                        "?"}
+                    </Avatar> */}
+                    </span>
+                  </Dropdown>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        {/* {data.currentUser.organizationMemberships.nodes.map(
+                          ({ organization, isOwner }) => (
+                            <Menu.Item key={organization?.id}>
+                              <Link
+                                href={`/o/[slug]`}
+                                as={`/o/${organization?.slug}`}
+                              >
+                                {organization?.name}
+                                {isOwner ? (
+                                  <span>
+                                    {" "}
+                                    <CrownOutlined />
+                                  </span>
+                                ) : (
+                                  ""
+                                )}
+                              </Link>
+                            </Menu.Item>
+                          )
+                        )}
+                        <Menu.Item key="_create-organization">
+                          <Link
+                            href="/create-organization"
+                            data-cy="layout-link-create-organization"
+                          >
+                            Create organization
+                          </Link>
+                        </Menu.Item> */}
+                        {/* <Menu.Item key="_settings">
+                          <Link href="/settings" data-cy="layout-link-settings">
+                            <Warn okay={data.currentUser.isVerified}>
+                              Settings
+                            </Warn>
+                          </Link>
+                        </Menu.Item> */}
+
+                        {/* TODO: show a list of pets, each pet has it's own page */}
+                        <Menu.Item key="_logout">
+                          <a onClick={handleLogout}>Logout</a>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <img
+                      src={
+                        data.currentUser.avatarUrl
+                          ? data.currentUser.avatarUrl
+                          : "/default_avatar.png"
+                      }
+                      style={{ height: "min(38px, 4vw)", minHeight: "1.8rem" }}
+                    />
+                  </Dropdown>
+                </div>
               ) : forbidsLoggedIn ? null : (
                 <Button
                   href={`/login?next=${encodeURIComponent(currentUrl)}`}

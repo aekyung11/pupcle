@@ -220,6 +220,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                   />
                 </Row>
                 <Formik
+                  validateOnBlur
                   validationSchema={validationSchema}
                   initialValues={initialValues}
                   onSubmit={handleSubmit}
