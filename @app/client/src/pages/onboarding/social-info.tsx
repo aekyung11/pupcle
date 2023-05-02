@@ -176,6 +176,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                       autoComplete="nickname name"
                       ref={focusElement}
                       data-cy="registerpage-input-name"
+                      suffix
                     />
                   </Form.Item>
                   <Row
@@ -221,6 +222,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                       autoComplete="username"
                       // ref={focusElement}
                       data-cy="registerpage-input-username"
+                      suffix
                     />
                   </Form.Item>
                   {error ? (

@@ -270,6 +270,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           autoComplete="name"
                           ref={focusElement}
                           data-cy="registerpage-input-name"
+                          suffix
                         />
                       </Form.Item>
                       <Row
@@ -315,6 +316,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           autoComplete="username"
                           // ref={focusElement}
                           data-cy="registerpage-input-username"
+                          suffix
                         />
                       </Form.Item>
                       <Row
@@ -359,6 +361,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           }}
                           // ref={focusElement}
                           data-cy="registerpage-input-email"
+                          suffix
                         />
                       </Form.Item>
                       <Row
@@ -390,6 +393,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           }}
                           // ref={focusElement}
                           data-cy="registerpage-input-cellnumber"
+                          suffix
                         />
                       </Form.Item>
                       <Row
@@ -427,6 +431,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                             fontWeight: 400,
                             padding: "0 1.5rem",
                           }}
+                          suffix
                         />
                       </Form.Item>
                       {error ? (

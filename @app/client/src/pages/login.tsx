@@ -265,6 +265,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             autoComplete="email"
                             ref={focusElement}
                             data-cy="loginpage-input-username"
+                            suffix
                           />
                         </Form.Item>
                         <Row
@@ -311,6 +312,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             // placeholder="Passphrase"
                             autoComplete="current-password"
                             data-cy="loginpage-input-password"
+                            suffix
                             // TODO: eyeoutlined/eyeinvisibleoutlined
                           />
                         </Form.Item>

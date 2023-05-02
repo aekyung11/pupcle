@@ -157,6 +157,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                         autoComplete="name"
                         ref={focusElement}
                         data-cy="petprofilepage-input-name"
+                        suffix
                       />
                     </Form.Item>
                   </Row>
@@ -194,6 +195,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                         autoComplete="dob"
                         // ref={focusElement}
                         data-cy="petprofilepage-input-dob"
+                        suffix
                       />
                     </Form.Item>
                   </Row>
