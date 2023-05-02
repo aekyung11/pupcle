@@ -71,14 +71,6 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
 
   const code = getCodeFromError(error);
 
-  const handleAvatarUpload = useCallback(async () => {
-    try {
-      message.success("Successfully updated profile picture");
-    } catch (e) {
-      message.error("Error updating profile picture");
-    }
-  }, []);
-
   return (
     <>
       <Row
@@ -122,18 +114,26 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                 style={{ width: "36px", marginBottom: "3px" }}
               />
             </Row>
-            <FramedAvatarUpload
-              user={currentUser}
-              disabled={false}
-              onUpload={handleAvatarUpload}
-            />
             <Formik
               validationSchema={validationSchema}
               initialValues={initialValues}
               onSubmit={handleSubmit}
             >
-              {() => (
+              {({ values, setFieldValue }) => (
                 <Form>
+                  <Form.Item
+                    name="avatarUrl"
+                    valuePropName="avatarUrl"
+                    trigger="onUpload"
+                  >
+                    <FramedAvatarUpload
+                      disabled={false}
+                      avatarUrl={values.avatarUrl}
+                      onUpload={async (avatarUrl) =>
+                        setFieldValue("avatarUrl", avatarUrl)
+                      }
+                    />
+                  </Form.Item>
                   <Row style={{ marginBottom: "8px" }}>
                     <Col
                       span={4}
@@ -314,12 +314,10 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                           suffix
                         />
                       </Form.Item> */}
-                      <Form.Item
-                        name="sex"
-                        trigger="onValueChange"
-                        validateTrigger="onValueChange"
-                      >
+                      <Form.Item name="sex">
                         <RadioGroupPrimitive.Root
+                          value={values.sex}
+                          onValueChange={(sex) => setFieldValue("sex", sex)}
                           data-cy="petprofilepage-input-sex"
                           style={{
                             display: "flex",

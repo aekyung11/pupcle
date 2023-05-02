@@ -12,7 +12,11 @@ fragment SharedLayout_User on User {
   avatarUrl
   isAdmin
   isVerified
-  pets {
+  pets(first: 20) {
+    nodes {
+      id
+      avatarUrl
+    }
     totalCount
   }
   userEntry {

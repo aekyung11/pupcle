@@ -5,7 +5,11 @@ import {
   FramedAvatarUpload,
   SharedLayout,
 } from "@app/components";
-import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
+import {
+  SharedLayout_UserFragment,
+  useSharedQuery,
+  useUpdateUserMutation,
+} from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import { Alert, Button, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
@@ -70,13 +74,26 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
 
   const code = getCodeFromError(error);
 
-  const handleAvatarUpload = useCallback(async () => {
-    try {
-      message.success("Successfully updated profile picture");
-    } catch (e) {
-      message.error("Error updating profile picture");
-    }
-  }, []);
+  const [updateUser] = useUpdateUserMutation();
+
+  const handleAvatarUpload = useCallback(
+    async (avatarUrl: string) => {
+      try {
+        await updateUser({
+          variables: {
+            id: currentUser.id,
+            patch: {
+              avatarUrl,
+            },
+          },
+        });
+        message.success("Successfully updated profile picture");
+      } catch (e) {
+        message.error("Error updating profile picture");
+      }
+    },
+    [currentUser.id, updateUser]
+  );
 
   return (
     <>
@@ -122,7 +139,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
               />
             </Row>
             <FramedAvatarUpload
-              user={currentUser}
+              avatarUrl={currentUser.avatarUrl}
               disabled={false}
               onUpload={handleAvatarUpload}
             />

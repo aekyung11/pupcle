@@ -1,7 +1,6 @@
-import { CameraFilled, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import {
   AllowedUploadContentType,
-  SharedLayout_UserFragment,
   useCreateUploadUrlMutation,
   useUpdateUserMutation,
 } from "@app/graphql";
@@ -36,16 +35,14 @@ const ALLOWED_UPLOAD_CONTENT_TYPES_STRING = Object.keys(
 ).join(",");
 
 export function FramedAvatarUpload({
-  user,
+  avatarUrl,
   disabled,
   onUpload,
 }: {
-  user: SharedLayout_UserFragment;
+  avatarUrl: string | null | undefined;
   disabled: boolean;
-  onUpload?: () => void;
+  onUpload?: (avatarUrl: string) => Promise<void>;
 }) {
-  const [updateUser] = useUpdateUserMutation();
-
   const beforeUpload = (file: any) => {
     file.uid = getUid(file.name);
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -104,19 +101,11 @@ export function FramedAvatarUpload({
             },
       });
       if (response.config.url) {
-        await updateUser({
-          variables: {
-            id: user.id,
-            patch: {
-              avatarUrl: response.config.url.split("?")[0],
-            },
-          },
-        });
         if (onSuccess) {
           onSuccess(response.config);
         }
         if (onUpload) {
-          onUpload();
+          await onUpload(response.config.url.split("?")[0]);
         }
       }
     } catch (e) {
@@ -153,8 +142,6 @@ export function FramedAvatarUpload({
     }
   };
 
-  const nickname = user.nickname;
-
   return (
     <div
       style={{
@@ -179,7 +166,7 @@ export function FramedAvatarUpload({
         <div style={{ position: "relative" }}>
           {loading ? (
             <LoadingOutlined />
-          ) : user.avatarUrl ? (
+          ) : avatarUrl ? (
             <Row>
               <Col span={24}>
                 <img
@@ -192,8 +179,8 @@ export function FramedAvatarUpload({
                     height: "140px",
                     // marginTop: "60px",
                   }}
-                  src={user.avatarUrl}
-                  alt={nickname || "avatar"}
+                  src={avatarUrl}
+                  alt={"avatar"}
                 />
               </Col>
             </Row>
@@ -211,7 +198,7 @@ export function FramedAvatarUpload({
                   src="/profile_default_avatar.png"
                   width="140px"
                   height="140px"
-                  alt={nickname || "avatar"}
+                  alt={"avatar"}
                 />
               </Col>
             </Row>
