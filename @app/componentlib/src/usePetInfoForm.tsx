@@ -22,7 +22,8 @@ const validationSchema = yup.object({
     .mixed<PetGender>()
     .oneOf(Object.values(PetGender))
     .required("Please provide your pet's sex"),
-  neutered: yup.boolean().required("Please provide your pet's neutered status"),
+  neutered: yup.boolean(),
+  // neutered: yup.boolean().required("Please provide your pet's neutered status"),
   // TODO: avatarUrl
 });
 

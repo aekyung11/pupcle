@@ -294,7 +294,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                       </span>
                     </Col>
                     <Col span={20} style={{ paddingLeft: "1rem" }}>
-                      <Form.Item name="sex">
+                      {/* <Form.Item name="sex">
                         <Input
                           name="sex"
                           // size="large"
@@ -313,73 +313,51 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                           ref={focusElement}
                           suffix
                         />
-                      </Form.Item>
+                      </Form.Item> */}
                       <Form.Item
-                        className="choose-media-type"
-                        name="serviceName"
+                        name="sex"
                         trigger="onValueChange"
                         validateTrigger="onValueChange"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please choose a type",
-                          },
-                        ]}
                       >
                         <RadioGroupPrimitive.Root
                           data-cy="petprofilepage-input-sex"
                           style={{
                             display: "flex",
                             flexWrap: "wrap",
-                            padding: "0px 3% 20px",
                             width: "100%",
                             maxWidth: 400,
                           }}
                         >
                           <div
                             style={{
-                              width: "50%",
                               display: "flex",
-                              flexDirection: "column",
                               alignItems: "center",
+                              width: "100%",
+                              justifyContent: "space-evenly",
                             }}
                           >
                             <RadioGroupPrimitive.Item
                               className="circular-radio-button"
                               value={PetGender.M}
-                              style={{
-                                borderRadius: "19.5px 0px 0px 19.5px",
-                              }}
                             >
-                              <img
-                                src="/circular-button.png"
-                                width={78}
-                                height={78}
-                              />
+                              <img src="/male.png" width={40} height={40} />
                               <img
                                 className="image-hover"
                                 src="/circular-button-selected.png"
-                                width={78}
-                                height={78}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className="circular-radio-button"
                               value={PetGender.F}
-                              style={{
-                                borderRadius: "0px 19.5px 19.5px 0px",
-                              }}
                             >
-                              <img
-                                src="/circular-button.png"
-                                width={78}
-                                height={78}
-                              />
+                              <img src="/female.png" width={40} height={40} />
                               <img
                                 className="image-hover"
                                 src="/circular-button-selected.png"
-                                width={78}
-                                height={78}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                           </div>
@@ -410,26 +388,58 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                       </span>
                     </Col>
                     <Col span={20} style={{ paddingLeft: "1rem" }}>
-                      <Form.Item name="neutered">
-                        <Input
-                          name="neutered"
-                          // size="large"
-                          style={{
-                            backgroundColor: "#f5f5f5",
-                            height: "40px",
-                            width: "100%",
-                            borderRadius: "20px",
-                            borderStyle: "none",
-                            fontFamily: "Poppins, sans-serif",
-                            fontSize: "14px",
-                            fontWeight: 400,
-                            padding: "0 1.5rem",
-                          }}
-                          autoComplete="neutered"
-                          ref={focusElement}
+                      <Form.Item
+                        name="neutered"
+                        trigger="onValueChange"
+                        validateTrigger="onValueChange"
+                      >
+                        <RadioGroupPrimitive.Root
                           data-cy="petprofilepage-input-neutered"
-                          suffix
-                        />
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            width: "100%",
+                            maxWidth: 400,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              width: "100%",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <RadioGroupPrimitive.Item
+                              className="circular-radio-button"
+                              value="true"
+                            >
+                              <img src="/neutered.png" width={40} height={40} />
+                              <img
+                                className="image-hover"
+                                src="/circular-button-selected.png"
+                                width={40}
+                                height={40}
+                              />
+                            </RadioGroupPrimitive.Item>
+                            <RadioGroupPrimitive.Item
+                              className="circular-radio-button"
+                              value="false"
+                            >
+                              <img
+                                src="/not_neutered.png"
+                                width={40}
+                                height={40}
+                              />
+                              <img
+                                className="image-hover"
+                                src="/circular-button-selected.png"
+                                width={40}
+                                height={40}
+                              />
+                            </RadioGroupPrimitive.Item>
+                          </div>
+                        </RadioGroupPrimitive.Root>
                       </Form.Item>
                     </Col>
                   </Row>
