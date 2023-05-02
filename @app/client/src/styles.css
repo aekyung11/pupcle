@@ -12,3 +12,29 @@ a.ant-btn-primary {
 a.ant-btn-primary:hover {
   color: #f0faff;
 }
+
+.circular-radio-button {
+  width: 78;
+  height: 78;
+  border-radius: 50%;
+  border-style: none;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.circular-radio-button img.image-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.circular-radio-button:not([disabled])[aria-checked="true"] img.image-hover {
+  opacity: 1;
+}

@@ -6,8 +6,13 @@ import {
   Link,
   SharedLayout,
 } from "@app/components";
-import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
+import {
+  PetGender,
+  SharedLayout_UserFragment,
+  useSharedQuery,
+} from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Alert, Button, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
@@ -306,9 +311,79 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                           }}
                           autoComplete="sex"
                           ref={focusElement}
-                          data-cy="petprofilepage-input-sex"
                           suffix
                         />
+                      </Form.Item>
+                      <Form.Item
+                        className="choose-media-type"
+                        name="serviceName"
+                        trigger="onValueChange"
+                        validateTrigger="onValueChange"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please choose a type",
+                          },
+                        ]}
+                      >
+                        <RadioGroupPrimitive.Root
+                          data-cy="petprofilepage-input-sex"
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            padding: "0px 3% 20px",
+                            width: "100%",
+                            maxWidth: 400,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "50%",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <RadioGroupPrimitive.Item
+                              className="circular-radio-button"
+                              value={PetGender.M}
+                              style={{
+                                borderRadius: "19.5px 0px 0px 19.5px",
+                              }}
+                            >
+                              <img
+                                src="/circular-button.png"
+                                width={78}
+                                height={78}
+                              />
+                              <img
+                                className="image-hover"
+                                src="/circular-button-selected.png"
+                                width={78}
+                                height={78}
+                              />
+                            </RadioGroupPrimitive.Item>
+                            <RadioGroupPrimitive.Item
+                              className="circular-radio-button"
+                              value={PetGender.F}
+                              style={{
+                                borderRadius: "0px 19.5px 19.5px 0px",
+                              }}
+                            >
+                              <img
+                                src="/circular-button.png"
+                                width={78}
+                                height={78}
+                              />
+                              <img
+                                className="image-hover"
+                                src="/circular-button-selected.png"
+                                width={78}
+                                height={78}
+                              />
+                            </RadioGroupPrimitive.Item>
+                          </div>
+                        </RadioGroupPrimitive.Root>
                       </Form.Item>
                     </Col>
                   </Row>

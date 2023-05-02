@@ -157,6 +157,16 @@ services:
     networks:
       - default
 
+  miniobuckets:
+    image: minio/mc
+    env_file:
+      - docker/.env
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c " /usr/bin/mc alias set myminio http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb myminio/uploads; /usr/bin/mc anonymous set download myminio/uploads; exit 0; "
+
 networks:
   default:
     # No metadata required right now.
