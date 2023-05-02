@@ -31,6 +31,7 @@ interface PetProfilePageProps {
 
 const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
   const query = useSharedQuery();
+  const refetch = async () => query.refetch();
   const next: string = isSafe(rawNext) ? rawNext! : "/";
 
   return (
@@ -41,6 +42,7 @@ const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
     >
       {query.data?.currentUser && (
         <PetProfilePageInner
+          refetch={refetch}
           next={next}
           currentUser={query.data?.currentUser}
         ></PetProfilePageInner>
@@ -52,15 +54,18 @@ const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
 interface PetProfilePageInnerProps {
   next: string;
   currentUser: SharedLayout_UserFragment;
+  refetch: () => Promise<any>;
 }
 
 const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
   currentUser,
   next,
+  refetch,
 }) => {
   const postResult = useCallback(async () => {
+    await refetch();
     Router.push(next);
-  }, [next]);
+  }, [next, refetch]);
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     usePetInfoForm(currentUser.id, postResult);
