@@ -83,8 +83,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
       <Row
         style={{
           width: "100%",
-          height: "100vh",
-          backgroundColor: "#D8E7F7",
+          height: "calc(100vh - 64px - 70px)",
           minHeight: "720px",
         }}
       >
@@ -103,6 +102,7 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 marginBottom: "32px",
               }}
             >

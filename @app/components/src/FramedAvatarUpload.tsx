@@ -158,9 +158,11 @@ export function FramedAvatarUpload({
   return (
     <div
       style={{
-        width: "180px",
         height: "180px",
-        display: "contents",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: "32px",
       }}
       className="framed-avatar-upload"
     >
@@ -179,142 +181,36 @@ export function FramedAvatarUpload({
             <LoadingOutlined />
           ) : user.avatarUrl ? (
             <Row>
-              <Col lg={24} md={0} sm={0} xs={0}>
+              <Col span={24}>
                 <img
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
-                    borderRadius: "75px",
-                    borderWidth: "5px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
+                    borderRadius: "70px",
+                    borderStyle: "none",
+                    width: "140px",
+                    height: "140px",
                     // marginTop: "60px",
                   }}
                   src={user.avatarUrl}
-                  width="150px"
-                  height="150px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={24} sm={0} xs={0}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderRadius: "75px",
-                    borderWidth: "5px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    // marginTop: "60px",
-                  }}
-                  src={user.avatarUrl}
-                  width="150px"
-                  height="150px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={24} xs={0}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderRadius: "55px",
-                    borderWidth: "4px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    // marginTop: "60px",
-                  }}
-                  src={user.avatarUrl}
-                  width="110px"
-                  height="110px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={0} xs={24}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderRadius: "55px",
-                    borderWidth: "4px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    // marginTop: "60px",
-                  }}
-                  src={user.avatarUrl}
-                  width="110px"
-                  height="110px"
                   alt={nickname || "avatar"}
                 />
               </Col>
             </Row>
           ) : (
             <Row>
-              <Col lg={24} md={0} sm={0} xs={0}>
+              <Col span={24}>
                 <img
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
-                    borderWidth: "5px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    borderRadius: "75px",
+                    borderStyle: "none",
+                    borderRadius: "70px",
                     // marginTop: "60px",
                   }}
-                  src="/profile_default.png"
-                  width="150px"
-                  height="150px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={24} sm={0} xs={0}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderWidth: "5px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    borderRadius: "75px",
-                    // marginTop: "60px",
-                  }}
-                  src="/profile_default.png"
-                  width="150px"
-                  height="150px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={24} xs={0}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderWidth: "4px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    borderRadius: "55px",
-                    // marginTop: "60px",
-                  }}
-                  src="/profile_default.png"
-                  width="110px"
-                  height="110px"
-                  alt={nickname || "avatar"}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={0} xs={24}>
-                <img
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderWidth: "4px",
-                    borderColor: "#FFD9D0",
-                    borderStyle: "solid",
-                    borderRadius: "55px",
-                    // marginTop: "60px",
-                  }}
-                  src="/profile_default.png"
-                  width="110px"
-                  height="110px"
+                  src="/profile_default_avatar.png"
+                  width="140px"
+                  height="140px"
                   alt={nickname || "avatar"}
                 />
               </Col>
@@ -322,52 +218,16 @@ export function FramedAvatarUpload({
           )}
           {!disabled && (
             <Row>
-              <Col lg={24} md={0} sm={0} xs={0}>
-                <CameraFilled
+              <Col span={24}>
+                <img
                   style={{
-                    color: "#FF4B7D",
                     position: "absolute",
                     zIndex: 100,
-                    right: "50px",
-                    bottom: "55px",
-                    fontSize: "50px",
-                  }}
-                />
-              </Col>
-              <Col lg={0} md={24} sm={0} xs={0}>
-                <CameraFilled
-                  style={{
-                    color: "#FF4B7D",
-                    position: "absolute",
-                    zIndex: 100,
-                    right: "50px",
-                    bottom: "55px",
-                    fontSize: "50px",
-                  }}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={24} xs={0}>
-                <CameraFilled
-                  style={{
-                    color: "#FF4B7D",
-                    position: "absolute",
-                    zIndex: 100,
-                    right: "35px",
+                    right: "40px",
                     bottom: "40px",
-                    fontSize: "40px",
+                    width: "60px",
                   }}
-                />
-              </Col>
-              <Col lg={0} md={0} sm={0} xs={24}>
-                <CameraFilled
-                  style={{
-                    color: "#FF4B7D",
-                    position: "absolute",
-                    zIndex: 100,
-                    right: "35px",
-                    bottom: "40px",
-                    fontSize: "40px",
-                  }}
+                  src="/plus_icon.png"
                 />
               </Col>
             </Row>

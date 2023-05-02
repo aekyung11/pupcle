@@ -1,6 +1,11 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { usePetInfoForm } from "@app/componentlib";
-import { AuthRestrict, Link, SharedLayout } from "@app/components";
+import {
+  AuthRestrict,
+  FramedAvatarUpload,
+  Link,
+  SharedLayout,
+} from "@app/components";
 import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import { Alert, Button, Col, InputRef, message, Row } from "antd";
@@ -75,7 +80,6 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
         style={{
           width: "100%",
           height: "100vh",
-          backgroundColor: "#D8E7F7",
           minHeight: "720px",
         }}
       >
@@ -94,6 +98,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 marginBottom: "32px",
               }}
             >
@@ -105,18 +110,18 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                   fontWeight: 600,
                 }}
               >
-                회원님의 정보를 입력해주세요
+                반려견의 정보를 입력해주세요
               </span>
               <img
                 src="/paw.png"
                 style={{ width: "36px", marginBottom: "3px" }}
               />
             </Row>
-            {/* <FramedAvatarUpload
+            <FramedAvatarUpload
               user={currentUser}
               disabled={false}
               onUpload={handleAvatarUpload}
-            /> */}
+            />
             <Formik
               validationSchema={validationSchema}
               initialValues={initialValues}
@@ -124,80 +129,234 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
             >
               {() => (
                 <Form>
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
+                  <Row style={{ marginBottom: "8px" }}>
+                    <Col
+                      span={4}
                       style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: "24.5px",
                       }}
                     >
-                      Name
-                    </span>
-                    <Form.Item name="name">
-                      <Input
-                        name="name"
-                        // size="large"
+                      <span
                         style={{
-                          backgroundColor: "#f5f5f5",
-                          height: "40px",
-                          borderRadius: "20px",
-                          borderStyle: "none",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           fontWeight: 400,
-                          padding: "0 1.5rem",
+                          paddingLeft: "16px",
                         }}
-                        autoComplete="name"
-                        ref={focusElement}
-                        data-cy="petprofilepage-input-name"
-                        suffix
-                      />
-                    </Form.Item>
+                      >
+                        Name
+                      </span>
+                    </Col>
+                    <Col span={20} style={{ paddingLeft: "1rem" }}>
+                      <Form.Item name="name">
+                        <Input
+                          name="name"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="name"
+                          ref={focusElement}
+                          data-cy="petprofilepage-input-name"
+                          suffix
+                        />
+                      </Form.Item>
+                    </Col>
                   </Row>
 
-                  <Row
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span
+                  <Row style={{ marginBottom: "8px" }}>
+                    <Col
+                      span={4}
                       style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        paddingLeft: "16px",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: "24.5px",
                       }}
                     >
-                      DOB
-                    </span>
-                    <Form.Item name="dob">
-                      <Input
-                        name="dob"
-                        // size="large"
+                      <span
                         style={{
-                          backgroundColor: "#f5f5f5",
-                          height: "40px",
-                          borderRadius: "20px",
-                          borderStyle: "none",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           fontWeight: 400,
-                          padding: "0 1.5rem",
+                          paddingLeft: "16px",
                         }}
-                        autoComplete="dob"
-                        // ref={focusElement}
-                        data-cy="petprofilepage-input-dob"
-                        suffix
-                      />
-                    </Form.Item>
+                      >
+                        DOB
+                      </span>
+                    </Col>
+                    <Col span={20} style={{ paddingLeft: "1rem" }}>
+                      <Form.Item name="dob">
+                        <Input
+                          name="dob"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="dob"
+                          ref={focusElement}
+                          data-cy="petprofilepage-input-dob"
+                          suffix
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "8px" }}>
+                    <Col
+                      span={4}
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: "24.5px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          paddingLeft: "16px",
+                        }}
+                      >
+                        Weight
+                      </span>
+                    </Col>
+                    <Col span={20} style={{ paddingLeft: "1rem" }}>
+                      <Form.Item name="weight">
+                        <Input
+                          name="weight"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="weight"
+                          ref={focusElement}
+                          data-cy="petprofilepage-input-weight"
+                          suffix="kg"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "8px" }}>
+                    <Col
+                      span={4}
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: "24.5px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          paddingLeft: "16px",
+                        }}
+                      >
+                        Sex
+                      </span>
+                    </Col>
+                    <Col span={20} style={{ paddingLeft: "1rem" }}>
+                      <Form.Item name="sex">
+                        <Input
+                          name="sex"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="sex"
+                          ref={focusElement}
+                          data-cy="petprofilepage-input-sex"
+                          suffix
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "8px" }}>
+                    <Col
+                      span={4}
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: "24.5px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          paddingLeft: "16px",
+                        }}
+                      >
+                        Neutered
+                      </span>
+                    </Col>
+                    <Col span={20} style={{ paddingLeft: "1rem" }}>
+                      <Form.Item name="neutered">
+                        <Input
+                          name="neutered"
+                          // size="large"
+                          style={{
+                            backgroundColor: "#f5f5f5",
+                            height: "40px",
+                            width: "100%",
+                            borderRadius: "20px",
+                            borderStyle: "none",
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            padding: "0 1.5rem",
+                          }}
+                          autoComplete="neutered"
+                          ref={focusElement}
+                          data-cy="petprofilepage-input-neutered"
+                          suffix
+                        />
+                      </Form.Item>
+                    </Col>
                   </Row>
 
                   {error ? (

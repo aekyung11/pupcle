@@ -11,7 +11,7 @@ import { useCallback, useState } from "react";
 import * as yup from "yup";
 import { InferType } from "yup";
 
-const submitLabel = "next";
+const submitLabel = "Save";
 
 const validationSchema = yup.object({
   name: yup.string().required("Please enter your pet's name"),
