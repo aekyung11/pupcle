@@ -38,3 +38,7 @@ a.ant-btn-primary:hover {
 .circular-radio-button:not([disabled])[aria-checked="true"] img.image-hover {
   opacity: 1;
 }
+
+input {
+  background-color: rgb(245, 245, 245) !important;
+}
