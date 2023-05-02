@@ -3,6 +3,7 @@ mutation CreatePet($input: CreatePetInput!) {
     clientMutationId
     pet {
       id
+      userId
       avatarUrl
       createdAt
       dob

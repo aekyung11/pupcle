@@ -55,12 +55,14 @@ create index on app_public.pets (user_id, kind);
 create index on app_public.pets (kind);
 
 create policy select_own on app_public.pets for select using (user_id = app_public.current_user_id());
+create policy insert_own on app_public.pets for insert with check (user_id = app_public.current_user_id());
 
 create policy select_shared on app_public.pets
   for select using (user_id in (select app_public.current_user_shared_friend_ids()));
 
 grant select, delete on app_public.pets to :DATABASE_VISITOR;
 grant insert (
+  user_id,
   kind,
   name,
   gender,

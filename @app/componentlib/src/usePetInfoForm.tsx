@@ -49,13 +49,17 @@ export function usePetInfoForm(
           variables: {
             input: {
               pet: {
+                userId,
                 avatarUrl: values.avatarUrl,
                 dob: values.dob,
                 gender: values.sex,
                 kind: PetKind.Dog,
                 name: values.name,
                 neutered: values.neutered,
-                weight: { unit: WeightUnit.Kg, value: values.weight },
+                weight: {
+                  unit: WeightUnit.Kg,
+                  value: Number(values.weight),
+                },
               },
             },
           },
@@ -71,7 +75,7 @@ export function usePetInfoForm(
         }
       }
     },
-    [createPet, postResult]
+    [createPet, postResult, userId]
   );
 
   return {

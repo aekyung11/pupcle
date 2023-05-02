@@ -2,6 +2,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import { usePetInfoForm } from "@app/componentlib";
 import {
   AuthRestrict,
+  DayPickerInput,
   FramedAvatarUpload,
   Link,
   SharedLayout,
@@ -20,6 +21,7 @@ import { NextPage } from "next";
 import Router from "next/router";
 import * as React from "react";
 import { FC, useCallback, useEffect, useRef } from "react";
+import { DayPicker } from "react-day-picker";
 
 import { isSafe } from "../login";
 
@@ -29,7 +31,7 @@ interface PetProfilePageProps {
 
 const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
   const query = useSharedQuery();
-  const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
+  const next: string = isSafe(rawNext) ? rawNext! : "/";
 
   return (
     <SharedLayout
@@ -203,24 +205,9 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                     </Col>
                     <Col span={20} style={{ paddingLeft: "1rem" }}>
                       <Form.Item name="dob">
-                        <Input
-                          name="dob"
-                          // size="large"
-                          style={{
-                            backgroundColor: "#f5f5f5",
-                            height: "40px",
-                            width: "100%",
-                            borderRadius: "20px",
-                            borderStyle: "none",
-                            fontFamily: "Poppins, sans-serif",
-                            fontSize: "14px",
-                            fontWeight: 400,
-                            padding: "0 1.5rem",
-                          }}
-                          autoComplete="dob"
-                          ref={focusElement}
-                          data-cy="petprofilepage-input-dob"
-                          suffix
+                        <DayPickerInput
+                          selected={values.dob}
+                          setSelected={(d) => setFieldValue("dob", d)}
                         />
                       </Form.Item>
                     </Col>
@@ -386,12 +373,18 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                       </span>
                     </Col>
                     <Col span={20} style={{ paddingLeft: "1rem" }}>
-                      <Form.Item
-                        name="neutered"
-                        trigger="onValueChange"
-                        validateTrigger="onValueChange"
-                      >
+                      <Form.Item name="neutered">
                         <RadioGroupPrimitive.Root
+                          value={
+                            values.neutered === true
+                              ? "true"
+                              : values.neutered === false
+                              ? "false"
+                              : undefined
+                          }
+                          onValueChange={(n) =>
+                            setFieldValue("neutered", n === "true")
+                          }
                           data-cy="petprofilepage-input-neutered"
                           style={{
                             display: "flex",

@@ -1314,6 +1314,7 @@ input PetInput {
   kind: PetKind!
   name: String!
   neutered: Boolean!
+  userId: UUID!
   vaccinations: JSON
   weight: WeightInput
 }
