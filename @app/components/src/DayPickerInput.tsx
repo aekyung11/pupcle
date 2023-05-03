@@ -1,6 +1,6 @@
 import { format, isValid, parse } from "date-fns";
 import FocusTrap from "focus-trap-react";
-import React, { ChangeEventHandler, useRef, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { usePopper } from "react-popper";
 
@@ -10,6 +10,12 @@ export type DayPickerInputProps = {
 };
 
 export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
+  const [currentYear, setCurrentYear] = useState(2023);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   const [inputValue, setInputValue] = useState<string>("");
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 
@@ -53,25 +59,33 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
   };
 
   return (
-    <div>
-      <div ref={popperRef}>
+    <div style={{ height: "40px" }}>
+      <div ref={popperRef} style={{ height: "40px" }}>
         <input
+          className="dob-input"
           type="text"
           placeholder={format(new Date(), "y-MM-dd")}
           value={inputValue}
           onChange={handleInputChange}
-          className="input-reset pa2 ma2 black ba bg-white"
+          style={{
+            position: "absolute",
+          }}
+          // className="input-reset pa2 ma2 black ba bg-white"
         />
         <button
           ref={buttonRef}
           type="button"
-          className="pa2 button-reset ba bg-white"
+          // className="pa2 button-reset ba bg-white"
           aria-label="Pick a date"
           onClick={handleButtonClick}
+          style={{
+            position: "relative",
+            top: "10px",
+            left: "calc(100% - 20px - 1.5rem)",
+          }}
+          // style={{ position: "absolute" }}
         >
-          <span role="img" aria-label="calendar icon">
-            📅
-          </span>
+          <img src="/calender_icon.png" style={{ width: "20px" }} />
         </button>
       </div>
       {isPopperOpen && (
@@ -88,7 +102,7 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
         >
           <div
             tabIndex={-1}
-            style={popper.styles.popper}
+            // style={popper.styles.popper}
             className="dialog-sheet"
             {...popper.attributes.popper}
             ref={setPopperElement}
@@ -96,6 +110,9 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
             aria-label="DayPicker calendar"
           >
             <DayPicker
+              captionLayout="dropdown"
+              fromYear={1990}
+              toYear={currentYear}
               initialFocus={isPopperOpen}
               mode="single"
               defaultMonth={selected}

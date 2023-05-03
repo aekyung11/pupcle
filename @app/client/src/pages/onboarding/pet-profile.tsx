@@ -209,7 +209,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                       </span>
                     </Col>
                     <Col span={20} style={{ paddingLeft: "1rem" }}>
-                      <Form.Item name="dob">
+                      <Form.Item name="dob" style={{ height: "40px" }}>
                         <DayPickerInput
                           selected={values.dob}
                           setSelected={(d) => setFieldValue("dob", d)}
@@ -256,7 +256,6 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                             padding: "0 1.5rem",
                           }}
                           autoComplete="weight"
-                          ref={focusElement}
                           data-cy="petprofilepage-input-weight"
                           suffix="kg"
                         />

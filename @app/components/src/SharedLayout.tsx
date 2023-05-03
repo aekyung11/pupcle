@@ -420,7 +420,14 @@ export function SharedLayout({
                           ? data.currentUser.avatarUrl
                           : "/default_avatar.png"
                       }
-                      style={{ height: "min(38px, 4vw)", minHeight: "1.8rem" }}
+                      style={{
+                        height: "min(38px, 4vw)",
+                        width: "min(38px, 4vw)",
+                        minHeight: "1.8rem",
+                        minWidth: "1.8rem",
+                        borderRadius: "min(19px, 2vw)",
+                        objectFit: "cover",
+                      }}
                     />
                   </Dropdown>
                 </div>

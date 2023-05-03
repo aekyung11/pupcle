@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "react-day-picker/dist/style.css";
 
 /*
  * Work around a bug in antd where a <Button type="primary" block href="...">
@@ -37,6 +38,95 @@ a.ant-btn-primary:hover {
 
 .circular-radio-button:not([disabled])[aria-checked="true"] img.image-hover {
   opacity: 1;
+}
+
+.ant-input {
+  font-family: inherit;
+}
+
+.ant-input-suffix {
+  color: #8f9092;
+}
+
+.ant-form-item-explain-error {
+  font-family: Poppins;
+  padding-left: 1rem;
+}
+
+.dob-input {
+  background-color: #f5f5f5;
+  height: 40px;
+  width: 100%;
+  border-radius: 20px;
+  border-style: none;
+  font: Poppins 14px 400;
+  padding: 0 1.5rem;
+}
+
+.dialog-sheet {
+  position: absolute;
+  inset: 0px auto auto 0px;
+  transform: translate3d(50px, 20px, 0px);
+  z-index: 1;
+  /* left: 20%; */
+  background-color: white;
+  border: #8f9092 solid 1px;
+  border-radius: 20px;
+}
+
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #7fb3e8;
+  --rdp-background-color: #e7edff;
+  /* Switch to dark colors for dark themes */
+  --rdp-accent-color-dark: #7fb3e8;
+  --rdp-background-color-dark: #180270;
+  /* Outline border for focused elements */
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  /* Outline border for focused and selected elements */
+  --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75);
+  /* --rdp-day_selected-color: #7fb3e8; */
+}
+
+.rdp-caption_label {
+  font-family: Poppins;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.rdp-dropdown_icon {
+  color: #7fb3e8;
+}
+
+.rdp-head_row {
+  font-family: Poppins;
+}
+
+.rdp-head_cell {
+  vertical-align: middle;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: center;
+  height: var(--rdp-cell-size);
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.rdp-head_cell[aria-label="Sunday"] {
+  color: #ffa38e;
+}
+
+.rdp-head_cell[aria-label="Saturday"] {
+  color: #7fb3e8;
+}
+
+.rdp-tbody {
+  color: #8f9092;
+}
+
+.rdp-day_selected {
+  color: inherit;
+  background-color: #dce8f6;
 }
 
 input {
