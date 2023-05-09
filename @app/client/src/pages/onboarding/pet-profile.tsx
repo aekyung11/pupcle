@@ -332,7 +332,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               <img src="/male.png" width={40} height={40} />
                               <img
                                 className="image-hover"
-                                src="/circular-button-selected.png"
+                                src="/male_clicked.png"
                                 width={40}
                                 height={40}
                               />
@@ -344,7 +344,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               <img src="/female.png" width={40} height={40} />
                               <img
                                 className="image-hover"
-                                src="/circular-button-selected.png"
+                                src="/female_clicked.png"
                                 width={40}
                                 height={40}
                               />
@@ -412,7 +412,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               <img src="/neutered.png" width={40} height={40} />
                               <img
                                 className="image-hover"
-                                src="/circular-button-selected.png"
+                                src="/neutered_clicked.png"
                                 width={40}
                                 height={40}
                               />
@@ -428,7 +428,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               />
                               <img
                                 className="image-hover"
-                                src="/circular-button-selected.png"
+                                src="/not_neutered_clicked.png"
                                 width={40}
                                 height={40}
                               />

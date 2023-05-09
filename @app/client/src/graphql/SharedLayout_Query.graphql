@@ -16,6 +16,7 @@ fragment SharedLayout_User on User {
     nodes {
       id
       avatarUrl
+      name
     }
     totalCount
   }

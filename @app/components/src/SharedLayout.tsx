@@ -230,44 +230,44 @@ export function SharedLayout({
                 />
               </Link>
             </Col>
-            <Col
-              span={15}
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "min(20px, 14px + 0.5vw)",
-                fontWeight: 400,
-                // overflow: "scroll",
-              }}
-            >
+            <Col className="homepage-title" span={15}>
               <a
                 href="/home"
-                style={{ color: title === "home" ? "#7FB3E8" : "black" }}
+                style={{
+                  fontWeight: title === "home" ? 600 : 400,
+                }}
               >
                 HOME
               </a>
               <a
                 href="/calender"
-                style={{ color: title === "calender" ? "#7FB3E8" : "black" }}
+                style={{
+                  fontWeight: title === "calender" ? 600 : 400,
+                }}
               >
                 CALENDER
               </a>
               <a
                 href="/mission"
-                style={{ color: title === "mission" ? "#7FB3E8" : "black" }}
+                style={{
+                  fontWeight: title === "mission" ? 600 : 400,
+                }}
               >
                 MISSION
               </a>
               <a
                 href="/maps"
-                style={{ color: title === "maps" ? "#7FB3E8" : "black" }}
+                style={{
+                  fontWeight: title === "maps" ? 600 : 400,
+                }}
               >
                 MAPS
               </a>
               <a
                 href="/circle"
-                style={{ color: title === "circle" ? "#7FB3E8" : "black" }}
+                style={{
+                  fontWeight: title === "circle" ? 600 : 400,
+                }}
               >
                 CIRCLE
               </a>
@@ -408,6 +408,12 @@ export function SharedLayout({
                         </Menu.Item> */}
 
                         {/* TODO: show a list of pets, each pet has it's own page */}
+                        {data.currentUser.pets.nodes.map((pet) => (
+                          <Menu.Item key={pet.id}>
+                            <a>{pet.name}</a>
+                          </Menu.Item>
+                        ))}
+
                         <Menu.Item key="_logout">
                           <a onClick={handleLogout}>Logout</a>
                         </Menu.Item>
@@ -416,9 +422,9 @@ export function SharedLayout({
                   >
                     <img
                       src={
-                        data.currentUser.avatarUrl
-                          ? data.currentUser.avatarUrl
-                          : "/default_avatar.png"
+                        data.currentUser.pets.nodes[0]?.avatarUrl ||
+                        data.currentUser.avatarUrl ||
+                        "/default_avatar.png"
                       }
                       style={{
                         height: "min(38px, 4vw)",
