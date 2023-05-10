@@ -42,21 +42,21 @@ const Home: NextPage = () => {
               }}
             />
             <Button className="sleep">
-              <img src="/sleep.png" />
+              <img id="sleep" src="/sleep.png" />
             </Button>
-            <Button className="diet">
+            <Button className="diet" disabled={true}>
               <img src="/diet.png" />
             </Button>
-            <Button className="walking">
+            <Button className="walking" disabled={true}>
               <img src="/walking.png" />
             </Button>
-            <Button className="play">
+            <Button className="play" disabled={true}>
               <img src="/play.png" />
             </Button>
-            <Button className="bathroom">
+            <Button className="bathroom" disabled={true}>
               <img src="/bathroom.png" />
             </Button>
-            <Button className="health">
+            <Button className="health" disabled={true}>
               <img src="/health.png" />
             </Button>
           </Col>

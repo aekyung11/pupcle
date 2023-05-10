@@ -24,14 +24,16 @@ a.ant-btn-primary:hover {
   font-weight: 400;
 }
 
-.homepage-title:hover {
+/* .homepage-title:hover,
+.homepage-title:focus,
+.homepage-title:active {
   color: black;
   font-weight: 600;
-}
+} */
 
 .sleep {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
@@ -39,11 +41,12 @@ a.ant-btn-primary:hover {
   border-radius: 100px;
   bottom: 50%;
   filter: drop-shadow(2px 2px 2px grey);
+  margin-right: min(0.1vw, 1px);
 }
 
 .diet {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
@@ -57,7 +60,7 @@ a.ant-btn-primary:hover {
 
 .walking {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
@@ -70,7 +73,7 @@ a.ant-btn-primary:hover {
 
 .play {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
@@ -78,13 +81,14 @@ a.ant-btn-primary:hover {
   border-radius: 100px;
   top: 50%;
   margin-right: min(calc(49% + 0.3vw), 346px);
-  margin-top: 2px;
+  /* margin-top: 2px; */
+  margin-top: -1px;
   filter: drop-shadow(2px 2px 2px grey);
 }
 
 .bathroom {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
@@ -98,14 +102,16 @@ a.ant-btn-primary:hover {
 
 .health {
   position: absolute;
-  width: calc(85% / 3);
+  width: 29%;
   max-width: 200px;
   height: fit-content;
   padding: 0;
   border: none;
   border-radius: 100px;
   top: 50%;
-  margin-top: 2px;
+  /* margin-top: 2px; */
+  margin-right: min(0.1vw, 1px);
+  margin-top: -1px;
   filter: drop-shadow(2px 2px 2px grey);
 }
 
@@ -113,7 +119,11 @@ a.ant-btn-primary:hover {
   display: none;
 } */
 
-.sleep:hover,
+#sleep:hover {
+  content: url("/sleep_selected.png");
+}
+
+/* .sleep:hover,
 .diet:hover,
 .walking:hover,
 .play:hover,
@@ -128,6 +138,27 @@ a.ant-btn-primary:hover {
     #e1f7fd 93%,
     #eeffff 100%
   );
+} */
+
+/* Vector */
+/* .diet:hover {
+  background: linear-gradient(
+    90deg,
+    #70b2ea 0.01%,
+    #77b6eb 14.01%,
+    #8dc4ef 36.01%,
+    #b1d9f5 64.01%,
+    #e2f7fd 95.01%,
+    #ecfdff 100.01%
+  );
+} */
+
+.diet:disabled,
+.walking:disabled,
+.play:disabled,
+.bathroom:disabled,
+.health:disabled {
+  background-color: transparent;
 }
 
 .circular-radio-button {
