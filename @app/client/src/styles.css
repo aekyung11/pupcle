@@ -123,6 +123,10 @@ a.ant-btn-primary:hover {
   content: url("/sleep_selected.png");
 }
 
+#diet:hover {
+  content: url("/diet_circle.png");
+}
+
 /* .sleep:hover,
 .diet:hover,
 .walking:hover,

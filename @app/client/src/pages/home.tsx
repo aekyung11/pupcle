@@ -44,8 +44,8 @@ const Home: NextPage = () => {
             <Button className="sleep">
               <img id="sleep" src="/sleep.png" />
             </Button>
-            <Button className="diet" disabled={true}>
-              <img src="/diet.png" />
+            <Button className="diet">
+              <img id="diet" src="/diet.png" />
             </Button>
             <Button className="walking" disabled={true}>
               <img src="/walking.png" />
