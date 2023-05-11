@@ -31,6 +31,10 @@ class MyDocument extends Document {
             type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bc729dab1397cc4612b6b86217c1bf3a"
           ></script>
+          <script
+            type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=APIKEY&libraries=services,clusterer,drawing"
+          ></script>
         </Head>
         <body>
           <Main />

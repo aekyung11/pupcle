@@ -201,10 +201,12 @@ export function SharedLayout({
   return (
     <Layout style={{ minWidth: "768px" }}>
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
-      {title === "Sign in" || title === "Register" ? null : (
+      {title === "Sign in" ||
+      title === "Register" ||
+      title === "maps" ? null : (
         <Header
           style={{
-            boxShadow: "0 2px 8px #f5f5f5", // TODO: f5f5f5 -> pupcleGray로 지정
+            boxShadow: "0 4px 4px #f5f5f5", // TODO: f5f5f5 -> pupcleGray로 지정
             zIndex: 1,
             overflow: "hidden",
             height: "6rem",
@@ -231,46 +233,50 @@ export function SharedLayout({
               </Link>
             </Col>
             <Col className="homepage-title" span={15}>
-              <a
-                href="/home"
-                style={{
-                  fontWeight: title === "home" ? 600 : 400,
-                }}
-              >
-                HOME
-              </a>
-              <a
-                href="/calender"
-                style={{
-                  fontWeight: title === "calender" ? 600 : 400,
-                }}
-              >
-                CALENDER
-              </a>
-              <a
-                href="/mission"
-                style={{
-                  fontWeight: title === "mission" ? 600 : 400,
-                }}
-              >
-                MISSION
-              </a>
-              <a
-                href="/maps"
-                style={{
-                  fontWeight: title === "maps" ? 600 : 400,
-                }}
-              >
-                MAPS
-              </a>
-              <a
-                href="/circle"
-                style={{
-                  fontWeight: title === "circle" ? 600 : 400,
-                }}
-              >
-                CIRCLE
-              </a>
+              {data?.currentUser && (
+                <>
+                  <a
+                    href="/home"
+                    style={{
+                      fontWeight: title === "home" ? 600 : 400,
+                    }}
+                  >
+                    HOME
+                  </a>
+                  <a
+                    href="/calender"
+                    style={{
+                      fontWeight: title === "calender" ? 600 : 400,
+                    }}
+                  >
+                    CALENDER
+                  </a>
+                  <a
+                    href="/mission"
+                    style={{
+                      fontWeight: title === "mission" ? 600 : 400,
+                    }}
+                  >
+                    MISSION
+                  </a>
+                  <a
+                    href="/maps"
+                    style={{
+                      fontWeight: title === "maps" ? 600 : 400,
+                    }}
+                  >
+                    MAPS
+                  </a>
+                  <a
+                    href="/circle"
+                    style={{
+                      fontWeight: title === "circle" ? 600 : 400,
+                    }}
+                  >
+                    CIRCLE
+                  </a>
+                </>
+              )}
             </Col>
             <Col
               span={4}

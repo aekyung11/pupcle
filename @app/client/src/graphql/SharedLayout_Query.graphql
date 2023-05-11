@@ -17,6 +17,7 @@ fragment SharedLayout_User on User {
       id
       avatarUrl
       name
+      # ...SharedLayout_Pet
     }
     totalCount
   }
@@ -37,3 +38,24 @@ fragment SharedLayout_User on User {
     }
   }
 }
+
+# fragment SharedLayout_Pet on Pet {
+#   id
+#   privateDailyRecords {
+#     nodes {
+#       bathroomComment
+#       bathroomStatus
+#       dietComment
+#       dietStatus
+#       healthComment
+#       healthStatus
+#       playComment
+#       playStatus
+#       sleepComment
+#       sleepStatus
+#       walkingComment
+#       walkingStatus
+#     }
+#     totalCount
+#   }
+# }
