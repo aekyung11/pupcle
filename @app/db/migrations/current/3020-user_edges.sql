@@ -53,7 +53,7 @@ create trigger _200_unfriend
   for each row
   execute procedure app_public.tg_user_edges__unfriend();
 comment on function app_public.tg_user_edges__unfriend() is
-  E'Ensures that every user record has an associated user_entries record.';
+  E'Ensures that when user A unfriends user B, user B unfriends user A.';
 
 create function app_public.current_user_shared_friend_ids() returns setof uuid as $$
   select to_user_id from app_public.user_edges
