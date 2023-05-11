@@ -2084,6 +2084,7 @@ type SharedDailyRecord {
   createdAt: Datetime!
   day: Date!
   dayStatus: DailyRecordDayStatus!
+  everCompleted: Boolean!
   isComplete: Boolean!
 
   """Reads a single `Pet` that is related to this `SharedDailyRecord`."""

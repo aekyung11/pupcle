@@ -123,6 +123,7 @@ create table app_public.shared_daily_records (
   primary key (user_id, pet_id, day),
   day_status              text not null references app_public.daily_record_day_status,
   is_complete             boolean not null default false,
+  ever_completed          boolean not null default false,
   complete_status_count   int not null default 0,
   -- maybe add max status count
   created_at              timestamptz not null default now(),
@@ -232,6 +233,7 @@ declare
   v_good_status_count int;
   v_bad_status_count int;
   v_day_status text;
+  v_is_complete boolean;
 begin
   select sum(c) into v_complete_status_count from (
     select (case when NEW.sleep_status is not null and NEW.sleep_comment is not null then 1 else 0 end) as c
@@ -285,10 +287,12 @@ begin
     v_day_status := 'MIXED';
   end if;
 
-  insert into app_public.shared_daily_records (user_id, pet_id, day, day_status, is_complete, complete_status_count) values
-    (NEW.user_id, NEW.pet_id, NEW.day, v_day_status, v_complete_status_count = 6, v_complete_status_count)
+  v_is_complete := v_complete_status_count = 6;
+
+  insert into app_public.shared_daily_records (user_id, pet_id, day, day_status, is_complete, ever_completed, complete_status_count) values
+    (NEW.user_id, NEW.pet_id, NEW.day, v_day_status, v_is_complete, v_is_complete, v_complete_status_count)
   on conflict (user_id, pet_id, day) do update
-  set (day, day_status, is_complete, complete_status_count) = (EXCLUDED.day, EXCLUDED.day_status, EXCLUDED.is_complete, EXCLUDED.complete_status_count);
+  set (day, day_status, is_complete, ever_completed, complete_status_count) = (EXCLUDED.day, EXCLUDED.day_status, EXCLUDED.is_complete, shared_daily_records.ever_completed or EXCLUDED.ever_completed, EXCLUDED.complete_status_count);
   return null;
 end;
 $$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
@@ -300,3 +304,37 @@ create trigger _200_update_shared_daily_records
   execute procedure app_public.tg_update_shared_daily_records();
 comment on function app_public.tg_update_shared_daily_records() is
   E'Ensures that shared_daily_records is up to date when the user updates their private_daily_records.';
+
+create function app_public.tg_pupcle_on_complete_daily_record() returns trigger as $$
+declare
+  v_newly_completed boolean;
+begin
+  if tg_when = 'AFTER' then
+    v_newly_completed := false;
+    if (TG_OP = 'INSERT') then
+      if NEW.ever_completed is true then
+        v_newly_completed := true;
+      end if;
+    elsif (TG_OP = 'UPDATE') then
+      if OLD.ever_completed is false and NEW.ever_completed is true then
+        v_newly_completed := true;
+      end if;
+    end if;
+
+    if v_newly_completed = true then
+      update app_public.user_entries
+      set pupcle_balance = pupcle_balance + 1, total_pupcles_earned = total_pupcles_earned + 1
+      where user_id = NEW.user_id;
+    end if;
+  end if;
+  return null;
+end;
+$$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
+
+create trigger _300_pupcle_on_complete_daily_record
+  after insert or update
+  on app_public.shared_daily_records
+  for each row
+  execute procedure app_public.tg_pupcle_on_complete_daily_record();
+comment on function app_public.tg_pupcle_on_complete_daily_record() is
+  E'Gives a pupcle to the user when the user completes a pet''s daily record';
