@@ -120,11 +120,27 @@ a.ant-btn-primary:hover {
 } */
 
 #sleep:hover {
-  content: url("/sleep_selected.png");
+  content: url("/sleep_hover.png");
 }
 
 #diet:hover {
-  content: url("/diet_circle.png");
+  content: url("/diet_hover.png");
+}
+
+#walking:hover {
+  content: url("/walking_hover.png");
+}
+
+#play:hover {
+  content: url("/play_hover.png");
+}
+
+#bathroom:hover {
+  content: url("/bathroom_hover.png");
+}
+
+#health:hover {
+  content: url("/health_hover.png");
 }
 
 /* .sleep:hover,

@@ -26,6 +26,10 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
             rel="stylesheet"
           />
+          <script
+            type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bc729dab1397cc4612b6b86217c1bf3a"
+          ></script>
         </Head>
         <body>
           <Main />

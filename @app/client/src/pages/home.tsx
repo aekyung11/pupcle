@@ -47,17 +47,17 @@ const Home: NextPage = () => {
             <Button className="diet">
               <img id="diet" src="/diet.png" />
             </Button>
-            <Button className="walking" disabled={true}>
-              <img src="/walking.png" />
+            <Button className="walking">
+              <img id="walking" src="/walking.png" />
             </Button>
-            <Button className="play" disabled={true}>
-              <img src="/play.png" />
+            <Button className="play">
+              <img id="play" src="/play.png" />
             </Button>
-            <Button className="bathroom" disabled={true}>
-              <img src="/bathroom.png" />
+            <Button className="bathroom">
+              <img id="bathroom" src="/bathroom.png" />
             </Button>
-            <Button className="health" disabled={true}>
-              <img src="/health.png" />
+            <Button className="health">
+              <img id="health" src="/health.png" />
             </Button>
           </Col>
           <Col
