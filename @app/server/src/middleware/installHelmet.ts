@@ -30,6 +30,14 @@ export default async function installHelmet(app: Express) {
         "img-src": [
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
           s3Host!,
+          "*.daumcdn.net",
+        ],
+        "script-src": [
+          "'self'",
+          "https://dapi.kakao.com/",
+          "http://dapi.kakao.com/",
+          "https://*.daumcdn.net/",
+          "http://*.daumcdn.net/",
         ],
       },
     },
@@ -45,7 +53,9 @@ export default async function installHelmet(app: Express) {
     // Dev needs 'unsafe-eval' due to
     // https://github.com/vercel/next.js/issues/14221
     options.contentSecurityPolicy.directives!["script-src"] = [
-      "'self'",
+      ...((options.contentSecurityPolicy.directives?.[
+        "script-src"
+      ] as unknown as string[]) ?? []),
       "'unsafe-eval'",
     ];
   }

@@ -27,6 +27,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <script
+            id="kakao-map-sdk"
             type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bc729dab1397cc4612b6b86217c1bf3a"
           ></script>
