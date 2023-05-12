@@ -201,16 +201,15 @@ export function SharedLayout({
   return (
     <Layout style={{ minWidth: "768px" }}>
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
-      {title === "Sign in" ||
-      title === "Register" ||
-      title === "maps" ? null : (
+      {title === "Sign in" || title === "Register" ? null : (
         <Header
           style={{
-            boxShadow: "0 4px 4px #f5f5f5", // TODO: f5f5f5 -> pupcleGray로 지정
+            boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)", // TODO: f5f5f5 -> pupcleGray로 지정
             zIndex: 1,
             overflow: "hidden",
             height: "6rem",
             borderRadius: "0 0 50px 50px",
+            border: "solid 2px #f5f5f5",
           }}
         >
           <Head>
