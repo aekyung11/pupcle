@@ -198,8 +198,257 @@ export function SharedLayout({
   };
   const { data, loading, error } = query;
 
+  const isMapsPage = currentUrl.startsWith("/maps");
+
+  const headerContent: React.ReactNode = (
+    <Row
+      style={{
+        display: "flex",
+        height: "6rem",
+        alignItems: "center",
+        width: isMapsPage ? "100%" : undefined,
+        minWidth: isMapsPage ? "768px" : undefined,
+      }}
+    >
+      <Col span={5} style={{ display: "flex", justifyContent: "flex-start" }}>
+        <Link href="/">
+          {/* <Link href="/{projectName}"> */}
+          <img
+            src="/logo.png"
+            style={{ height: "min(2.8rem, 4vw)", minHeight: "2rem" }}
+          />
+        </Link>
+      </Col>
+      <Col className="homepage-title" span={15}>
+        {data?.currentUser && (
+          <>
+            <a
+              href="/home"
+              style={{
+                fontWeight: title === "home" ? 600 : 400,
+              }}
+            >
+              HOME
+            </a>
+            <a
+              href="/calender"
+              style={{
+                fontWeight: title === "calender" ? 600 : 400,
+              }}
+            >
+              CALENDER
+            </a>
+            <a
+              href="/mission"
+              style={{
+                fontWeight: title === "mission" ? 600 : 400,
+              }}
+            >
+              MISSION
+            </a>
+            <a
+              href="/maps"
+              style={{
+                fontWeight: title === "maps" ? 600 : 400,
+              }}
+            >
+              MAPS
+            </a>
+            <a
+              href="/circle"
+              style={{
+                fontWeight: title === "circle" ? 600 : 400,
+              }}
+            >
+              CIRCLE
+            </a>
+          </>
+        )}
+      </Col>
+      <Col span={4} style={{ display: "flex", justifyContent: "flex-end" }}>
+        {data && data.currentUser ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Dropdown
+              overlay={
+                <Menu>
+                  {data.currentUser.organizationMemberships.nodes.map(
+                    ({ organization, isOwner }) => (
+                      <Menu.Item key={organization?.id}>
+                        <Link
+                          href={`/o/[slug]`}
+                          as={`/o/${organization?.slug}`}
+                        >
+                          {organization?.name}
+                          {isOwner ? (
+                            <span>
+                              {" "}
+                              <CrownOutlined />
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </Link>
+                      </Menu.Item>
+                    )
+                  )}
+                  <Menu.Item key="_account">
+                    <Link href="/account" data-cy="layout-link-account">
+                      Account
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="_pup-notes">
+                    <Link href="/pup-notes" data-cy="layout-link-pup-notes">
+                      My Pup&apos;s Notes
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="_friends">
+                    <Link href="/friends" data-cy="layout-link-friends">
+                      Friends
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="_settings">
+                    <Link href="/settings" data-cy="layout-link-settings">
+                      <Warn okay={data.currentUser.isVerified}>Settings</Warn>
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="_notification">
+                    <Link
+                      href="/notification"
+                      data-cy="layout-link-notification"
+                    >
+                      Notification
+                    </Link>
+                  </Menu.Item>
+                  {/* <Menu.Item key="_logout">
+                  <a onClick={handleLogout}>Logout</a>
+                </Menu.Item> */}
+                </Menu>
+              }
+            >
+              <span
+                data-cy="layout-dropdown-user"
+                style={{
+                  whiteSpace: "nowrap",
+                  marginRight: "min(24px, calc(8px + 1.5vw))",
+                  position: "relative",
+                  top: "min(calc(0.5vw + 5px), 18px)",
+                }}
+              >
+                <Warn
+                  okay={data.currentUser.isVerified}
+                  data-cy="header-unverified-warning"
+                >
+                  <img
+                    src="/hamburger.png"
+                    style={{
+                      height: "min(2rem, 4vw)",
+                      minHeight: "1.5rem",
+                    }}
+                  />
+                </Warn>
+
+                {/* <Avatar>
+              {(data.currentUser.name && data.currentUser.name[0]) ||
+                "?"}
+            </Avatar> */}
+              </span>
+            </Dropdown>
+            <Dropdown
+              overlay={
+                <Menu>
+                  {/* {data.currentUser.organizationMemberships.nodes.map(
+                  ({ organization, isOwner }) => (
+                    <Menu.Item key={organization?.id}>
+                      <Link
+                        href={`/o/[slug]`}
+                        as={`/o/${organization?.slug}`}
+                      >
+                        {organization?.name}
+                        {isOwner ? (
+                          <span>
+                            {" "}
+                            <CrownOutlined />
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </Link>
+                    </Menu.Item>
+                  )
+                )}
+                <Menu.Item key="_create-organization">
+                  <Link
+                    href="/create-organization"
+                    data-cy="layout-link-create-organization"
+                  >
+                    Create organization
+                  </Link>
+                </Menu.Item> */}
+                  {/* <Menu.Item key="_settings">
+                  <Link href="/settings" data-cy="layout-link-settings">
+                    <Warn okay={data.currentUser.isVerified}>
+                      Settings
+                    </Warn>
+                  </Link>
+                </Menu.Item> */}
+
+                  {/* TODO: show a list of pets, each pet has it's own page */}
+                  {data.currentUser.pets.nodes.map((pet) => (
+                    <Menu.Item key={pet.id}>
+                      <a>{pet.name}</a>
+                    </Menu.Item>
+                  ))}
+
+                  <Menu.Item key="_logout">
+                    <a onClick={handleLogout}>Logout</a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <img
+                src={
+                  data.currentUser.pets.nodes[0]?.avatarUrl ||
+                  data.currentUser.avatarUrl ||
+                  "/default_avatar.png"
+                }
+                style={{
+                  height: "min(38px, 4vw)",
+                  width: "min(38px, 4vw)",
+                  minHeight: "1.8rem",
+                  minWidth: "1.8rem",
+                  borderRadius: "min(19px, 2vw)",
+                  objectFit: "cover",
+                }}
+              />
+            </Dropdown>
+          </div>
+        ) : forbidsLoggedIn ? null : (
+          <Button
+            href={`/login?next=${encodeURIComponent(currentUrl)}`}
+            style={{
+              display: "flex",
+              height: "min(40px, 2rem + 0.5vw)",
+              width: "min(106px, 80px + 2vw)",
+              alignItems: "center",
+              backgroundColor: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
+              borderRadius: "20px",
+              borderStyle: "none",
+              color: "white",
+              justifyContent: "center",
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "min(20px, 14px + 0.5vw)",
+              fontWeight: 500,
+            }}
+          >
+            Login
+          </Button>
+        )}
+      </Col>
+    </Row>
+  );
+
   return (
-    <Layout style={{ minWidth: "768px" }}>
+    <Layout style={isMapsPage ? {} : { minWidth: "768px" }}>
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
       {title === "Sign in" || title === "Register" ? null : (
         <Header
@@ -216,255 +465,17 @@ export function SharedLayout({
             {/* 100: thin, 200: extralight, 300: light, 400: regular, 500: medium, 600: semibold, 700: bold, 800: extrabold */}
             <title>{title ? `${title} — ${projectName}` : projectName}</title>
           </Head>
-          <Row
-            style={{ display: "flex", height: "6rem", alignItems: "center" }}
-          >
-            <Col
-              span={5}
-              style={{ display: "flex", justifyContent: "flex-start" }}
+          {isMapsPage ? (
+            <div
+              style={{
+                overflowX: "scroll",
+              }}
             >
-              <Link href="/">
-                {/* <Link href="/{projectName}"> */}
-                <img
-                  src="/logo.png"
-                  style={{ height: "min(2.8rem, 4vw)", minHeight: "2rem" }}
-                />
-              </Link>
-            </Col>
-            <Col className="homepage-title" span={15}>
-              {data?.currentUser && (
-                <>
-                  <a
-                    href="/home"
-                    style={{
-                      fontWeight: title === "home" ? 600 : 400,
-                    }}
-                  >
-                    HOME
-                  </a>
-                  <a
-                    href="/calender"
-                    style={{
-                      fontWeight: title === "calender" ? 600 : 400,
-                    }}
-                  >
-                    CALENDER
-                  </a>
-                  <a
-                    href="/mission"
-                    style={{
-                      fontWeight: title === "mission" ? 600 : 400,
-                    }}
-                  >
-                    MISSION
-                  </a>
-                  <a
-                    href="/maps"
-                    style={{
-                      fontWeight: title === "maps" ? 600 : 400,
-                    }}
-                  >
-                    MAPS
-                  </a>
-                  <a
-                    href="/circle"
-                    style={{
-                      fontWeight: title === "circle" ? 600 : 400,
-                    }}
-                  >
-                    CIRCLE
-                  </a>
-                </>
-              )}
-            </Col>
-            <Col
-              span={4}
-              style={{ display: "flex", justifyContent: "flex-end" }}
-            >
-              {data && data.currentUser ? (
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        {data.currentUser.organizationMemberships.nodes.map(
-                          ({ organization, isOwner }) => (
-                            <Menu.Item key={organization?.id}>
-                              <Link
-                                href={`/o/[slug]`}
-                                as={`/o/${organization?.slug}`}
-                              >
-                                {organization?.name}
-                                {isOwner ? (
-                                  <span>
-                                    {" "}
-                                    <CrownOutlined />
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </Link>
-                            </Menu.Item>
-                          )
-                        )}
-                        <Menu.Item key="_account">
-                          <Link href="/account" data-cy="layout-link-account">
-                            Account
-                          </Link>
-                        </Menu.Item>
-                        <Menu.Item key="_pup-notes">
-                          <Link
-                            href="/pup-notes"
-                            data-cy="layout-link-pup-notes"
-                          >
-                            My Pup&apos;s Notes
-                          </Link>
-                        </Menu.Item>
-                        <Menu.Item key="_friends">
-                          <Link href="/friends" data-cy="layout-link-friends">
-                            Friends
-                          </Link>
-                        </Menu.Item>
-                        <Menu.Item key="_settings">
-                          <Link href="/settings" data-cy="layout-link-settings">
-                            <Warn okay={data.currentUser.isVerified}>
-                              Settings
-                            </Warn>
-                          </Link>
-                        </Menu.Item>
-                        <Menu.Item key="_notification">
-                          <Link
-                            href="/notification"
-                            data-cy="layout-link-notification"
-                          >
-                            Notification
-                          </Link>
-                        </Menu.Item>
-                        {/* <Menu.Item key="_logout">
-                          <a onClick={handleLogout}>Logout</a>
-                        </Menu.Item> */}
-                      </Menu>
-                    }
-                  >
-                    <span
-                      data-cy="layout-dropdown-user"
-                      style={{
-                        whiteSpace: "nowrap",
-                        marginRight: "min(24px, calc(8px + 1.5vw))",
-                        position: "relative",
-                        top: "min(calc(0.5vw + 5px), 18px)",
-                      }}
-                    >
-                      <Warn
-                        okay={data.currentUser.isVerified}
-                        data-cy="header-unverified-warning"
-                      >
-                        <img
-                          src="/hamburger.png"
-                          style={{
-                            height: "min(2rem, 4vw)",
-                            minHeight: "1.5rem",
-                          }}
-                        />
-                      </Warn>
-
-                      {/* <Avatar>
-                      {(data.currentUser.name && data.currentUser.name[0]) ||
-                        "?"}
-                    </Avatar> */}
-                    </span>
-                  </Dropdown>
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        {/* {data.currentUser.organizationMemberships.nodes.map(
-                          ({ organization, isOwner }) => (
-                            <Menu.Item key={organization?.id}>
-                              <Link
-                                href={`/o/[slug]`}
-                                as={`/o/${organization?.slug}`}
-                              >
-                                {organization?.name}
-                                {isOwner ? (
-                                  <span>
-                                    {" "}
-                                    <CrownOutlined />
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </Link>
-                            </Menu.Item>
-                          )
-                        )}
-                        <Menu.Item key="_create-organization">
-                          <Link
-                            href="/create-organization"
-                            data-cy="layout-link-create-organization"
-                          >
-                            Create organization
-                          </Link>
-                        </Menu.Item> */}
-                        {/* <Menu.Item key="_settings">
-                          <Link href="/settings" data-cy="layout-link-settings">
-                            <Warn okay={data.currentUser.isVerified}>
-                              Settings
-                            </Warn>
-                          </Link>
-                        </Menu.Item> */}
-
-                        {/* TODO: show a list of pets, each pet has it's own page */}
-                        {data.currentUser.pets.nodes.map((pet) => (
-                          <Menu.Item key={pet.id}>
-                            <a>{pet.name}</a>
-                          </Menu.Item>
-                        ))}
-
-                        <Menu.Item key="_logout">
-                          <a onClick={handleLogout}>Logout</a>
-                        </Menu.Item>
-                      </Menu>
-                    }
-                  >
-                    <img
-                      src={
-                        data.currentUser.pets.nodes[0]?.avatarUrl ||
-                        data.currentUser.avatarUrl ||
-                        "/default_avatar.png"
-                      }
-                      style={{
-                        height: "min(38px, 4vw)",
-                        width: "min(38px, 4vw)",
-                        minHeight: "1.8rem",
-                        minWidth: "1.8rem",
-                        borderRadius: "min(19px, 2vw)",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Dropdown>
-                </div>
-              ) : forbidsLoggedIn ? null : (
-                <Button
-                  href={`/login?next=${encodeURIComponent(currentUrl)}`}
-                  style={{
-                    display: "flex",
-                    height: "min(40px, 2rem + 0.5vw)",
-                    width: "min(106px, 80px + 2vw)",
-                    alignItems: "center",
-                    backgroundColor: "#7FB3E8", // TODO: pupcleBlue로 컬러 정의 후 사용(계속 사용할 것 같음)
-                    borderRadius: "20px",
-                    borderStyle: "none",
-                    color: "white",
-                    justifyContent: "center",
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "min(20px, 14px + 0.5vw)",
-                    fontWeight: 500,
-                  }}
-                >
-                  Login
-                </Button>
-              )}
-            </Col>
-          </Row>
+              {headerContent}
+            </div>
+          ) : (
+            headerContent
+          )}
         </Header>
       )}
 

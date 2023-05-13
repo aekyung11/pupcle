@@ -61,7 +61,7 @@ start database using this command:
 이후 터미널에서 아래의 command를 사용한다.
 
 ```fish
-~> UID=(id -u) docker-compose up -d db minio
+~> UID=(id -u) docker-compose up -d db minio miniobuckets
 ```
 
 ```fish
