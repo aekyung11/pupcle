@@ -181,6 +181,55 @@ a.ant-btn-primary:hover {
   background-color: transparent;
 }
 
+.map-search {
+  font-family: Poppins;
+  font-weight: 700;
+  font-size: min(20px, 1rem + 0.2vw);
+  color: rgba(143, 144, 146, 0.8);
+}
+
+.maps-category {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: min(140px, 5rem + 4vw); */
+  height: min(53px, 2rem + 1vw);
+  border-style: none;
+  border-radius: 27px;
+  background-color: white;
+  box-shadow: 0px 4px 4px rgb(0 0 0 / 0.15);
+  margin-right: 1rem;
+  padding: 0 20px;
+}
+
+.maps-category:hover {
+  background-color: #7fb3e8;
+}
+
+.maps-category-span {
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: min(20px, 1rem + 0.2vw);
+  color: black;
+  margin-left: 4px;
+}
+
+.maps-category:hover #vet {
+  content: url("/vet_icon_selected.png");
+}
+
+.maps-category:hover #cafe {
+  content: url("/cafe_icon_selected.png");
+}
+
+.maps-category:hover #restaurant {
+  content: url("/restaurant_icon_selected.png");
+}
+
+.maps-category:hover #park {
+  content: url("/park_icon_selected.png");
+}
+
 .circular-radio-button {
   width: 78;
   height: 78;
@@ -300,6 +349,6 @@ a.ant-btn-primary:hover {
   border: none;
 }
 
-input {
+.ant-form input {
   background-color: rgb(245, 245, 245) !important;
 }

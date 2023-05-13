@@ -1,7 +1,7 @@
 import { CrownOutlined } from "@ant-design/icons";
 import { Link, SharedLayout, Warn } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import { Button, Col, Dropdown, Menu, Row } from "antd";
+import { Button, Col, Dropdown, Input, Menu, Row } from "antd";
 import { NextPage } from "next";
 import * as React from "react";
 import { useEffect } from "react";
@@ -76,15 +76,145 @@ const Maps: NextPage = () => {
 
   return (
     <SharedLayout title="maps" query={query}>
-      <div
-        id="map"
-        style={{
-          width: "100vw",
-          height: "100vh",
-          position: "fixed",
-          top: 0,
-        }}
-      ></div>
+      <div style={{ minWidth: "768px" }}>
+        <div
+          id="map"
+          style={{
+            width: "100vw",
+            height: "100vh",
+            position: "fixed",
+            top: 0,
+          }}
+        ></div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            position: "fixed",
+            top: "calc(6rem + 25px)",
+            left: "18px",
+          }}
+        >
+          <Button
+            style={{
+              width: "min(53px, 2rem + 1vw)",
+              height: "min(53px, 2rem + 1vw)",
+              borderRadius: "50%",
+              boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+              padding: 0,
+            }}
+          >
+            <img src="/map_list.png" />
+          </Button>
+          <div
+            style={{
+              marginLeft: "3rem",
+              width: "23vw",
+              minWidth: "200px",
+              height: "min(72px, 2rem + 1.5vw)",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Input
+              className="map-search"
+              style={{
+                width: "100%",
+                height: "100%",
+                borderStyle: "none",
+                borderRadius: "min(10px, 0.6vw)",
+                boxShadow: "0px 4px 4px rgb(0 0 0 / 0.15)",
+              }}
+              placeholder="어디로 가고 싶으세요?"
+              prefix={
+                <img
+                  src="/search_icon.png"
+                  style={{
+                    width: "min(25px, 1rem + 0.5vw)",
+                    marginRight: "8px",
+                  }}
+                />
+              }
+            />
+          </div>
+          <div
+            style={{
+              marginLeft: "3rem",
+              // width: "35vw",
+              // minWidth: "280px",
+              height: "min(72px, 2rem + 1.5vw)",
+              display: "flex",
+              alignItems: "center",
+              // justifyContent: "space-between",
+              overscrollBehavior: "contain",
+              overflow: "scroll",
+              maxWidth: "calc(100vw - (18px + 53px + 6rem + 200px))",
+            }}
+          >
+            <Button className="maps-category group">
+              <img
+                src="/vet_icon.png"
+                id="vet"
+                style={{ width: "min(17px, 12px + 0.1vw)" }}
+              />
+              <span className="maps-category-span group-hover:text-white">
+                동물병원
+              </span>
+            </Button>
+            <Button className="maps-category group">
+              <img
+                src="/cafe_icon.png"
+                id="cafe"
+                style={{ width: "min(29px, 20px + 1vw)" }}
+              />
+              <span className="maps-category-span group-hover:text-white">
+                카페
+              </span>
+            </Button>
+            <Button className="maps-category group">
+              <img
+                src="/restaurant_icon.png"
+                id="restaurant"
+                style={{ width: "min(19px, 13px + 0.1vw)" }}
+              />
+              <span className="maps-category-span group-hover:text-white">
+                식당
+              </span>
+            </Button>
+            <Button className="maps-category group">
+              <img
+                src="/park_icon.png"
+                id="park"
+                style={{ width: "min(23.5px, 16px + 0.1vw)" }}
+              />
+              <span className="maps-category-span group-hover:text-white">
+                공원
+              </span>
+            </Button>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            position: "fixed",
+            top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
+            left: "18px",
+          }}
+        >
+          <Button
+            style={{
+              width: "min(53px, 2rem + 1vw)",
+              height: "min(53px, 2rem + 1vw)",
+              borderRadius: "50%",
+              boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+              padding: 0,
+            }}
+          >
+            <img src="/map_c.png" />
+          </Button>
+        </div>
+      </div>
     </SharedLayout>
   );
 };
