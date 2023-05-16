@@ -171,7 +171,7 @@ function StatusTab({
             <RadioGroupPrimitive.Item
               className="circular-radio-button"
               value={DailyRecordStatus.Good}
-              style={{ marginRight: "min(2vw, 40px)" }}
+              style={{ marginRight: "min(2vw, 40px)", borderRadius: 0 }}
             >
               <img
                 src="/good_icon_unchecked.png"
@@ -188,6 +188,7 @@ function StatusTab({
             <RadioGroupPrimitive.Item
               className="circular-radio-button"
               value={DailyRecordStatus.Bad}
+              style={{ borderRadius: 0 }}
             >
               <img
                 src="/bad_icon_unchecked.png"
