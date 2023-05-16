@@ -10,8 +10,9 @@ import {
 } from "@app/graphql";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Button, Col, Row } from "antd";
+import { Button, Col, Input, Row } from "antd";
 import { format } from "date-fns";
+import { min } from "lodash";
 import { NextPage } from "next";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
@@ -43,58 +44,69 @@ function StatusTab({
   refetch,
 }: StatusTabProps) {
   const [upsertPrivateDailyRecord] = useUpsertPrivateDailyRecordMutation();
+  const [showCommentBox, setShowCommentBox] = useState<boolean>(false);
+
   let statusKey: keyof HomePage_PrivateDailyRecordFragment;
   let status = null;
+  let commentKey: keyof HomePage_PrivateDailyRecordFragment;
   let comment = null;
   let statusBannerUrl = null;
   if (tab === Tab.SLEEP) {
     statusKey = "sleepStatus";
+    commentKey = "sleepComment";
     statusBannerUrl = "/sleep_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.sleepComment;
+      comment = privateRecord[commentKey];
     }
   }
   if (tab === Tab.DIET) {
     statusKey = "dietStatus";
+    commentKey = "dietComment";
     statusBannerUrl = "/diet_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.dietComment;
+      comment = privateRecord[commentKey];
     }
   }
   if (tab === Tab.WALKING) {
     statusKey = "walkingStatus";
+    commentKey = "walkingComment";
     statusBannerUrl = "/walking_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.walkingComment;
+      comment = privateRecord[commentKey];
     }
   }
   if (tab === Tab.PLAY) {
     statusKey = "playStatus";
+    commentKey = "playComment";
     statusBannerUrl = "/play_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.playComment;
+      comment = privateRecord[commentKey];
     }
   }
   if (tab === Tab.BATHROOM) {
     statusKey = "bathroomStatus";
+    commentKey = "bathroomComment";
     statusBannerUrl = "/bathroom_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.bathroomComment;
+      comment = privateRecord[commentKey];
     }
   }
   if (tab === Tab.HEALTH) {
     statusKey = "healthStatus";
+    commentKey = "healthComment";
     statusBannerUrl = "/health_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
-      comment = privateRecord.healthComment;
+      comment = privateRecord[commentKey];
     }
   }
+
+  const [commentBox, setCommentBox] = useState(comment || "");
 
   const dailyRecordStatus =
     status === DailyRecordStatus.Good || status === DailyRecordStatus.Bad
@@ -122,7 +134,7 @@ function StatusTab({
         style={{
           display: "flex",
           justifyContent: "center",
-          margin: "min(13%, 40px) 0px",
+          margin: "min(3vw, 30px) 0px",
         }}
       >
         <span
@@ -135,7 +147,7 @@ function StatusTab({
           Did he {tab} well?
         </span>
       </Row>
-      <Row>
+      <Row style={{ display: showCommentBox ? "none" : "flex" }}>
         <RadioGroupPrimitive.Root
           value={dailyRecordStatus}
           onValueChange={async (status: DailyRecordStatus) => {
@@ -204,6 +216,83 @@ function StatusTab({
             </RadioGroupPrimitive.Item>
           </div>
         </RadioGroupPrimitive.Root>
+      </Row>
+      <Row
+        style={{
+          width: "100%",
+          marginTop: "min(3vw, 30px)",
+          display: showCommentBox ? "none" : "flex",
+        }}
+      >
+        <Button
+          style={{
+            width: "100%",
+            backgroundColor: "#FFF9D8",
+            height: "min(30px + 2vw, 70px)",
+            borderRadius: "35px",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 6%",
+          }}
+          onClick={() => setShowCommentBox(true)}
+        >
+          <img
+            style={{ height: "min(calc((30px + 2vw) / 2), 35px)" }}
+            src="/write_icon.png"
+          />
+          <span
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "min(24px, 2vw)",
+              fontWeight: 600,
+              color: "#615518",
+              paddingLeft: "3%",
+            }}
+          >
+            Leave a comment here
+          </span>
+          <img
+            src="/caret_icon.png"
+            style={{
+              height: "min(10px + 0.2vw, 20px)",
+              position: "absolute",
+              right: "22px",
+            }}
+          />
+        </Button>
+      </Row>
+      <Row style={{ display: showCommentBox ? "flex" : "none" }}>
+        <Button onClick={() => setShowCommentBox(false)}>
+          <img
+            src="/close_button.png"
+            style={{ width: "min(24px, 10px + 0.2vw)" }}
+          />
+        </Button>
+        <Input.TextArea
+          value={commentBox}
+          onChange={(e) => setCommentBox(e.target.value)}
+        />
+        <Button
+          onClick={async () => {
+            await upsertPrivateDailyRecord({
+              variables: {
+                input: {
+                  privateDailyRecord: {
+                    userId,
+                    petId,
+                    day,
+                    [commentKey]: commentBox,
+                  },
+                },
+              },
+            });
+            await refetch();
+            setShowCommentBox(false);
+          }}
+        >
+          save
+        </Button>
       </Row>
     </>
   );
@@ -346,7 +435,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               style={{
                 minHeight: "330px",
                 maxHeight: "630px",
-                height: "40vw",
+                // height: "45vw",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
