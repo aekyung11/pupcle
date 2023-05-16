@@ -1,0 +1,3 @@
+query HomePage($day: Date!) {
+  ...HomePage_Query
+}

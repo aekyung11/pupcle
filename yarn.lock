@@ -213,6 +213,7 @@ __metadata:
     "@app/lib": 0.0.0
     "@popperjs/core": ^2.11.7
     "@radix-ui/react-radio-group": ^1.1.2
+    "@radix-ui/react-tabs": ^1.0.3
     "@types/lodash": ^4.14.191
     "@types/node": ^18.14.2
     "@types/nprogress": ^0.2.0
@@ -4307,6 +4308,26 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0 || ^18.0
   checksum: a20693f8ce532bd6cbff12ba543dfcf90d451f22923bd60b57dc9e639f6e53348915e182002b33444feb6ab753434e78e2a54085bf7092aadda4418f0423763f
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-tabs@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@radix-ui/react-tabs@npm:1.0.3"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-direction": 1.0.0
+    "@radix-ui/react-id": 1.0.0
+    "@radix-ui/react-presence": 1.0.0
+    "@radix-ui/react-primitive": 1.0.2
+    "@radix-ui/react-roving-focus": 1.0.3
+    "@radix-ui/react-use-controllable-state": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 603b06a1c071fec7b01cf82c3058aff239079b14f7d7988b559b9877bcd4e3f23d287b8cf38ebef6bb6b0c4f238a80f67525aa5fc9db519fbf1b70777a40f0ec
   languageName: node
   linkType: hard
 

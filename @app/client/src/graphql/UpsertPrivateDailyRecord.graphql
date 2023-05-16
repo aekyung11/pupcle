@@ -1,0 +1,9 @@
+mutation UpsertPrivateDailyRecord($input: UpsertPrivateDailyRecordInput!) {
+  upsertPrivateDailyRecord(input: $input) {
+    privateDailyRecord {
+      userId
+      petId
+      day
+    }
+  }
+}

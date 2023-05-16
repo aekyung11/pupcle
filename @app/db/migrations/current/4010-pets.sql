@@ -175,8 +175,8 @@ create table app_public.private_daily_records (
   bathroom_comment  text,
   health_status     text references app_public.daily_record_status,
   health_comment    text,
-  created_at            timestamptz not null default now(),
-  updated_at            timestamptz not null default now()
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
 );
 alter table app_public.private_daily_records enable row level security;
 
@@ -295,7 +295,7 @@ begin
   set (day, day_status, is_complete, ever_completed, complete_status_count) = (EXCLUDED.day, EXCLUDED.day_status, EXCLUDED.is_complete, shared_daily_records.ever_completed or EXCLUDED.ever_completed, EXCLUDED.complete_status_count);
   return null;
 end;
-$$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
 
 create trigger _200_update_shared_daily_records
   after insert or update
@@ -329,7 +329,7 @@ begin
   end if;
   return null;
 end;
-$$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
 
 create trigger _300_pupcle_on_complete_daily_record
   after insert or update

@@ -172,12 +172,10 @@ a.ant-btn-primary:hover {
     #ecfdff 100.01%
   );
 } */
+.status-tab-trigger[data-state="active"] {
+}
 
-.diet:disabled,
-.walking:disabled,
-.play:disabled,
-.bathroom:disabled,
-.health:disabled {
+.status-tab-trigger:disabled {
   background-color: transparent;
 }
 

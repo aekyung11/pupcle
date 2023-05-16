@@ -45,7 +45,7 @@ const PetProfilePage: NextPage<PetProfilePageProps> = ({ next: rawNext }) => {
           refetch={refetch}
           next={next}
           currentUser={query.data?.currentUser}
-        ></PetProfilePageInner>
+        />
       )}
     </SharedLayout>
   );

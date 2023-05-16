@@ -1,0 +1,37 @@
+fragment HomePage_PrivateDailyRecord on PrivateDailyRecord {
+  bathroomComment
+  bathroomStatus
+  day
+  dietComment
+  dietStatus
+  healthComment
+  healthStatus
+  petId
+  playComment
+  playStatus
+  sleepComment
+  sleepStatus
+  userId
+  walkingComment
+  walkingStatus
+}
+
+fragment HomePage_Query on Query {
+  ...SharedLayout_Query
+  currentUser {
+    id
+    pets(first: 20) {
+      nodes {
+        id
+        privateDailyRecords(condition: { day: $day }) {
+          nodes {
+            day
+            petId
+            userId
+            ...HomePage_PrivateDailyRecord
+          }
+        }
+      }
+    }
+  }
+}
