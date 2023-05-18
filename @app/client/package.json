@@ -23,6 +23,7 @@
     "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.28",
     "antd": "5.2.3",
+    "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "focus-trap-react": "^10.1.1",
     "formik-antd": "^3.0.0-beta.8",

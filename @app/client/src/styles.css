@@ -30,117 +30,182 @@ a.ant-btn-primary:hover {
   color: black;
   font-weight: 600;
 } */
-
-.sleep {
+.status-tab-trigger {
+  filter: drop-shadow(2px 2px 2px grey);
   position: absolute;
-  width: 29%;
-  max-width: 200px;
+  width: calc(14.17vw - 1.42px - 1.42px);
+  /* width: 29%; */
+  max-width: calc(200px - 1.42px - 1.42px);
+  /* max-width: 200px; */
+  min-width: calc(109.18px - 2.84px);
   height: fit-content;
   padding: 0;
   border: none;
   border-radius: 100px;
+}
+
+.status-tab-trigger.complete {
+  filter: none;
+}
+
+.sleep {
   bottom: 50%;
-  filter: drop-shadow(2px 2px 2px grey);
-  margin-right: min(0.1vw, 1px);
+  /* margin-right: min(0.1vw, 1px); */
+  margin-right: min(0.1vw, 1.42px);
 }
 
 .diet {
-  position: absolute;
-  width: 29%;
-  max-width: 200px;
-  height: fit-content;
-  padding: 0;
-  border: none;
-  border-radius: 100px;
   bottom: 50%;
-  margin-bottom: min(calc(14% + 0.3vw), 100px);
-  margin-right: min(calc((49% + 0.3vw) / 2), 173px);
-  filter: drop-shadow(2px 2px 2px grey);
+  /* margin-bottom: min(calc(14% + 0.3vw), 100px); */
+  margin-bottom: min(calc(14% + 0.3vw), 100px - 0.71px);
+  margin-right: min(calc((50% - 0.71px + 0.3vw) / 2), 173px + 1.42px);
+  /* margin-right: min(calc((49% + 0.3vw) / 2), 173px); */
 }
 
 .walking {
-  position: absolute;
-  width: 29%;
-  max-width: 200px;
-  height: fit-content;
-  padding: 0;
-  border: none;
-  border-radius: 100px;
   bottom: 50%;
-  margin-right: min(calc(49% + 0.3vw), 346px);
-  filter: drop-shadow(2px 2px 2px grey);
+  /* margin-right: min(calc(49% + 0.3vw), 346px); */
+  margin-right: min(calc(50% - 0.71px + 0.3vw), 346px + 1.42px + 0.71px);
 }
 
 .play {
-  position: absolute;
-  width: 29%;
-  max-width: 200px;
-  height: fit-content;
-  padding: 0;
-  border: none;
-  border-radius: 100px;
   top: 50%;
-  margin-right: min(calc(49% + 0.3vw), 346px);
+  /* margin-right: min(calc(49% + 0.3vw), 346px); */
+  margin-right: min(calc(50% - 0.71px + 0.3vw), 346px + 1.42px + 0.71px);
   /* margin-top: 2px; */
-  margin-top: -1px;
-  filter: drop-shadow(2px 2px 2px grey);
+  /* margin-top: -1px; */
+  margin-top: 0.71px;
 }
 
 .bathroom {
-  position: absolute;
-  width: 29%;
-  max-width: 200px;
-  height: fit-content;
-  padding: 0;
-  border: none;
-  border-radius: 100px;
   top: 50%;
-  margin-top: min(calc(14% + 0.3vw), 100px);
-  margin-right: min(calc((49% + 0.3vw) / 2), 173px);
-  filter: drop-shadow(2px 2px 2px grey);
+  /* margin-top: min(calc(14% + 0.3vw), 100px); */
+  margin-top: min(calc(14% + 0.3vw), 100px + 1.42px);
+  margin-right: min(calc((50% - 0.71px + 0.3vw) / 2), 173px + 1.42px);
+  /* margin-right: min(calc((49% + 0.3vw) / 2), 173px); */
 }
 
 .health {
-  position: absolute;
-  width: 29%;
-  max-width: 200px;
-  height: fit-content;
-  padding: 0;
-  border: none;
-  border-radius: 100px;
   top: 50%;
   /* margin-top: 2px; */
-  margin-right: min(0.1vw, 1px);
-  margin-top: -1px;
-  filter: drop-shadow(2px 2px 2px grey);
+  /* margin-right: min(0.1vw, 1px); */
+  margin-right: min(0.1vw, 1.42px);
+  /* margin-top: -1px; */
+  margin-top: 0.71px;
 }
 
 /* .ant-click-animating-node {
   display: none;
 } */
 
-#sleep:hover {
+.status-tab-trigger #sleep:hover {
   content: url("/sleep_hover.png");
 }
 
-#diet:hover {
+.status-tab-trigger.complete #sleep:hover {
+  content: url("/sleep_hover.png");
+}
+
+.status-tab-trigger.complete #sleep {
+  content: url("/sleep_selected.png");
+}
+
+.status-tab-trigger[data-state="active"] #sleep {
+  /* display: none; */
+  content: url("/sleep_selected.png");
+  filter: none;
+}
+
+.status-tab-trigger #diet:hover {
   content: url("/diet_hover.png");
 }
 
-#walking:hover {
+.status-tab-trigger.complete #diet:hover {
+  content: url("/diet_hover.png");
+}
+
+.status-tab-trigger.complete #diet {
+  content: url("/diet_selected.png");
+  /* opacity: 0; */
+  /* content: none; */
+}
+
+.status-tab-trigger[data-state="active"] #diet {
+  /* display: none; */
+  content: url("/diet_selected.png");
+  filter: none;
+}
+
+.status-tab-trigger #walking:hover {
   content: url("/walking_hover.png");
 }
 
-#play:hover {
+.status-tab-trigger.complete #walking:hover {
+  content: url("/walking_hover.png");
+}
+
+.status-tab-trigger.complete #walking {
+  content: url("/walking_selected.png");
+}
+
+.status-tab-trigger[data-state="active"] #walking {
+  /* display: none; */
+  content: url("/walking_selected.png");
+  filter: none;
+}
+
+.status-tab-trigger #play:hover {
   content: url("/play_hover.png");
 }
 
-#bathroom:hover {
+.status-tab-trigger.complete #play:hover {
+  content: url("/play_hover.png");
+}
+
+.status-tab-trigger.complete #play {
+  content: url("/play_selected.png");
+}
+
+.status-tab-trigger[data-state="active"] #play {
+  /* display: none; */
+  content: url("/play_selected.png");
+  filter: none;
+}
+
+.status-tab-trigger #bathroom:hover {
   content: url("/bathroom_hover.png");
 }
 
-#health:hover {
+.status-tab-trigger.complete #bathroom:hover {
+  content: url("/bathroom_hover.png");
+}
+
+.status-tab-trigger.complete #bathroom {
+  content: url("/bathroom_selected.png");
+}
+
+.status-tab-trigger[data-state="active"] #bathroom {
+  /* display: none; */
+  content: url("/bathroom_selected.png");
+  filter: none;
+}
+
+.status-tab-trigger #health:hover {
   content: url("/health_hover.png");
+}
+
+.status-tab-trigger.complete #health:hover {
+  content: url("/health_hover.png");
+}
+
+.status-tab-trigger.complete #health {
+  content: url("/health_selected.png");
+}
+
+.status-tab-trigger[data-state="active"] #health {
+  /* display: none; */
+  content: url("/health_selected.png");
+  filter: none;
 }
 
 /* .sleep:hover,
@@ -172,8 +237,6 @@ a.ant-btn-primary:hover {
     #ecfdff 100.01%
   );
 } */
-.status-tab-trigger[data-state="active"] {
-}
 
 .status-tab-trigger:disabled {
   background-color: transparent;

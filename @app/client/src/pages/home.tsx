@@ -13,6 +13,7 @@ import {
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Col, Input, Row } from "antd";
+import clsx from "clsx";
 import { format } from "date-fns";
 import { min } from "lodash";
 import { NextPage } from "next";
@@ -231,7 +232,7 @@ function StatusTab({
       </Row>
       <Row
         style={{
-          width: "100%",
+          width: "min(32vw, 580px)",
           marginTop: "min(3vw, 30px)",
           display: "flex",
           position: "relative",
@@ -240,7 +241,7 @@ function StatusTab({
         <Button
           style={{
             width: "100%",
-            backgroundColor: "#FFF9D8",
+            backgroundColor: comment ? "transparent" : "#FFF9D8",
             height: "min(30px + 2vw, 70px)",
             borderRadius: "35px",
             border: "none",
@@ -262,10 +263,22 @@ function StatusTab({
               fontWeight: 600,
               color: "#615518",
               paddingLeft: "3%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
-            Leave a comment here
+            {comment ? <u>{comment}</u> : "Leave a comment here"}
           </span>
+          {/* {!comment && (
+            <img
+              src="/caret_icon.png"
+              style={{
+                height: "min(10px + 0.2vw, 20px)",
+                position: "absolute",
+                right: "22px",
+              }}
+            />
+          )} */}
           <img
             src="/caret_icon.png"
             style={{
@@ -396,6 +409,22 @@ const Home: NextPage = () => {
   const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
     (record) => record.day === today
   );
+  const [selectedTab, setSelectedTab] = useState<Tab | undefined>();
+
+  useEffect(() => {
+    if (selectedTab === undefined) {
+      const completeStatusCount =
+        todaySharedDailyRecord?.completeStatusCount || 0;
+
+      const initialTab =
+        completeStatusCount === 0
+          ? undefined
+          : Object.values(Tab)[completeStatusCount - 1];
+
+      setSelectedTab(initialTab);
+    }
+  }, [selectedTab, todaySharedDailyRecord]);
+
   // console.log({ query });
   return (
     <SharedLayout
@@ -411,6 +440,8 @@ const Home: NextPage = () => {
           day={today}
           refetch={refetch}
           pet={pet}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
         />
       ) : (
         <p>loading...</p>
@@ -426,6 +457,8 @@ interface HomePageInnerProps {
   day: string;
   refetch: () => Promise<any>;
   pet: HomePage_PetFragment;
+  selectedTab: Tab | undefined;
+  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
 }
 
 const HomePageInner: FC<HomePageInnerProps> = ({
@@ -435,13 +468,11 @@ const HomePageInner: FC<HomePageInnerProps> = ({
   day,
   refetch,
   pet,
+  selectedTab,
+  setSelectedTab,
 }) => {
   const completeStatusCount = sharedRecord?.completeStatusCount || 0;
-  const initialTab =
-    completeStatusCount === 0
-      ? undefined
-      : Object.values(Tab)[completeStatusCount - 1];
-  const [selectedTab, setSelectedTab] = useState<Tab | undefined>(initialTab);
+  console.log({ completeStatusCount });
   return (
     <Tabs.Root
       value={selectedTab}
@@ -473,7 +504,21 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
             >
               <img
-                src="/c.png"
+                src={
+                  completeStatusCount > 5
+                    ? "/c_health_selected.png"
+                    : completeStatusCount > 4
+                    ? "/c_bathroom_selected.png"
+                    : completeStatusCount > 3
+                    ? "/c_play_selected.png"
+                    : completeStatusCount > 2
+                    ? "/c_walking_selected.png"
+                    : completeStatusCount > 1
+                    ? "/c_diet_selected.png"
+                    : completeStatusCount > 0
+                    ? "/c_sleep_selected.png"
+                    : "/c.png"
+                }
                 style={{
                   height: "fit-content",
                   width: "85%",
@@ -482,12 +527,22 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 }}
               />
               <Tabs.Trigger value={Tab.SLEEP} key={Tab.SLEEP} asChild={true}>
-                <Button className="status-tab-trigger sleep">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger sleep": true,
+                    complete: completeStatusCount >= 1,
+                  })}
+                >
                   <img id="sleep" src="/sleep.png" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.DIET} key={Tab.DIET} asChild={true}>
-                <Button className="status-tab-trigger diet">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger diet": true,
+                    complete: completeStatusCount >= 2,
+                  })}
+                >
                   <img id="diet" src="/diet.png" />
                 </Button>
               </Tabs.Trigger>
@@ -496,12 +551,22 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 key={Tab.WALKING}
                 asChild={true}
               >
-                <Button className="status-tab-trigger walking">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger walking": true,
+                    complete: completeStatusCount >= 3,
+                  })}
+                >
                   <img id="walking" src="/walking.png" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.PLAY} key={Tab.PLAY} asChild={true}>
-                <Button className="status-tab-trigger play">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger play": true,
+                    complete: completeStatusCount >= 4,
+                  })}
+                >
                   <img id="play" src="/play.png" />
                 </Button>
               </Tabs.Trigger>
@@ -510,12 +575,22 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 key={Tab.BATHROOM}
                 asChild={true}
               >
-                <Button className="status-tab-trigger bathroom">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger bathroom": true,
+                    complete: completeStatusCount >= 5,
+                  })}
+                >
                   <img id="bathroom" src="/bathroom.png" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.HEALTH} key={Tab.HEALTH} asChild={true}>
-                <Button className="status-tab-trigger health">
+                <Button
+                  className={clsx({
+                    "status-tab-trigger health": true,
+                    complete: completeStatusCount >= 6,
+                  })}
+                >
                   <img id="health" src="/health.png" />
                 </Button>
               </Tabs.Trigger>
