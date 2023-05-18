@@ -238,6 +238,47 @@ type CreatePetPayload {
   user: User
 }
 
+"""All input for the create `PoiReview` mutation."""
+input CreatePoiReviewInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `PoiReview` to be created by this mutation."""
+  poiReview: PoiReviewInput!
+}
+
+"""The output of our create `PoiReview` mutation."""
+type CreatePoiReviewPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+
+  """The `PoiReview` that was created by this mutation."""
+  poiReview: PoiReview
+
+  """An edge for our `PoiReview`. May be used by Relay 1."""
+  poiReviewEdge(
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiReview`."""
+  user: User
+}
+
 """All input for the create `PrivateDailyRecord` mutation."""
 input CreatePrivateDailyRecordInput {
   """
@@ -550,6 +591,46 @@ type DeletePetPayload {
   query: Query
 
   """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
+"""All input for the `deletePoiReview` mutation."""
+input DeletePoiReviewInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""The output of our delete `PoiReview` mutation."""
+type DeletePoiReviewPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedPoiReviewNodeId: ID
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+
+  """The `PoiReview` that was deleted by this mutation."""
+  poiReview: PoiReview
+
+  """An edge for our `PoiReview`. May be used by Relay 1."""
+  poiReviewEdge(
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiReview`."""
   user: User
 }
 
@@ -901,6 +982,14 @@ type Mutation {
     input: CreatePetInput!
   ): CreatePetPayload
 
+  """Creates a single `PoiReview`."""
+  createPoiReview(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePoiReviewInput!
+  ): CreatePoiReviewPayload
+
   """Creates a single `PrivateDailyRecord`."""
   createPrivateDailyRecord(
     """
@@ -958,6 +1047,14 @@ type Mutation {
     """
     input: DeletePetInput!
   ): DeletePetPayload
+
+  """Deletes a single `PoiReview` using a unique key."""
+  deletePoiReview(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePoiReviewInput!
+  ): DeletePoiReviewPayload
 
   """Deletes a single `UserAuthentication` using a unique key."""
   deleteUserAuthentication(
@@ -1112,6 +1209,14 @@ type Mutation {
     input: UpdatePetInput!
   ): UpdatePetPayload
 
+  """Updates a single `PoiReview` using a unique key and a patch."""
+  updatePoiReview(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePoiReviewInput!
+  ): UpdatePoiReviewPayload
+
   """Updates a single `PrivateDailyRecord` using a unique key and a patch."""
   updatePrivateDailyRecord(
     """
@@ -1175,6 +1280,22 @@ type Mutation {
     """
     input: UpsertPetBatchInput!
   ): UpsertPetBatchPayload
+
+  """Upserts a single `PoiReview`."""
+  upsertPoiReview(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPoiReviewInput!
+  ): UpsertPoiReviewPayload
+
+  """Upserts a batch of `PoiReviews`."""
+  upsertPoiReviewBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPoiReviewBatchInput!
+  ): UpsertPoiReviewBatchPayload
 
   """Upserts a single `PrivateDailyRecord`."""
   upsertPrivateDailyRecord(
@@ -1593,6 +1714,192 @@ enum PetsOrderBy {
   USER_ID_DESC
 }
 
+type Poi {
+  createdAt: Datetime!
+  id: UUID!
+  kakaoId: String!
+
+  """Reads and enables pagination through a set of `PoiReview`."""
+  poiReviews(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiReviewCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsConnection!
+  rating: Float!
+  ratingCount: Int!
+  reviewCount: Int!
+  totalRating: Int!
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `Poi` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PoiCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `kakaoId` field."""
+  kakaoId: String
+}
+
+type PoiReview {
+  comment: String
+  createdAt: Datetime!
+  id: UUID!
+  kakaoId: String!
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+  poiId: UUID
+  rating: Int!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `PoiReview`."""
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `PoiReview` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input PoiReviewCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `kakaoId` field."""
+  kakaoId: String
+
+  """Checks for equality with the object’s `poiId` field."""
+  poiId: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""An input for mutations affecting `PoiReview`"""
+input PoiReviewInput {
+  comment: String
+  id: UUID
+  kakaoId: String!
+  poiId: UUID
+  rating: Int!
+  userId: UUID!
+}
+
+"""
+Represents an update to a `PoiReview`. Fields that are set will be updated.
+"""
+input PoiReviewPatch {
+  comment: String
+  id: UUID
+  kakaoId: String
+  poiId: UUID
+  rating: Int
+  userId: UUID
+}
+
+"""A connection to a list of `PoiReview` values."""
+type PoiReviewsConnection {
+  """
+  A list of edges which contains the `PoiReview` and cursor to aid in pagination.
+  """
+  edges: [PoiReviewsEdge!]!
+
+  """A list of `PoiReview` objects."""
+  nodes: [PoiReview!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `PoiReview` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `PoiReview` edge in the connection."""
+type PoiReviewsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `PoiReview` at the end of the edge."""
+  node: PoiReview!
+}
+
+"""Methods to use when ordering `PoiReview`."""
+enum PoiReviewsOrderBy {
+  ID_ASC
+  ID_DESC
+  KAKAO_ID_ASC
+  KAKAO_ID_DESC
+  NATURAL
+  POI_ID_ASC
+  POI_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+"""A connection to a list of `Poi` values."""
+type PoisConnection {
+  """
+  A list of edges which contains the `Poi` and cursor to aid in pagination.
+  """
+  edges: [PoisEdge!]!
+
+  """A list of `Poi` objects."""
+  nodes: [Poi!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Poi` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Poi` edge in the connection."""
+type PoisEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Poi` at the end of the edge."""
+  node: Poi!
+}
+
+"""Methods to use when ordering `Poi`."""
+enum PoisOrderBy {
+  ID_ASC
+  ID_DESC
+  KAKAO_ID_ASC
+  KAKAO_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
 type PrivateDailyRecord {
   bathroomComment: String
   bathroomStatus: DailyRecordStatus
@@ -1832,6 +2139,68 @@ type Query {
     """The method to use when ordering `Pet`."""
     orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
   ): PetsConnection
+  poi(id: UUID!): Poi
+  poiByKakaoId(kakaoId: String!): Poi
+  poiReview(id: UUID!): PoiReview
+  poiReviewByKakaoId(kakaoId: String!): PoiReview
+
+  """Reads and enables pagination through a set of `PoiReview`."""
+  poiReviews(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiReviewCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsConnection
+
+  """Reads and enables pagination through a set of `Poi`."""
+  pois(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Poi`."""
+    orderBy: [PoisOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoisConnection
   privateDailyRecord(day: Date!, petId: UUID!, userId: UUID!): PrivateDailyRecord
 
   """Reads and enables pagination through a set of `PrivateDailyRecord`."""
@@ -2316,6 +2685,50 @@ type UpdatePetPayload {
   user: User
 }
 
+"""All input for the `updatePoiReview` mutation."""
+input UpdatePoiReviewInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+
+  """
+  An object where the defined keys will be set on the `PoiReview` being updated.
+  """
+  patch: PoiReviewPatch!
+}
+
+"""The output of our update `PoiReview` mutation."""
+type UpdatePoiReviewPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+
+  """The `PoiReview` that was updated by this mutation."""
+  poiReview: PoiReview
+
+  """An edge for our `PoiReview`. May be used by Relay 1."""
+  poiReviewEdge(
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiReview`."""
+  user: User
+}
+
 """All input for the `updatePrivateDailyRecord` mutation."""
 input UpdatePrivateDailyRecordInput {
   """
@@ -2639,6 +3052,86 @@ type UpsertPetPayload {
   query: Query
 
   """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
+"""All input for the upsert `PoiReview` batch mutation."""
+input UpsertPoiReviewBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `PoiReviews` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  poiReviews: [PoiReviewInput]!
+}
+
+"""The output of our upsert `PoiReview` batch mutation."""
+type UpsertPoiReviewBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+
+  """An edge for our `PoiReview`. May be used by Relay 1."""
+  poiReviewEdge(
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsEdge
+
+  """The `PoiReviews` that was upserted by this mutation."""
+  poiReviews: [PoiReview]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiReview`."""
+  user: User
+}
+
+"""All input for the upsert `PoiReview` mutation."""
+input UpsertPoiReviewInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `PoiReview` to be upserted by this mutation."""
+  poiReview: PoiReviewInput!
+}
+
+"""The output of our upsert `PoiReview` mutation."""
+type UpsertPoiReviewPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiReview`."""
+  poi: Poi
+
+  """The `PoiReview` that were upserted by this mutation."""
+  poiReview: PoiReview
+
+  """An edge for our `PoiReview`. May be used by Relay 1."""
+  poiReviewEdge(
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiReview`."""
   user: User
 }
 
@@ -3010,6 +3503,35 @@ type User {
     """The method to use when ordering `Pet`."""
     orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
   ): PetsConnection!
+
+  """Reads and enables pagination through a set of `PoiReview`."""
+  poiReviews(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiReviewCondition
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiReview`."""
+    orderBy: [PoiReviewsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiReviewsConnection!
 
   """Reads and enables pagination through a set of `PrivateDailyRecord`."""
   privateDailyRecords(
