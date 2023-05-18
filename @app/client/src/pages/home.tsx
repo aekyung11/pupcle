@@ -1,7 +1,9 @@
 import { AuthRestrict, Link, SharedLayout } from "@app/components";
 import {
   DailyRecordStatus,
+  HomePage_PetFragment,
   HomePage_PrivateDailyRecordFragment,
+  HomePage_SharedDailyRecordFragment,
   PetGender,
   SharedLayout_UserFragment,
   useHomePageQuery,
@@ -29,19 +31,20 @@ enum Tab {
 type StatusTabProps = {
   tab: Tab;
   privateRecord?: HomePage_PrivateDailyRecordFragment;
+  sharedRecord?: HomePage_SharedDailyRecordFragment;
   userId: string;
-  petId: string;
   day: string;
   refetch: () => Promise<any>;
+  pet: HomePage_PetFragment;
 };
 
 function StatusTab({
   tab,
   privateRecord,
   userId,
-  petId,
   day,
   refetch,
+  pet,
 }: StatusTabProps) {
   const [upsertPrivateDailyRecord] = useUpsertPrivateDailyRecordMutation();
   const [showCommentBox, setShowCommentBox] = useState<boolean>(false);
@@ -126,7 +129,8 @@ function StatusTab({
           src={statusBannerUrl}
           style={{
             height: "min(calc(48px + 2.4vw), 94px)",
-            filter: "drop-shadow(0px 4px 7px rgb(0 0 0 / 0.1)",
+            filter: "drop-shadow(0px 4px 7px rgb(0 0 0 / 0.1))",
+            position: "relative",
           }}
         />
       </Row>
@@ -144,10 +148,18 @@ function StatusTab({
             fontWeight: 500,
           }}
         >
-          Did he {tab} well?
+          Did {pet.gender === PetGender.F ? "she" : "he"} {tab} well?
         </span>
       </Row>
-      <Row style={{ display: showCommentBox ? "none" : "flex" }}>
+      <Row
+        style={{
+          display: "flex",
+          position: "relative",
+          justifyContent: "center",
+          width: "min(32vw, 580px)",
+          minWidth: "280px",
+        }}
+      >
         <RadioGroupPrimitive.Root
           value={dailyRecordStatus}
           onValueChange={async (status: DailyRecordStatus) => {
@@ -156,7 +168,7 @@ function StatusTab({
                 input: {
                   privateDailyRecord: {
                     userId,
-                    petId,
+                    petId: pet.id,
                     day,
                     [statusKey]: status,
                   },
@@ -168,8 +180,8 @@ function StatusTab({
           style={{
             display: "flex",
             flexWrap: "wrap",
-            width: "100%",
-            maxWidth: "470px",
+            // width: "100%",
+            // maxWidth: "470px",
           }}
         >
           <div
@@ -221,7 +233,8 @@ function StatusTab({
         style={{
           width: "100%",
           marginTop: "min(3vw, 30px)",
-          display: showCommentBox ? "none" : "flex",
+          display: "flex",
+          position: "relative",
         }}
       >
         <Button
@@ -236,6 +249,7 @@ function StatusTab({
             padding: "0 6%",
           }}
           onClick={() => setShowCommentBox(true)}
+          disabled={!dailyRecordStatus}
         >
           <img
             style={{ height: "min(calc((30px + 2vw) / 2), 35px)" }}
@@ -244,7 +258,7 @@ function StatusTab({
           <span
             style={{
               fontFamily: "Poppins, sans-serif",
-              fontSize: "min(24px, 2vw)",
+              fontSize: "min(24px, 1.8vw)",
               fontWeight: 600,
               color: "#615518",
               paddingLeft: "3%",
@@ -262,37 +276,104 @@ function StatusTab({
           />
         </Button>
       </Row>
-      <Row style={{ display: showCommentBox ? "flex" : "none" }}>
-        <Button onClick={() => setShowCommentBox(false)}>
-          <img
-            src="/close_button.png"
-            style={{ width: "min(24px, 10px + 0.2vw)" }}
-          />
-        </Button>
-        <Input.TextArea
-          value={commentBox}
-          onChange={(e) => setCommentBox(e.target.value)}
-        />
-        <Button
-          onClick={async () => {
-            await upsertPrivateDailyRecord({
-              variables: {
-                input: {
-                  privateDailyRecord: {
-                    userId,
-                    petId,
-                    day,
-                    [commentKey]: commentBox,
-                  },
-                },
-              },
-            });
-            await refetch();
-            setShowCommentBox(false);
+      <Row
+        style={{
+          backgroundColor: "#FFF9D8",
+          position: "absolute",
+          bottom: "0px",
+          width: "100%",
+          height: "72%",
+          borderRadius: "min(2vw, 35px)",
+          display: showCommentBox ? "flex" : "none",
+          filter: "drop-shadow(0px 4px 15px rgb(0 0 0 / 0.1))",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            height: "fit-content",
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: "min(20px + 0.5vw , 40px) min(20px + 0.75vw, 48px) 0px",
           }}
         >
-          save
-        </Button>
+          <Button
+            onClick={() => setShowCommentBox(false)}
+            style={{
+              border: "none",
+              width: "min(24px, 15px + 0.5vw)",
+              height: "min(24px, 15px + 0.5vw)",
+              padding: "0px",
+            }}
+          >
+            <img
+              src="/close_button.png"
+              style={{ width: "min(24px, 15px + 0.5vw)" }}
+            />
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            height: "50%",
+            padding: "0px min(20px + 0.75vw, 48px)",
+          }}
+        >
+          <textarea
+            className="text-Poppins text-pupcle-30px text-home-comment placeholder-home-comment w-full resize-none border-0 bg-transparent px-0 font-semibold text-gray-900 focus:outline-0 focus:ring-0"
+            placeholder={
+              "자세히 기록해보세요.\n(기록하지 않더라도 결과는 저장됩니다.)"
+            }
+            value={commentBox}
+            onChange={(e) => setCommentBox(e.target.value)}
+          />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            height: "fit-content",
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: "0px min(20px + 0.75vw, 48px) min(20px + 0.5vw , 40px)",
+          }}
+        >
+          <Button
+            style={{
+              border: "none",
+              borderRadius: "27px",
+              height: "min(54px, 36px + 1vw)",
+              fontSize: "min(30px, 2.4vw)",
+              backgroundColor: "#615518",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              fontFamily: "Poppins",
+              fontWeight: 600,
+              padding: "0px 8%",
+            }}
+            onClick={async () => {
+              await upsertPrivateDailyRecord({
+                variables: {
+                  input: {
+                    privateDailyRecord: {
+                      userId,
+                      petId: pet.id,
+                      day,
+                      [commentKey]: commentBox,
+                    },
+                  },
+                },
+              });
+              await refetch();
+              setShowCommentBox(false);
+            }}
+          >
+            SAVE
+          </Button>
+        </div>
       </Row>
     </>
   );
@@ -308,10 +389,13 @@ const Home: NextPage = () => {
   const today = useToday();
   const query = useHomePageQuery({ variables: { day: today || "2023-01-01" } });
   const refetch = async () => query.refetch();
-  const todayPrivateDailyRecord =
-    query.data?.currentUser?.pets.nodes[0]?.privateDailyRecords.nodes.find(
-      (record) => record.day === today
-    );
+  const pet = query.data?.currentUser?.pets.nodes[0];
+  const todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
+    (record) => record.day === today
+  );
+  const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
+    (record) => record.day === today
+  );
   // console.log({ query });
   return (
     <SharedLayout
@@ -319,12 +403,14 @@ const Home: NextPage = () => {
       query={query}
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
-      {query.data?.currentUser && today ? (
+      {query.data?.currentUser && today && pet ? (
         <HomePageInner
           currentUser={query.data?.currentUser}
           privateRecord={todayPrivateDailyRecord}
+          sharedRecord={todaySharedDailyRecord}
           day={today}
           refetch={refetch}
+          pet={pet}
         />
       ) : (
         <p>loading...</p>
@@ -336,18 +422,31 @@ const Home: NextPage = () => {
 interface HomePageInnerProps {
   currentUser: SharedLayout_UserFragment;
   privateRecord?: HomePage_PrivateDailyRecordFragment;
+  sharedRecord?: HomePage_SharedDailyRecordFragment;
   day: string;
   refetch: () => Promise<any>;
+  pet: HomePage_PetFragment;
 }
 
 const HomePageInner: FC<HomePageInnerProps> = ({
   currentUser,
   privateRecord,
+  sharedRecord,
   day,
   refetch,
+  pet,
 }) => {
+  const completeStatusCount = sharedRecord?.completeStatusCount || 0;
+  const initialTab =
+    completeStatusCount === 0
+      ? undefined
+      : Object.values(Tab)[completeStatusCount - 1];
+  const [selectedTab, setSelectedTab] = useState<Tab | undefined>(initialTab);
   return (
-    <Tabs.Root defaultValue={undefined}>
+    <Tabs.Root
+      value={selectedTab}
+      onValueChange={(value) => setSelectedTab(value as Tab)}
+    >
       <Col span={24}>
         <Row
           style={{
@@ -440,6 +539,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                maxWidth: "580px",
               }}
             >
               <Row>
@@ -466,19 +566,48 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                   How was today?
                 </span>
               </Row>
-              <Row style={{ height: "80%" }}>
-                {Object.values(Tab).map((tab) => (
-                  <Tabs.Content value={tab} key={tab}>
-                    <StatusTab
-                      tab={tab}
-                      privateRecord={privateRecord}
-                      userId={currentUser.id}
-                      petId={currentUser.pets.nodes[0]?.id}
-                      day={day}
-                      refetch={refetch}
-                    />
-                  </Tabs.Content>
-                ))}
+              <Row style={{ height: "80%", position: "relative" }}>
+                {selectedTab === undefined ? (
+                  <>
+                    <Row
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        margin: "min(2vw, 20px) 0px min(3vw, 30px) 0px",
+                        width: "100%",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "min(30px, 2.4vw)",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Let&apos;s click pupcle!
+                      </span>
+                    </Row>
+                    <Row>
+                      <img src="/status_hero.png" height={"100%"} />
+                    </Row>
+                  </>
+                ) : (
+                  <>
+                    {Object.values(Tab).map((tab) => (
+                      <Tabs.Content value={tab} key={tab}>
+                        <StatusTab
+                          tab={tab}
+                          privateRecord={privateRecord}
+                          sharedRecord={sharedRecord}
+                          userId={currentUser.id}
+                          day={day}
+                          refetch={refetch}
+                          pet={pet}
+                        />
+                      </Tabs.Content>
+                    ))}
+                  </>
+                )}
               </Row>
             </div>
           </Col>

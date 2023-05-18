@@ -15,7 +15,14 @@ module.exports = {
     ),
   ],
   theme: {
-    extend: {},
+    fontSize: {
+      "pupcle-30px": "min(30px, 2.4vw)",
+    },
+    extend: {
+      colors: {
+        "home-comment": "#615518",
+      },
+    },
   },
   variants: {},
   plugins: [],
