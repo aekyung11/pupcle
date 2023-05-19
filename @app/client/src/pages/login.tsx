@@ -290,7 +290,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                           name="password"
                           style={{ marginBottom: "0px" }}
                         >
-                          <Input
+                          <Input.Password
                             style={{
                               backgroundColor: "#f5f5f5",
                               height: "40px",
@@ -302,6 +302,19 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                               padding: "0 1.5rem",
                             }}
                             name="password"
+                            iconRender={(visible) =>
+                              visible ? (
+                                <img
+                                  src="/password_visible.png"
+                                  style={{ width: "22px" }}
+                                />
+                              ) : (
+                                <img
+                                  src="/password_invisible.png"
+                                  style={{ width: "22px" }}
+                                />
+                              )
+                            }
                             // prefix={
                             //   <LockOutlined
                             //     style={{ color: "rgba(0,0,0,.25)" }}

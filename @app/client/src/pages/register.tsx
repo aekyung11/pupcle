@@ -414,11 +414,24 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                         </span>
                       </Row>
                       <Form.Item name="password">
-                        <Input
+                        <Input.Password
                           name="password"
                           type="password"
                           autoComplete="new-password"
                           data-cy="registerpage-input-password"
+                          iconRender={(visible) =>
+                            visible ? (
+                              <img
+                                src="/password_visible.png"
+                                style={{ width: "22px" }}
+                              />
+                            ) : (
+                              <img
+                                src="/password_invisible.png"
+                                style={{ width: "22px" }}
+                              />
+                            )
+                          }
                           // onFocus={setPasswordFocussed}
                           // onBlur={setPasswordNotFocussed}
                           style={{

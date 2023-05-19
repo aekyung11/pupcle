@@ -131,7 +131,7 @@ const Maps: NextPage = () => {
                 <img
                   src="/search_icon.png"
                   style={{
-                    width: "min(25px, 1rem + 0.5vw)",
+                    width: "min(25px, 14px + 0.5vw)",
                     marginRight: "8px",
                   }}
                 />
@@ -166,7 +166,7 @@ const Maps: NextPage = () => {
               <img
                 src="/cafe_icon.png"
                 id="cafe"
-                style={{ width: "min(29px, 20px + 1vw)" }}
+                style={{ width: "min(28px, 20px + 0.1vw)" }}
               />
               <span className="maps-category-span group-hover:text-white">
                 카페
