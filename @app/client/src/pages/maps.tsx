@@ -1,8 +1,8 @@
-import { CrownOutlined } from "@ant-design/icons";
-import { Link, SharedLayout, Warn } from "@app/components";
+import { SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import { Button, Col, Dropdown, Input, Menu, Row } from "antd";
+import { Button, Input } from "antd";
 import { NextPage } from "next";
+import Image from "next/image";
 import * as React from "react";
 import { useEffect } from "react";
 
@@ -12,16 +12,22 @@ const Maps: NextPage = () => {
   useEffect(() => {
     var container = document.getElementById("map");
     if (typeof window !== "undefined") {
+      // @ts-ignore
+      const kakao = window.kakao;
       var options = {
-        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+        center: new kakao.maps.LatLng(33.450701, 126.570667),
         level: 2,
       };
 
-      var map = new window.kakao.maps.Map(container, options);
+      var map = new kakao.maps.Map(container, options);
 
-      displayLevel();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const displayLevel = () => {
+        var _levelEl = document.getElementById("maplevel");
+      };
 
-      function zoomIn() {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const zoomIn = () => {
         // 현재 지도의 레벨을 얻어옵니다
         var level = map.getLevel();
 
@@ -30,9 +36,10 @@ const Maps: NextPage = () => {
 
         // 지도 레벨을 표시합니다
         displayLevel();
-      }
+      };
 
-      function zoomOut() {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const zoomOut = () => {
         // 현재 지도의 레벨을 얻어옵니다
         var level = map.getLevel();
 
@@ -41,12 +48,10 @@ const Maps: NextPage = () => {
 
         // 지도 레벨을 표시합니다
         displayLevel();
-      }
+      };
 
-      function displayLevel() {
-        var levelEl = document.getElementById("maplevel");
-        levelEl;
-      }
+      displayLevel();
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           var lat = position.coords.latitude; // 현재 위치의 위도
@@ -59,13 +64,13 @@ const Maps: NextPage = () => {
           map.panTo(moveLatLon);
 
           // 현재 위치에 마커를 표시합니다.
-          var markerImage = new kakao.maps.MarkerImage(
+          var _markerImage = new kakao.maps.MarkerImage(
             "https://map.kakaocdn.net/sh/maps/dhdwk7mst/marker/star.png",
             new kakao.maps.Size(24, 35),
             { offset: new kakao.maps.Point(12, 35) }
           );
 
-          var marker = new kakao.maps.Marker({
+          var _marker = new kakao.maps.Marker({
             position: new kakao.maps.LatLng(lat, lng),
             map: map,
           });
@@ -105,7 +110,7 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <img src="/map_list.png" />
+            <Image src="/map_list.png" alt="map list" />
           </Button>
           <div
             style={{
@@ -128,12 +133,13 @@ const Maps: NextPage = () => {
               }}
               placeholder="어디로 가고 싶으세요?"
               prefix={
-                <img
+                <Image
                   src="/search_icon.png"
                   style={{
                     width: "min(25px, 14px + 0.5vw)",
                     marginRight: "8px",
                   }}
+                  alt="search icon"
                 />
               }
             />
@@ -153,40 +159,44 @@ const Maps: NextPage = () => {
             }}
           >
             <Button className="maps-category group">
-              <img
+              <Image
                 src="/vet_icon.png"
                 id="vet"
                 style={{ width: "min(17px, 12px + 0.1vw)" }}
+                alt="vet icon"
               />
               <span className="maps-category-span group-hover:text-white">
                 동물병원
               </span>
             </Button>
             <Button className="maps-category group">
-              <img
+              <Image
                 src="/cafe_icon.png"
                 id="cafe"
                 style={{ width: "min(28px, 20px + 0.1vw)" }}
+                alt="cafe icon"
               />
               <span className="maps-category-span group-hover:text-white">
                 카페
               </span>
             </Button>
             <Button className="maps-category group">
-              <img
+              <Image
                 src="/restaurant_icon.png"
                 id="restaurant"
                 style={{ width: "min(19px, 13px + 0.1vw)" }}
+                alt="restaurant icon"
               />
               <span className="maps-category-span group-hover:text-white">
                 식당
               </span>
             </Button>
             <Button className="maps-category group">
-              <img
+              <Image
                 src="/park_icon.png"
                 id="park"
                 style={{ width: "min(23.5px, 16px + 0.1vw)" }}
+                alt="park icon"
               />
               <span className="maps-category-span group-hover:text-white">
                 공원
@@ -211,7 +221,7 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <img src="/map_c.png" />
+            <Image src="/map_c.png" alt="my list" />
           </Button>
         </div>
       </div>

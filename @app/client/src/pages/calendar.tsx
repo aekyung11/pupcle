@@ -3,13 +3,13 @@ import { useSharedQuery } from "@app/graphql";
 import { NextPage } from "next";
 import * as React from "react";
 
-const Mission: NextPage = () => {
+const Calendar: NextPage = () => {
   const query = useSharedQuery();
   return (
-    <SharedLayout title="mission" query={query}>
-      Mission
+    <SharedLayout title="calendar" query={query}>
+      Calendar
     </SharedLayout>
   );
 };
 
-export default Mission;
+export default Calendar;

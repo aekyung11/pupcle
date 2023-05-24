@@ -20,6 +20,7 @@ import { Alert, Button } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
 import React, { useCallback, useEffect, useRef } from "react";
@@ -99,13 +100,18 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                   }}
                 >
                   <Link href="/">
-                    <img src="/logo.png" style={{ height: "2.4rem" }} />
+                    <Image
+                      src="/logo.png"
+                      style={{ height: "2.4rem" }}
+                      alt="home logo"
+                    />
                   </Link>
                 </Row>
                 <Row style={{ display: "flex", justifyContent: "center" }}>
-                  <img
+                  <Image
                     src="/login_page_img.png"
                     style={{ maxWidth: "400px", width: "80%" }}
+                    alt=""
                   />
                 </Row>
                 <Row style={{ maxWidth: "450px" }}>
@@ -191,9 +197,10 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                     >
                       로그인
                     </span>
-                    <img
+                    <Image
                       src="/paw.png"
                       style={{ width: "36px", marginBottom: "3px" }}
+                      alt=""
                     />
                   </Row>
                   <Row>
@@ -214,7 +221,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
                   >
-                    {({ isValid }) => (
+                    {({}) => (
                       <Form>
                         <Row
                           style={{
@@ -304,14 +311,16 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             name="password"
                             iconRender={(visible) =>
                               visible ? (
-                                <img
+                                <Image
                                   src="/password_visible.png"
                                   style={{ width: "22px" }}
+                                  alt="make password visible"
                                 />
                               ) : (
-                                <img
+                                <Image
                                   src="/password_invisible.png"
                                   style={{ width: "22px" }}
+                                  alt="make password invisible"
                                 />
                               )
                             }

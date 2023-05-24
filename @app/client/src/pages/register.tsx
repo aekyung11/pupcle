@@ -1,38 +1,26 @@
-import { CheckCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { ApolloError, useApolloClient } from "@apollo/client";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { useApolloClient } from "@apollo/client";
 import { useRegisterForm } from "@app/componentlib";
 import {
   AuthRestrict,
   FormikIconCheckBox,
-  PasswordStrength,
   Redirect,
   SharedLayout,
 } from "@app/components";
-import { useRegisterMutation, useSharedQuery } from "@app/graphql";
+import { useSharedQuery } from "@app/graphql";
 import {
   extractError,
-  formItemLayout,
   getCodeFromError,
-  getExceptionFromError,
   resetWebsocketConnection,
-  setPasswordInfo,
-  tailFormItemLayout,
 } from "@app/lib";
-import { Alert, Button, Col, InputRef, Row, Tooltip } from "antd";
-import { useForm } from "antd/lib/form/Form";
+import { Alert, Button, Col, InputRef, Row } from "antd";
 import { Formik } from "formik";
-import { Checkbox, Form, Input, SubmitButton } from "formik-antd";
+import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
-import { Store } from "rc-field-form/lib/interface";
-import React, {
-  FocusEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 import { isSafe } from "./login";
 
@@ -57,16 +45,6 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     useRegisterForm(postResult);
-
-  const [confirmDirty, setConfirmDirty] = useState(false);
-
-  const handleConfirmBlur = useCallback(
-    (e: FocusEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setConfirmDirty(confirmDirty || !!value);
-    },
-    [setConfirmDirty, confirmDirty]
-  );
 
   const focusElement = useRef<InputRef>(null);
   useEffect(
@@ -116,13 +94,18 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                 }}
               >
                 <Link href="/">
-                  <img src="/logo.png" style={{ height: "2.4rem" }} />
+                  <Image
+                    src="/logo.png"
+                    style={{ height: "2.4rem" }}
+                    alt="home"
+                  />
                 </Link>
               </Row>
               <Row style={{ display: "flex", justifyContent: "center" }}>
-                <img
+                <Image
                   src="/login_page_img.png"
                   style={{ maxWidth: "400px", width: "80%" }}
+                  alt=""
                 />
               </Row>
               <Row style={{ maxWidth: "450px" }}>
@@ -214,9 +197,10 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                   >
                     회원가입
                   </span>
-                  <img
+                  <Image
                     src="/paw.png"
                     style={{ width: "36px", marginBottom: "3px" }}
+                    alt=""
                   />
                 </Row>
                 <Formik
@@ -225,7 +209,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                   initialValues={initialValues}
                   onSubmit={handleSubmit}
                 >
-                  {({ isValid }) => (
+                  {({}) => (
                     <Form>
                       <Row
                         style={{
@@ -421,14 +405,16 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           data-cy="registerpage-input-password"
                           iconRender={(visible) =>
                             visible ? (
-                              <img
+                              <Image
                                 src="/password_visible.png"
                                 style={{ width: "22px" }}
+                                alt="password visible"
                               />
                             ) : (
-                              <img
+                              <Image
                                 src="/password_invisible.png"
                                 style={{ width: "22px" }}
+                                alt="password invisible"
                               />
                             )
                           }

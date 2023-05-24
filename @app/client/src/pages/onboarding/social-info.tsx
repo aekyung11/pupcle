@@ -11,11 +11,11 @@ import {
   useUpdateUserMutation,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import { Alert, Button, Col, InputRef, message, Row } from "antd";
+import { Alert, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Link from "next/link";
+import Image from "next/image";
 import Router from "next/router";
 import React, { FC, useCallback, useEffect, useRef } from "react";
 
@@ -133,9 +133,10 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
               >
                 회원님의 정보를 입력해주세요
               </span>
-              <img
+              <Image
                 src="/paw.png"
                 style={{ width: "36px", marginBottom: "3px" }}
+                alt=""
               />
             </Row>
             <FramedAvatarUpload

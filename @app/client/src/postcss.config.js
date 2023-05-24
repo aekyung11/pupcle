@@ -15,7 +15,7 @@ module.exports = {
               },
             },
           ],
-          ["tailwindcss", { config: "../client/src/tailwind.config.js" }],
+          ["tailwindcss", { config: "tailwind.config.js" }],
           "autoprefixer",
         ]
       : [

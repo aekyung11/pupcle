@@ -1,4 +1,4 @@
-import { AuthRestrict, Link, SharedLayout } from "@app/components";
+import { AspectRatioImage, AuthRestrict, SharedLayout } from "@app/components";
 import {
   DailyRecordStatus,
   HomePage_PetFragment,
@@ -7,16 +7,16 @@ import {
   PetGender,
   SharedLayout_UserFragment,
   useHomePageQuery,
-  useSharedQuery,
   useUpsertPrivateDailyRecordMutation,
 } from "@app/graphql";
+import sleepStatusBanner from "@app/server/public/sleep_status_banner.png";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Button, Col, Input, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import clsx from "clsx";
 import { format } from "date-fns";
-import { min } from "lodash";
 import { NextPage } from "next";
+import Image from "next/image";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
 
@@ -54,11 +54,12 @@ function StatusTab({
   let status = null;
   let commentKey: keyof HomePage_PrivateDailyRecordFragment;
   let comment = null;
-  let statusBannerUrl = null;
+  let statusBannerUrl: React.ComponentProps<typeof Image>["src"] =
+    "/unknown.png";
   if (tab === Tab.SLEEP) {
     statusKey = "sleepStatus";
     commentKey = "sleepComment";
-    statusBannerUrl = "/sleep_status_banner.png";
+    statusBannerUrl = sleepStatusBanner;
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -126,13 +127,15 @@ function StatusTab({
           justifyContent: "center",
         }}
       >
-        <img
+        <AspectRatioImage
           src={statusBannerUrl}
           style={{
             height: "min(calc(48px + 2.4vw), 94px)",
             filter: "drop-shadow(0px 4px 7px rgb(0 0 0 / 0.1))",
-            position: "relative",
           }}
+          alt="status banner"
+          imgWidth={1454}
+          imgHeight={282}
         />
       </Row>
       <Row
@@ -198,16 +201,18 @@ function StatusTab({
               value={DailyRecordStatus.Good}
               style={{ marginRight: "min(2vw, 40px)", borderRadius: 0 }}
             >
-              <img
+              <Image
                 src="/good_icon_unchecked.png"
                 style={{ width: "min(220px, 20vw)" }}
+                alt="good unchecked"
               />
-              <img
+              <Image
                 className="image-hover"
                 src="/good_icon_checked.png"
                 style={{ width: "min(220px, 20vw)" }}
                 // width={40}
                 // height={40}
+                alt="good checked"
               />
             </RadioGroupPrimitive.Item>
             <RadioGroupPrimitive.Item
@@ -215,16 +220,18 @@ function StatusTab({
               value={DailyRecordStatus.Bad}
               style={{ borderRadius: 0 }}
             >
-              <img
+              <Image
                 src="/bad_icon_unchecked.png"
                 style={{ width: "min(220px, 20vw)" }}
+                alt="bad icon unchecked"
               />
-              <img
+              <Image
                 className="image-hover"
                 src="/bad_icon_checked.png"
                 style={{ width: "min(220px, 20vw)" }}
                 // width={40}
                 // height={40}
+                alt="bad icon checked"
               />
             </RadioGroupPrimitive.Item>
           </div>
@@ -252,9 +259,10 @@ function StatusTab({
           onClick={() => setShowCommentBox(true)}
           disabled={!dailyRecordStatus}
         >
-          <img
+          <Image
             style={{ height: "min(calc((30px + 2vw) / 2), 35px)" }}
             src="/write_icon.png"
+            alt="write icon"
           />
           <span
             style={{
@@ -269,23 +277,14 @@ function StatusTab({
           >
             {comment ? <u>{comment}</u> : "Leave a comment here"}
           </span>
-          {/* {!comment && (
-            <img
-              src="/caret_icon.png"
-              style={{
-                height: "min(10px + 0.2vw, 20px)",
-                position: "absolute",
-                right: "22px",
-              }}
-            />
-          )} */}
-          <img
+          <Image
             src="/caret_icon.png"
             style={{
               height: "min(10px + 0.2vw, 20px)",
               position: "absolute",
               right: "22px",
             }}
+            alt="caret icon"
           />
         </Button>
       </Row>
@@ -321,9 +320,10 @@ function StatusTab({
               padding: "0px",
             }}
           >
-            <img
+            <Image
               src="/close_button.png"
               style={{ width: "min(24px, 15px + 0.5vw)" }}
+              alt="close button"
             />
           </Button>
         </div>
@@ -503,7 +503,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 // backgroundImage: "url(/c.png)",
               }}
             >
-              <img
+              <Image
                 src={
                   completeStatusCount > 5
                     ? "/c_health_selected.png"
@@ -525,6 +525,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                   maxWidth: "573px",
                   filter: "drop-shadow(2px 2px 2px grey)",
                 }}
+                alt=""
               />
               <Tabs.Trigger value={Tab.SLEEP} key={Tab.SLEEP} asChild={true}>
                 <Button
@@ -533,7 +534,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 1,
                   })}
                 >
-                  <img id="sleep" src="/sleep.png" />
+                  <Image id="sleep" src="/sleep.png" alt="sleep tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.DIET} key={Tab.DIET} asChild={true}>
@@ -543,7 +544,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 2,
                   })}
                 >
-                  <img id="diet" src="/diet.png" />
+                  <Image id="diet" src="/diet.png" alt="diet tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger
@@ -557,7 +558,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 3,
                   })}
                 >
-                  <img id="walking" src="/walking.png" />
+                  <Image id="walking" src="/walking.png" alt="walking tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.PLAY} key={Tab.PLAY} asChild={true}>
@@ -567,7 +568,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 4,
                   })}
                 >
-                  <img id="play" src="/play.png" />
+                  <Image id="play" src="/play.png" alt="play tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger
@@ -581,7 +582,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 5,
                   })}
                 >
-                  <img id="bathroom" src="/bathroom.png" />
+                  <Image id="bathroom" src="/bathroom.png" alt="bathroom tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.HEALTH} key={Tab.HEALTH} asChild={true}>
@@ -591,7 +592,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 6,
                   })}
                 >
-                  <img id="health" src="/health.png" />
+                  <Image id="health" src="/health.png" alt="health tab" />
                 </Button>
               </Tabs.Trigger>
             </Tabs.List>
@@ -663,7 +664,11 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                       </span>
                     </Row>
                     <Row>
-                      <img src="/status_hero.png" height={"100%"} />
+                      <Image
+                        src="/status_hero.png"
+                        style={{ height: "100%" }}
+                        alt="status hero"
+                      />
                     </Row>
                   </>
                 ) : (

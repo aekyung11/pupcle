@@ -2,12 +2,12 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {
   AllowedUploadContentType,
   useCreateUploadUrlMutation,
-  useUpdateUserMutation,
 } from "@app/graphql";
 import { getExceptionFromError } from "@app/lib";
 import { Col, message, Row, Upload } from "antd";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import axios from "axios";
+import Image from "next/image";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import React, { useState } from "react";
 import slugify from "slugify";
@@ -169,7 +169,7 @@ export function FramedAvatarUpload({
           ) : avatarUrl ? (
             <Row>
               <Col span={24}>
-                <img
+                <Image
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
@@ -187,7 +187,7 @@ export function FramedAvatarUpload({
           ) : (
             <Row>
               <Col span={24}>
-                <img
+                <Image
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
@@ -196,8 +196,8 @@ export function FramedAvatarUpload({
                     // marginTop: "60px",
                   }}
                   src="/profile_default_avatar.png"
-                  width="140px"
-                  height="140px"
+                  width={140}
+                  height={140}
                   alt={"avatar"}
                 />
               </Col>
@@ -206,7 +206,7 @@ export function FramedAvatarUpload({
           {!disabled && (
             <Row>
               <Col span={24}>
-                <img
+                <Image
                   style={{
                     position: "absolute",
                     zIndex: 100,
@@ -215,6 +215,7 @@ export function FramedAvatarUpload({
                     width: "60px",
                   }}
                   src="/plus_icon.png"
+                  alt="upload"
                 />
               </Col>
             </Row>

@@ -1,4 +1,4 @@
-import { CrownOutlined, DownOutlined } from "@ant-design/icons";
+import { CrownOutlined } from "@ant-design/icons";
 import { ApolloError, QueryResult, useApolloClient } from "@apollo/client";
 import { companyName, projectName } from "@app/config";
 import {
@@ -7,23 +7,16 @@ import {
   useCurrentUserUpdatedSubscription,
   useLogoutMutation,
 } from "@app/graphql";
-import {
-  Avatar,
-  Button,
-  Col,
-  Dropdown,
-  Layout,
-  Menu,
-  Row,
-  Typography,
-} from "antd";
+import logo from "@app/server/public/logo.png";
+import { Button, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
 import { useCallback } from "react";
 
-import { ErrorAlert, StandardWidth, Warn } from ".";
+import { AspectRatioImage, ErrorAlert, StandardWidth, Warn } from ".";
 import { Redirect } from "./Redirect";
 
 const { Header, Content, Footer } = Layout;
@@ -213,55 +206,61 @@ export function SharedLayout({
       <Col span={5} style={{ display: "flex", justifyContent: "flex-start" }}>
         <Link href="/">
           {/* <Link href="/{projectName}"> */}
-          <img
-            src="/logo.png"
-            style={{ height: "min(2.8rem, 4vw)", minHeight: "2rem" }}
+          <AspectRatioImage
+            style={{
+              height: "min(2.8rem, 4vw)",
+              minHeight: "2rem",
+            }}
+            imgWidth={374}
+            imgHeight={116}
+            alt="home"
+            src={logo}
           />
         </Link>
       </Col>
       <Col className="homepage-title" span={15}>
         {data?.currentUser && (
           <>
-            <a
+            <Link
               href="/home"
               style={{
                 fontWeight: title === "home" ? 600 : 400,
               }}
             >
               HOME
-            </a>
+            </Link>
             <a
-              href="/calender"
+              href="/calendar"
               style={{
-                fontWeight: title === "calender" ? 600 : 400,
+                fontWeight: title === "calendar" ? 600 : 400,
               }}
             >
-              CALENDER
+              CALENDAR
             </a>
-            <a
+            <Link
               href="/mission"
               style={{
                 fontWeight: title === "mission" ? 600 : 400,
               }}
             >
               MISSION
-            </a>
-            <a
+            </Link>
+            <Link
               href="/maps"
               style={{
                 fontWeight: title === "maps" ? 600 : 400,
               }}
             >
               MAPS
-            </a>
-            <a
+            </Link>
+            <Link
               href="/circle"
               style={{
                 fontWeight: title === "circle" ? 600 : 400,
               }}
             >
               CIRCLE
-            </a>
+            </Link>
           </>
         )}
       </Col>
@@ -338,12 +337,13 @@ export function SharedLayout({
                   okay={data.currentUser.isVerified}
                   data-cy="header-unverified-warning"
                 >
-                  <img
+                  <Image
                     src="/hamburger.png"
                     style={{
                       height: "min(2rem, 4vw)",
                       minHeight: "1.5rem",
                     }}
+                    alt="menu"
                   />
                 </Warn>
 
@@ -405,7 +405,7 @@ export function SharedLayout({
                 </Menu>
               }
             >
-              <img
+              <Image
                 src={
                   data.currentUser.pets.nodes[0]?.avatarUrl ||
                   data.currentUser.avatarUrl ||
@@ -419,6 +419,7 @@ export function SharedLayout({
                   borderRadius: "min(19px, 2vw)",
                   objectFit: "cover",
                 }}
+                alt="user menu"
               />
             </Dropdown>
           </div>

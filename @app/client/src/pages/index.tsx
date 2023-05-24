@@ -2,6 +2,7 @@ import { Link, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
 import { Button, Col, Row } from "antd";
 import { NextPage } from "next";
+import Image from "next/image";
 import * as React from "react";
 
 const StartPage: NextPage = () => {
@@ -29,14 +30,15 @@ const StartPage: NextPage = () => {
               padding: "4.5rem 1rem 4.5rem 0",
             }}
           >
-            <img
-              src="/cycle_example.png"
+            <div
               style={{
                 height: "fit-content",
                 width: "85%",
                 maxWidth: "600px",
               }}
-            />
+            >
+              <Image fill src="/cycle_example.png" alt="cycle example" />
+            </div>
           </Col>
           <Col
             span={12}

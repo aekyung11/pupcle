@@ -1,4 +1,10 @@
-import { s3AccessKeyId, s3Host, s3SecretKey, uploadBucket } from "@app/config";
+import {
+  awsRegion,
+  s3AccessKeyId,
+  s3Host,
+  s3SecretKey,
+  uploadBucket,
+} from "@app/config";
 import * as aws from "aws-sdk";
 import { gql, makeExtendSchemaPlugin } from "graphile-utils";
 import { PoolClient } from "pg";
@@ -201,7 +207,9 @@ const CreateUploadUrlPlugin = makeExtendSchemaPlugin(() => ({
           fileName && `inline; filename="${fileName}"`;
         const s3 = new aws.S3({
           // TODO: change these in production, maybe unneeded if we stick with DigitalOcean Spaces
-          // region: awsRegion,
+          ...(!isDev && {
+            region: awsRegion,
+          }),
           signatureVersion: "v4",
           endpoint: s3Host,
           accessKeyId: s3AccessKeyId,

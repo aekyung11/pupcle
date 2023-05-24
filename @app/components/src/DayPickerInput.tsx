@@ -1,5 +1,6 @@
 import { format, isValid, parse } from "date-fns";
 import FocusTrap from "focus-trap-react";
+import Image from "next/image";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { usePopper } from "react-popper";
@@ -85,7 +86,11 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
           }}
           // style={{ position: "absolute" }}
         >
-          <img src="/calender_icon.png" style={{ width: "20px" }} />
+          <Image
+            src="/calendar_icon.png"
+            style={{ width: "20px" }}
+            alt="calendar icon"
+          />
         </button>
       </div>
       {isPopperOpen && (

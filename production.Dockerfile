@@ -96,5 +96,4 @@ ENV DATABASE_OWNER="${DATABASE_NAME}"
 ENV DATABASE_VISITOR="${DATABASE_NAME}_visitor"
 ENV DATABASE_AUTHENTICATOR="${DATABASE_NAME}_authenticator"
 
-# Entrypoint last so that we can run `sh` in previous build steps for debugging
-ENTRYPOINT yarn "${TARGET}" start
+CMD yarn "${TARGET}" start
