@@ -214,7 +214,7 @@ export function SharedLayout({
             imgWidth={374}
             imgHeight={116}
             alt="home"
-            src={logo}
+            src="/logo.png"
           />
         </Link>
       </Col>
