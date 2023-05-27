@@ -1,0 +1,7 @@
+docker buildx build --platform linux/amd64 \
+              -t pupcle/server:(git rev-parse --short HEAD) \
+              --file production.Dockerfile \
+              --build-arg ROOT_URL="https://staging-pupcle.fly.dev" \
+              --build-arg TARGET="server" \
+              --build-arg PORT="8080" \
+              .

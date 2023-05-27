@@ -7,7 +7,13 @@ ARG TARGET="server"
 ################################################################################
 # Build stage 1 - `yarn build`
 
-FROM node:16-alpine as builder
+FROM node:18-alpine3.17 as builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update && apk add --update git && rm -rf /var/cache/apk/*
+RUN corepack enable \
+    && corepack prepare yarn@stable --activate
+
 # Import our shared args
 ARG NODE_ENV
 ARG ROOT_URL
@@ -18,6 +24,7 @@ COPY .yarn/ /app/.yarn/
 COPY @app/ /app/@app/
 RUN rm -rf /app/@app/mobile
 WORKDIR /app/
+RUN yarn set version 3.4.1
 RUN yarn workspaces focus --all
 
 COPY tsconfig.json /app/
@@ -26,12 +33,19 @@ COPY scripts/ /app/scripts/
 COPY data/ /app/data/
 
 # Finally run the build script
+RUN yarn set version 3.4.1
 RUN yarn run build
 
 ################################################################################
 # Build stage 2 - COPY the relevant things (multiple steps)
 
-FROM node:16-alpine as clean
+FROM node:18-alpine3.17 as clean
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update
+RUN corepack enable \
+    && corepack prepare yarn@stable --activate
+
 # Import our shared args
 ARG NODE_ENV
 ARG ROOT_URL
@@ -70,13 +84,19 @@ RUN rm -Rf /app/node_modules /app/@app/*/node_modules
 ################################################################################
 # Build stage FINAL - COPY everything, once, and then do a clean `yarn install`
 
-FROM node:16-alpine
+FROM node:18-alpine3.17
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update && apk add --update git && rm -rf /var/cache/apk/*
+RUN corepack enable \
+    && corepack prepare yarn@stable --activate
 
 EXPOSE $PORT
 WORKDIR /app/
 # Copy everything from stage 2, it's already been filtered
 COPY --from=clean /app/ /app/
 
+RUN yarn set version 3.4.1
 # Install yarn ASAP because it's the slowest
 RUN yarn workspaces focus --all --production
 
@@ -96,4 +116,5 @@ ENV DATABASE_OWNER="${DATABASE_NAME}"
 ENV DATABASE_VISITOR="${DATABASE_NAME}_visitor"
 ENV DATABASE_AUTHENTICATOR="${DATABASE_NAME}_authenticator"
 
-CMD yarn "${TARGET}" start
+# Entrypoint last so that we can run `sh` in previous build steps for debugging
+ENTRYPOINT yarn "${TARGET}" start
