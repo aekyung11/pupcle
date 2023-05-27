@@ -6,7 +6,12 @@
 app = "staging-pupcle"
 primary_region = "nrt"
 
+[processes]
+  server = "yarn server start"
+  worker = "yarn worker start"
+
 [http_service]
+  processes = ["server"]
   internal_port = 5678
   force_https = true
   auto_stop_machines = true
@@ -18,7 +23,7 @@ primary_region = "nrt"
 
 [build.args]
   ROOT_URL = "https://staging-pupcle.fly.dev"
-  TARGET = "server"
+  # TARGET = "server"
 
 [env]
   NODE_ENV = "production"
