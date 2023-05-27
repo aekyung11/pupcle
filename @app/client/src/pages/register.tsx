@@ -16,8 +16,6 @@ import {
 } from "@app/lib";
 import registerLoginDogImage from "@app/server/public/login_page_img.png";
 import logo from "@app/server/public/logo.png";
-import passwordInvisible from "@app/server/public/password_invisible.png";
-import passwordVisible from "@app/server/public/password_visible.png";
 import paw from "@app/server/public/paw.png";
 import { Alert, Button, Col, InputRef, Row } from "antd";
 import { Formik } from "formik";

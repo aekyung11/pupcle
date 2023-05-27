@@ -12,7 +12,7 @@ primary_region = "nrt"
 
 [http_service]
   processes = ["server"]
-  internal_port = 5678
+  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
@@ -22,8 +22,10 @@ primary_region = "nrt"
   dockerfile = "production.Dockerfile"
 
 [build.args]
+  NODE_ENV = "development"
+  PORT = "8080"
   ROOT_URL = "https://staging-pupcle.fly.dev"
-  # TARGET = "server"
+  TARGET = "server"
 
 [env]
   NODE_ENV = "production"
