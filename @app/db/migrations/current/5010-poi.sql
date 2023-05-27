@@ -21,7 +21,7 @@ create trigger _100_timestamps
 
 create table poi_reviews (
   id              uuid primary key default gen_random_uuid(),
-  kakao_id        varchar(255) not null unique,
+  kakao_id        varchar(255) not null,
   -- always set by trigger
   poi_id          uuid references app_public.poi on delete cascade,
   user_id         uuid not null references app_public.users on delete cascade,
@@ -32,6 +32,7 @@ create table poi_reviews (
 );
 alter table app_public.poi_reviews enable row level security;
 
+create index on app_public.poi_reviews (kakao_id, user_id);
 create index on app_public.poi_reviews (poi_id, user_id);
 create index on app_public.poi_reviews (user_id);
 
@@ -65,7 +66,7 @@ create trigger _100_timestamps
   for each row
   execute procedure app_private.tg__timestamps();
 
-create or replace function app_public.tg__poi_reviews__create_poi()
+create or replace function app_public.tg__poi_related__create_poi()
 returns trigger as $$
 begin
   if NEW.poi_id is null then
@@ -86,9 +87,9 @@ $$ language plpgsql volatile security definer set search_path to pg_catalog, pub
 create trigger _200_poi_reviews_create_poi
   before insert on app_public.poi_reviews
   for each row
-  execute procedure app_public.tg__poi_reviews__create_poi();
-comment on function app_public.tg__poi_reviews__create_poi() is
-  E'Inserts a poi for this poi review';
+  execute procedure app_public.tg__poi_related__create_poi();
+comment on function app_public.tg__poi_related__create_poi() is
+  E'Inserts a poi for this poi related object';
 
 create or replace function app_public.tg__poi_reviews__check_kakao_id()
 returns trigger as $$

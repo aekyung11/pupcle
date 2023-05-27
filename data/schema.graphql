@@ -280,6 +280,47 @@ type CreatePetPayload {
   user: User
 }
 
+"""All input for the create `PoiFavorite` mutation."""
+input CreatePoiFavoriteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `PoiFavorite` to be created by this mutation."""
+  poiFavorite: PoiFavoriteInput!
+}
+
+"""The output of our create `PoiFavorite` mutation."""
+type CreatePoiFavoritePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiFavorite`."""
+  poi: Poi
+
+  """The `PoiFavorite` that was created by this mutation."""
+  poiFavorite: PoiFavorite
+
+  """An edge for our `PoiFavorite`. May be used by Relay 1."""
+  poiFavoriteEdge(
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiFavorite`."""
+  user: User
+}
+
 """All input for the create `PoiReview` mutation."""
 input CreatePoiReviewInput {
   """
@@ -675,6 +716,47 @@ type DeletePetPayload {
   query: Query
 
   """Reads a single `User` that is related to this `Pet`."""
+  user: User
+}
+
+"""All input for the `deletePoiFavorite` mutation."""
+input DeletePoiFavoriteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  poiId: UUID!
+  userId: UUID!
+}
+
+"""The output of our delete `PoiFavorite` mutation."""
+type DeletePoiFavoritePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedPoiFavoriteNodeId: ID
+
+  """Reads a single `Poi` that is related to this `PoiFavorite`."""
+  poi: Poi
+
+  """The `PoiFavorite` that was deleted by this mutation."""
+  poiFavorite: PoiFavorite
+
+  """An edge for our `PoiFavorite`. May be used by Relay 1."""
+  poiFavoriteEdge(
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiFavorite`."""
   user: User
 }
 
@@ -1086,6 +1168,14 @@ type Mutation {
     input: CreatePetInput!
   ): CreatePetPayload
 
+  """Creates a single `PoiFavorite`."""
+  createPoiFavorite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePoiFavoriteInput!
+  ): CreatePoiFavoritePayload
+
   """Creates a single `PoiReview`."""
   createPoiReview(
     """
@@ -1151,6 +1241,14 @@ type Mutation {
     """
     input: DeletePetInput!
   ): DeletePetPayload
+
+  """Deletes a single `PoiFavorite` using a unique key."""
+  deletePoiFavorite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePoiFavoriteInput!
+  ): DeletePoiFavoritePayload
 
   """Deletes a single `PoiReview` using a unique key."""
   deletePoiReview(
@@ -1384,6 +1482,22 @@ type Mutation {
     """
     input: UpsertPetBatchInput!
   ): UpsertPetBatchPayload
+
+  """Upserts a single `PoiFavorite`."""
+  upsertPoiFavorite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPoiFavoriteInput!
+  ): UpsertPoiFavoritePayload
+
+  """Upserts a batch of `PoiFavorites`."""
+  upsertPoiFavoriteBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPoiFavoriteBatchInput!
+  ): UpsertPoiFavoriteBatchPayload
 
   """Upserts a single `PoiReview`."""
   upsertPoiReview(
@@ -1952,6 +2066,40 @@ type Poi {
   id: UUID!
   kakaoId: String!
 
+  """Reads and enables pagination through a set of `PoiFavorite`."""
+  poiFavorites(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiFavoriteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiFavoriteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesConnection!
+
   """Reads and enables pagination through a set of `PoiReview`."""
   poiReviews(
     """Read all values in the set after (below) this cursor."""
@@ -2001,6 +2149,104 @@ input PoiCondition {
 
   """Checks for equality with the object’s `kakaoId` field."""
   kakaoId: String
+}
+
+type PoiFavorite {
+  createdAt: Datetime!
+  kakaoId: String!
+
+  """Reads a single `Poi` that is related to this `PoiFavorite`."""
+  poi: Poi
+  poiId: UUID!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `PoiFavorite`."""
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `PoiFavorite` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input PoiFavoriteCondition {
+  """Checks for equality with the object’s `kakaoId` field."""
+  kakaoId: String
+
+  """Checks for equality with the object’s `poiId` field."""
+  poiId: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `PoiFavorite` object types. All fields are combined with a logical ‘and.’
+"""
+input PoiFavoriteFilter {
+  """Checks for all expressions in this list."""
+  and: [PoiFavoriteFilter!]
+
+  """Filter by the object’s `kakaoId` field."""
+  kakaoId: StringFilter
+
+  """Negates the expression."""
+  not: PoiFavoriteFilter
+
+  """Checks for any expressions in this list."""
+  or: [PoiFavoriteFilter!]
+
+  """Filter by the object’s `poiId` field."""
+  poiId: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""An input for mutations affecting `PoiFavorite`"""
+input PoiFavoriteInput {
+  kakaoId: String!
+  poiId: UUID!
+  userId: UUID!
+}
+
+"""A connection to a list of `PoiFavorite` values."""
+type PoiFavoritesConnection {
+  """
+  A list of edges which contains the `PoiFavorite` and cursor to aid in pagination.
+  """
+  edges: [PoiFavoritesEdge!]!
+
+  """A list of `PoiFavorite` objects."""
+  nodes: [PoiFavorite!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `PoiFavorite` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `PoiFavorite` edge in the connection."""
+type PoiFavoritesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `PoiFavorite` at the end of the edge."""
+  node: PoiFavorite!
+}
+
+"""Methods to use when ordering `PoiFavorite`."""
+enum PoiFavoritesOrderBy {
+  KAKAO_ID_ASC
+  KAKAO_ID_DESC
+  NATURAL
+  POI_ID_ASC
+  POI_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
 }
 
 """
@@ -2468,8 +2714,42 @@ type Query {
   ): PetsConnection
   poi(id: UUID!): Poi
   poiByKakaoId(kakaoId: String!): Poi
+  poiFavorite(poiId: UUID!, userId: UUID!): PoiFavorite
+
+  """Reads and enables pagination through a set of `PoiFavorite`."""
+  poiFavorites(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiFavoriteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiFavoriteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesConnection
   poiReview(id: UUID!): PoiReview
-  poiReviewByKakaoId(kakaoId: String!): PoiReview
 
   """Reads and enables pagination through a set of `PoiReview`."""
   poiReviews(
@@ -3651,6 +3931,86 @@ type UpsertPetPayload {
   user: User
 }
 
+"""All input for the upsert `PoiFavorite` batch mutation."""
+input UpsertPoiFavoriteBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `PoiFavorites` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  poiFavorites: [PoiFavoriteInput]!
+}
+
+"""The output of our upsert `PoiFavorite` batch mutation."""
+type UpsertPoiFavoriteBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiFavorite`."""
+  poi: Poi
+
+  """An edge for our `PoiFavorite`. May be used by Relay 1."""
+  poiFavoriteEdge(
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesEdge
+
+  """The `PoiFavorites` that was upserted by this mutation."""
+  poiFavorites: [PoiFavorite]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiFavorite`."""
+  user: User
+}
+
+"""All input for the upsert `PoiFavorite` mutation."""
+input UpsertPoiFavoriteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `PoiFavorite` to be upserted by this mutation."""
+  poiFavorite: PoiFavoriteInput!
+}
+
+"""The output of our upsert `PoiFavorite` mutation."""
+type UpsertPoiFavoritePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `Poi` that is related to this `PoiFavorite`."""
+  poi: Poi
+
+  """The `PoiFavorite` that were upserted by this mutation."""
+  poiFavorite: PoiFavorite
+
+  """An edge for our `PoiFavorite`. May be used by Relay 1."""
+  poiFavoriteEdge(
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `PoiFavorite`."""
+  user: User
+}
+
 """All input for the upsert `PoiReview` batch mutation."""
 input UpsertPoiReviewBatchInput {
   """
@@ -4119,6 +4479,40 @@ type User {
     """The method to use when ordering `Pet`."""
     orderBy: [PetsOrderBy!] = [PRIMARY_KEY_ASC]
   ): PetsConnection!
+
+  """Reads and enables pagination through a set of `PoiFavorite`."""
+  poiFavorites(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PoiFavoriteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiFavoriteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `PoiFavorite`."""
+    orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PoiFavoritesConnection!
 
   """Reads and enables pagination through a set of `PoiReview`."""
   poiReviews(
