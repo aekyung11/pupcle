@@ -7,10 +7,10 @@ import {
   useCurrentUserUpdatedSubscription,
   useLogoutMutation,
 } from "@app/graphql";
+import hamburger from "@app/server/public/hamburger.png";
 import logo from "@app/server/public/logo.png";
 import { Button, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
@@ -337,13 +337,15 @@ export function SharedLayout({
                   okay={data.currentUser.isVerified}
                   data-cy="header-unverified-warning"
                 >
-                  <Image
-                    src="/hamburger.png"
+                  <AspectRatioImage
                     style={{
                       height: "min(2rem, 4vw)",
                       minHeight: "1.5rem",
                     }}
                     alt="menu"
+                    src={hamburger}
+                    imgWidth={72}
+                    imgHeight={72}
                   />
                 </Warn>
 
@@ -405,7 +407,8 @@ export function SharedLayout({
                 </Menu>
               }
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={
                   data.currentUser.pets.nodes[0]?.avatarUrl ||
                   data.currentUser.avatarUrl ||

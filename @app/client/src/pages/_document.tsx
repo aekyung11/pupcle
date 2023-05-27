@@ -29,12 +29,7 @@ class MyDocument extends Document {
           <script
             id="kakao-map-sdk"
             type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bc729dab1397cc4612b6b86217c1bf3a"
-            defer
-          ></script>
-          <script
-            type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=APIKEY&libraries=services,clusterer,drawing"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bc729dab1397cc4612b6b86217c1bf3a&libraries=services,clusterer,drawing&autoload=false"
             defer
           ></script>
         </Head>

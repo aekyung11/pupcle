@@ -1,9 +1,11 @@
+import calendarIcon from "@app/server/public/calendar_icon.png";
 import { format, isValid, parse } from "date-fns";
 import FocusTrap from "focus-trap-react";
-import Image from "next/image";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { usePopper } from "react-popper";
+
+import { AspectRatioImage } from ".";
 
 export type DayPickerInputProps = {
   selected: Date;
@@ -86,10 +88,12 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
           }}
           // style={{ position: "absolute" }}
         >
-          <Image
-            src="/calendar_icon.png"
+          <AspectRatioImage
+            src={calendarIcon}
             style={{ width: "20px" }}
             alt="calendar icon"
+            imgWidth={68}
+            imgHeight={68}
           />
         </button>
       </div>

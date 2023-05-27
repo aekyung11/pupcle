@@ -1,19 +1,29 @@
-import { SharedLayout } from "@app/components";
+import { AspectRatioImage, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
+import cafeIcon from "@app/server/public/cafe_icon.png";
+import mapC from "@app/server/public/map_c.png";
+import mapList from "@app/server/public/map_list.png";
+import parkIcon from "@app/server/public/park_icon.png";
+import restaurantIcon from "@app/server/public/restaurant_icon.png";
+import searchIcon from "@app/server/public/search_icon.png";
+import vetIcon from "@app/server/public/vet_icon.png";
 import { Button, Input } from "antd";
 import { NextPage } from "next";
-import Image from "next/image";
 import * as React from "react";
 import { useEffect } from "react";
 
 const Maps: NextPage = () => {
   const query = useSharedQuery();
+  // @ts-ignore
+  const kakao = typeof window !== "undefined" && window?.kakao;
+  const kakaoMaps = kakao?.maps;
 
   useEffect(() => {
-    var container = document.getElementById("map");
-    if (typeof window !== "undefined") {
-      // @ts-ignore
-      const kakao = window.kakao;
+    if (!kakaoMaps) {
+      return;
+    }
+    kakao.maps.load(() => {
+      var container = document.getElementById("map");
       var options = {
         center: new kakao.maps.LatLng(33.450701, 126.570667),
         level: 2,
@@ -76,8 +86,8 @@ const Maps: NextPage = () => {
           });
         });
       }
-    }
-  }, []);
+    });
+  }, [kakao, kakaoMaps]);
 
   return (
     <SharedLayout title="maps" query={query}>
@@ -110,7 +120,12 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <Image src="/map_list.png" alt="map list" />
+            <AspectRatioImage
+              src={mapList}
+              alt="map list"
+              imgWidth={159}
+              imgHeight={159}
+            />
           </Button>
           <div
             style={{
@@ -133,13 +148,15 @@ const Maps: NextPage = () => {
               }}
               placeholder="어디로 가고 싶으세요?"
               prefix={
-                <Image
-                  src="/search_icon.png"
+                <AspectRatioImage
+                  src={searchIcon}
                   style={{
                     width: "min(25px, 14px + 0.5vw)",
                     marginRight: "8px",
                   }}
                   alt="search icon"
+                  imgWidth={75}
+                  imgHeight={72}
                 />
               }
             />
@@ -159,44 +176,52 @@ const Maps: NextPage = () => {
             }}
           >
             <Button className="maps-category group">
-              <Image
-                src="/vet_icon.png"
+              <AspectRatioImage
+                src={vetIcon}
                 id="vet"
                 style={{ width: "min(17px, 12px + 0.1vw)" }}
                 alt="vet icon"
+                imgWidth={51}
+                imgHeight={51}
               />
               <span className="maps-category-span group-hover:text-white">
                 동물병원
               </span>
             </Button>
             <Button className="maps-category group">
-              <Image
-                src="/cafe_icon.png"
+              <AspectRatioImage
+                src={cafeIcon}
                 id="cafe"
                 style={{ width: "min(28px, 20px + 0.1vw)" }}
                 alt="cafe icon"
+                imgWidth={87}
+                imgHeight={48}
               />
               <span className="maps-category-span group-hover:text-white">
                 카페
               </span>
             </Button>
             <Button className="maps-category group">
-              <Image
-                src="/restaurant_icon.png"
+              <AspectRatioImage
+                src={restaurantIcon}
                 id="restaurant"
                 style={{ width: "min(19px, 13px + 0.1vw)" }}
                 alt="restaurant icon"
+                imgWidth={57}
+                imgHeight={66}
               />
               <span className="maps-category-span group-hover:text-white">
                 식당
               </span>
             </Button>
             <Button className="maps-category group">
-              <Image
-                src="/park_icon.png"
+              <AspectRatioImage
+                src={parkIcon}
                 id="park"
                 style={{ width: "min(23.5px, 16px + 0.1vw)" }}
                 alt="park icon"
+                imgWidth={71}
+                imgHeight={68}
               />
               <span className="maps-category-span group-hover:text-white">
                 공원
@@ -221,7 +246,12 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <Image src="/map_c.png" alt="my list" />
+            <AspectRatioImage
+              src={mapC}
+              alt="my list"
+              imgWidth={159}
+              imgHeight={159}
+            />
           </Button>
         </div>
       </div>

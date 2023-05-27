@@ -1,6 +1,7 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useSocialInfoForm } from "@app/componentlib";
 import {
+  AspectRatioImage,
   AuthRestrict,
   FramedAvatarUpload,
   SharedLayout,
@@ -11,11 +12,11 @@ import {
   useUpdateUserMutation,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import paw from "@app/server/public/paw.png";
 import { Alert, Col, InputRef, message, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Image from "next/image";
 import Router from "next/router";
 import React, { FC, useCallback, useEffect, useRef } from "react";
 
@@ -133,10 +134,12 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
               >
                 회원님의 정보를 입력해주세요
               </span>
-              <Image
-                src="/paw.png"
+              <AspectRatioImage
+                src={paw}
                 style={{ width: "36px", marginBottom: "3px" }}
                 alt=""
+                imgWidth={86}
+                imgHeight={56}
               />
             </Row>
             <FramedAvatarUpload

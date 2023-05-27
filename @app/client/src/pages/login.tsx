@@ -2,6 +2,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import { useLoginForm } from "@app/componentlib";
 import {
+  AspectRatioImage,
   AuthRestrict,
   Col,
   Redirect,
@@ -15,12 +16,14 @@ import {
   getCodeFromError,
   resetWebsocketConnection,
 } from "@app/lib";
+import loginPageImg from "@app/server/public/login_page_img.png";
+import logo from "@app/server/public/logo.png";
+import paw from "@app/server/public/paw.png";
 import type { InputRef } from "antd";
 import { Alert, Button } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
 import React, { useCallback, useEffect, useRef } from "react";
@@ -100,18 +103,28 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                   }}
                 >
                   <Link href="/">
-                    <Image
-                      src="/logo.png"
+                    <AspectRatioImage
+                      src={logo}
                       style={{ height: "2.4rem" }}
                       alt="home logo"
+                      imgWidth={374}
+                      imgHeight={116}
                     />
                   </Link>
                 </Row>
-                <Row style={{ display: "flex", justifyContent: "center" }}>
-                  <Image
-                    src="/login_page_img.png"
+                <Row
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <AspectRatioImage
+                    src={loginPageImg}
                     style={{ maxWidth: "400px", width: "80%" }}
                     alt=""
+                    imgWidth={800}
+                    imgHeight={840}
                   />
                 </Row>
                 <Row style={{ maxWidth: "450px" }}>
@@ -197,10 +210,12 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                     >
                       로그인
                     </span>
-                    <Image
-                      src="/paw.png"
+                    <AspectRatioImage
+                      src={paw}
                       style={{ width: "36px", marginBottom: "3px" }}
                       alt=""
+                      imgWidth={86}
+                      imgHeight={56}
                     />
                   </Row>
                   <Row>
@@ -311,13 +326,15 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             name="password"
                             iconRender={(visible) =>
                               visible ? (
-                                <Image
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
                                   src="/password_visible.png"
                                   style={{ width: "22px" }}
                                   alt="make password visible"
                                 />
                               ) : (
-                                <Image
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
                                   src="/password_invisible.png"
                                   style={{ width: "22px" }}
                                   alt="make password invisible"
