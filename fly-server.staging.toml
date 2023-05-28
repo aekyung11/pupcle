@@ -22,13 +22,13 @@ primary_region = "nrt"
   dockerfile = "production.Dockerfile"
 
 [build.args]
-  NODE_ENV = "development"
+  NODE_ENV = "production"
   PORT = "8080"
   ROOT_URL = "https://staging-pupcle.fly.dev"
   TARGET = "server"
 
 [env]
-  NODE_ENV = "development"
+  NODE_ENV = "production"
   DATABASE_AUTHENTICATOR = "staging_pupcle_authenticator"
   DATABASE_VISITOR = "staging_pupcle_visitor"
   ROOT_URL = "https://staging-pupcle.fly.dev"
