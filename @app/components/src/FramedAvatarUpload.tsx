@@ -2,18 +2,15 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {
   AllowedUploadContentType,
   useCreateUploadUrlMutation,
+  useUpdateUserMutation,
 } from "@app/graphql";
 import { getExceptionFromError } from "@app/lib";
-import plus from "@app/server/public/plus_icon.png";
-import profileDefaultAvatar from "@app/server/public/profile_default_avatar.png";
 import { Col, message, Row, Upload } from "antd";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import axios from "axios";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import React, { useState } from "react";
 import slugify from "slugify";
-
-import { AspectRatioImage } from ".";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -172,7 +169,6 @@ export function FramedAvatarUpload({
           ) : avatarUrl ? (
             <Row>
               <Col span={24}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   style={{
                     objectFit: "cover",
@@ -191,20 +187,18 @@ export function FramedAvatarUpload({
           ) : (
             <Row>
               <Col span={24}>
-                <AspectRatioImage
-                  src={profileDefaultAvatar}
+                <img
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
                     borderStyle: "none",
                     borderRadius: "70px",
-                    width: "140px",
-                    height: "140px",
                     // marginTop: "60px",
                   }}
+                  src="/profile_default_avatar.png"
+                  width="140px"
+                  height="140px"
                   alt={"avatar"}
-                  imgWidth={276}
-                  imgHeight={276}
                 />
               </Col>
             </Row>
@@ -212,8 +206,7 @@ export function FramedAvatarUpload({
           {!disabled && (
             <Row>
               <Col span={24}>
-                <AspectRatioImage
-                  src={plus}
+                <img
                   style={{
                     position: "absolute",
                     zIndex: 100,
@@ -221,9 +214,7 @@ export function FramedAvatarUpload({
                     bottom: "40px",
                     width: "60px",
                   }}
-                  alt="upload"
-                  imgWidth={124}
-                  imgHeight={126}
+                  src="/plus_icon.png"
                 />
               </Col>
             </Row>

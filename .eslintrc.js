@@ -29,6 +29,9 @@ module.exports = {
     {
       files: ["@app/client/**", "@app/components/**"],
       extends: ["next"],
+      rules: {
+        "@next/next/no-img-element": "off",
+      },
     },
   ],
   parserOptions: {

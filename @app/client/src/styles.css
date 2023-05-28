@@ -305,7 +305,7 @@ a.ant-btn-primary:hover {
   cursor: pointer;
 }
 
-.circular-radio-button div.image-hover {
+.circular-radio-button img.image-hover {
   position: absolute;
   top: 0;
   left: 0;
@@ -313,7 +313,7 @@ a.ant-btn-primary:hover {
   transition: opacity 0.2s;
 }
 
-.circular-radio-button:not([disabled])[aria-checked="true"] div.image-hover {
+.circular-radio-button:not([disabled])[aria-checked="true"] img.image-hover {
   opacity: 1;
 }
 

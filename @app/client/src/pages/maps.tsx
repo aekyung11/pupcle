@@ -1,12 +1,5 @@
-import { AspectRatioImage, SharedLayout } from "@app/components";
+import { SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import cafeIcon from "@app/server/public/cafe_icon.png";
-import mapC from "@app/server/public/map_c.png";
-import mapList from "@app/server/public/map_list.png";
-import parkIcon from "@app/server/public/park_icon.png";
-import restaurantIcon from "@app/server/public/restaurant_icon.png";
-import searchIcon from "@app/server/public/search_icon.png";
-import vetIcon from "@app/server/public/vet_icon.png";
 import { Button, Input } from "antd";
 import { NextPage } from "next";
 import * as React from "react";
@@ -120,12 +113,7 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <AspectRatioImage
-              src={mapList}
-              alt="map list"
-              imgWidth={159}
-              imgHeight={159}
-            />
+            <img src="/map_list.png" alt="map list" />
           </Button>
           <div
             style={{
@@ -148,15 +136,13 @@ const Maps: NextPage = () => {
               }}
               placeholder="어디로 가고 싶으세요?"
               prefix={
-                <AspectRatioImage
-                  src={searchIcon}
+                <img
+                  src="/search_icon.png"
                   style={{
                     width: "min(25px, 14px + 0.5vw)",
                     marginRight: "8px",
                   }}
                   alt="search icon"
-                  imgWidth={75}
-                  imgHeight={72}
                 />
               }
             />
@@ -176,52 +162,44 @@ const Maps: NextPage = () => {
             }}
           >
             <Button className="maps-category group">
-              <AspectRatioImage
-                src={vetIcon}
+              <img
+                src="/vet_icon.png"
                 id="vet"
                 style={{ width: "min(17px, 12px + 0.1vw)" }}
                 alt="vet icon"
-                imgWidth={51}
-                imgHeight={51}
               />
               <span className="maps-category-span group-hover:text-white">
                 동물병원
               </span>
             </Button>
             <Button className="maps-category group">
-              <AspectRatioImage
-                src={cafeIcon}
+              <img
+                src="/cafe_icon.png"
                 id="cafe"
                 style={{ width: "min(28px, 20px + 0.1vw)" }}
                 alt="cafe icon"
-                imgWidth={87}
-                imgHeight={48}
               />
               <span className="maps-category-span group-hover:text-white">
                 카페
               </span>
             </Button>
             <Button className="maps-category group">
-              <AspectRatioImage
-                src={restaurantIcon}
+              <img
+                src="/restaurant_icon.png"
                 id="restaurant"
                 style={{ width: "min(19px, 13px + 0.1vw)" }}
                 alt="restaurant icon"
-                imgWidth={57}
-                imgHeight={66}
               />
               <span className="maps-category-span group-hover:text-white">
                 식당
               </span>
             </Button>
             <Button className="maps-category group">
-              <AspectRatioImage
-                src={parkIcon}
+              <img
+                src="/park_icon.png"
                 id="park"
                 style={{ width: "min(23.5px, 16px + 0.1vw)" }}
                 alt="park icon"
-                imgWidth={71}
-                imgHeight={68}
               />
               <span className="maps-category-span group-hover:text-white">
                 공원
@@ -246,12 +224,7 @@ const Maps: NextPage = () => {
               padding: 0,
             }}
           >
-            <AspectRatioImage
-              src={mapC}
-              alt="my list"
-              imgWidth={159}
-              imgHeight={159}
-            />
+            <img src="/map_c.png" alt="my list" />
           </Button>
         </div>
       </div>

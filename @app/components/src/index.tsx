@@ -1,4 +1,3 @@
-export * from "./AspectRatioImage";
 export * from "./ButtonLink";
 export * from "./DayPickerInput";
 export * from "./ErrorAlert";

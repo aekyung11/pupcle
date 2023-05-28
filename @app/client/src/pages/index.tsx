@@ -1,6 +1,5 @@
-import { AspectRatioImage, Link, SharedLayout } from "@app/components";
+import { Link, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import cycleExample from "@app/server/public/cycle_example.png";
 import { Button, Col, Row } from "antd";
 import { NextPage } from "next";
 import * as React from "react";
@@ -30,15 +29,14 @@ const StartPage: NextPage = () => {
               padding: "4.5rem 1rem 4.5rem 0",
             }}
           >
-            <AspectRatioImage
-              src={cycleExample}
-              alt="cycle example"
-              imgWidth={1136}
-              imgHeight={1202}
+            <img
+              src="/cycle_example.png"
               style={{
+                height: "fit-content",
                 width: "85%",
                 maxWidth: "600px",
               }}
+              alt="cycle example"
             />
           </Col>
           <Col

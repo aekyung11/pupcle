@@ -1,6 +1,5 @@
 import { usePetInfoForm } from "@app/componentlib";
 import {
-  AspectRatioImage,
   AuthRestrict,
   DayPickerInput,
   FramedAvatarUpload,
@@ -12,15 +11,6 @@ import {
   useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import female from "@app/server/public/female.png";
-import femaleClicked from "@app/server/public/female_clicked.png";
-import male from "@app/server/public/male.png";
-import maleClicked from "@app/server/public/male_clicked.png";
-import neutered from "@app/server/public/neutered.png";
-import neuteredClicked from "@app/server/public/neutered_clicked.png";
-import notNeutered from "@app/server/public/not_neutered.png";
-import notNeuteredClicked from "@app/server/public/not_neutered_clicked.png";
-import paw from "@app/server/public/paw.png";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Alert, Col, InputRef, Row } from "antd";
 import { Formik } from "formik";
@@ -123,12 +113,10 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
               >
                 반려견의 정보를 입력해주세요
               </span>
-              <AspectRatioImage
-                src={paw}
+              <img
+                src="/paw.png"
                 style={{ width: "36px", marginBottom: "3px" }}
                 alt=""
-                imgWidth={86}
-                imgHeight={56}
               />
             </Row>
             <Formik
@@ -339,40 +327,36 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               className="circular-radio-button"
                               value={PetGender.M}
                             >
-                              <AspectRatioImage
-                                src={male}
-                                style={{ width: "40px", height: "40px" }}
+                              <img
+                                src="/male.png"
+                                width={40}
+                                height={40}
                                 alt="male"
-                                imgWidth={98}
-                                imgHeight={98}
                               />
-                              <AspectRatioImage
+                              <img
                                 className="image-hover"
-                                src={maleClicked}
-                                style={{ width: "40px", height: "40px" }}
+                                src="/male_clicked.png"
                                 alt="male clicked"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className="circular-radio-button"
                               value={PetGender.F}
                             >
-                              <AspectRatioImage
-                                src={female}
-                                style={{ width: "40px", height: "40px" }}
+                              <img
+                                src="/female.png"
                                 alt="female"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
-                              <AspectRatioImage
+                              <img
                                 className="image-hover"
-                                src={femaleClicked}
-                                style={{ width: "40px", height: "40px" }}
+                                src="/female_clicked.png"
                                 alt="female clicked"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                           </div>
@@ -435,49 +419,36 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
                               className="circular-radio-button"
                               value="true"
                             >
-                              <AspectRatioImage
-                                src={neutered}
-                                style={{ width: "40px", height: "40px" }}
+                              <img
+                                src="/neutered.png"
                                 alt="neutered"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
-                              <AspectRatioImage
+                              <img
                                 className="image-hover"
-                                src={neuteredClicked}
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                }}
+                                src="/neutered_clicked.png"
                                 alt="neutered clicked"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className="circular-radio-button"
                               value="false"
                             >
-                              <AspectRatioImage
-                                src={notNeutered}
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                }}
+                              <img
+                                src="/not_neutered.png"
                                 alt="not neutered"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
-                              <AspectRatioImage
+                              <img
                                 className="image-hover"
-                                src={notNeuteredClicked}
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                }}
+                                src="/not_neutered_clicked.png"
                                 alt="not neutered clicked"
-                                imgWidth={98}
-                                imgHeight={98}
+                                width={40}
+                                height={40}
                               />
                             </RadioGroupPrimitive.Item>
                           </div>

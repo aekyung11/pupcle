@@ -11,8 +11,7 @@
     "declarationMap": false,
     "isolatedModules": true,
     "module": "esnext",
-    "moduleResolution": "node",
-    "typeRoots": ["types"]
+    "moduleResolution": "node"
   },
   "exclude": ["node_modules", "./node_modules", "./node_modules/*"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

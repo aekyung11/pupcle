@@ -7,8 +7,6 @@ import {
   useCurrentUserUpdatedSubscription,
   useLogoutMutation,
 } from "@app/graphql";
-import hamburger from "@app/server/public/hamburger.png";
-import logo from "@app/server/public/logo.png";
 import { Button, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
 import Head from "next/head";
 import Link from "next/link";
@@ -16,7 +14,7 @@ import Router, { useRouter } from "next/router";
 import * as React from "react";
 import { useCallback } from "react";
 
-import { AspectRatioImage, ErrorAlert, StandardWidth, Warn } from ".";
+import { ErrorAlert, StandardWidth, Warn } from ".";
 import { Redirect } from "./Redirect";
 
 const { Header, Content, Footer } = Layout;
@@ -206,15 +204,10 @@ export function SharedLayout({
       <Col span={5} style={{ display: "flex", justifyContent: "flex-start" }}>
         <Link href="/">
           {/* <Link href="/{projectName}"> */}
-          <AspectRatioImage
-            style={{
-              height: "min(2.8rem, 4vw)",
-              minHeight: "2rem",
-            }}
-            imgWidth={374}
-            imgHeight={116}
+          <img
+            src="/logo.png"
+            style={{ height: "min(2.8rem, 4vw)", minHeight: "2rem" }}
             alt="home"
-            src={logo}
           />
         </Link>
       </Col>
@@ -229,14 +222,14 @@ export function SharedLayout({
             >
               HOME
             </Link>
-            <a
+            <Link
               href="/calendar"
               style={{
                 fontWeight: title === "calendar" ? 600 : 400,
               }}
             >
               CALENDAR
-            </a>
+            </Link>
             <Link
               href="/mission"
               style={{
@@ -337,15 +330,13 @@ export function SharedLayout({
                   okay={data.currentUser.isVerified}
                   data-cy="header-unverified-warning"
                 >
-                  <AspectRatioImage
+                  <img
+                    src="/hamburger.png"
                     style={{
                       height: "min(2rem, 4vw)",
                       minHeight: "1.5rem",
                     }}
                     alt="menu"
-                    src={hamburger}
-                    imgWidth={72}
-                    imgHeight={72}
                   />
                 </Warn>
 
@@ -407,7 +398,6 @@ export function SharedLayout({
                 </Menu>
               }
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={
                   data.currentUser.pets.nodes[0]?.avatarUrl ||

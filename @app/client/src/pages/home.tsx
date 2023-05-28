@@ -1,4 +1,4 @@
-import { AspectRatioImage, AuthRestrict, SharedLayout } from "@app/components";
+import { AuthRestrict, SharedLayout } from "@app/components";
 import {
   DailyRecordStatus,
   HomePage_PetFragment,
@@ -9,40 +9,12 @@ import {
   useHomePageQuery,
   useUpsertPrivateDailyRecordMutation,
 } from "@app/graphql";
-import badIconChecked from "@app/server/public/bad_icon_checked.png";
-import badIconUnchecked from "@app/server/public/bad_icon_unchecked.png";
-import bathroom from "@app/server/public/bathroom.png";
-import bathroomStatusBanner from "@app/server/public/bathroom_status_banner.png";
-import c from "@app/server/public/c.png";
-import cBathroomSelected from "@app/server/public/c_bathroom_selected.png";
-import cDietSelected from "@app/server/public/c_diet_selected.png";
-import cHealthSelected from "@app/server/public/c_health_selected.png";
-import cPlaySelected from "@app/server/public/c_play_selected.png";
-import cSleepSelected from "@app/server/public/c_sleep_selected.png";
-import cWalkingSelected from "@app/server/public/c_walking_selected.png";
-import caretIcon from "@app/server/public/caret_icon.png";
-import closeButton from "@app/server/public/close_button.png";
-import diet from "@app/server/public/diet.png";
-import dietStatusBanner from "@app/server/public/diet_status_banner.png";
-import goodIconChecked from "@app/server/public/good_icon_checked.png";
-import goodIconUnchecked from "@app/server/public/good_icon_unchecked.png";
-import health from "@app/server/public/health.png";
-import healthStatusBanner from "@app/server/public/health_status_banner.png";
-import play from "@app/server/public/play.png";
-import playStatusBanner from "@app/server/public/play_status_banner.png";
-import sleep from "@app/server/public/sleep.png";
-import sleepStatusBanner from "@app/server/public/sleep_status_banner.png";
-import statusHero from "@app/server/public/status_hero.png";
-import walking from "@app/server/public/walking.png";
-import walkingStatusBanner from "@app/server/public/walking_status_banner.png";
-import writeIcon from "@app/server/public/write_icon.png";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Col, Row } from "antd";
 import clsx from "clsx";
 import { format } from "date-fns";
 import { NextPage } from "next";
-import Image from "next/image";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
 
@@ -80,16 +52,11 @@ function StatusTab({
   let status = null;
   let commentKey: keyof HomePage_PrivateDailyRecordFragment;
   let comment = null;
-  let statusBannerUrl: React.ComponentProps<typeof Image>["src"] =
-    "/unknown.png";
-  let statusBannerWidth = 0;
-  let statusBannerHeight = 0;
+  let statusBannerUrl = "/unknown.png";
   if (tab === Tab.SLEEP) {
     statusKey = "sleepStatus";
     commentKey = "sleepComment";
-    statusBannerUrl = sleepStatusBanner;
-    statusBannerWidth = 829;
-    statusBannerHeight = 282;
+    statusBannerUrl = "/sleep_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -98,9 +65,7 @@ function StatusTab({
   if (tab === Tab.DIET) {
     statusKey = "dietStatus";
     commentKey = "dietComment";
-    statusBannerUrl = dietStatusBanner;
-    statusBannerWidth = 765;
-    statusBannerHeight = 282;
+    statusBannerUrl = "/diet_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -109,9 +74,7 @@ function StatusTab({
   if (tab === Tab.WALKING) {
     statusKey = "walkingStatus";
     commentKey = "walkingComment";
-    statusBannerUrl = walkingStatusBanner;
-    statusBannerWidth = 1276;
-    statusBannerHeight = 307;
+    statusBannerUrl = "/walking_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -120,9 +83,7 @@ function StatusTab({
   if (tab === Tab.PLAY) {
     statusKey = "playStatus";
     commentKey = "playComment";
-    statusBannerUrl = playStatusBanner;
-    statusBannerWidth = 755;
-    statusBannerHeight = 282;
+    statusBannerUrl = "/play_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -131,9 +92,7 @@ function StatusTab({
   if (tab === Tab.BATHROOM) {
     statusKey = "bathroomStatus";
     commentKey = "bathroomComment";
-    statusBannerUrl = bathroomStatusBanner;
-    statusBannerWidth = 1454;
-    statusBannerHeight = 282;
+    statusBannerUrl = "/bathroom_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -142,9 +101,7 @@ function StatusTab({
   if (tab === Tab.HEALTH) {
     statusKey = "healthStatus";
     commentKey = "healthComment";
-    statusBannerUrl = healthStatusBanner;
-    statusBannerWidth = 1023;
-    statusBannerHeight = 291;
+    statusBannerUrl = "/health_status_banner.png";
     if (privateRecord) {
       status = privateRecord[statusKey];
       comment = privateRecord[commentKey];
@@ -167,15 +124,14 @@ function StatusTab({
           justifyContent: "center",
         }}
       >
-        <AspectRatioImage
+        <img
           src={statusBannerUrl}
           style={{
             height: "min(calc(48px + 2.4vw), 94px)",
             filter: "drop-shadow(0px 4px 7px rgb(0 0 0 / 0.1))",
+            position: "relative",
           }}
           alt="status banner"
-          imgWidth={statusBannerWidth}
-          imgHeight={statusBannerHeight}
         />
       </Row>
       <Row
@@ -241,20 +197,18 @@ function StatusTab({
               value={DailyRecordStatus.Good}
               style={{ marginRight: "min(2vw, 40px)", borderRadius: 0 }}
             >
-              <AspectRatioImage
-                src={goodIconUnchecked}
+              <img
+                src="/good_icon_unchecked.png"
                 style={{ width: "min(220px, 20vw)" }}
                 alt="good unchecked"
-                imgWidth={644}
-                imgHeight={512}
               />
-              <AspectRatioImage
+              <img
                 className="image-hover"
-                src={goodIconChecked}
+                src="/good_icon_checked.png"
                 style={{ width: "min(220px, 20vw)" }}
+                // width={40}
+                // height={40}
                 alt="good checked"
-                imgWidth={645}
-                imgHeight={512}
               />
             </RadioGroupPrimitive.Item>
             <RadioGroupPrimitive.Item
@@ -262,20 +216,18 @@ function StatusTab({
               value={DailyRecordStatus.Bad}
               style={{ borderRadius: 0 }}
             >
-              <AspectRatioImage
-                src={badIconUnchecked}
+              <img
+                src="/bad_icon_unchecked.png"
                 style={{ width: "min(220px, 20vw)" }}
                 alt="bad icon unchecked"
-                imgWidth={644}
-                imgHeight={510}
               />
-              <AspectRatioImage
+              <img
                 className="image-hover"
-                src={badIconChecked}
+                src="/bad_icon_checked.png"
                 style={{ width: "min(220px, 20vw)" }}
+                // width={40}
+                // height={40}
                 alt="bad icon checked"
-                imgWidth={644}
-                imgHeight={510}
               />
             </RadioGroupPrimitive.Item>
           </div>
@@ -303,12 +255,10 @@ function StatusTab({
           onClick={() => setShowCommentBox(true)}
           disabled={!dailyRecordStatus}
         >
-          <AspectRatioImage
+          <img
             style={{ height: "min(calc((30px + 2vw) / 2), 35px)" }}
-            src={writeIcon}
+            src="/write_icon.png"
             alt="write icon"
-            imgWidth={96}
-            imgHeight={96}
           />
           <span
             style={{
@@ -323,16 +273,24 @@ function StatusTab({
           >
             {comment ? <u>{comment}</u> : "Leave a comment here"}
           </span>
-          <AspectRatioImage
-            src={caretIcon}
+          {/* {!comment && (
+            <img
+              src="/caret_icon.png"
+              style={{
+                height: "min(10px + 0.2vw, 20px)",
+                position: "absolute",
+                right: "22px",
+              }}
+            />
+          )} */}
+          <img
+            src="/caret_icon.png"
             style={{
               height: "min(10px + 0.2vw, 20px)",
               position: "absolute",
               right: "22px",
             }}
             alt="caret icon"
-            imgWidth={72}
-            imgHeight={48}
           />
         </Button>
       </Row>
@@ -368,12 +326,10 @@ function StatusTab({
               padding: "0px",
             }}
           >
-            <AspectRatioImage
-              src={closeButton}
+            <img
+              src="/close_button.png"
               style={{ width: "min(24px, 15px + 0.5vw)" }}
               alt="close button"
-              imgWidth={84}
-              imgHeight={84}
             />
           </Button>
         </div>
@@ -553,21 +509,21 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                 // backgroundImage: "url(/c.png)",
               }}
             >
-              <AspectRatioImage
+              <img
                 src={
                   completeStatusCount > 5
-                    ? cHealthSelected
+                    ? "/c_health_selected.png"
                     : completeStatusCount > 4
-                    ? cBathroomSelected
+                    ? "/c_bathroom_selected.png"
                     : completeStatusCount > 3
-                    ? cPlaySelected
+                    ? "/c_play_selected.png"
                     : completeStatusCount > 2
-                    ? cWalkingSelected
+                    ? "/c_walking_selected.png"
                     : completeStatusCount > 1
-                    ? cDietSelected
+                    ? "/c_diet_selected.png"
                     : completeStatusCount > 0
-                    ? cSleepSelected
-                    : c
+                    ? "/c_sleep_selected.png"
+                    : "/c.png"
                 }
                 style={{
                   height: "fit-content",
@@ -576,36 +532,6 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                   filter: "drop-shadow(2px 2px 2px grey)",
                 }}
                 alt=""
-                imgWidth={
-                  completeStatusCount > 5
-                    ? 1722
-                    : completeStatusCount > 4
-                    ? 1725
-                    : completeStatusCount > 3
-                    ? 1722
-                    : completeStatusCount > 2
-                    ? 1722
-                    : completeStatusCount > 1
-                    ? 1722
-                    : completeStatusCount > 0
-                    ? 1719
-                    : 1721
-                }
-                imgHeight={
-                  completeStatusCount > 5
-                    ? 1806
-                    : completeStatusCount > 4
-                    ? 1810
-                    : completeStatusCount > 3
-                    ? 1803
-                    : completeStatusCount > 2
-                    ? 1803
-                    : completeStatusCount > 1
-                    ? 1802
-                    : completeStatusCount > 0
-                    ? 1800
-                    : 1802
-                }
               />
               <Tabs.Trigger value={Tab.SLEEP} key={Tab.SLEEP} asChild={true}>
                 <Button
@@ -614,13 +540,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 1,
                   })}
                 >
-                  <AspectRatioImage
-                    id="sleep"
-                    src={sleep}
-                    alt="sleep tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="sleep" src="/sleep.png" alt="sleep tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.DIET} key={Tab.DIET} asChild={true}>
@@ -630,13 +550,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 2,
                   })}
                 >
-                  <AspectRatioImage
-                    id="diet"
-                    src={diet}
-                    alt="diet tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="diet" src="/diet.png" alt="diet tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger
@@ -650,13 +564,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 3,
                   })}
                 >
-                  <AspectRatioImage
-                    id="walking"
-                    src={walking}
-                    alt="walking tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="walking" src="/walking.png" alt="walking tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.PLAY} key={Tab.PLAY} asChild={true}>
@@ -666,13 +574,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 4,
                   })}
                 >
-                  <AspectRatioImage
-                    id="play"
-                    src={play}
-                    alt="play tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="play" src="/play.png" alt="play tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger
@@ -686,13 +588,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 5,
                   })}
                 >
-                  <AspectRatioImage
-                    id="bathroom"
-                    src={bathroom}
-                    alt="bathroom tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="bathroom" src="/bathroom.png" alt="bathroom tab" />
                 </Button>
               </Tabs.Trigger>
               <Tabs.Trigger value={Tab.HEALTH} key={Tab.HEALTH} asChild={true}>
@@ -702,13 +598,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     complete: completeStatusCount >= 6,
                   })}
                 >
-                  <AspectRatioImage
-                    id="health"
-                    src={health}
-                    alt="health tab"
-                    imgWidth={604}
-                    imgHeight={604}
-                  />
+                  <img id="health" src="/health.png" alt="health tab" />
                 </Button>
               </Tabs.Trigger>
             </Tabs.List>
@@ -780,12 +670,10 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                       </span>
                     </Row>
                     <Row>
-                      <AspectRatioImage
-                        src={statusHero}
-                        style={{ height: "100%" }}
+                      <img
+                        src="/status_hero.png"
+                        height={"100%"}
                         alt="status hero"
-                        imgWidth={1263}
-                        imgHeight={1020}
                       />
                     </Row>
                   </>
