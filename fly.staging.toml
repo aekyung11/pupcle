@@ -24,18 +24,18 @@ primary_region = "nrt"
 [build.args]
   NODE_ENV = "production"
   PORT = "8080"
-  ROOT_URL = "https://staging-pupcle.fly.dev"
+  ROOT_URL = "https://staging-pupcle.com"
   TARGET = "server"
 
 [env]
   NODE_ENV = "production"
   DATABASE_AUTHENTICATOR = "staging_pupcle_authenticator"
   DATABASE_VISITOR = "staging_pupcle_visitor"
-  ROOT_URL = "https://staging-pupcle.fly.dev"
+  ROOT_URL = "https://staging-pupcle.com"
   GRAPHILE_TURBO = "1"
   FROM_EMAIL_DOMAIN = "staging-pupcle.com"
   AWS_BUCKET_UPLOAD = "staging-pupcle-upload"
-  S3_HOST = "staging-pupcle-upload.s3-website-us-west-2.amazonaws.com"
+  S3_HOST = "s3.us-west-2.amazonaws.com"
   S3_ACCESS_KEY_ID = "AKIAXP474PBJEOOMJUPA"
   AWS_ACCESS_KEY_ID = "AKIAXP474PBJEOOMJUPA"
 

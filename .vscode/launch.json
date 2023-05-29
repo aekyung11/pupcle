@@ -12,16 +12,6 @@
       "type": "node"
     },
     {
-      "name": "Docker: Attach to Node",
-      "type": "node",
-      "request": "attach",
-      "port": 9229,
-      "address": "localhost",
-      "localRoot": "${workspaceFolder}",
-      "remoteRoot": "/app",
-      "protocol": "inspector"
-    },
-    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Node Server",

@@ -211,7 +211,7 @@ const CreateUploadUrlPlugin = makeExtendSchemaPlugin(() => ({
             region: awsRegion,
           }),
           signatureVersion: "v4",
-          endpoint: s3Host,
+          ...(isDev && { endpoint: s3Host }),
           accessKeyId: s3AccessKeyId,
           secretAccessKey: s3SecretKey,
           s3ForcePathStyle: isDev,

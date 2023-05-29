@@ -1,4 +1,4 @@
-import { s3Host } from "@app/config";
+import { s3Host, uploadBucket } from "@app/config";
 import { Express } from "express";
 import type { HelmetOptions } from "helmet" assert { "resolution-mode": "import" };
 
@@ -9,8 +9,9 @@ if (!tmpRootUrl || typeof tmpRootUrl !== "string") {
 }
 const ROOT_URL = tmpRootUrl;
 
-const isDevOrTest =
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+const isDev = process.env.NODE_ENV === "development";
+
+const isDevOrTest = isDev || process.env.NODE_ENV === "test";
 
 export default async function installHelmet(app: Express) {
   const { default: helmet, contentSecurityPolicy } = await import("helmet");
@@ -25,11 +26,11 @@ export default async function installHelmet(app: Express) {
           // an https:// page, so we have to translate explicitly for
           // it.
           ROOT_URL.replace(/^http/, "ws"),
-          s3Host!,
+          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
         ],
         "img-src": [
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
-          s3Host!,
+          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
           "*.daumcdn.net",
         ],
         "script-src": [
