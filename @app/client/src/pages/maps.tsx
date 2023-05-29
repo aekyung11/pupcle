@@ -1,4 +1,4 @@
-import { SharedLayout } from "@app/components";
+import { MapSheet, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
 import { Button, Input } from "antd";
 import { NextPage } from "next";
@@ -146,17 +146,30 @@ const Maps: NextPage = () => {
             zIndex: 2,
           }}
         >
-          <Button
-            style={{
-              width: "min(53px, 2rem + 1vw)",
-              height: "min(53px, 2rem + 1vw)",
-              borderRadius: "50%",
-              boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
-              padding: 0,
-            }}
-          >
-            <img src="/map_list.png" alt="map list" />
-          </Button>
+          <MapSheet.Sheet>
+            <MapSheet.SheetTrigger
+              style={{
+                width: "min(53px, 2rem + 1vw)",
+                height: "min(53px, 2rem + 1vw)",
+                borderRadius: "50%",
+                boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+                padding: 0,
+              }}
+            >
+              <img src="/map_list.png" alt="map list" />
+            </MapSheet.SheetTrigger>
+            <MapSheet.SheetContent>
+              <MapSheet.SheetHeader>
+                <MapSheet.SheetTitle>
+                  Are you sure absolutely sure?
+                </MapSheet.SheetTitle>
+                <MapSheet.SheetDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </MapSheet.SheetDescription>
+              </MapSheet.SheetHeader>
+            </MapSheet.SheetContent>
+          </MapSheet.Sheet>
           <div
             style={{
               marginLeft: "3rem",
