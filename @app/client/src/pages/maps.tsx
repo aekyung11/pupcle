@@ -94,7 +94,48 @@ const Maps: NextPage = () => {
             top: 0,
           }}
         ></div>
-
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "min(53px + 36px, 2rem + 1vw + 36px)",
+            height: "100vh",
+            position: "fixed",
+            top: 0,
+            boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
+            zIndex: 1,
+          }}
+        ></div>
+        <div
+          style={{
+            backgroundColor: "white",
+            left: "min(53px + 36px, 2rem + 1vw + 36px)",
+            width: "calc(6rem - 36px + max(200px, 23vw))",
+            height: "100vh",
+            position: "fixed",
+            top: 0,
+            boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+              padding:
+                "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
+            }}
+          >
+            <Button
+              style={{
+                height: "min(38px, 1.5rem + 0.4vw)",
+                width: "min(112px, 5rem + 0.5vw)",
+              }}
+            >
+              {" "}
+              거리 순{" "}
+            </Button>
+          </div>
+        </div>
         <div
           style={{
             display: "flex",
@@ -102,6 +143,7 @@ const Maps: NextPage = () => {
             position: "fixed",
             top: "calc(6rem + 25px)",
             left: "18px",
+            zIndex: 2,
           }}
         >
           <Button
@@ -213,6 +255,7 @@ const Maps: NextPage = () => {
             position: "fixed",
             top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
             left: "18px",
+            zIndex: 2,
           }}
         >
           <Button

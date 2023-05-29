@@ -16,6 +16,7 @@ module.exports = {
   ],
   theme: {
     fontSize: {
+      "pupcle-24px": "min(24px, 2vw)",
       "pupcle-30px": "min(30px, 2.4vw)",
     },
     extend: {

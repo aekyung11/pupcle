@@ -31,7 +31,7 @@ const _babelHackRow = Row;
 const _babelHackCol = Col;
 export { _babelHackCol as Col, Link, _babelHackRow as Row };
 
-export const contentMinHeight = "calc(100vh - 64px - 70px)";
+export const contentMinHeight = "calc(100vh - 6rem - 70px)";
 
 export interface SharedLayoutChildProps {
   error?: ApolloError | Error;
@@ -262,7 +262,19 @@ export function SharedLayout({
           <div style={{ display: "flex", alignItems: "center" }}>
             <Dropdown
               overlay={
-                <Menu>
+                <Menu
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "245px",
+                    height: "250px",
+                    right: "-80px",
+                    top: "-20px",
+                    borderRadius: "30px",
+                    padding: 0,
+                    boxShadow: "0px 0px 6px 2px rgb(0 0 0 / 0.25)",
+                  }}
+                >
                   {data.currentUser.organizationMemberships.nodes.map(
                     ({ organization, isOwner }) => (
                       <Menu.Item key={organization?.id}>
@@ -283,32 +295,173 @@ export function SharedLayout({
                       </Menu.Item>
                     )
                   )}
-                  <Menu.Item key="_account">
+                  <Menu.Item
+                    key="_account"
+                    style={{
+                      height: "calc((250px - 147px) / 2)",
+                      padding: "2.5px 1.5rem 0px",
+                      borderBottom: "#D9D9D9 2px solid",
+                    }}
+                  >
                     <Link href="/account" data-cy="layout-link-account">
-                      Account
+                      <Row style={{ alignItems: "center" }}>
+                        <Col
+                          span={4}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <img
+                            src="/account_icon.png"
+                            style={{ width: "17px" }}
+                          />
+                        </Col>
+                        <Col span={20} style={{ paddingLeft: "0.5rem" }}>
+                          <span
+                            style={{
+                              fontFamily: "Poppins",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                            }}
+                          >
+                            Account
+                          </span>
+                        </Col>
+                      </Row>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="_pup-notes">
+                  <Menu.Item
+                    key="_pup-notes"
+                    style={{
+                      height: "49px",
+                      padding: "0 1.5rem",
+                      borderBottom: "#D9D9D9 2px solid",
+                    }}
+                  >
                     <Link href="/pup-notes" data-cy="layout-link-pup-notes">
-                      My Pup&apos;s Notes
+                      <Row style={{ alignItems: "center" }}>
+                        <Col
+                          span={4}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <img
+                            src="/notes_icon.png"
+                            style={{ width: "20px" }}
+                          />
+                        </Col>
+                        <Col span={20} style={{ paddingLeft: "0.5rem" }}>
+                          <span
+                            style={{
+                              fontFamily: "Poppins",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                            }}
+                          >
+                            My Pup&apos;s Notes
+                          </span>
+                        </Col>
+                      </Row>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="_friends">
+                  <Menu.Item
+                    key="_friends"
+                    style={{
+                      height: "49px",
+                      padding: "0 1.5rem",
+                      borderBottom: "#D9D9D9 2px solid",
+                    }}
+                  >
                     <Link href="/friends" data-cy="layout-link-friends">
-                      Friends
+                      <Row style={{ alignItems: "center" }}>
+                        <Col
+                          span={4}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <img
+                            src="/friends_icon.png"
+                            style={{ width: "24px" }}
+                          />
+                        </Col>
+                        <Col span={20} style={{ paddingLeft: "0.5rem" }}>
+                          <span
+                            style={{
+                              fontFamily: "Poppins",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                            }}
+                          >
+                            Friends
+                          </span>
+                        </Col>
+                      </Row>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="_settings">
+                  <Menu.Item
+                    key="_settings"
+                    style={{
+                      height: "49px",
+                      padding: "0 1.5rem",
+                      borderBottom: "#D9D9D9 2px solid",
+                    }}
+                  >
                     <Link href="/settings" data-cy="layout-link-settings">
-                      <Warn okay={data.currentUser.isVerified}>Settings</Warn>
+                      <Row style={{ alignItems: "center" }}>
+                        <Col
+                          span={4}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <img
+                            src="/settings_icon.png"
+                            style={{ width: "23px" }}
+                          />
+                        </Col>
+                        <Col span={20} style={{ paddingLeft: "0.5rem" }}>
+                          <Warn okay={data.currentUser.isVerified}>
+                            <span
+                              style={{
+                                fontFamily: "Poppins",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              Settings
+                            </span>
+                          </Warn>
+                        </Col>
+                      </Row>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="_notification">
+                  <Menu.Item
+                    key="_notification"
+                    style={{
+                      height: "calc((250px - 147px) / 2)",
+                      padding: "0 1.5rem 2.5px",
+                    }}
+                  >
                     <Link
                       href="/notification"
                       data-cy="layout-link-notification"
                     >
-                      Notification
+                      <Row style={{ alignItems: "center" }}>
+                        <Col
+                          span={4}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <img
+                            src="/notification_icon.png"
+                            style={{ width: "28px" }}
+                          />
+                        </Col>
+                        <Col span={20} style={{ paddingLeft: "0.5rem" }}>
+                          <span
+                            style={{
+                              fontFamily: "Poppins",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                            }}
+                          >
+                            Notification
+                          </span>
+                        </Col>
+                      </Row>
                     </Link>
                   </Menu.Item>
                   {/* <Menu.Item key="_logout">
@@ -448,7 +601,7 @@ export function SharedLayout({
         <Header
           style={{
             boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)", // TODO: f5f5f5 -> pupcleGray로 지정
-            zIndex: 1,
+            zIndex: 2,
             overflow: "hidden",
             height: "6rem",
             borderRadius: "0 0 50px 50px",

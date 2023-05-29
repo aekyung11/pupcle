@@ -342,7 +342,7 @@ function StatusTab({
           }}
         >
           <textarea
-            className="text-Poppins text-pupcle-30px text-home-comment placeholder-home-comment w-full resize-none border-0 bg-transparent px-0 font-semibold text-gray-900 focus:outline-0 focus:ring-0"
+            className="text-Poppins text-pupcle-24px text-home-comment placeholder-home-comment w-full resize-none border-0 bg-transparent px-0 font-semibold text-gray-900 focus:outline-0 focus:ring-0"
             placeholder={
               "자세히 기록해보세요.\n(기록하지 않더라도 결과는 저장됩니다.)"
             }
@@ -364,7 +364,7 @@ function StatusTab({
               border: "none",
               borderRadius: "27px",
               height: "min(54px, 36px + 1vw)",
-              fontSize: "min(30px, 2.4vw)",
+              fontSize: "min(30px, 2vw)",
               backgroundColor: "#615518",
               color: "white",
               display: "flex",
