@@ -8,6 +8,10 @@ ARG TARGET="server"
 # Build stage 1 - `yarn build`
 
 FROM node:16-alpine as builder
+
+RUN apk add --no-cache --virtual .gyp \
+        build-base python3
+
 # Import our shared args
 ARG NODE_ENV
 ARG ROOT_URL
@@ -73,6 +77,9 @@ RUN rm -Rf /app/node_modules /app/@app/*/node_modules
 
 FROM node:16-alpine
 
+RUN apk add --no-cache --virtual .gyp \
+        build-base python3
+
 EXPOSE $PORT
 WORKDIR /app/
 # Copy everything from stage 2, it's already been filtered
@@ -80,6 +87,8 @@ COPY --from=clean /app/ /app/
 
 # Install yarn ASAP because it's the slowest
 RUN yarn workspaces focus --all --production
+
+RUN apk del .gyp
 
 # Import our shared args
 ARG PORT
