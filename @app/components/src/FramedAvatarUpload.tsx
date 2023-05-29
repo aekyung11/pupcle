@@ -11,8 +11,6 @@ import { UploadRequestOption } from "rc-upload/lib/interface";
 import React, { useState } from "react";
 import slugify from "slugify";
 
-const isDev = process.env.NODE_ENV === "development";
-
 export function getUid(name: string) {
   const randomHex = () => Math.floor(Math.random() * 16777215).toString(16);
   const fileNameSlug = slugify(name);
@@ -90,14 +88,9 @@ export function FramedAvatarUpload({
             onProgress({ percent: progress });
           }
         },
-        headers: isDev
-          ? {
-              "Content-Type": contentType,
-            }
-          : {
-              "x-amz-acl": "public-read",
-              "Content-Type": contentType,
-            },
+        headers: {
+          "Content-Type": contentType,
+        },
       });
       if (response.config.url) {
         if (onSuccess) {

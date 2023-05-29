@@ -232,7 +232,6 @@ const CreateUploadUrlPlugin = makeExtendSchemaPlugin(() => ({
               // randomly generated filename, nested under username directory
               Key: `${user.id}/${uuidv4()}`,
               Expires: 300, // signed URL will expire in 5 minutes
-              ACL: "public-read", // uploaded file will be publicly readable
               ContentDisposition,
             };
         const signedUrl = await s3.getSignedUrlPromise("putObject", params);

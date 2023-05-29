@@ -26,11 +26,11 @@ export default async function installHelmet(app: Express) {
           // an https:// page, so we have to translate explicitly for
           // it.
           ROOT_URL.replace(/^http/, "ws"),
-          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
+          false ? s3Host! : `${uploadBucket}.${s3Host}`!,
         ],
         "img-src": [
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
-          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
+          false ? s3Host! : `${uploadBucket}.${s3Host}`!,
           "*.daumcdn.net",
         ],
         "script-src": [
@@ -42,6 +42,7 @@ export default async function installHelmet(app: Express) {
         ],
       },
     },
+    crossOriginEmbedderPolicy: false,
   };
   if (isDevOrTest) {
     // Appease TypeScript
@@ -59,10 +60,6 @@ export default async function installHelmet(app: Express) {
       ] as unknown as string[]) ?? []),
       "'unsafe-eval'",
     ];
-  }
-  if (isDevOrTest || !!process.env.ENABLE_GRAPHIQL) {
-    // Enables prettier script and SVG icon in GraphiQL
-    options.crossOriginEmbedderPolicy = false;
   }
   app.use(helmet(options));
 }
