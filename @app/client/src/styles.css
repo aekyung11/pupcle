@@ -242,6 +242,12 @@ a.ant-btn-primary:hover {
   background-color: transparent;
 }
 
+.maps .ant-select-selection-item {
+  font-family: Poppins;
+  font-size: min(15px, 12px + 0.1vw);
+  font-weight: 600;
+}
+
 .map-search {
   font-family: Poppins;
   font-weight: 700;

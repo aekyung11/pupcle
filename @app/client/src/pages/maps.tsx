@@ -1,9 +1,13 @@
 import { MapSheet, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import { Button, Input } from "antd";
+import { Button, Input, Select } from "antd";
 import { NextPage } from "next";
 import * as React from "react";
 import { useEffect } from "react";
+
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`);
+};
 
 const Maps: NextPage = () => {
   const query = useSharedQuery();
@@ -125,15 +129,26 @@ const Maps: NextPage = () => {
                 "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
             }}
           >
-            <Button
+            <Select
+              className="maps"
+              onChange={handleChange}
+              defaultValue="distance"
+              suffixIcon={
+                <img className="foobar" src="/maps-selector.png" width="12px" />
+              }
+              options={[
+                { value: "distance", label: "거리 순" },
+                { value: "reviews", label: "리뷰 순" },
+                { value: "highRatings", label: "별점 높은 순" },
+                { value: "lowRatings", label: "별점 낮은 순" },
+              ]}
               style={{
                 height: "min(38px, 1.5rem + 0.4vw)",
                 width: "min(112px, 5rem + 0.5vw)",
+                display: "flex",
+                alignItems: "center",
               }}
-            >
-              {" "}
-              거리 순{" "}
-            </Button>
+            />
           </div>
         </div>
         <div
