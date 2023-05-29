@@ -3,8 +3,9 @@ const packageJson = require("../../../package.json");
 
 // TODO: customise this with your own settings!
 
-export const fromEmail =
-  '"PostGraphile Starter" <no-reply@examples.graphile.org>';
+export const fromEmail = `"PupCle" <hello@${
+  process.env.FROM_EMAIL_DOMAIN ?? "staging-puple.com"
+}>`;
 export const awsRegion = "us-west-2";
 export const uploadBucket = process.env.AWS_BUCKET_UPLOAD;
 export const s3Host = process.env.S3_HOST;
