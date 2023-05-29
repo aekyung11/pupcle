@@ -85,7 +85,7 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
           }}
           // style={{ position: "absolute" }}
         >
-          <img src="/calender_icon.png" style={{ width: "20px" }} />
+          <img src="/calendar_icon.png" style={{ width: "20px" }} />
         </button>
       </div>
       {isPopperOpen && (

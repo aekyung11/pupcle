@@ -9,10 +9,6 @@ if (!tmpRootUrl || typeof tmpRootUrl !== "string") {
 }
 const ROOT_URL = tmpRootUrl;
 
-const isDev = process.env.NODE_ENV === "development";
-
-const isDevOrTest = isDev || process.env.NODE_ENV === "test";
-
 export default async function installHelmet(app: Express) {
   const { default: helmet, contentSecurityPolicy } = await import("helmet");
 
@@ -39,27 +35,14 @@ export default async function installHelmet(app: Express) {
           "http://dapi.kakao.com/",
           "https://*.daumcdn.net/",
           "http://*.daumcdn.net/",
+          // for kakao maps
+          // Dev needs 'unsafe-eval' due to
+          // https://github.com/vercel/next.js/issues/14221
+          "'unsafe-eval'",
         ],
       },
     },
     crossOriginEmbedderPolicy: false,
   };
-  if (isDevOrTest) {
-    // Appease TypeScript
-    if (
-      typeof options.contentSecurityPolicy === "boolean" ||
-      !options.contentSecurityPolicy
-    ) {
-      throw new Error(`contentSecurityPolicy must be an object`);
-    }
-    // Dev needs 'unsafe-eval' due to
-    // https://github.com/vercel/next.js/issues/14221
-    options.contentSecurityPolicy.directives!["script-src"] = [
-      ...((options.contentSecurityPolicy.directives?.[
-        "script-src"
-      ] as unknown as string[]) ?? []),
-      "'unsafe-eval'",
-    ];
-  }
   app.use(helmet(options));
 }
