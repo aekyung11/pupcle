@@ -166,11 +166,7 @@ const Maps: NextPage = () => {
                     onChange={handleChange}
                     defaultValue="distance"
                     suffixIcon={
-                      <img
-                        className="foobar"
-                        src="/maps-selector.png"
-                        width="12px"
-                      />
+                      <img src="/maps-selector.png" width="12px" alt="" />
                     }
                     options={[
                       { value: "distance", label: "거리 순" },

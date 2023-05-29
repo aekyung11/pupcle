@@ -1,5 +1,5 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
-import { useHomePageQuery, useSharedQuery } from "@app/graphql";
+import { useHomePageQuery } from "@app/graphql";
 import { Col, Row } from "antd";
 import { format } from "date-fns";
 import { NextPage } from "next";
@@ -24,9 +24,9 @@ const useToday = () => {
 const Calendar: NextPage = () => {
   const today = useToday();
   const query = useHomePageQuery({ variables: { day: today || "2023-01-01" } });
-  const refetch = async () => query.refetch();
+  const _refetch = async () => query.refetch();
   const pet = query.data?.currentUser?.pets.nodes[0];
-  const todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
+  const _todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
     (record) => record.day === today
   );
   const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
@@ -114,6 +114,7 @@ const Calendar: NextPage = () => {
                   width: "min(29px, 20px + 0.5vw)",
                   height: "fit-content",
                 }}
+                alt="pupcle count"
               />
             </div>
           </Col>
@@ -152,7 +153,10 @@ const Calendar: NextPage = () => {
                   }}
                 >
                   {/* TODO: write an if statement */}
-                  <img src="/calendar_friends_avatar_default.png" />
+                  <img
+                    src="/calendar_friends_avatar_default.png"
+                    alt="friend avatar"
+                  />
                 </div>
               </div>
             </div>
