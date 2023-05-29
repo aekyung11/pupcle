@@ -9,6 +9,8 @@ if (!tmpRootUrl || typeof tmpRootUrl !== "string") {
 }
 const ROOT_URL = tmpRootUrl;
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default async function installHelmet(app: Express) {
   const { default: helmet, contentSecurityPolicy } = await import("helmet");
 
@@ -22,11 +24,11 @@ export default async function installHelmet(app: Express) {
           // an https:// page, so we have to translate explicitly for
           // it.
           ROOT_URL.replace(/^http/, "ws"),
-          false ? s3Host! : `${uploadBucket}.${s3Host}`!,
+          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
         ],
         "img-src": [
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
-          false ? s3Host! : `${uploadBucket}.${s3Host}`!,
+          isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
           "*.daumcdn.net",
         ],
         "script-src": [
