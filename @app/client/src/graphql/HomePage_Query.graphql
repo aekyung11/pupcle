@@ -21,6 +21,8 @@ fragment HomePage_SharedDailyRecord on SharedDailyRecord {
   petId
   userId
   completeStatusCount
+  dayStatus
+  isComplete
 }
 
 fragment HomePage_Pet on Pet {

@@ -98,59 +98,7 @@ const Maps: NextPage = () => {
             top: 0,
           }}
         ></div>
-        <div
-          style={{
-            backgroundColor: "white",
-            width: "min(53px + 36px, 2rem + 1vw + 36px)",
-            height: "100vh",
-            position: "fixed",
-            top: 0,
-            boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
-            zIndex: 1,
-          }}
-        ></div>
-        <div
-          style={{
-            backgroundColor: "white",
-            left: "min(53px + 36px, 2rem + 1vw + 36px)",
-            width: "calc(6rem - 36px + max(200px, 23vw))",
-            height: "100vh",
-            position: "fixed",
-            top: 0,
-            boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              width: "100%",
-              padding:
-                "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
-            }}
-          >
-            <Select
-              className="maps"
-              onChange={handleChange}
-              defaultValue="distance"
-              suffixIcon={
-                <img className="foobar" src="/maps-selector.png" width="12px" />
-              }
-              options={[
-                { value: "distance", label: "거리 순" },
-                { value: "reviews", label: "리뷰 순" },
-                { value: "highRatings", label: "별점 높은 순" },
-                { value: "lowRatings", label: "별점 낮은 순" },
-              ]}
-              style={{
-                height: "min(38px, 1.5rem + 0.4vw)",
-                width: "min(112px, 5rem + 0.5vw)",
-                display: "flex",
-                alignItems: "center",
-              }}
-            />
-          </div>
-        </div>
+
         <div
           style={{
             display: "flex",
@@ -161,7 +109,7 @@ const Maps: NextPage = () => {
             zIndex: 2,
           }}
         >
-          <MapSheet.Sheet>
+          <MapSheet.Sheet modal={false}>
             <MapSheet.SheetTrigger
               style={{
                 width: "min(53px, 2rem + 1vw)",
@@ -173,8 +121,71 @@ const Maps: NextPage = () => {
             >
               <img src="/map_list.png" alt="map list" />
             </MapSheet.SheetTrigger>
-            <MapSheet.SheetContent>
-              <MapSheet.SheetHeader>
+            <MapSheet.SheetContent
+              position="left"
+              onPointerDownOutside={(event) => {
+                event.preventDefault();
+              }}
+              onInteractOutside={(event) => {
+                event.preventDefault();
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "white",
+                  width: "min(53px + 36px, 2rem + 1vw + 36px)",
+                  height: "100vh",
+                  position: "fixed",
+                  top: 0,
+                  boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
+                  zIndex: 1,
+                }}
+              ></div>
+              <div
+                style={{
+                  backgroundColor: "white",
+                  left: "min(53px + 36px, 2rem + 1vw + 36px)",
+                  width: "calc(6rem - 36px + max(200px, 23vw))",
+                  height: "100vh",
+                  position: "fixed",
+                  top: 0,
+                  boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                    padding:
+                      "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
+                  }}
+                >
+                  <Select
+                    className="maps"
+                    onChange={handleChange}
+                    defaultValue="distance"
+                    suffixIcon={
+                      <img
+                        className="foobar"
+                        src="/maps-selector.png"
+                        width="12px"
+                      />
+                    }
+                    options={[
+                      { value: "distance", label: "거리 순" },
+                      { value: "reviews", label: "리뷰 순" },
+                      { value: "highRatings", label: "별점 높은 순" },
+                      { value: "lowRatings", label: "별점 낮은 순" },
+                    ]}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  />
+                </div>
+              </div>
+              {/* <MapSheet.SheetHeader>
                 <MapSheet.SheetTitle>
                   Are you sure absolutely sure?
                 </MapSheet.SheetTitle>
@@ -182,7 +193,7 @@ const Maps: NextPage = () => {
                   This action cannot be undone. This will permanently delete
                   your account and remove your data from our servers.
                 </MapSheet.SheetDescription>
-              </MapSheet.SheetHeader>
+              </MapSheet.SheetHeader> */}
             </MapSheet.SheetContent>
           </MapSheet.Sheet>
           <div

@@ -242,6 +242,15 @@ a.ant-btn-primary:hover {
   background-color: transparent;
 }
 
+.maps .ant-select-selector {
+  width: min(112px, 5rem + 0.6vw) !important;
+  height: min(38px, 1.5rem + 0.5vw) !important;
+  border-style: none !important;
+  box-shadow: 0px 4px 4px rgb(0 0 0 / 0.15) !important;
+  border-radius: 19px;
+  padding: 0 1rem !important;
+}
+
 .maps .ant-select-selection-item {
   font-family: Poppins;
   font-size: min(15px, 12px + 0.1vw);
