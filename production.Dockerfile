@@ -60,6 +60,7 @@ COPY --from=builder /app/@app/server/dist/ /app/@app/server/dist/
 COPY --from=builder /app/@app/worker/package.json /app/@app/worker/
 COPY --from=builder /app/@app/worker/templates/ /app/@app/worker/templates/
 COPY --from=builder /app/@app/worker/dist/ /app/@app/worker/dist/
+COPY --from=builder /app/@app/server/public/ /app/@app/server/public/
 COPY --from=builder /app/data/amazon-rds-ca-cert.pem /app/data/amazon-rds-ca-cert.pem
 COPY --from=builder /app/data/digitalocean-ca-certificate.crt /app/data/digitalocean-ca-certificate.crt
 

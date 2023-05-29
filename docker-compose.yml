@@ -32,7 +32,7 @@ services:
       - default
     ports:
       # The main server
-      - "5678:5678"
+      - "6000:5678"
       # Node `--inspect=...` port numbers for debugging
       - "9678:9678"
       - "9876:9876"

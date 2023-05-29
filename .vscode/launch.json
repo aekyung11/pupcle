@@ -2,6 +2,26 @@
   "version": "0.1.0",
   "configurations": [
     {
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "name": "Attach to Docker Remote",
+      "port": 9229,
+      "remoteRoot": "/app/@app/server",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "name": "Docker: Attach to Node",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "protocol": "inspector"
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Node Server",
