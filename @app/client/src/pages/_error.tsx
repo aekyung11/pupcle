@@ -11,7 +11,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import * as React from "react";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 interface SocialAuthErrorProps {
   provider: string;

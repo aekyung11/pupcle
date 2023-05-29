@@ -2,7 +2,6 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {
   AllowedUploadContentType,
   useCreateUploadUrlMutation,
-  useUpdateUserMutation,
 } from "@app/graphql";
 import { getExceptionFromError } from "@app/lib";
 import { Col, message, Row, Upload } from "antd";
@@ -12,7 +11,7 @@ import { UploadRequestOption } from "rc-upload/lib/interface";
 import React, { useState } from "react";
 import slugify from "slugify";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 export function getUid(name: string) {
   const randomHex = () => Math.floor(Math.random() * 16777215).toString(16);
@@ -215,6 +214,7 @@ export function FramedAvatarUpload({
                     width: "60px",
                   }}
                   src="/plus_icon.png"
+                  alt="plus"
                 />
               </Col>
             </Row>
