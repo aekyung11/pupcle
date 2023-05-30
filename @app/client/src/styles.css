@@ -425,6 +425,22 @@ a.ant-btn-primary:hover {
   border: none;
 }
 
+.calendar-pupcle-calendar {
+  --rdp-cell-size: 7vw;
+  --rdp-accent-color: #7fb3e8;
+  --rdp-background-color: #e7edff;
+  --rdp-accent-color-dark: #7fb3e8;
+  --rdp-background-color-dark: #180270;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75);
+}
+
+.calendar-pupcle-calendar .rdp-caption_label {
+  font-family: Poppins;
+  font-size: 20px;
+  font-weight: 500;
+}
+
 .ant-form input {
   background-color: rgb(245, 245, 245) !important;
 }

@@ -76,6 +76,48 @@ enum AllowedUploadContentType {
   VIDEO_QUICKTIME
 }
 
+"""
+A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’
+"""
+input BooleanFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Boolean
+
+  """Greater than the specified value."""
+  greaterThan: Boolean
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Boolean
+
+  """Included in the specified list."""
+  in: [Boolean!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: Boolean
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Boolean
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Boolean
+
+  """Not equal to the specified value."""
+  notEqualTo: Boolean
+
+  """Not included in the specified list."""
+  notIn: [Boolean!]
+}
+
 """All input for the `changePassword` mutation."""
 input ChangePasswordInput {
   """
@@ -487,6 +529,48 @@ enum DailyRecordStatus {
 scalar Date
 
 """
+A filter to be used against Date fields. All fields are combined with a logical ‘and.’
+"""
+input DateFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Date
+
+  """Equal to the specified value."""
+  equalTo: Date
+
+  """Greater than the specified value."""
+  greaterThan: Date
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Date
+
+  """Included in the specified list."""
+  in: [Date!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: Date
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Date
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Date
+
+  """Not equal to the specified value."""
+  notEqualTo: Date
+
+  """Not included in the specified list."""
+  notIn: [Date!]
+}
+
+"""
 A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
@@ -790,6 +874,26 @@ input FriendRequestCondition {
 
   """Checks for equality with the object’s `toUserId` field."""
   toUserId: UUID
+}
+
+"""
+A filter to be used against `FriendRequest` object types. All fields are combined with a logical ‘and.’
+"""
+input FriendRequestFilter {
+  """Checks for all expressions in this list."""
+  and: [FriendRequestFilter!]
+
+  """Filter by the object’s `fromUserId` field."""
+  fromUserId: UUIDFilter
+
+  """Negates the expression."""
+  not: FriendRequestFilter
+
+  """Checks for any expressions in this list."""
+  or: [FriendRequestFilter!]
+
+  """Filter by the object’s `toUserId` field."""
+  toUserId: UUIDFilter
 }
 
 """An input for mutations affecting `FriendRequest`"""
@@ -1378,6 +1482,11 @@ type Organization {
     """
     condition: OrganizationMembershipCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OrganizationMembershipFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -1406,6 +1515,32 @@ input OrganizationCondition {
 
   """Checks for equality with the object’s `slug` field."""
   slug: String
+}
+
+"""
+A filter to be used against `Organization` object types. All fields are combined with a logical ‘and.’
+"""
+input OrganizationFilter {
+  """Checks for all expressions in this list."""
+  and: [OrganizationFilter!]
+
+  """Filter by the object’s `currentUserIsBillingContact` field."""
+  currentUserIsBillingContact: BooleanFilter
+
+  """Filter by the object’s `currentUserIsOwner` field."""
+  currentUserIsOwner: BooleanFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: OrganizationFilter
+
+  """Checks for any expressions in this list."""
+  or: [OrganizationFilter!]
+
+  """Filter by the object’s `slug` field."""
+  slug: StringFilter
 }
 
 type OrganizationMembership {
@@ -1440,6 +1575,29 @@ input OrganizationMembershipCondition {
 
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
+}
+
+"""
+A filter to be used against `OrganizationMembership` object types. All fields are combined with a logical ‘and.’
+"""
+input OrganizationMembershipFilter {
+  """Checks for all expressions in this list."""
+  and: [OrganizationMembershipFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: OrganizationMembershipFilter
+
+  """Checks for any expressions in this list."""
+  or: [OrganizationMembershipFilter!]
+
+  """Filter by the object’s `organizationId` field."""
+  organizationId: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
 }
 
 """A connection to a list of `OrganizationMembership` values."""
@@ -1569,6 +1727,11 @@ type Pet {
     """
     condition: PrivateDailyRecordCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PrivateDailyRecordFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -1597,6 +1760,11 @@ type Pet {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: SharedDailyRecordCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SharedDailyRecordFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -1636,6 +1804,29 @@ input PetCondition {
   userId: UUID
 }
 
+"""
+A filter to be used against `Pet` object types. All fields are combined with a logical ‘and.’
+"""
+input PetFilter {
+  """Checks for all expressions in this list."""
+  and: [PetFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `kind` field."""
+  kind: PetKindFilter
+
+  """Negates the expression."""
+  not: PetFilter
+
+  """Checks for any expressions in this list."""
+  or: [PetFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
 enum PetGender {
   """female"""
   F
@@ -1661,6 +1852,48 @@ input PetInput {
 enum PetKind {
   """Dog"""
   DOG
+}
+
+"""
+A filter to be used against PetKind fields. All fields are combined with a logical ‘and.’
+"""
+input PetKindFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: PetKind
+
+  """Equal to the specified value."""
+  equalTo: PetKind
+
+  """Greater than the specified value."""
+  greaterThan: PetKind
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: PetKind
+
+  """Included in the specified list."""
+  in: [PetKind!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: PetKind
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: PetKind
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: PetKind
+
+  """Not equal to the specified value."""
+  notEqualTo: PetKind
+
+  """Not included in the specified list."""
+  notIn: [PetKind!]
 }
 
 """Represents an update to a `Pet`. Fields that are set will be updated."""
@@ -1732,6 +1965,11 @@ type Poi {
     """
     condition: PoiReviewCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiReviewFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -1763,6 +2001,26 @@ input PoiCondition {
 
   """Checks for equality with the object’s `kakaoId` field."""
   kakaoId: String
+}
+
+"""
+A filter to be used against `Poi` object types. All fields are combined with a logical ‘and.’
+"""
+input PoiFilter {
+  """Checks for all expressions in this list."""
+  and: [PoiFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `kakaoId` field."""
+  kakaoId: StringFilter
+
+  """Negates the expression."""
+  not: PoiFilter
+
+  """Checks for any expressions in this list."""
+  or: [PoiFilter!]
 }
 
 type PoiReview {
@@ -1798,6 +2056,32 @@ input PoiReviewCondition {
 
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
+}
+
+"""
+A filter to be used against `PoiReview` object types. All fields are combined with a logical ‘and.’
+"""
+input PoiReviewFilter {
+  """Checks for all expressions in this list."""
+  and: [PoiReviewFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `kakaoId` field."""
+  kakaoId: StringFilter
+
+  """Negates the expression."""
+  not: PoiReviewFilter
+
+  """Checks for any expressions in this list."""
+  or: [PoiReviewFilter!]
+
+  """Filter by the object’s `poiId` field."""
+  poiId: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
 }
 
 """An input for mutations affecting `PoiReview`"""
@@ -1941,6 +2225,29 @@ input PrivateDailyRecordCondition {
   userId: UUID
 }
 
+"""
+A filter to be used against `PrivateDailyRecord` object types. All fields are combined with a logical ‘and.’
+"""
+input PrivateDailyRecordFilter {
+  """Checks for all expressions in this list."""
+  and: [PrivateDailyRecordFilter!]
+
+  """Filter by the object’s `day` field."""
+  day: DateFilter
+
+  """Negates the expression."""
+  not: PrivateDailyRecordFilter
+
+  """Checks for any expressions in this list."""
+  or: [PrivateDailyRecordFilter!]
+
+  """Filter by the object’s `petId` field."""
+  petId: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
 """An input for mutations affecting `PrivateDailyRecord`"""
 input PrivateDailyRecordInput {
   bathroomComment: String
@@ -2030,6 +2337,11 @@ type Query {
     """Read all values in the set before (above) this cursor."""
     before: Cursor
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UUIDFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2056,6 +2368,11 @@ type Query {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: FriendRequestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FriendRequestFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2094,6 +2411,11 @@ type Query {
     """
     condition: OrganizationCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OrganizationFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2123,6 +2445,11 @@ type Query {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: PetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PetFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2157,6 +2484,11 @@ type Query {
     """
     condition: PoiReviewCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiReviewFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2185,6 +2517,11 @@ type Query {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: PoiCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2216,6 +2553,11 @@ type Query {
     """
     condition: PrivateDailyRecordCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PrivateDailyRecordFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2245,6 +2587,11 @@ type Query {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: SharedDailyRecordCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SharedDailyRecordFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2279,6 +2626,11 @@ type Query {
     """
     condition: UserEdgeCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEdgeFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2308,6 +2660,11 @@ type Query {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: UserEntryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEntryFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2448,6 +2805,48 @@ enum ShareLevel {
   SUMMARY
 }
 
+"""
+A filter to be used against ShareLevel fields. All fields are combined with a logical ‘and.’
+"""
+input ShareLevelFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: ShareLevel
+
+  """Equal to the specified value."""
+  equalTo: ShareLevel
+
+  """Greater than the specified value."""
+  greaterThan: ShareLevel
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: ShareLevel
+
+  """Included in the specified list."""
+  in: [ShareLevel!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: ShareLevel
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: ShareLevel
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: ShareLevel
+
+  """Not equal to the specified value."""
+  notEqualTo: ShareLevel
+
+  """Not included in the specified list."""
+  notIn: [ShareLevel!]
+}
+
 type SharedDailyRecord {
   completeStatusCount: Int!
   createdAt: Datetime!
@@ -2479,6 +2878,29 @@ input SharedDailyRecordCondition {
 
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
+}
+
+"""
+A filter to be used against `SharedDailyRecord` object types. All fields are combined with a logical ‘and.’
+"""
+input SharedDailyRecordFilter {
+  """Checks for all expressions in this list."""
+  and: [SharedDailyRecordFilter!]
+
+  """Filter by the object’s `day` field."""
+  day: DateFilter
+
+  """Negates the expression."""
+  not: SharedDailyRecordFilter
+
+  """Checks for any expressions in this list."""
+  or: [SharedDailyRecordFilter!]
+
+  """Filter by the object’s `petId` field."""
+  petId: UUIDFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
 }
 
 """An input for mutations affecting `SharedDailyRecord`"""
@@ -2527,6 +2949,138 @@ enum SharedDailyRecordsOrderBy {
   PRIMARY_KEY_DESC
   USER_ID_ASC
   USER_ID_DESC
+}
+
+"""
+A filter to be used against String fields. All fields are combined with a logical ‘and.’
+"""
+input StringFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: String
+
+  """
+  Not equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  distinctFromInsensitive: String
+
+  """Ends with the specified string (case-sensitive)."""
+  endsWith: String
+
+  """Ends with the specified string (case-insensitive)."""
+  endsWithInsensitive: String
+
+  """Equal to the specified value."""
+  equalTo: String
+
+  """Equal to the specified value (case-insensitive)."""
+  equalToInsensitive: String
+
+  """Greater than the specified value."""
+  greaterThan: String
+
+  """Greater than the specified value (case-insensitive)."""
+  greaterThanInsensitive: String
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: String
+
+  """Greater than or equal to the specified value (case-insensitive)."""
+  greaterThanOrEqualToInsensitive: String
+
+  """Included in the specified list."""
+  in: [String!]
+
+  """Included in the specified list (case-insensitive)."""
+  inInsensitive: [String!]
+
+  """Contains the specified string (case-sensitive)."""
+  includes: String
+
+  """Contains the specified string (case-insensitive)."""
+  includesInsensitive: String
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: String
+
+  """Less than the specified value (case-insensitive)."""
+  lessThanInsensitive: String
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: String
+
+  """Less than or equal to the specified value (case-insensitive)."""
+  lessThanOrEqualToInsensitive: String
+
+  """
+  Matches the specified pattern (case-sensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  like: String
+
+  """
+  Matches the specified pattern (case-insensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  likeInsensitive: String
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: String
+
+  """
+  Equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  notDistinctFromInsensitive: String
+
+  """Does not end with the specified string (case-sensitive)."""
+  notEndsWith: String
+
+  """Does not end with the specified string (case-insensitive)."""
+  notEndsWithInsensitive: String
+
+  """Not equal to the specified value."""
+  notEqualTo: String
+
+  """Not equal to the specified value (case-insensitive)."""
+  notEqualToInsensitive: String
+
+  """Not included in the specified list."""
+  notIn: [String!]
+
+  """Not included in the specified list (case-insensitive)."""
+  notInInsensitive: [String!]
+
+  """Does not contain the specified string (case-sensitive)."""
+  notIncludes: String
+
+  """Does not contain the specified string (case-insensitive)."""
+  notIncludesInsensitive: String
+
+  """
+  Does not match the specified pattern (case-sensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  notLike: String
+
+  """
+  Does not match the specified pattern (case-insensitive). An underscore (_) matches any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  notLikeInsensitive: String
+
+  """Does not start with the specified string (case-sensitive)."""
+  notStartsWith: String
+
+  """Does not start with the specified string (case-insensitive)."""
+  notStartsWithInsensitive: String
+
+  """Starts with the specified string (case-sensitive)."""
+  startsWith: String
+
+  """Starts with the specified string (case-insensitive)."""
+  startsWithInsensitive: String
 }
 
 """
@@ -2605,6 +3159,48 @@ type TransferOrganizationOwnershipPayload {
 A universally unique identifier as defined by [RFC 4122](https://tools.ietf.org/html/rfc4122).
 """
 scalar UUID
+
+"""
+A filter to be used against UUID fields. All fields are combined with a logical ‘and.’
+"""
+input UUIDFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: UUID
+
+  """Equal to the specified value."""
+  equalTo: UUID
+
+  """Greater than the specified value."""
+  greaterThan: UUID
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: UUID
+
+  """Included in the specified list."""
+  in: [UUID!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: UUID
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: UUID
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: UUID
+
+  """Not equal to the specified value."""
+  notEqualTo: UUID
+
+  """Not included in the specified list."""
+  notIn: [UUID!]
+}
 
 """All input for the `updateOrganization` mutation."""
 input UpdateOrganizationInput {
@@ -3388,6 +3984,11 @@ type User {
     """
     condition: FriendRequestCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FriendRequestFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3416,6 +4017,11 @@ type User {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: FriendRequestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FriendRequestFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -3459,6 +4065,11 @@ type User {
     """
     condition: OrganizationMembershipCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OrganizationMembershipFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3487,6 +4098,11 @@ type User {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: PetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PetFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -3517,6 +4133,11 @@ type User {
     """
     condition: PoiReviewCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PoiReviewFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3545,6 +4166,11 @@ type User {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: PrivateDailyRecordCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PrivateDailyRecordFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -3575,6 +4201,11 @@ type User {
     """
     condition: SharedDailyRecordCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SharedDailyRecordFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3599,6 +4230,11 @@ type User {
     """
     condition: UserAuthenticationCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserAuthenticationFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3621,6 +4257,11 @@ type User {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: UserEdgeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEdgeFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -3651,6 +4292,11 @@ type User {
     """
     condition: UserEdgeCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEdgeFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3680,6 +4326,11 @@ type User {
     """
     condition: UserEmailCondition
 
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEmailFilter
+
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -3708,6 +4359,11 @@ type User {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: UserEntryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: UserEntryFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -3766,6 +4422,29 @@ input UserAuthenticationCondition {
   userId: UUID
 }
 
+"""
+A filter to be used against `UserAuthentication` object types. All fields are combined with a logical ‘and.’
+"""
+input UserAuthenticationFilter {
+  """Checks for all expressions in this list."""
+  and: [UserAuthenticationFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: UserAuthenticationFilter
+
+  """Checks for any expressions in this list."""
+  or: [UserAuthenticationFilter!]
+
+  """Filter by the object’s `service` field."""
+  service: StringFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
 """Methods to use when ordering `UserAuthentication`."""
 enum UserAuthenticationsOrderBy {
   ID_ASC
@@ -3806,6 +4485,29 @@ input UserEdgeCondition {
 
   """Checks for equality with the object’s `toUserId` field."""
   toUserId: UUID
+}
+
+"""
+A filter to be used against `UserEdge` object types. All fields are combined with a logical ‘and.’
+"""
+input UserEdgeFilter {
+  """Checks for all expressions in this list."""
+  and: [UserEdgeFilter!]
+
+  """Filter by the object’s `dailyRecordsShared` field."""
+  dailyRecordsShared: ShareLevelFilter
+
+  """Filter by the object’s `fromUserId` field."""
+  fromUserId: UUIDFilter
+
+  """Negates the expression."""
+  not: UserEdgeFilter
+
+  """Checks for any expressions in this list."""
+  or: [UserEdgeFilter!]
+
+  """Filter by the object’s `toUserId` field."""
+  toUserId: UUIDFilter
 }
 
 """
@@ -3887,6 +4589,29 @@ input UserEmailCondition {
 
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
+}
+
+"""
+A filter to be used against `UserEmail` object types. All fields are combined with a logical ‘and.’
+"""
+input UserEmailFilter {
+  """Checks for all expressions in this list."""
+  and: [UserEmailFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `isPrimary` field."""
+  isPrimary: BooleanFilter
+
+  """Negates the expression."""
+  not: UserEmailFilter
+
+  """Checks for any expressions in this list."""
+  or: [UserEmailFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
 }
 
 """An input for mutations affecting `UserEmail`"""
@@ -3995,6 +4720,23 @@ for equality and combined with a logical ‘and.’
 input UserEntryCondition {
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
+}
+
+"""
+A filter to be used against `UserEntry` object types. All fields are combined with a logical ‘and.’
+"""
+input UserEntryFilter {
+  """Checks for all expressions in this list."""
+  and: [UserEntryFilter!]
+
+  """Negates the expression."""
+  not: UserEntryFilter
+
+  """Checks for any expressions in this list."""
+  or: [UserEntryFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
 }
 
 """

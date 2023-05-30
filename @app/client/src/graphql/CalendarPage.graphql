@@ -1,0 +1,3 @@
+query CalendarPage($start: Date!, $end: Date!) {
+  ...CalendarPage_Query
+}

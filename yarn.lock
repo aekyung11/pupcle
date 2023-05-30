@@ -436,6 +436,7 @@ __metadata:
     pg: ^8.9.0
     postcss: ^8.4.21
     postgraphile: ^4.13.0
+    postgraphile-plugin-connection-filter: ^2.3.0
     redis: ^4.6.5
     source-map-support: ^0.5.21
     tailwindcss: ^3.2.7
@@ -18280,6 +18281,15 @@ __metadata:
     graphql: ">=0.9 <0.14 || ^14.0.2 || ^15.4.0"
     pg: ">=6.1.0 <9"
   checksum: 4b339843b4e2dde0b4a3076a1d019be0dab6d1c8a30ede6d67fbfba480f58017df76e2ad80c4af49c7dcc4156b41665c726961f1b5c8e4a8c6e593030174206c
+  languageName: node
+  linkType: hard
+
+"postgraphile-plugin-connection-filter@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "postgraphile-plugin-connection-filter@npm:2.3.0"
+  dependencies:
+    tslib: ^2.3.0
+  checksum: b5bf7ae847225682ebc48e9224c45ccf1d3e16dfd820f2bdfe3dfc26f049e7c995278bf77123a2be04561b6b23438063590845e0456492f4ee67db0ae3a99771
   languageName: node
   linkType: hard
 

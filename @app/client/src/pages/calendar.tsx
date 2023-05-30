@@ -1,10 +1,12 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
-import { useHomePageQuery } from "@app/graphql";
+import { useCalendarPageQuery } from "@app/graphql";
 import { Col, Row } from "antd";
-import { format } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import { ko } from "date-fns/locale";
 import { NextPage } from "next";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { DayPicker } from "react-day-picker";
 
 enum Tab {
   SLEEP = "sleep",
@@ -17,13 +19,26 @@ enum Tab {
 
 const useToday = () => {
   const [day, setDay] = useState<string | null>(null);
-  useEffect(() => setDay(format(new Date(), "yyyy-MM-dd")), []);
-  return day;
+  const [dayDate, setDayDate] = useState<Date | null>(null);
+  useEffect(() => {
+    const date = new Date();
+    setDay(format(date, "yyyy-MM-dd"));
+    setDayDate(date);
+  }, []);
+  return { day, dayDate };
 };
 
 const Calendar: NextPage = () => {
-  const today = useToday();
-  const query = useHomePageQuery({ variables: { day: today || "2023-01-01" } });
+  const { day: today, dayDate: todayDate } = useToday();
+  const firstDayOfMonth = todayDate ? startOfMonth(todayDate) : null;
+  const lastDayOfMonth = todayDate ? endOfMonth(todayDate) : null;
+
+  const query = useCalendarPageQuery({
+    variables: {
+      start: firstDayOfMonth ?? "2023-01-01",
+      end: lastDayOfMonth ?? "2023-01-31",
+    },
+  });
   const _refetch = async () => query.refetch();
   const pet = query.data?.currentUser?.pets.nodes[0];
   const _todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
@@ -68,9 +83,21 @@ const Calendar: NextPage = () => {
         >
           <Col
             span={14}
-            style={{ display: "flex", justifyContent: "flex-end" }}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
           >
-            calendar
+            <div
+              style={{ height: "85%", display: "flex", alignItems: "center" }}
+            >
+              <DayPicker
+                className="calendar-pupcle-calendar"
+                weekStartsOn={1}
+                locale={ko}
+              />
+            </div>
           </Col>
           <Col
             span={8}
@@ -140,7 +167,6 @@ const Calendar: NextPage = () => {
               <div
                 style={{
                   height: "90%",
-                  overflow: "scroll",
                 }}
               >
                 {/* TODO: friends.map() */}

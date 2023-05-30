@@ -9,6 +9,7 @@ import { resolve } from "path";
 import { Pool, PoolClient } from "pg";
 import { makePluginHook, Middleware, PostGraphileOptions } from "postgraphile";
 import { makePgSmartTagsFromFilePlugin } from "postgraphile/plugins";
+import ConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 
 import CreateUploadUrlPlugin from "./plugins/CreateUploadUrlPlugin";
 import FriendsPlugin from "./plugins/FriendsPlugin";
@@ -195,6 +196,8 @@ export function getPostGraphileOptions({
 
       PgMutationUpsertPlugin,
       PgMutationUpsertPluginBatch,
+
+      ConnectionFilterPlugin,
     ],
 
     /*
