@@ -1,12 +1,13 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
-import { useCalendarPageQuery } from "@app/graphql";
+import { DailyRecordDayStatus, useCalendarPageQuery } from "@app/graphql";
 import { Col, Row } from "antd";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { ko } from "date-fns/locale";
+import { keyBy } from "lodash";
 import { NextPage } from "next";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { DayPicker } from "react-day-picker";
+import { useEffect, useMemo, useState } from "react";
+import { DayContent, DayContentProps, DayPicker } from "react-day-picker";
 
 enum Tab {
   SLEEP = "sleep",
@@ -34,6 +35,7 @@ const Calendar: NextPage = () => {
   const lastDayOfMonth = todayDate ? endOfMonth(todayDate) : null;
 
   const query = useCalendarPageQuery({
+    fetchPolicy: "network-only",
     variables: {
       start: firstDayOfMonth ?? "2023-01-01",
       end: lastDayOfMonth ?? "2023-01-31",
@@ -67,6 +69,55 @@ const Calendar: NextPage = () => {
     return sdr.isComplete;
   }).length;
 
+  const sharedDailyRecords = keyBy(pet?.sharedDailyRecords.nodes, "day");
+
+  const CustomDayContent: React.FC<DayContentProps> = useMemo(() => {
+    const c = (props: DayContentProps) => {
+      const dateTime = format(props.date, "yyyy-MM-dd");
+      const sharedDailyRecord = sharedDailyRecords[dateTime];
+      const completePercentage =
+        ((sharedDailyRecord?.completeStatusCount ?? 0) / 6) * 100;
+      return (
+        <time
+          dateTime={dateTime}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <DayContent {...props} />
+          {sharedDailyRecord && completePercentage ? (
+            <div
+              className="radial-progress"
+              style={{
+                // width: "1rem",
+                // height: "1rem",
+                // @ts-ignore
+                "--value": completePercentage,
+                // @ts-ignore
+                "--size": "3vw",
+                // @ts-ignore
+                "--thickness": "1vw",
+                color:
+                  DailyRecordDayStatus.AllGood === sharedDailyRecord.dayStatus
+                    ? "#7fb3e8"
+                    : DailyRecordDayStatus.Mixed === sharedDailyRecord.dayStatus
+                    ? "#A0B0EB"
+                    : DailyRecordDayStatus.AllBad ===
+                      sharedDailyRecord.dayStatus
+                    ? "#E35B67"
+                    : undefined,
+              }}
+            ></div>
+          ) : null}
+        </time>
+      );
+    };
+    c.displayName = "CustomDayContent";
+    return c;
+  }, [sharedDailyRecords]);
+
   return (
     <SharedLayout
       title="calendar"
@@ -92,11 +143,16 @@ const Calendar: NextPage = () => {
             <div
               style={{ height: "85%", display: "flex", alignItems: "center" }}
             >
-              <DayPicker
-                className="calendar-pupcle-calendar"
-                weekStartsOn={1}
-                locale={ko}
-              />
+              {firstDayOfMonth && lastDayOfMonth && (
+                <DayPicker
+                  fromMonth={firstDayOfMonth}
+                  toMonth={lastDayOfMonth}
+                  className="calendar-pupcle-calendar"
+                  weekStartsOn={1}
+                  locale={ko}
+                  components={{ DayContent: CustomDayContent }}
+                />
+              )}
             </div>
           </Col>
           <Col
