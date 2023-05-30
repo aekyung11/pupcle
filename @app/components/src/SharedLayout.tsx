@@ -479,10 +479,7 @@ export function SharedLayout({
                   top: "min(calc(0.5vw + 5px), 18px)",
                 }}
               >
-                <Warn
-                  okay={data.currentUser.isVerified}
-                  data-cy="header-unverified-warning"
-                >
+                <Warn okay={false} data-cy="header-unverified-warning">
                   <img
                     src="/hamburger.png"
                     style={{
