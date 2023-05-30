@@ -549,6 +549,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     "status-tab-trigger diet": true,
                     complete: completeStatusCount >= 2,
                   })}
+                  disabled={completeStatusCount < 1}
                 >
                   <img id="diet" src="/diet.png" alt="diet tab" />
                 </Button>
@@ -563,6 +564,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     "status-tab-trigger walking": true,
                     complete: completeStatusCount >= 3,
                   })}
+                  disabled={completeStatusCount < 2}
                 >
                   <img id="walking" src="/walking.png" alt="walking tab" />
                 </Button>
@@ -573,6 +575,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     "status-tab-trigger play": true,
                     complete: completeStatusCount >= 4,
                   })}
+                  disabled={completeStatusCount < 3}
                 >
                   <img id="play" src="/play.png" alt="play tab" />
                 </Button>
@@ -587,6 +590,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     "status-tab-trigger bathroom": true,
                     complete: completeStatusCount >= 5,
                   })}
+                  disabled={completeStatusCount < 4}
                 >
                   <img id="bathroom" src="/bathroom.png" alt="bathroom tab" />
                 </Button>
@@ -597,6 +601,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
                     "status-tab-trigger health": true,
                     complete: completeStatusCount >= 6,
                   })}
+                  disabled={completeStatusCount < 5}
                 >
                   <img id="health" src="/health.png" alt="health tab" />
                 </Button>
