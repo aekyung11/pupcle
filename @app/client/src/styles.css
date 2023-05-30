@@ -98,7 +98,7 @@ a.ant-btn-primary:hover {
   display: none;
 } */
 
-.status-tab-trigger #sleep:hover {
+.status-tab-trigger:not([disabled]) #sleep:hover {
   content: url("/sleep_hover.png");
 }
 
@@ -116,7 +116,7 @@ a.ant-btn-primary:hover {
   filter: none;
 }
 
-.status-tab-trigger #diet:hover {
+.status-tab-trigger:not([disabled]) #diet:hover {
   content: url("/diet_hover.png");
 }
 
@@ -136,7 +136,7 @@ a.ant-btn-primary:hover {
   filter: none;
 }
 
-.status-tab-trigger #walking:hover {
+.status-tab-trigger:not([disabled]) #walking:hover {
   content: url("/walking_hover.png");
 }
 
@@ -154,7 +154,7 @@ a.ant-btn-primary:hover {
   filter: none;
 }
 
-.status-tab-trigger #play:hover {
+.status-tab-trigger:not([disabled]) #play:hover {
   content: url("/play_hover.png");
 }
 
@@ -172,7 +172,7 @@ a.ant-btn-primary:hover {
   filter: none;
 }
 
-.status-tab-trigger #bathroom:hover {
+.status-tab-trigger:not([disabled]) #bathroom:hover {
   content: url("/bathroom_hover.png");
 }
 
@@ -190,7 +190,7 @@ a.ant-btn-primary:hover {
   filter: none;
 }
 
-.status-tab-trigger #health:hover {
+.status-tab-trigger:not([disabled]) #health:hover {
   content: url("/health_hover.png");
 }
 
