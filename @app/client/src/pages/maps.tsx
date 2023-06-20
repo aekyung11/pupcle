@@ -1,16 +1,30 @@
+import { DownOutlined } from "@ant-design/icons";
 import { MapSheet, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
-import { Button, Input, Select } from "antd";
+import * as Tabs from "@radix-ui/react-tabs";
+import { Button, Col, Input, Select } from "antd";
 import { NextPage } from "next";
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
 };
 
+enum Tab {
+  EXPLORE = "explore",
+  FAVORITES = "favorites",
+}
+
 const Maps: NextPage = () => {
   const query = useSharedQuery();
+
+  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.EXPLORE);
+  // is there a better way?
+  const [lastClickedTab, setLastClickedTab] = useState<Tab | undefined>();
+
+  const [sheetIsOpen, setSheetIsOpen] = useState<boolean>(false);
+
   // @ts-ignore
   const kakao = typeof window !== "undefined" && window?.kakao;
   const kakaoMaps = kakao?.maps;
@@ -109,132 +123,224 @@ const Maps: NextPage = () => {
             zIndex: 2,
           }}
         >
-          <MapSheet.Sheet modal={false}>
-            <MapSheet.SheetTrigger
-              style={{
-                width: "min(53px, 2rem + 1vw)",
-                height: "min(53px, 2rem + 1vw)",
-                borderRadius: "50%",
-                boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
-                padding: 0,
+          <MapSheet.Sheet modal={false} open={sheetIsOpen}>
+            <Tabs.Root
+              value={selectedTab}
+              onValueChange={(newValue) => {
+                setSelectedTab(newValue as Tab);
               }}
             >
-              <img src="/map_list.png" alt="map list" />
-            </MapSheet.SheetTrigger>
-            <MapSheet.SheetTrigger
-              style={{
-                marginLeft: "3rem",
-                width: "23vw",
-                minWidth: "200px",
-                height: "min(72px, 2rem + 1.5vw)",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Input
-                className="map-search"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  borderStyle: "none",
-                  borderRadius: "min(10px, 0.6vw)",
-                  boxShadow: "0px 4px 4px rgb(0 0 0 / 0.15)",
-                }}
-                placeholder="어디로 가고 싶으세요?"
-                prefix={
-                  <img
-                    src="/search_icon.png"
+              <Tabs.List style={{ display: "flex" }}>
+                <Tabs.Trigger
+                  key={Tab.EXPLORE}
+                  value={Tab.EXPLORE}
+                  style={{
+                    width: "min(53px, 2rem + 1vw)",
+                    height: "min(53px, 2rem + 1vw)",
+                    borderRadius: "50%",
+                    boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    setSheetIsOpen(
+                      !(lastClickedTab === Tab.EXPLORE && sheetIsOpen)
+                    );
+                    setLastClickedTab(Tab.EXPLORE);
+                  }}
+                >
+                  <img src="/map_list.png" alt="map list" />
+                </Tabs.Trigger>
+                <div
+                  style={{
+                    marginLeft: "3rem",
+                    width: "23vw",
+                    minWidth: "200px",
+                    height: "min(72px, 2rem + 1.5vw)",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  onClick={() => {
+                    if (!sheetIsOpen) {
+                      setSheetIsOpen(true);
+                    }
+                  }}
+                >
+                  <Input
+                    className="map-search"
                     style={{
-                      width: "min(25px, 14px + 0.5vw)",
-                      marginRight: "8px",
+                      width: "100%",
+                      height: "100%",
+                      borderStyle: "none",
+                      borderRadius: "min(10px, 0.6vw)",
+                      boxShadow: "0px 4px 4px rgb(0 0 0 / 0.15)",
                     }}
-                    alt="search icon"
+                    placeholder="어디로 가고 싶으세요?"
+                    prefix={
+                      <img
+                        src="/search_icon.png"
+                        style={{
+                          width: "min(25px, 14px + 0.5vw)",
+                          marginRight: "8px",
+                        }}
+                        alt="search icon"
+                      />
+                    }
                   />
-                }
-              />
-            </MapSheet.SheetTrigger>
-            <div
-              style={{
-                display: "flex",
-                position: "fixed",
-                top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
-                left: "18px",
-                zIndex: 2,
-              }}
-            >
-              <MapSheet.SheetTrigger
-                style={{
-                  width: "min(53px, 2rem + 1vw)",
-                  height: "min(53px, 2rem + 1vw)",
-                  borderRadius: "50%",
-                  boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
-                  padding: 0,
+                </div>
+                <Tabs.Trigger
+                  key={Tab.FAVORITES}
+                  value={Tab.FAVORITES}
+                  style={{
+                    display: "flex",
+                    position: "fixed",
+                    top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
+                    left: "18px",
+                    zIndex: 2,
+                  }}
+                  onClick={() => {
+                    setSheetIsOpen(
+                      !(lastClickedTab === Tab.FAVORITES && sheetIsOpen)
+                    );
+                    setLastClickedTab(Tab.FAVORITES);
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "min(53px, 2rem + 1vw)",
+                      height: "min(53px, 2rem + 1vw)",
+                      borderRadius: "50%",
+                      boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+                      padding: 0,
+                    }}
+                  >
+                    <img src="/map_c.png" alt="my list" />
+                  </div>
+                </Tabs.Trigger>
+              </Tabs.List>
+              <MapSheet.SheetContent
+                position="left"
+                onPointerDownOutside={(event) => {
+                  event.preventDefault();
                 }}
-              >
-                <img src="/map_c.png" alt="my list" />
-              </MapSheet.SheetTrigger>
-            </div>
-            <MapSheet.SheetContent
-              position="left"
-              onPointerDownOutside={(event) => {
-                event.preventDefault();
-              }}
-              onInteractOutside={(event) => {
-                event.preventDefault();
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: "white",
-                  width: "min(53px + 36px, 2rem + 1vw + 36px)",
-                  height: "100vh",
-                  position: "fixed",
-                  top: 0,
-                  boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
-                  zIndex: 1,
-                }}
-              ></div>
-              <div
-                style={{
-                  backgroundColor: "white",
-                  left: "min(53px + 36px, 2rem + 1vw + 36px)",
-                  width: "calc(6rem - 36px + max(200px, 23vw))",
-                  height: "100vh",
-                  position: "fixed",
-                  top: 0,
-                  boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
+                onInteractOutside={(event) => {
+                  event.preventDefault();
                 }}
               >
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    padding:
-                      "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
+                    backgroundColor: "white",
+                    width: "min(53px + 36px, 2rem + 1vw + 36px)",
+                    height: "100vh",
+                    position: "fixed",
+                    top: 0,
+                    boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
+                    zIndex: 1,
+                  }}
+                ></div>
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    left: "min(53px + 36px, 2rem + 1vw + 36px)",
+                    width: "calc(6rem - 36px + max(200px, 23vw))",
+                    height: "100vh",
+                    position: "fixed",
+                    top: 0,
+                    boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
                   }}
                 >
-                  <Select
-                    className="maps"
-                    onChange={handleChange}
-                    defaultValue="distance"
-                    suffixIcon={
-                      <img src="/maps-selector.png" width="12px" alt="" />
-                    }
-                    options={[
-                      { value: "distance", label: "거리 순" },
-                      { value: "reviews", label: "리뷰 순" },
-                      { value: "highRatings", label: "별점 높은 순" },
-                      { value: "lowRatings", label: "별점 낮은 순" },
-                    ]}
+                  <div
                     style={{
                       display: "flex",
-                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                      padding:
+                        "calc(7rem + 25px + min(72px, 2rem + 1.5vw)) calc(3rem - 18px) 1rem",
                     }}
-                  />
+                  >
+                    <Select
+                      className="maps"
+                      onChange={handleChange}
+                      defaultValue="distance"
+                      suffixIcon={
+                        <img src="/maps-selector.png" width="12px" alt="" />
+                      }
+                      options={[
+                        { value: "distance", label: "거리 순" },
+                        { value: "reviews", label: "리뷰 순" },
+                        { value: "highRatings", label: "별점 높은 순" },
+                        { value: "lowRatings", label: "별점 낮은 순" },
+                      ]}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    />
+                  </div>
+                  <Tabs.Content key={Tab.EXPLORE} value={Tab.EXPLORE}>
+                    <div
+                      style={{
+                        width: "100%",
+                        borderWidth: "1px 0px",
+                        borderColor: "#D9D9D9",
+                        padding: "min(1.8rem, 2vw) min(1rem, 1.2vw)",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Col
+                        span={7}
+                        style={{
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                          padding: "8px 0px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            backgroundColor: "lightgrey",
+                            width: "min(106px, 7.5vw)",
+                            minWidth: "60px",
+                            height: "min(106px, 7.5vw)",
+                            minHeight: "60px",
+                            borderRadius: "20%",
+                          }}
+                        ></div>
+                      </Col>
+                      <Col
+                        span={13}
+                        style={{
+                          height: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "80%",
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <span>논현동물병원</span>
+                          <span>26m</span>
+                          <div>ratings</div>
+                          <div>
+                            <span>서울 강남구 논현동</span>
+                            <DownOutlined />
+                          </div>
+                          <span>리뷰 000개</span>
+                        </div>
+                      </Col>
+                      <Col span={4} style={{ height: "100%" }}></Col>
+                    </div>
+                  </Tabs.Content>
+                  <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>
+                    Favorites
+                  </Tabs.Content>
                 </div>
-              </div>
-              {/* <MapSheet.SheetHeader>
+                {/* <MapSheet.SheetHeader>
                 <MapSheet.SheetTitle>
                   Are you sure absolutely sure?
                 </MapSheet.SheetTitle>
@@ -243,7 +349,8 @@ const Maps: NextPage = () => {
                   your account and remove your data from our servers.
                 </MapSheet.SheetDescription>
               </MapSheet.SheetHeader> */}
-            </MapSheet.SheetContent>
+              </MapSheet.SheetContent>
+            </Tabs.Root>
           </MapSheet.Sheet>
 
           <div
