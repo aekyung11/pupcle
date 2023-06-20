@@ -536,7 +536,8 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               <Tabs.Trigger value={Tab.SLEEP} key={Tab.SLEEP} asChild={true}>
                 <Button
                   className={clsx({
-                    "status-tab-trigger sleep": true,
+                    "status-tab-trigger sleep disabled:cursor-not-allowed":
+                      true,
                     complete: completeStatusCount >= 1,
                   })}
                 >
@@ -546,7 +547,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               <Tabs.Trigger value={Tab.DIET} key={Tab.DIET} asChild={true}>
                 <Button
                   className={clsx({
-                    "status-tab-trigger diet": true,
+                    "status-tab-trigger diet disabled:cursor-not-allowed": true,
                     complete: completeStatusCount >= 2,
                   })}
                   disabled={completeStatusCount < 1}
@@ -561,7 +562,8 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               >
                 <Button
                   className={clsx({
-                    "status-tab-trigger walking": true,
+                    "status-tab-trigger walking disabled:cursor-not-allowed":
+                      true,
                     complete: completeStatusCount >= 3,
                   })}
                   disabled={completeStatusCount < 2}
@@ -572,7 +574,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               <Tabs.Trigger value={Tab.PLAY} key={Tab.PLAY} asChild={true}>
                 <Button
                   className={clsx({
-                    "status-tab-trigger play": true,
+                    "status-tab-trigger play disabled:cursor-not-allowed": true,
                     complete: completeStatusCount >= 4,
                   })}
                   disabled={completeStatusCount < 3}
@@ -587,7 +589,8 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               >
                 <Button
                   className={clsx({
-                    "status-tab-trigger bathroom": true,
+                    "status-tab-trigger bathroom disabled:cursor-not-allowed":
+                      true,
                     complete: completeStatusCount >= 5,
                   })}
                   disabled={completeStatusCount < 4}
@@ -598,7 +601,8 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               <Tabs.Trigger value={Tab.HEALTH} key={Tab.HEALTH} asChild={true}>
                 <Button
                   className={clsx({
-                    "status-tab-trigger health": true,
+                    "status-tab-trigger health disabled:cursor-not-allowed":
+                      true,
                     complete: completeStatusCount >= 6,
                   })}
                   disabled={completeStatusCount < 5}
