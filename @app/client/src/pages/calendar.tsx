@@ -141,7 +141,12 @@ const Calendar: NextPage = () => {
             }}
           >
             <div
-              style={{ height: "85%", display: "flex", alignItems: "center" }}
+              style={{
+                height: "85%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
             >
               {firstDayOfMonth && lastDayOfMonth && (
                 <DayPicker

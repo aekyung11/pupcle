@@ -426,24 +426,49 @@ a.ant-btn-primary:hover {
 }
 
 .calendar-pupcle-calendar {
-  --rdp-cell-size: 7vw;
+  --rdp-cell-size: max(7.5vw, 3.5rem);
+  --rdp-cell-height: min(8.5vw, 1vw + 6rem);
   --rdp-accent-color: #7fb3e8;
   --rdp-background-color: #e7edff;
   --rdp-accent-color-dark: #7fb3e8;
   --rdp-background-color-dark: #180270;
   --rdp-outline: 2px solid var(--rdp-accent-color);
   --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75);
+  margin: 0;
+  margin-left: 1rem;
+  min-width: 500px;
+  padding: 2rem 0px;
+}
+
+.calendar-pupcle-calendar .rdp-caption_label {
+  font-family: Poppins;
+  font-size: min(30px, 2.4vw);
+  font-weight: 600;
+}
+
+.calendar-pupcle-calendar .rdp-months {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.calendar-pupcle-calendar .rdp-head_cell {
+  font-family: Poppins;
+  font-size: min(30px, 2.4vw);
+  font-weight: 600;
+}
+
+.calendar-pupcle-calendar .rdp-cell {
+  height: var(--rdp-cell-height);
 }
 
 .calendar-pupcle-calendar .rdp-day {
   display: flex;
   align-items: flex-start;
-}
-
-.calendar-pupcle-calendar .rdp-caption_label {
   font-family: Poppins;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: min(30px, 2.4vw);
+  font-weight: 400;
+  color: #8f9092;
+  height: 100%;
 }
 
 .ant-form input {
