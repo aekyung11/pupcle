@@ -121,6 +121,59 @@ const Maps: NextPage = () => {
             >
               <img src="/map_list.png" alt="map list" />
             </MapSheet.SheetTrigger>
+            <MapSheet.SheetTrigger
+              style={{
+                marginLeft: "3rem",
+                width: "23vw",
+                minWidth: "200px",
+                height: "min(72px, 2rem + 1.5vw)",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Input
+                className="map-search"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderStyle: "none",
+                  borderRadius: "min(10px, 0.6vw)",
+                  boxShadow: "0px 4px 4px rgb(0 0 0 / 0.15)",
+                }}
+                placeholder="어디로 가고 싶으세요?"
+                prefix={
+                  <img
+                    src="/search_icon.png"
+                    style={{
+                      width: "min(25px, 14px + 0.5vw)",
+                      marginRight: "8px",
+                    }}
+                    alt="search icon"
+                  />
+                }
+              />
+            </MapSheet.SheetTrigger>
+            <div
+              style={{
+                display: "flex",
+                position: "fixed",
+                top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
+                left: "18px",
+                zIndex: 2,
+              }}
+            >
+              <MapSheet.SheetTrigger
+                style={{
+                  width: "min(53px, 2rem + 1vw)",
+                  height: "min(53px, 2rem + 1vw)",
+                  borderRadius: "50%",
+                  boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
+                  padding: 0,
+                }}
+              >
+                <img src="/map_c.png" alt="my list" />
+              </MapSheet.SheetTrigger>
+            </div>
             <MapSheet.SheetContent
               position="left"
               onPointerDownOutside={(event) => {
@@ -192,38 +245,7 @@ const Maps: NextPage = () => {
               </MapSheet.SheetHeader> */}
             </MapSheet.SheetContent>
           </MapSheet.Sheet>
-          <div
-            style={{
-              marginLeft: "3rem",
-              width: "23vw",
-              minWidth: "200px",
-              height: "min(72px, 2rem + 1.5vw)",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Input
-              className="map-search"
-              style={{
-                width: "100%",
-                height: "100%",
-                borderStyle: "none",
-                borderRadius: "min(10px, 0.6vw)",
-                boxShadow: "0px 4px 4px rgb(0 0 0 / 0.15)",
-              }}
-              placeholder="어디로 가고 싶으세요?"
-              prefix={
-                <img
-                  src="/search_icon.png"
-                  style={{
-                    width: "min(25px, 14px + 0.5vw)",
-                    marginRight: "8px",
-                  }}
-                  alt="search icon"
-                />
-              }
-            />
-          </div>
+
           <div
             style={{
               marginLeft: "3rem",
@@ -283,27 +305,6 @@ const Maps: NextPage = () => {
               </span>
             </Button>
           </div>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            position: "fixed",
-            top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
-            left: "18px",
-            zIndex: 2,
-          }}
-        >
-          <Button
-            style={{
-              width: "min(53px, 2rem + 1vw)",
-              height: "min(53px, 2rem + 1vw)",
-              borderRadius: "50%",
-              boxShadow: "0px 4px 4px rgb(0 0 0 / 0.25)",
-              padding: 0,
-            }}
-          >
-            <img src="/map_c.png" alt="my list" />
-          </Button>
         </div>
       </div>
     </SharedLayout>
