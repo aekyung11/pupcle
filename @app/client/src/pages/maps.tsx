@@ -2,10 +2,12 @@ import { DownOutlined } from "@ant-design/icons";
 import { MapSheet, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Button, Col, Input, Select } from "antd";
+import { Button, Col, Input, Select, Typography } from "antd";
+const { Paragraph } = Typography;
+
 import { NextPage } from "next";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -16,6 +18,111 @@ enum Tab {
   FAVORITES = "favorites",
 }
 
+type Place = {
+  address_name: string;
+  category_group_code: string;
+  category_group_name: string;
+  category_name: string;
+  distance: string;
+  id: string;
+  phone: string;
+  place_name: string;
+  place_url: string;
+  road_address_name: string;
+  x: string;
+  y: string;
+};
+
+const PlaceItem = ({ place }: { place: Place }) => {
+  const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+
+  console.log(place.place_name, isAddressExpanded);
+
+  return (
+    <div
+      key={place.id}
+      style={{
+        width: "100%",
+        borderWidth: "1px 0px",
+        borderColor: "#D9D9D9",
+        padding: "min(1.8rem, 2vw) min(1rem, 1.2vw)",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Col
+        span={7}
+        style={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          padding: "8px 0px",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "lightgrey",
+            width: "min(106px, 7.5vw)",
+            minWidth: "60px",
+            height: "min(106px, 7.5vw)",
+            minHeight: "60px",
+            borderRadius: "20%",
+          }}
+        ></div>
+      </Col>
+      <Col
+        span={13}
+        style={{
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "80%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <span>{place.place_name}</span>
+          <span>{place.distance || "-"} m</span>
+          <div>ratings</div>
+          <div>
+            {isAddressExpanded ? (
+              <Paragraph
+                key={`id-${place.id}:address:isExpanded-${true}`}
+                style={{ marginBottom: 0 }}
+              >
+                {place.road_address_name}
+                {isAddressExpanded && (
+                  <DownOutlined onClick={() => setIsAddressExpanded(false)} />
+                )}
+              </Paragraph>
+            ) : (
+              <Paragraph
+                key={`id-${place.id}:address:isExpanded-${false}`}
+                style={{ marginBottom: 0 }}
+                ellipsis={{
+                  rows: 1,
+                  expandable: true,
+                  onExpand: () => setIsAddressExpanded(true),
+                  symbol: <DownOutlined />,
+                }}
+              >
+                {place.road_address_name}
+              </Paragraph>
+            )}
+          </div>
+          <span>리뷰 000개</span>
+        </div>
+      </Col>
+      <Col span={4} style={{ height: "100%" }}></Col>
+    </div>
+  );
+};
+
 const Maps: NextPage = () => {
   const query = useSharedQuery();
 
@@ -24,6 +131,9 @@ const Maps: NextPage = () => {
   const [lastClickedTab, setLastClickedTab] = useState<Tab | undefined>();
 
   const [sheetIsOpen, setSheetIsOpen] = useState<boolean>(false);
+
+  const [placesApi, setPlacesApi] = useState<any>(undefined);
+  const [listResults, setListResults] = useState<Place[]>([]);
 
   // @ts-ignore
   const kakao = typeof window !== "undefined" && window?.kakao;
@@ -34,23 +144,25 @@ const Maps: NextPage = () => {
       return;
     }
     kakao.maps.load(() => {
-      var container = document.getElementById("map");
-      var options = {
+      const container = document.getElementById("map");
+      const options = {
         center: new kakao.maps.LatLng(33.450701, 126.570667),
-        level: 2,
+        level: 3, // 지도의 확대 레벨
       };
 
-      var map = new kakao.maps.Map(container, options);
+      const map = new kakao.maps.Map(container, options);
+      const ps = new kakao.maps.services.Places();
+      setPlacesApi(ps);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const displayLevel = () => {
-        var _levelEl = document.getElementById("maplevel");
+        const _levelEl = document.getElementById("maplevel");
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const zoomIn = () => {
         // 현재 지도의 레벨을 얻어옵니다
-        var level = map.getLevel();
+        const level = map.getLevel();
 
         // 지도를 1레벨 내립니다 (지도가 확대됩니다)
         map.setLevel(level - 1);
@@ -62,7 +174,7 @@ const Maps: NextPage = () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const zoomOut = () => {
         // 현재 지도의 레벨을 얻어옵니다
-        var level = map.getLevel();
+        const level = map.getLevel();
 
         // 지도를 1레벨 올립니다 (지도가 축소됩니다)
         map.setLevel(level + 1);
@@ -75,23 +187,23 @@ const Maps: NextPage = () => {
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          var lat = position.coords.latitude; // 현재 위치의 위도
-          var lng = position.coords.longitude; // 현재 위치의 경도
+          const lat = position.coords.latitude; // 현재 위치의 위도
+          const lng = position.coords.longitude; // 현재 위치의 경도
 
           // 현재 위치를 중심으로 하는 지도로 이동합니다.
           map.setCenter(new kakao.maps.LatLng(lat, lng));
 
-          var moveLatLon = new kakao.maps.LatLng(lat, lng);
+          const moveLatLon = new kakao.maps.LatLng(lat, lng);
           map.panTo(moveLatLon);
 
           // 현재 위치에 마커를 표시합니다.
-          var _markerImage = new kakao.maps.MarkerImage(
+          const _markerImage = new kakao.maps.MarkerImage(
             "https://map.kakaocdn.net/sh/maps/dhdwk7mst/marker/star.png",
             new kakao.maps.Size(24, 35),
             { offset: new kakao.maps.Point(12, 35) }
           );
 
-          var _marker = new kakao.maps.Marker({
+          const _marker = new kakao.maps.Marker({
             position: new kakao.maps.LatLng(lat, lng),
             map: map,
           });
@@ -99,6 +211,36 @@ const Maps: NextPage = () => {
       }
     });
   }, [kakao, kakaoMaps]);
+
+  const handleSearch = useCallback(
+    async (keyword: string) => {
+      if (!keyword.replace(/^\s+|\s+$/g, "")) {
+        alert("키워드를 입력해주세요!");
+        return false;
+      }
+
+      const { data, pagination }: { data: Place[]; pagination: unknown } =
+        await new Promise((resolve, reject) => {
+          placesApi.keywordSearch(
+            keyword,
+            (data: unknown, status: any, pagination: unknown) => {
+              if (status === kakao.maps.services.Status.OK) {
+                resolve({ data: data as lPace[], pagination });
+              } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+                alert("검색 결과가 존재하지 않습니다.");
+                resolve({ data: [], pagination: null });
+              } else if (status === kakao.maps.services.Status.ERROR) {
+                reject("검색 결과 중 오류가 발생했습니다.");
+              }
+            }
+          );
+        });
+
+      console.log({ data, pagination });
+      setListResults(data);
+    },
+    [placesApi]
+  );
 
   return (
     <SharedLayout title="maps" query={query}>
@@ -184,6 +326,9 @@ const Maps: NextPage = () => {
                         }}
                         alt="search icon"
                       />
+                    }
+                    onPressEnter={(e: KeyboardEvent<HTMLInputElement>) =>
+                      handleSearch(e.currentTarget.value)
                     }
                   />
                 </div>
@@ -277,64 +422,9 @@ const Maps: NextPage = () => {
                     />
                   </div>
                   <Tabs.Content key={Tab.EXPLORE} value={Tab.EXPLORE}>
-                    <div
-                      style={{
-                        width: "100%",
-                        borderWidth: "1px 0px",
-                        borderColor: "#D9D9D9",
-                        padding: "min(1.8rem, 2vw) min(1rem, 1.2vw)",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Col
-                        span={7}
-                        style={{
-                          height: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "flex-end",
-                          padding: "8px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: "lightgrey",
-                            width: "min(106px, 7.5vw)",
-                            minWidth: "60px",
-                            height: "min(106px, 7.5vw)",
-                            minHeight: "60px",
-                            borderRadius: "20%",
-                          }}
-                        ></div>
-                      </Col>
-                      <Col
-                        span={13}
-                        style={{
-                          height: "100%",
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "80%",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <span>논현동물병원</span>
-                          <span>26m</span>
-                          <div>ratings</div>
-                          <div>
-                            <span>서울 강남구 논현동</span>
-                            <DownOutlined />
-                          </div>
-                          <span>리뷰 000개</span>
-                        </div>
-                      </Col>
-                      <Col span={4} style={{ height: "100%" }}></Col>
-                    </div>
+                    {listResults?.map((place) => (
+                      <PlaceItem key={place.id} place={place} />
+                    ))}
                   </Tabs.Content>
                   <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>
                     Favorites

@@ -25,6 +25,7 @@ export default async function installHelmet(app: Express) {
           // it.
           ROOT_URL.replace(/^http/, "ws"),
           isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
+          "https://dapi.kakao.com/",
         ],
         "img-src": [
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
