@@ -306,6 +306,39 @@ a.ant-btn-primary:hover {
   content: url("/park_icon_selected.png");
 }
 
+.map-list-title {
+  font-family: Poppins;
+  font-weight: 700;
+  font-size: min(20px, 14px + 0.2vw);
+  color: #7fb3e8;
+}
+
+.map-list-details {
+  font-family: Poppins;
+  font-weight: 500;
+  font-size: min(15px, 12px + 0.1vw);
+  color: #8f9092;
+}
+
+.map-rate {
+  display: flex;
+  align-items: center;
+}
+
+.map-rate .ant-rate {
+  display: flex;
+  color: #ff9c06;
+}
+
+.map-rate .ant-rate .ant-rate-star {
+  margin-inline-end: 4px;
+}
+
+.map-rate .ant-rate .ant-rate-star .anticon {
+  vertical-align: 0;
+  font-size: min(20px, 14px + 0.2vw);
+}
+
 .circular-radio-button {
   width: 78;
   height: 78;

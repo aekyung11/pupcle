@@ -2,7 +2,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { MapSheet, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Button, Col, Input, Select, Typography } from "antd";
+import { Button, Col, Input, Rate, Select, Typography } from "antd";
 const { Paragraph } = Typography;
 
 import { NextPage } from "next";
@@ -48,7 +48,7 @@ const PlaceItem = ({ place }: { place: Place }) => {
         alignItems: "center",
       }}
     >
-      {/* <Col
+      <Col
         span={7}
         style={{
           height: "100%",
@@ -68,10 +68,10 @@ const PlaceItem = ({ place }: { place: Place }) => {
             borderRadius: "20%",
           }}
         ></div>
-      </Col> */}
+      </Col>
       <Col
-        // span={13}
-        span={20}
+        span={13}
+        // span={20}
         style={{
           height: "100%",
           display: "flex",
@@ -85,12 +85,18 @@ const PlaceItem = ({ place }: { place: Place }) => {
             flexDirection: "column",
           }}
         >
-          <span>{place.place_name}</span>
-          <span>{place.distance ? `${place.distance}m` : "-"}</span>
-          <div>ratings</div>
+          <span className="map-list-title">{place.place_name}</span>
+          <span className="map-list-details">
+            {place.distance ? `${place.distance}m` : "-"}
+          </span>
+          <div className="map-rate">
+            <Rate disabled defaultValue={4.5} />
+            <span className="map-list-details">(4.9)</span>
+          </div>
           <div>
             {isAddressExpanded ? (
               <Paragraph
+                className="map-list-details"
                 key={`id-${place.id}:address:isExpanded-${true}`}
                 style={{ marginBottom: 0 }}
               >
@@ -101,6 +107,7 @@ const PlaceItem = ({ place }: { place: Place }) => {
               </Paragraph>
             ) : (
               <Paragraph
+                className="map-list-details"
                 key={`id-${place.id}:address:isExpanded-${false}`}
                 style={{ marginBottom: 0 }}
                 ellipsis={{
@@ -115,7 +122,9 @@ const PlaceItem = ({ place }: { place: Place }) => {
             )}
           </div>
           {/* TODO: database */}
-          <span>리뷰 {Number(place.id) % 10}개</span>
+          <span className="map-list-details">
+            리뷰 {Number(place.id) % 10}개
+          </span>
         </div>
       </Col>
       <Col span={4} style={{ height: "100%" }}></Col>
