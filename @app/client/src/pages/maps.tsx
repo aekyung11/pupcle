@@ -86,7 +86,7 @@ const PlaceItem = ({ place }: { place: Place }) => {
           }}
         >
           <span>{place.place_name}</span>
-          <span>{place.distance || "-"} m</span>
+          <span>{place.distance ? `${place.distance}m` : "-"}</span>
           <div>ratings</div>
           <div>
             {isAddressExpanded ? (
@@ -114,7 +114,8 @@ const PlaceItem = ({ place }: { place: Place }) => {
               </Paragraph>
             )}
           </div>
-          <span>리뷰 000개</span>
+          {/* TODO: database */}
+          <span>리뷰 {Number(place.id) % 10}개</span>
         </div>
       </Col>
       <Col span={4} style={{ height: "100%" }}></Col>
@@ -132,25 +133,28 @@ const Maps: NextPage = () => {
   const [sheetIsOpen, setSheetIsOpen] = useState<boolean>(false);
 
   const [placesApi, setPlacesApi] = useState<any>(undefined);
+
+  const [map, setMap] = useState<any>();
+  const [mapMarkers, setMapMarkers] = useState<any[]>([]);
   const [listResults, setListResults] = useState<Place[]>([]);
 
   // @ts-ignore
   const kakao = typeof window !== "undefined" && window?.kakao;
-  const kakaoMaps = kakao?.maps;
+  const kakaoMapApi = kakao?.maps;
 
   useEffect(() => {
-    if (!kakaoMaps) {
+    if (!kakaoMapApi) {
       return;
     }
-    kakao.maps.load(() => {
+    kakaoMapApi.load(() => {
       const container = document.getElementById("map");
       const options = {
-        center: new kakao.maps.LatLng(33.450701, 126.570667),
+        center: new kakaoMapApi.LatLng(33.450701, 126.570667),
         level: 3, // 지도의 확대 레벨
       };
 
-      const map = new kakao.maps.Map(container, options);
-      const ps = new kakao.maps.services.Places();
+      const map = new kakaoMapApi.Map(container, options);
+      const ps = new kakaoMapApi.services.Places(map);
       setPlacesApi(ps);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -190,26 +194,55 @@ const Maps: NextPage = () => {
           const lng = position.coords.longitude; // 현재 위치의 경도
 
           // 현재 위치를 중심으로 하는 지도로 이동합니다.
-          map.setCenter(new kakao.maps.LatLng(lat, lng));
+          map.setCenter(new kakaoMapApi.LatLng(lat, lng));
 
-          const moveLatLon = new kakao.maps.LatLng(lat, lng);
+          const moveLatLon = new kakaoMapApi.LatLng(lat, lng);
           map.panTo(moveLatLon);
 
           // 현재 위치에 마커를 표시합니다.
-          const _markerImage = new kakao.maps.MarkerImage(
+          const _markerImage = new kakaoMapApi.MarkerImage(
             "https://map.kakaocdn.net/sh/maps/dhdwk7mst/marker/star.png",
-            new kakao.maps.Size(24, 35),
-            { offset: new kakao.maps.Point(12, 35) }
+            new kakaoMapApi.Size(24, 35),
+            { offset: new kakaoMapApi.Point(12, 35) }
           );
 
-          const _marker = new kakao.maps.Marker({
-            position: new kakao.maps.LatLng(lat, lng),
+          const _marker = new kakaoMapApi.Marker({
+            position: new kakaoMapApi.LatLng(lat, lng),
             map: map,
           });
         });
       }
+
+      setMap(map);
     });
-  }, [kakao, kakaoMaps]);
+  }, [kakao, kakaoMapApi]);
+
+  const newMarker = useCallback(
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    (position: any, idx: number) => {
+      var imageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakaoMapApi.Size(36, 37), // 마커 이미지의 크기
+        imgOptions = {
+          spriteSize: new kakaoMapApi.Size(36, 691), // 스프라이트 이미지의 크기
+          spriteOrigin: new kakaoMapApi.Point(0, idx * 46 + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+          offset: new kakaoMapApi.Point(13, 37), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakaoMapApi.MarkerImage(
+          imageSrc,
+          imageSize,
+          imgOptions
+        ),
+        marker = new kakaoMapApi.Marker({
+          position: position, // 마커의 위치
+          image: markerImage,
+        });
+
+      marker.setMap(map); // 지도 위에 마커를 표출합니다
+      return marker;
+    },
+    [kakaoMapApi, map]
+  );
 
   const handleSearch = useCallback(
     async (keyword: string) => {
@@ -223,22 +256,47 @@ const Maps: NextPage = () => {
           placesApi.keywordSearch(
             keyword,
             (data: unknown, status: any, pagination: unknown) => {
-              if (status === kakao.maps.services.Status.OK) {
+              if (status === kakaoMapApi.services.Status.OK) {
                 resolve({ data: data as Place[], pagination });
-              } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+              } else if (status === kakaoMapApi.services.Status.ZERO_RESULT) {
                 alert("검색 결과가 존재하지 않습니다.");
                 resolve({ data: [], pagination: null });
-              } else if (status === kakao.maps.services.Status.ERROR) {
+              } else if (status === kakaoMapApi.services.Status.ERROR) {
                 reject("검색 결과 중 오류가 발생했습니다.");
               }
+            },
+            {
+              useMapCenter: true,
+              useMapBounds: true,
             }
           );
         });
 
       console.log({ data, pagination });
+
+      // clear markers
+      for (let marker of mapMarkers) {
+        marker.setMap(null);
+      }
+
+      const bounds = new kakao.maps.LatLngBounds();
+
+      // set new markers
+      const newMarkers = data.map((place, i) => {
+        // 마커를 생성하고 지도에 표시합니다
+        const placePosition = new kakao.maps.LatLng(place.y, place.x),
+          placeMarker = newMarker(placePosition, i);
+
+        bounds.extend(placePosition);
+
+        return placeMarker;
+      });
+      map.setBounds(bounds);
+
+      setMapMarkers(newMarkers);
       setListResults(data);
     },
-    [placesApi]
+    [placesApi, newMarker, mapMarkers, map]
   );
 
   return (
