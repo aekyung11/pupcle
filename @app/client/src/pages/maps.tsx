@@ -36,8 +36,6 @@ type Place = {
 const PlaceItem = ({ place }: { place: Place }) => {
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
 
-  console.log(place.place_name, isAddressExpanded);
-
   return (
     <div
       key={place.id}
@@ -50,7 +48,7 @@ const PlaceItem = ({ place }: { place: Place }) => {
         alignItems: "center",
       }}
     >
-      <Col
+      {/* <Col
         span={7}
         style={{
           height: "100%",
@@ -70,9 +68,10 @@ const PlaceItem = ({ place }: { place: Place }) => {
             borderRadius: "20%",
           }}
         ></div>
-      </Col>
+      </Col> */}
       <Col
-        span={13}
+        // span={13}
+        span={20}
         style={{
           height: "100%",
           display: "flex",
@@ -225,7 +224,7 @@ const Maps: NextPage = () => {
             keyword,
             (data: unknown, status: any, pagination: unknown) => {
               if (status === kakao.maps.services.Status.OK) {
-                resolve({ data: data as lPace[], pagination });
+                resolve({ data: data as Place[], pagination });
               } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
                 alert("검색 결과가 존재하지 않습니다.");
                 resolve({ data: [], pagination: null });
@@ -421,7 +420,15 @@ const Maps: NextPage = () => {
                       }}
                     />
                   </div>
-                  <Tabs.Content key={Tab.EXPLORE} value={Tab.EXPLORE}>
+                  <Tabs.Content
+                    key={Tab.EXPLORE}
+                    value={Tab.EXPLORE}
+                    style={{
+                      height: "100%",
+                      overflowY: "auto",
+                      overscrollBehavior: "contain",
+                    }}
+                  >
                     {listResults?.map((place) => (
                       <PlaceItem key={place.id} place={place} />
                     ))}
