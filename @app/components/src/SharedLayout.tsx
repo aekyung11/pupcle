@@ -8,6 +8,7 @@ import {
   useLogoutMutation,
 } from "@app/graphql";
 import { Button, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
+import clsx from "clsx";
 import Head from "next/head";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -71,6 +72,7 @@ export interface SharedLayoutProps {
   noPad?: boolean;
   noHandleErrors?: boolean;
   forbidWhen?: AuthRestrict;
+  useFriendsBg?: boolean;
 }
 
 /* The Apollo `useSubscription` hook doesn't currently allow skipping the
@@ -98,6 +100,7 @@ export function SharedLayout({
   query,
   forbidWhen = AuthRestrict.NEVER,
   children,
+  useFriendsBg,
 }: SharedLayoutProps) {
   const router = useRouter();
   const currentUrl = router.asPath;
@@ -592,7 +595,10 @@ export function SharedLayout({
   );
 
   return (
-    <Layout style={isMapsPage ? {} : { minWidth: "768px" }}>
+    <Layout
+      style={isMapsPage ? {} : { minWidth: "768px" }}
+      className={clsx({ "bg-friends-bg": useFriendsBg })}
+    >
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
       {title === "Sign in" || title === "Register" ? null : (
         <Header

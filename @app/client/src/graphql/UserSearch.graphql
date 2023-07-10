@@ -1,0 +1,13 @@
+fragment UserSearch_User on User {
+  avatarUrl
+  nickname
+  id
+  username
+}
+
+query UserSearch($term: String!) {
+  userByUsername(username: $term) {
+    id
+    ...UserSearch_User
+  }
+}

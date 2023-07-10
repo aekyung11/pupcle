@@ -60,7 +60,9 @@ const PlaceItem = ({ place }: { place: Place }) => {
       >
         <div
           style={{
-            backgroundColor: "lightgrey",
+            backgroundImage: "url(/default_map_thumbnail.png)",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
             width: "min(106px, 7.5vw)",
             minWidth: "60px",
             height: "min(106px, 7.5vw)",

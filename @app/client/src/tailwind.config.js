@@ -22,6 +22,7 @@ module.exports = {
     extend: {
       colors: {
         "home-comment": "#615518",
+        "friends-bg": "rgba(127, 179, 232, 0.1)",
       },
     },
   },
