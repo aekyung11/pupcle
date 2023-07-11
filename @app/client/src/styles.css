@@ -538,6 +538,19 @@ a.ant-btn-primary:hover {
   color: #8f9092;
 }
 
+.friend-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 27px;
+  border-radius: 14px;
+  border-width: 2px;
+  font-family: Poppins;
+  font-size: min(16px, 12px + 0.2vw);
+  font-weight: 600;
+}
+
 .ant-form input {
   background-color: rgb(245, 245, 245) !important;
 }

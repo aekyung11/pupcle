@@ -32,7 +32,7 @@ const _babelHackRow = Row;
 const _babelHackCol = Col;
 export { _babelHackCol as Col, Link, _babelHackRow as Row };
 
-export const contentMinHeight = "calc(100vh - 6rem - 70px)";
+export const contentMinHeight = "calc(100vh - 6rem)";
 
 export interface SharedLayoutChildProps {
   error?: ApolloError | Error;
@@ -72,7 +72,7 @@ export interface SharedLayoutProps {
   noPad?: boolean;
   noHandleErrors?: boolean;
   forbidWhen?: AuthRestrict;
-  useFriendsBg?: boolean;
+  useFriendsFrame?: boolean;
 }
 
 /* The Apollo `useSubscription` hook doesn't currently allow skipping the
@@ -100,7 +100,7 @@ export function SharedLayout({
   query,
   forbidWhen = AuthRestrict.NEVER,
   children,
-  useFriendsBg,
+  useFriendsFrame,
 }: SharedLayoutProps) {
   const router = useRouter();
   const currentUrl = router.asPath;
@@ -188,7 +188,15 @@ export function SharedLayout({
       );
     }
 
-    return noPad ? inner : <StandardWidth>{inner}</StandardWidth>;
+    return noPad ? (
+      inner
+    ) : (
+      <StandardWidth
+        className={clsx({ "h-[calc(100vh-6rem)]": useFriendsFrame })}
+      >
+        {inner}
+      </StandardWidth>
+    );
   };
   const { data, loading, error } = query;
 
@@ -596,8 +604,10 @@ export function SharedLayout({
 
   return (
     <Layout
-      style={isMapsPage ? {} : { minWidth: "768px" }}
-      className={clsx({ "bg-friends-bg": useFriendsBg })}
+      className={clsx({
+        "bg-friends-bg": useFriendsFrame,
+        "min-w-[768px]": !isMapsPage,
+      })}
     >
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
       {title === "Sign in" || title === "Register" ? null : (
@@ -636,42 +646,6 @@ export function SharedLayout({
           currentUser: data && data.currentUser,
         })}
       </Content>
-      {title === "Sign in" || title === "Register" ? null : (
-        <Footer>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text>
-              Copyright &copy; {new Date().getFullYear()} {companyName}. All
-              rights reserved.
-              {process.env.T_AND_C_URL ? (
-                <span>
-                  {" "}
-                  <a
-                    style={{ textDecoration: "underline" }}
-                    href={process.env.T_AND_C_URL}
-                  >
-                    Terms and conditions
-                  </a>
-                </span>
-              ) : null}
-            </Text>
-            <Text>
-              Powered by{" "}
-              <a
-                style={{ textDecoration: "underline" }}
-                href="https://graphile.org/postgraphile"
-              >
-                PostGraphile
-              </a>
-            </Text>
-          </div>
-        </Footer>
-      )}
     </Layout>
   );
 }

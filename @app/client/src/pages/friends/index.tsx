@@ -5,13 +5,17 @@ import { Button, Input, Spin } from "antd";
 import clsx from "clsx";
 import { NextPage } from "next";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type UserSearchBoxProps = {
   currentUserId: string | undefined;
+  onShowResultChange: (showResult: boolean) => void;
 };
 
-function UserSearchBox({ currentUserId }: UserSearchBoxProps) {
+function UserSearchBox({
+  currentUserId,
+  onShowResultChange,
+}: UserSearchBoxProps) {
   const [term, setTerm] = useState("");
   const { loading, data } = useUserSearchQuery({
     variables: {
@@ -19,10 +23,14 @@ function UserSearchBox({ currentUserId }: UserSearchBoxProps) {
     },
   });
 
-  const showResults = loading || data;
   const dataUsers = (data?.userByUsername ? [data.userByUsername] : []).filter(
     (u) => u.id !== currentUserId
   );
+  const showResults = !!(loading || dataUsers.length > 0);
+
+  useEffect(() => {
+    onShowResultChange(showResults);
+  }, [onShowResultChange, showResults]);
 
   return (
     <div>
@@ -49,40 +57,60 @@ function UserSearchBox({ currentUserId }: UserSearchBoxProps) {
             <Spin />
           ) : (
             <>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "20px 0px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src="/default_avatar.png" width="38px" height="38px" />
-                  <span
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "min(16px, 12px + 0.2vw)",
-                      fontWeight: 600,
-                      margin: "0px 10px",
-                    }}
-                  >
-                    퐁당이
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "min(16px, 12px + 0.2vw)",
-                      fontWeight: 500,
-                    }}
-                  >
-                    pongdang1004
-                  </span>
+              {dataUsers.map((user) => (
+                <div
+                  key={user.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "20px 0px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <img src="/default_avatar.png" width="38px" height="38px" />
+                    <span
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "min(16px, 12px + 0.2vw)",
+                        fontWeight: 600,
+                        margin: "0px 10px",
+                      }}
+                    >
+                      {user.nickname}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "min(16px, 12px + 0.2vw)",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {user.username}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Button
+                      className="friend-button"
+                      style={{
+                        marginRight: "10px",
+                        borderColor: "#7FB3E8",
+                        color: "#7FB3E8",
+                      }}
+                    >
+                      미션
+                    </Button>
+                    <Button
+                      className="friend-button"
+                      style={{
+                        borderColor: "#FF9C06",
+                        color: "#FF9C06",
+                      }}
+                    >
+                      삭제
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <Button>미션</Button>
-                  <Button>삭제</Button>
-                </div>
-              </div>
+              ))}
             </>
           )}
         </div>
@@ -95,10 +123,11 @@ const Friends: NextPage = () => {
   const query = useSharedQuery();
   const [requestsPanelOpen, setRequestsPanelOpen] = useState(false);
   const [userSearchResultsOpen, setUserSearchResultsOpen] = useState(false);
+  console.log({ userSearchResultsOpen });
   const currentUserId = query.data?.currentUser?.id as string | undefined;
   return (
-    <SharedLayout title="friends" query={query} useFriendsBg>
-      <div style={{ padding: "40px 50px" }}>
+    <SharedLayout title="friends" query={query} useFriendsFrame>
+      <div style={{ padding: "40px 50px", height: "15%" }}>
         <span
           style={{
             fontFamily: "Poppins, sans-serif",
@@ -110,7 +139,7 @@ const Friends: NextPage = () => {
           Friends
         </span>
       </div>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", height: "85%" }}>
         <div
           style={{
             width: "220px",
@@ -158,14 +187,22 @@ const Friends: NextPage = () => {
           style={{
             backgroundColor: "white",
             width: "calc(100vw - 280px)",
-            marginLeft: "40px",
+            margin: "0px 0px 20px 40px",
             borderRadius: "30px",
             display: "flex",
           }}
         >
           <div style={{ width: "calc(100% - 300px)", padding: "40px" }}>
-            <UserSearchBox currentUserId={currentUserId} />
-            <div style={{ marginTop: "70px" }}>
+            <UserSearchBox
+              currentUserId={currentUserId}
+              onShowResultChange={setUserSearchResultsOpen}
+            />
+            <div
+              style={{
+                marginTop: userSearchResultsOpen ? "0px" : "50px",
+                padding: "20px 0px",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -195,9 +232,26 @@ const Friends: NextPage = () => {
                     pongdang1004
                   </span>
                 </div>
-                <div>
-                  <Button>미션</Button>
-                  <Button>삭제</Button>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Button
+                    className="friend-button"
+                    style={{
+                      marginRight: "10px",
+                      borderColor: "#7FB3E8",
+                      color: "#7FB3E8",
+                    }}
+                  >
+                    미션
+                  </Button>
+                  <Button
+                    className="friend-button"
+                    style={{
+                      borderColor: "#FF9C06",
+                      color: "#FF9C06",
+                    }}
+                  >
+                    삭제
+                  </Button>
                 </div>
               </div>
             </div>
@@ -241,8 +295,13 @@ const Friends: NextPage = () => {
                   </button>
                 </Collapsible.Trigger>
               </div>
-              <Collapsible.Content className={clsx("pt-[70px]")}>
-                <div style={{ padding: "0px 30px", width: "220px" }}>
+              <Collapsible.Content className={clsx("pt-[50px]")}>
+                <div
+                  style={{
+                    width: "220px",
+                    padding: "20px 30px",
+                  }}
+                >
                   <div
                     style={{
                       display: "flex",
@@ -285,9 +344,34 @@ const Friends: NextPage = () => {
                       </span>
                     </div>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button>수락</Button>
-                    <Button>거절</Button>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      marginTop: "8px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Button
+                        className="friend-button"
+                        style={{
+                          marginRight: "10px",
+                          borderColor: "#7FB3E8",
+                          color: "#7FB3E8",
+                        }}
+                      >
+                        수락
+                      </Button>
+                      <Button
+                        className="friend-button"
+                        style={{
+                          borderColor: "#FF9C06",
+                          color: "#FF9C06",
+                        }}
+                      >
+                        거절
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Collapsible.Content>
