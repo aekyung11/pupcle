@@ -1,0 +1,13 @@
+query SentFriendRequests {
+  currentUser {
+    id
+    friendRequestsByFromUserId {
+      nodes {
+        updatedAt
+        toUserId
+        fromUserId
+        createdAt
+      }
+    }
+  }
+}

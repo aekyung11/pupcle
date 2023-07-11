@@ -1,0 +1,13 @@
+mutation CreateFriendRequest($fromUserId: UUID!, $toUserId: UUID!) {
+  createFriendRequest(
+    input: { friendRequest: { fromUserId: $fromUserId, toUserId: $toUserId } }
+  ) {
+    clientMutationId
+    friendRequest {
+      createdAt
+      fromUserId
+      toUserId
+      updatedAt
+    }
+  }
+}

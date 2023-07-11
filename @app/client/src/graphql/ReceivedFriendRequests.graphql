@@ -1,0 +1,19 @@
+query ReceivedFriendRequests {
+  currentUser {
+    id
+    friendRequestsByToUserId {
+      nodes {
+        createdAt
+        fromUserId
+        toUserId
+        updatedAt
+        fromUser {
+          avatarUrl
+          id
+          nickname
+          username
+        }
+      }
+    }
+  }
+}

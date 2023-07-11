@@ -77,8 +77,8 @@ const FriendsPlugin = makeExtendSchemaPlugin((build) => {
                 to_user_id,
                 daily_records_shared
               ) values (
-                $1,
-                $2,
+                $1::uuid,
+                $2::uuid,
                 $3
               ) returning *
             `,
@@ -92,8 +92,8 @@ const FriendsPlugin = makeExtendSchemaPlugin((build) => {
                 to_user_id,
                 daily_records_shared
               ) values (
-                $1,
-                $2,
+                $1::uuid,
+                $2::uuid,
                 $3
               ) returning *
             `,

@@ -1,0 +1,6 @@
+mutation DeleteFriendRequest($fromUserId: UUID!, $toUserId: UUID!) {
+  deleteFriendRequest(input: { fromUserId: $fromUserId, toUserId: $toUserId }) {
+    clientMutationId
+    deletedFriendRequestNodeId
+  }
+}
