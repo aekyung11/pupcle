@@ -104,6 +104,10 @@ const FriendsPlugin = makeExtendSchemaPlugin((build) => {
             "delete from app_public.friend_requests where from_user_id = $1 and to_user_id = app_public.current_user_id()",
             [fromUserId]
           );
+          await pgClient.query(
+            "delete from app_public.friend_requests where from_user_id = app_public.current_user_id() and to_user_id = $1",
+            [fromUserId]
+          );
 
           const sql = build.pgSql;
           const [row] = await selectGraphQLResultFromTable(

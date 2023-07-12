@@ -1,0 +1,5 @@
+mutation Unfriend($fromUserId: UUID!, $toUserId: UUID!) {
+  deleteUserEdge(input: { fromUserId: $fromUserId, toUserId: $toUserId }) {
+    deletedUserEdgeNodeId
+  }
+}

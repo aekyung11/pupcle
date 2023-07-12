@@ -1,10 +1,15 @@
-import { SharedLayout } from "@app/components";
+import { AuthRestrict, SharedLayout } from "@app/components";
 import {
+  Friends_UserEdgeFragment,
+  Friends_UserFragment,
+  useAcceptFriendRequestMutation,
   useCreateFriendRequestMutation,
   useDeleteFriendRequestMutation,
+  useFriendsQuery,
   useReceivedFriendRequestsQuery,
   useSentFriendRequestsQuery,
   useSharedQuery,
+  useUnfriendMutation,
   useUserSearchQuery,
 } from "@app/graphql";
 import * as Collapsible from "@radix-ui/react-collapsible";
@@ -18,21 +23,27 @@ import { useEffect, useState } from "react";
 type UserSearchBoxProps = {
   currentUserId: string | undefined;
   onShowResultChange: (showResult: boolean) => void;
+  friends: Friends_UserEdgeFragment[] | undefined;
 };
 
 function UserSearchBox({
   currentUserId,
   onShowResultChange,
+  friends,
 }: UserSearchBoxProps) {
   const [term, setTerm] = useState("");
+  const { refetch: friendsRefetch } = useFriendsQuery();
   const { data: sentFriendRequestsData, refetch: sentFriendRequestsRefetch } =
     useSentFriendRequestsQuery();
   const sentFriendRequestsByToUserId = keyBy(
     sentFriendRequestsData?.currentUser?.friendRequestsByFromUserId.nodes,
     "toUserId"
   );
+  const friendByToUserId = keyBy(friends, "toUser.id");
   const [createFriendRequest] = useCreateFriendRequestMutation();
   const [deleteFriendRequest] = useDeleteFriendRequestMutation();
+  const [unfriend] = useUnfriendMutation();
+
   const { loading, data } = useUserSearchQuery({
     variables: {
       term,
@@ -105,70 +116,85 @@ function UserSearchBox({
                     </span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {!sentFriendRequestsByToUserId[user.id] && (
-                      <Button
-                        className="friend-button"
-                        style={{
-                          borderColor: "#7FB3E8",
-                          color: "#7FB3E8",
-                          width: "110px",
-                        }}
-                        onClick={async () => {
-                          await createFriendRequest({
-                            variables: {
-                              fromUserId: currentUserId,
-                              toUserId: user.id,
-                            },
-                          });
-                          await sentFriendRequestsRefetch();
-                        }}
-                      >
-                        친구 신청
-                      </Button>
+                    {friendByToUserId[user.id] ? (
+                      <>
+                        <Button
+                          className="friend-button"
+                          style={{
+                            marginRight: "10px",
+                            borderColor: "#7FB3E8",
+                            color: "#7FB3E8",
+                            width: "50px",
+                          }}
+                        >
+                          미션
+                        </Button>
+                        <Button
+                          className="friend-button"
+                          style={{
+                            borderColor: "#FF9C06",
+                            color: "#FF9C06",
+                            width: "50px",
+                          }}
+                          onClick={async () => {
+                            await unfriend({
+                              variables: {
+                                fromUserId: currentUserId,
+                                toUserId: user.id,
+                              },
+                            });
+                            await friendsRefetch();
+                          }}
+                        >
+                          삭제
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        {!sentFriendRequestsByToUserId[user.id] && (
+                          <Button
+                            className="friend-button"
+                            style={{
+                              borderColor: "#7FB3E8",
+                              color: "#7FB3E8",
+                              width: "110px",
+                            }}
+                            onClick={async () => {
+                              await createFriendRequest({
+                                variables: {
+                                  fromUserId: currentUserId,
+                                  toUserId: user.id,
+                                },
+                              });
+                              await sentFriendRequestsRefetch();
+                            }}
+                          >
+                            친구 신청
+                          </Button>
+                        )}
+                        {sentFriendRequestsByToUserId[user.id] && (
+                          <Button
+                            className="friend-button"
+                            style={{
+                              borderColor: "#FF9C06",
+                              color: "#FF9C06",
+                              width: "110px",
+                            }}
+                            onClick={async () => {
+                              await deleteFriendRequest({
+                                variables: {
+                                  fromUserId: currentUserId,
+                                  toUserId: user.id,
+                                },
+                              });
+                              await sentFriendRequestsRefetch();
+                            }}
+                          >
+                            신청 취소
+                          </Button>
+                        )}
+                      </>
                     )}
-                    {sentFriendRequestsByToUserId[user.id] && (
-                      <Button
-                        className="friend-button"
-                        style={{
-                          borderColor: "#FF9C06",
-                          color: "#FF9C06",
-                          width: "110px",
-                        }}
-                        onClick={async () => {
-                          await deleteFriendRequest({
-                            variables: {
-                              fromUserId: currentUserId,
-                              toUserId: user.id,
-                            },
-                          });
-                          await sentFriendRequestsRefetch();
-                        }}
-                      >
-                        신청 취소
-                      </Button>
-                    )}
-
-                    <Button
-                      className="friend-button"
-                      style={{
-                        marginRight: "10px",
-                        borderColor: "#7FB3E8",
-                        color: "#7FB3E8",
-                        width: "50px",
-                      }}
-                    >
-                      미션
-                    </Button>
-                    <Button
-                      className="friend-button"
-                      style={{
-                        borderColor: "#FF9C06",
-                        color: "#FF9C06",
-                        width: "50px",
-                      }}
-                    >
-                      삭제
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -182,13 +208,29 @@ function UserSearchBox({
 
 const Friends: NextPage = () => {
   const query = useSharedQuery();
+  const { data: friendsData, refetch: friendsRefetch } = useFriendsQuery();
   const [requestsPanelOpen, setRequestsPanelOpen] = useState(false);
   const [userSearchResultsOpen, setUserSearchResultsOpen] = useState(false);
-  const { data: receivedFriendRequestsData } = useReceivedFriendRequestsQuery();
+  const [acceptFriendRequest] = useAcceptFriendRequestMutation();
+  const [deleteFriendRequest] = useDeleteFriendRequestMutation();
+  const [unfriend] = useUnfriendMutation();
+
+  const {
+    data: receivedFriendRequestsData,
+    refetch: receivedFriendRequestsRefetch,
+  } = useReceivedFriendRequestsQuery();
 
   const currentUserId = query.data?.currentUser?.id as string | undefined;
+  const friends: Friends_UserEdgeFragment[] | undefined =
+    friendsData?.currentUser?.userEdgesByFromUserId.nodes;
+
   return (
-    <SharedLayout title="friends" query={query} useFriendsFrame>
+    <SharedLayout
+      title="friends"
+      query={query}
+      useFriendsFrame
+      forbidWhen={AuthRestrict.LOGGED_OUT}
+    >
       <div style={{ padding: "40px 50px", height: "15%" }}>
         <span
           style={{
@@ -258,6 +300,7 @@ const Friends: NextPage = () => {
             <UserSearchBox
               currentUserId={currentUserId}
               onShowResultChange={setUserSearchResultsOpen}
+              friends={friends}
             />
             <div
               style={{
@@ -265,64 +308,77 @@ const Friends: NextPage = () => {
                 padding: "20px 0px",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0px 30px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img src="/default_avatar.png" width="38px" height="38px" />
-                  <span
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "min(16px, 12px + 0.2vw)",
-                      fontWeight: 600,
-                      margin: "0px 10px",
-                    }}
-                  >
-                    퐁당이
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "min(16px, 12px + 0.2vw)",
-                      fontWeight: 500,
-                    }}
-                  >
-                    @pongdang1004
-                  </span>
+              {friends?.map((friend) => (
+                <div
+                  key={friend.toUser?.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "0px 30px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <img src="/default_avatar.png" width="38px" height="38px" />
+                    <span
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "min(16px, 12px + 0.2vw)",
+                        fontWeight: 600,
+                        margin: "0px 10px",
+                      }}
+                    >
+                      {friend.toUser?.nickname}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "min(16px, 12px + 0.2vw)",
+                        fontWeight: 500,
+                      }}
+                    >
+                      @{friend.toUser?.username}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Button
+                      className="friend-button"
+                      style={{
+                        marginRight: "10px",
+                        borderColor: "#7FB3E8",
+                        color: "#7FB3E8",
+                        width: "50px",
+                      }}
+                    >
+                      미션
+                    </Button>
+                    <Button
+                      className="friend-button"
+                      style={{
+                        borderColor: "#FF9C06",
+                        color: "#FF9C06",
+                        width: "50px",
+                      }}
+                      onClick={async () => {
+                        await unfriend({
+                          variables: {
+                            fromUserId: currentUserId,
+                            toUserId: friend.toUser?.id,
+                          },
+                        });
+                        await friendsRefetch();
+                      }}
+                    >
+                      삭제
+                    </Button>
+                  </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button
-                    className="friend-button"
-                    style={{
-                      marginRight: "10px",
-                      borderColor: "#7FB3E8",
-                      color: "#7FB3E8",
-                      width: "50px",
-                    }}
-                  >
-                    미션
-                  </Button>
-                  <Button
-                    className="friend-button"
-                    style={{
-                      borderColor: "#FF9C06",
-                      color: "#FF9C06",
-                      width: "50px",
-                    }}
-                  >
-                    삭제
-                  </Button>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           <div style={{ padding: "40px" }}>
             <Collapsible.Root
               className="CollapsibleRoot"
+              style={{ height: "100%" }}
               open={requestsPanelOpen}
               onOpenChange={setRequestsPanelOpen}
             >
@@ -330,7 +386,9 @@ const Friends: NextPage = () => {
                 style={{
                   width: "220px",
                   height: "60px",
-                  borderRadius: "30px",
+                  borderRadius: requestsPanelOpen
+                    ? "30px 30px 0px 0px"
+                    : "30px",
                   backgroundColor: "rgba(242, 247, 253, 1)",
                   padding: "0px 30px",
                   display: "flex",
@@ -359,7 +417,16 @@ const Friends: NextPage = () => {
                   </button>
                 </Collapsible.Trigger>
               </div>
-              <Collapsible.Content className={clsx("pt-[50px]")}>
+              <Collapsible.Content
+                className={clsx(
+                  "bg-friends-requests-bg relative flex h-[calc(100%-60px)] justify-center rounded-b-[30px] pt-[50px]"
+                )}
+              >
+                <div
+                  className={clsx(
+                    "absolute top-0 h-[5px] w-[80%] rounded-full bg-white "
+                  )}
+                ></div>
                 {receivedFriendRequestsData?.currentUser?.friendRequestsByToUserId.nodes.map(
                   (friendRequest) => (
                     <div
@@ -431,6 +498,15 @@ const Friends: NextPage = () => {
                               color: "#7FB3E8",
                               width: "50px",
                             }}
+                            onClick={async () => {
+                              await acceptFriendRequest({
+                                variables: {
+                                  fromUserId: friendRequest.fromUser?.id,
+                                },
+                              });
+                              await receivedFriendRequestsRefetch();
+                              await friendsRefetch();
+                            }}
                           >
                             수락
                           </Button>
@@ -440,6 +516,15 @@ const Friends: NextPage = () => {
                               borderColor: "#FF9C06",
                               color: "#FF9C06",
                               width: "50px",
+                            }}
+                            onClick={async () => {
+                              await deleteFriendRequest({
+                                variables: {
+                                  fromUserId: friendRequest.fromUser?.id,
+                                  toUserId: friendRequest.toUserId,
+                                },
+                              });
+                              await receivedFriendRequestsRefetch();
                             }}
                           >
                             거절

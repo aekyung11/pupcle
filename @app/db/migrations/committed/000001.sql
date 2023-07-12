@@ -1,5 +1,5 @@
 --! Previous: -
---! Hash: sha1:9d0f8dae0a2d2bfae1b721f40037620a5843dd89
+--! Hash: sha1:6be18b7e111c3c3f4352fbb85562930c1c94fdd3
 
 --! split: 0001-reset.sql
 /*
@@ -2194,7 +2194,7 @@ begin
   delete from app_public.user_edges where from_user_id = OLD.to_user_id and to_user_id = OLD.from_user_id;
   return null;
 end;
-$$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
 create trigger _200_unfriend
   after delete on app_public.user_edges
   for each row

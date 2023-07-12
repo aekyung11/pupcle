@@ -23,6 +23,7 @@ module.exports = {
       colors: {
         "home-comment": "#615518",
         "friends-bg": "rgba(127, 179, 232, 0.1)",
+        "friends-requests-bg": "#F2F7FD",
       },
     },
   },

@@ -1,0 +1,21 @@
+fragment Friends_UserEdge on UserEdge {
+  dailyRecordsShared
+  createdAt
+  toUser {
+    id
+    avatarUrl
+    nickname
+    username
+  }
+}
+
+query Friends {
+  currentUser {
+    id
+    userEdgesByFromUserId {
+      nodes {
+        ...Friends_UserEdge
+      }
+    }
+  }
+}
