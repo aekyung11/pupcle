@@ -1,5 +1,9 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
-import { DailyRecordDayStatus, useCalendarPageQuery } from "@app/graphql";
+import {
+  DailyRecordDayStatus,
+  useCalendarPageQuery,
+  useCalendarRecordsQuery,
+} from "@app/graphql";
 import { Col, Row } from "antd";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -9,67 +13,52 @@ import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { DayContent, DayContentProps, DayPicker } from "react-day-picker";
 
-enum Tab {
-  SLEEP = "sleep",
-  DIET = "diet",
-  WALKING = "walking",
-  PLAY = "play",
-  BATHROOM = "bathroom",
-  HEALTH = "health",
-}
-
 const useToday = () => {
   const [day, setDay] = useState<string | null>(null);
   const [dayDate, setDayDate] = useState<Date | null>(null);
+  const [monthStart, setMonthStart] = useState<Date | null>(null);
+  const [monthEnd, setMonthEnd] = useState<Date | null>(null);
   useEffect(() => {
     const date = new Date();
     setDay(format(date, "yyyy-MM-dd"));
     setDayDate(date);
+    setMonthStart(startOfMonth(date));
+    setMonthEnd(endOfMonth(date));
   }, []);
-  return { day, dayDate };
+  return { day, dayDate, monthStart, setMonthStart, monthEnd, setMonthEnd };
 };
 
 const Calendar: NextPage = () => {
-  const { day: today, dayDate: todayDate } = useToday();
-  const firstDayOfMonth = todayDate ? startOfMonth(todayDate) : null;
-  const lastDayOfMonth = todayDate ? endOfMonth(todayDate) : null;
+  const {
+    day: today,
+    monthStart,
+    setMonthStart,
+    monthEnd,
+    setMonthEnd,
+  } = useToday();
 
-  const query = useCalendarPageQuery({
+  const query = useCalendarPageQuery();
+  const { data: calendarRecordsData } = useCalendarRecordsQuery({
     fetchPolicy: "network-only",
     variables: {
-      start: firstDayOfMonth ?? "2023-01-01",
-      end: lastDayOfMonth ?? "2023-01-31",
+      start: monthStart ?? "2023-01-01",
+      end: monthEnd ?? "2023-01-31",
     },
   });
-  const _refetch = async () => query.refetch();
   const pet = query.data?.currentUser?.pets.nodes[0];
-  const _todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
-  const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
-  const [selectedTab, setSelectedTab] = useState<Tab | undefined>();
 
-  useEffect(() => {
-    if (selectedTab === undefined) {
-      const completeStatusCount =
-        todaySharedDailyRecord?.completeStatusCount || 0;
-
-      const initialTab =
-        completeStatusCount === 0
-          ? undefined
-          : Object.values(Tab)[completeStatusCount - 1];
-
-      setSelectedTab(initialTab);
+  const firstPetCalendarRecords =
+    calendarRecordsData?.currentUser?.pets.nodes[0];
+  const pupcleCount = firstPetCalendarRecords?.sharedDailyRecords.nodes.filter(
+    (sdr) => {
+      return sdr.isComplete;
     }
-  }, [selectedTab, todaySharedDailyRecord]);
+  ).length;
 
-  const pupcleCount = pet?.sharedDailyRecords.nodes.filter((sdr) => {
-    return sdr.isComplete;
-  }).length;
-
-  const sharedDailyRecords = keyBy(pet?.sharedDailyRecords.nodes, "day");
+  const sharedDailyRecords = keyBy(
+    firstPetCalendarRecords?.sharedDailyRecords.nodes,
+    "day"
+  );
 
   const CustomDayContent: React.FC<DayContentProps> = useMemo(() => {
     const c = (props: DayContentProps) => {
@@ -148,14 +137,17 @@ const Calendar: NextPage = () => {
                 justifyContent: "flex-end",
               }}
             >
-              {firstDayOfMonth && lastDayOfMonth && (
+              {monthStart && monthEnd && (
                 <DayPicker
-                  fromMonth={firstDayOfMonth}
-                  toMonth={lastDayOfMonth}
                   className="calendar-pupcle-calendar"
                   weekStartsOn={1}
                   locale={ko}
                   components={{ DayContent: CustomDayContent }}
+                  month={monthStart}
+                  onMonthChange={(month) => {
+                    setMonthStart(startOfMonth(month));
+                    setMonthEnd(endOfMonth(month));
+                  }}
                 />
               )}
             </div>

@@ -1,0 +1,68 @@
+fragment CalendarRecords_PrivateDailyRecord on PrivateDailyRecord {
+  bathroomComment
+  bathroomStatus
+  createdAt
+  day
+  dietComment
+  dietStatus
+  healthComment
+  healthStatus
+  petId
+  playComment
+  playStatus
+  sleepComment
+  sleepStatus
+  updatedAt
+  userId
+  walkingComment
+  walkingStatus
+}
+
+fragment CalendarRecords_SharedDailyRecord on SharedDailyRecord {
+  completeStatusCount
+  createdAt
+  day
+  everCompleted
+  isComplete
+  dayStatus
+  petId
+  updatedAt
+  userId
+}
+
+fragment CalendarRecords_Pet on Pet {
+  id
+  gender
+  privateDailyRecords(
+    filter: { day: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end } }
+  ) {
+    nodes {
+      day
+      petId
+      userId
+      ...CalendarRecords_PrivateDailyRecord
+    }
+  }
+  sharedDailyRecords(
+    filter: { day: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end } }
+  ) {
+    nodes {
+      day
+      petId
+      userId
+      ...CalendarRecords_SharedDailyRecord
+    }
+  }
+}
+
+query CalendarRecords($start: Date!, $end: Date!) {
+  currentUser {
+    id
+    pets(first: 20) {
+      nodes {
+        id
+        ...CalendarRecords_Pet
+      }
+    }
+  }
+}
