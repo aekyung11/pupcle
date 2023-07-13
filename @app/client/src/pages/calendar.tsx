@@ -3,6 +3,7 @@ import {
   DailyRecordDayStatus,
   useCalendarPageQuery,
   useCalendarRecordsQuery,
+  useFriendsAndPetsQuery,
 } from "@app/graphql";
 import { Col, Row } from "antd";
 import { endOfMonth, format, startOfMonth } from "date-fns";
@@ -31,6 +32,7 @@ const useToday = () => {
 const Calendar: NextPage = () => {
   const {
     day: today,
+    dayDate: todayDate,
     monthStart,
     setMonthStart,
     monthEnd,
@@ -38,6 +40,9 @@ const Calendar: NextPage = () => {
   } = useToday();
 
   const query = useCalendarPageQuery();
+  const { data: friendsAndPetsData } = useFriendsAndPetsQuery();
+  const friendEdges =
+    friendsAndPetsData?.currentUser?.userEdgesByFromUserId.nodes;
   const currentUserFirstPet = query.data?.currentUser?.pets.nodes[0];
   const [selectedPetId, setSelectedPetId] = useState(
     currentUserFirstPet?.id as string | undefined
@@ -143,8 +148,14 @@ const Calendar: NextPage = () => {
               {monthStart && monthEnd && (
                 <DayPicker
                   className="calendar-pupcle-calendar"
+                  captionLayout="dropdown"
+                  fromYear={2023}
+                  toYear={todayDate?.getFullYear()}
                   weekStartsOn={1}
                   locale={ko}
+                  formatters={{
+                    formatMonthCaption: (date: Date) => format(date, "MMM"),
+                  }}
                   components={{ DayContent: CustomDayContent }}
                   month={monthStart}
                   onMonthChange={(month) => {
@@ -225,20 +236,43 @@ const Calendar: NextPage = () => {
                   height: "90%",
                 }}
               >
-                {/* TODO: friends.map() */}
                 <div
                   style={{
                     borderRadius: "50%",
                     width: "min(57px, 3rem + 0.2vw)",
                     height: "min(57px, 3rem + 0.2vw)",
-                    margin: "1rem 0px",
+                    marginBottom: "1rem",
+                    backgroundImage: `url(${
+                      query.data?.currentUser?.avatarUrl ??
+                      "/calendar_friends_avatar_default.png"
+                    })`,
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+
+                <div
+                  style={{
+                    width: "100%",
+                    height: "calc(100% - 1rem - min(57px, 3rem + 0.2vw))",
+                    display: "flex",
                   }}
                 >
-                  {/* TODO: write an if statement */}
-                  <img
-                    src="/calendar_friends_avatar_default.png"
-                    alt="friend avatar"
-                  />
+                  {friendEdges?.map((edge) => (
+                    <div
+                      key={edge.toUser?.id}
+                      style={{
+                        borderRadius: "50%",
+                        width: "min(57px, 3rem + 0.2vw)",
+                        height: "min(57px, 3rem + 0.2vw)",
+                        margin: "1rem 0px",
+                        backgroundImage: `url(${
+                          edge.toUser?.avatarUrl ??
+                          "/calendar_friends_avatar_default.png"
+                        })`,
+                        backgroundSize: "cover",
+                      }}
+                    ></div>
+                  ))}
                 </div>
               </div>
             </div>

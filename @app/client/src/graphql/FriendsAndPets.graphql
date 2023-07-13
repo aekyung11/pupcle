@@ -1,0 +1,28 @@
+fragment FriendsAndPets_UserEdge on UserEdge {
+  dailyRecordsShared
+  createdAt
+  toUser {
+    id
+    avatarUrl
+    nickname
+    username
+    pets {
+      nodes {
+        id
+        avatarUrl
+        name
+      }
+    }
+  }
+}
+
+query FriendsAndPets {
+  currentUser {
+    id
+    userEdgesByFromUserId {
+      nodes {
+        ...FriendsAndPets_UserEdge
+      }
+    }
+  }
+}
