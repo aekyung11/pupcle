@@ -38,17 +38,22 @@ const Calendar: NextPage = () => {
   } = useToday();
 
   const query = useCalendarPageQuery();
+  const currentUserFirstPet = query.data?.currentUser?.pets.nodes[0];
+  const [selectedPetId, setSelectedPetId] = useState(
+    currentUserFirstPet?.id as string | undefined
+  );
+  // TODO: use inner to ensure loaded state
+  const selectedPetIdOrDefault = selectedPetId ?? currentUserFirstPet?.id;
+
   const { data: calendarRecordsData } = useCalendarRecordsQuery({
     fetchPolicy: "network-only",
     variables: {
+      petId: selectedPetIdOrDefault,
       start: monthStart ?? "2023-01-01",
       end: monthEnd ?? "2023-01-31",
     },
   });
-  const pet = query.data?.currentUser?.pets.nodes[0];
-
-  const firstPetCalendarRecords =
-    calendarRecordsData?.currentUser?.pets.nodes[0];
+  const firstPetCalendarRecords = calendarRecordsData?.pet;
   const pupcleCount = firstPetCalendarRecords?.sharedDailyRecords.nodes.filter(
     (sdr) => {
       return sdr.isComplete;
@@ -169,7 +174,7 @@ const Calendar: NextPage = () => {
                   fontWeight: 700,
                 }}
               >
-                {pet?.name}
+                {currentUserFirstPet?.name}
               </span>
             </div>
             <div

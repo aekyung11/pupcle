@@ -55,14 +55,9 @@ fragment CalendarRecords_Pet on Pet {
   }
 }
 
-query CalendarRecords($start: Date!, $end: Date!) {
-  currentUser {
+query CalendarRecords($petId: UUID!, $start: Date!, $end: Date!) {
+  pet(id: $petId) {
     id
-    pets(first: 20) {
-      nodes {
-        id
-        ...CalendarRecords_Pet
-      }
-    }
+    ...CalendarRecords_Pet
   }
 }
