@@ -504,6 +504,14 @@ a.ant-btn-primary:hover {
   height: 100%;
 }
 
+.friends-tab[data-state="active"] {
+  background-color: rgba(127, 179, 232, 0.3);
+}
+
+.friends-tab:hover {
+  background-color: rgba(127, 179, 232, 0.3);
+}
+
 .friend-search {
   width: 100%;
   height: 60px;
@@ -548,6 +556,11 @@ a.ant-btn-primary:hover {
   font-family: Poppins;
   font-size: min(16px, 12px + 0.2vw);
   font-weight: 600;
+}
+
+.friend-caret:hover {
+  transform: rotate(180deg);
+  transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
 }
 
 .ant-form input {

@@ -230,6 +230,8 @@ const Friends: NextPage = () => {
   const currentUserId = query.data?.currentUser?.id as string | undefined;
   const friends: Friends_UserEdgeFragment[] | undefined =
     friendsData?.currentUser?.userEdgesByFromUserId.nodes;
+  const receivedFriendRequestsList =
+    receivedFriendRequestsData?.currentUser?.friendRequestsByToUserId.nodes;
 
   return (
     <SharedLayout
@@ -268,6 +270,7 @@ const Friends: NextPage = () => {
           >
             <Tabs.Trigger key={Tab.FRIENDS} value={Tab.FRIENDS} asChild>
               <Button
+                className="friends-tab"
                 style={{
                   width: "100%",
                   height: "50px",
@@ -287,6 +290,7 @@ const Friends: NextPage = () => {
             </Tabs.Trigger>
             <Tabs.Trigger key={Tab.MISSIONS} value={Tab.MISSIONS} asChild>
               <Button
+                className="friends-tab"
                 style={{
                   width: "100%",
                   height: "50px",
@@ -422,8 +426,17 @@ const Friends: NextPage = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    position: "relative",
                   }}
                 >
+                  {(receivedFriendRequestsList?.length || 0) > 0 && (
+                    <div
+                      className={clsx(
+                        "bg-pupcleOrange absolute -top-2 right-4 h-4 w-4 rounded-full"
+                      )}
+                    ></div>
+                  )}
+
                   <img src="/friend_request.png" width="37px" height="37px" />
                   <span
                     style={{
@@ -440,7 +453,11 @@ const Friends: NextPage = () => {
                       {requestsPanelOpen ? (
                         <img src="friend_caret_icon_up.png" width="10px" />
                       ) : (
-                        <img src="friend_caret_icon_down.png" width="10px" />
+                        <img
+                          className="friend-caret"
+                          src="friend_caret_icon_down.png"
+                          width="10px"
+                        />
                       )}
                     </button>
                   </Collapsible.Trigger>
@@ -455,115 +472,111 @@ const Friends: NextPage = () => {
                       "absolute top-0 h-[5px] w-[80%] rounded-full bg-white "
                     )}
                   ></div>
-                  {receivedFriendRequestsData?.currentUser?.friendRequestsByToUserId.nodes.map(
-                    (friendRequest) => (
+                  {receivedFriendRequestsList?.map((friendRequest) => (
+                    <div
+                      key={friendRequest.fromUserId}
+                      style={{
+                        width: "220px",
+                        padding: "20px 30px",
+                      }}
+                    >
                       <div
-                        key={friendRequest.fromUserId}
                         style={{
+                          display: "flex",
+                          alignItems: "center",
                           width: "220px",
-                          padding: "20px 30px",
                         }}
                       >
+                        <img
+                          src="/default_avatar.png"
+                          width="36px"
+                          height="36px"
+                        />
                         <div
                           style={{
                             display: "flex",
-                            alignItems: "center",
-                            width: "220px",
+                            flexDirection: "column",
+                            paddingLeft: "8px",
                           }}
                         >
-                          <img
-                            src="/default_avatar.png"
-                            width="36px"
-                            height="36px"
-                          />
-                          <div
+                          <span
                             style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              paddingLeft: "8px",
+                              fontFamily: "Poppins, sans-serif",
+                              fontSize: "min(16px, 12px + 0.2vw)",
+                              fontWeight: 600,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
                             }}
                           >
-                            <span
-                              style={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "min(16px, 12px + 0.2vw)",
-                                fontWeight: 600,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {friendRequest.fromUser?.nickname}
-                            </span>
-                            <span
-                              style={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "min(16px, 12px + 0.2vw)",
-                                fontWeight: 500,
-                                overflow: "hidden",
-                                width: "calc(220px - 30px - 36px - 8px - 30px)",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              @{friendRequest.fromUser?.username}
-                            </span>
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            marginTop: "8px",
-                          }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
+                            {friendRequest.fromUser?.nickname}
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: "Poppins, sans-serif",
+                              fontSize: "min(16px, 12px + 0.2vw)",
+                              fontWeight: 500,
+                              overflow: "hidden",
+                              width: "calc(220px - 30px - 36px - 8px - 30px)",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
                           >
-                            <Button
-                              className="friend-button"
-                              style={{
-                                marginRight: "10px",
-                                borderColor: "#7FB3E8",
-                                color: "#7FB3E8",
-                                width: "50px",
-                              }}
-                              onClick={async () => {
-                                await acceptFriendRequest({
-                                  variables: {
-                                    fromUserId: friendRequest.fromUser?.id,
-                                  },
-                                });
-                                await receivedFriendRequestsRefetch();
-                                await friendsRefetch();
-                              }}
-                            >
-                              수락
-                            </Button>
-                            <Button
-                              className="friend-button"
-                              style={{
-                                borderColor: "#FF9C06",
-                                color: "#FF9C06",
-                                width: "50px",
-                              }}
-                              onClick={async () => {
-                                await deleteFriendRequest({
-                                  variables: {
-                                    fromUserId: friendRequest.fromUser?.id,
-                                    toUserId: friendRequest.toUserId,
-                                  },
-                                });
-                                await receivedFriendRequestsRefetch();
-                              }}
-                            >
-                              거절
-                            </Button>
-                          </div>
+                            @{friendRequest.fromUser?.username}
+                          </span>
                         </div>
                       </div>
-                    )
-                  )}
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          marginTop: "8px",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <Button
+                            className="friend-button"
+                            style={{
+                              marginRight: "10px",
+                              borderColor: "#7FB3E8",
+                              color: "#7FB3E8",
+                              width: "50px",
+                            }}
+                            onClick={async () => {
+                              await acceptFriendRequest({
+                                variables: {
+                                  fromUserId: friendRequest.fromUser?.id,
+                                },
+                              });
+                              await receivedFriendRequestsRefetch();
+                              await friendsRefetch();
+                            }}
+                          >
+                            수락
+                          </Button>
+                          <Button
+                            className="friend-button"
+                            style={{
+                              borderColor: "#FF9C06",
+                              color: "#FF9C06",
+                              width: "50px",
+                            }}
+                            onClick={async () => {
+                              await deleteFriendRequest({
+                                variables: {
+                                  fromUserId: friendRequest.fromUser?.id,
+                                  toUserId: friendRequest.toUserId,
+                                },
+                              });
+                              await receivedFriendRequestsRefetch();
+                            }}
+                          >
+                            거절
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </Collapsible.Content>
               </Collapsible.Root>
             </div>
