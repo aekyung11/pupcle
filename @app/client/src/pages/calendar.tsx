@@ -53,15 +53,13 @@ const Calendar: NextPage = () => {
       end: monthEnd ?? "2023-01-31",
     },
   });
-  const firstPetCalendarRecords = calendarRecordsData?.pet;
-  const pupcleCount = firstPetCalendarRecords?.sharedDailyRecords.nodes.filter(
-    (sdr) => {
-      return sdr.isComplete;
-    }
-  ).length;
+  const selectedPet = calendarRecordsData?.pet;
+  const pupcleCount = selectedPet?.sharedDailyRecords.nodes.filter((sdr) => {
+    return sdr.isComplete;
+  }).length;
 
   const sharedDailyRecords = keyBy(
-    firstPetCalendarRecords?.sharedDailyRecords.nodes,
+    selectedPet?.sharedDailyRecords.nodes,
     "day"
   );
 
@@ -174,7 +172,7 @@ const Calendar: NextPage = () => {
                   fontWeight: 700,
                 }}
               >
-                {currentUserFirstPet?.name}
+                {selectedPet?.name}
               </span>
             </div>
             <div

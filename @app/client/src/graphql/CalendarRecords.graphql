@@ -58,6 +58,7 @@ fragment CalendarRecords_Pet on Pet {
 query CalendarRecords($petId: UUID!, $start: Date!, $end: Date!) {
   pet(id: $petId) {
     id
+    name
     ...CalendarRecords_Pet
   }
 }
