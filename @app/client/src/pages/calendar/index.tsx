@@ -211,7 +211,7 @@ const Calendar: NextPage = () => {
                   fontWeight: 400,
                 }}
               >
-                총 획득 펍클:&nbsp;&nbsp;{pupcleCount}&nbsp;
+                이달의 펍클:&nbsp;&nbsp;{pupcleCount}&nbsp;
               </span>
               <img
                 src="/pupcle_count.png"

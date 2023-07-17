@@ -6,6 +6,7 @@ import {
   useCalendarPageQuery,
   useCalendarRecordsQuery,
 } from "@app/graphql";
+import { Button } from "antd";
 import { format, parseISO } from "date-fns";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -68,6 +69,7 @@ const StatusTable: React.FC<StatusTableProps> = ({
             fontWeight: 600,
             fontSize: "min(28px, 2.2vw)",
             color: "#FF9C06",
+            marginTop: "1rem",
           }}
         >
           {status === DailyRecordStatus.Good && "GOOD"}
@@ -82,24 +84,335 @@ const StatusTable: React.FC<StatusTableProps> = ({
             marginTop: "0.5rem",
           }}
         ></div>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            width: "90%",
+            paddingTop: "30px",
+          }}
+        >
           {status === privateDailyRecord.sleepStatus && (
-            <div>{privateDailyRecord.sleepComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img src="/sleep_status_grey.png" style={{ width: "36px" }} />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.sleepComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
           {status === privateDailyRecord.dietStatus && (
-            <div>{privateDailyRecord.dietComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img src="/diet_status_grey.png" style={{ width: "36px" }} />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.dietComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
           {status === privateDailyRecord.walkingStatus && (
-            <div>{privateDailyRecord.walkingComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img src="/walking_status_grey.png" style={{ width: "36px" }} />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.walkingComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
           {status === privateDailyRecord.playStatus && (
-            <div>{privateDailyRecord.playComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img src="/play_status_grey.png" style={{ width: "36px" }} />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.playComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
           {status === privateDailyRecord.bathroomStatus && (
-            <div>{privateDailyRecord.bathroomComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img
+                  src="/bathroom_status_grey.png"
+                  style={{ width: "36px" }}
+                />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.bathroomComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
           {status === privateDailyRecord.healthStatus && (
-            <div>{privateDailyRecord.healthComment}</div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                margin: "30px 0px",
+              }}
+            >
+              <div style={{ width: "15%" }}>
+                <img src="/health_status_grey.png" style={{ width: "36px" }} />
+              </div>
+              <div
+                style={{
+                  width: "70%",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  paddingRight: "20px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "#8F9092",
+                  }}
+                >
+                  {privateDailyRecord.healthComment}
+                </span>
+              </div>
+              <div style={{ width: "15%" }}>
+                <Button
+                  style={{
+                    // width: "min(74px, 4rem + 0.5vw)",
+                    height: "27px",
+                    display: "flex",
+                    borderRadius: "14px",
+                    alignItems: "center",
+                    fontFamily: "Poppins",
+                    fontWeight: 600,
+                    fontSize: "min(16px, 12 + 0.5vw)",
+                    color: "white",
+                    backgroundColor: "#7FB3E8",
+                    borderStyle: "none",
+                  }}
+                >
+                  펼치기
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       </div>
