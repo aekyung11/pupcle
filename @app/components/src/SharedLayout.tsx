@@ -72,7 +72,7 @@ export interface SharedLayoutProps {
   noPad?: boolean;
   noHandleErrors?: boolean;
   forbidWhen?: AuthRestrict;
-  useFriendsFrame?: boolean;
+  useLightBlueFrame?: boolean;
 }
 
 /* The Apollo `useSubscription` hook doesn't currently allow skipping the
@@ -100,7 +100,7 @@ export function SharedLayout({
   query,
   forbidWhen = AuthRestrict.NEVER,
   children,
-  useFriendsFrame,
+  useLightBlueFrame,
 }: SharedLayoutProps) {
   const router = useRouter();
   const currentUrl = router.asPath;
@@ -192,7 +192,7 @@ export function SharedLayout({
       inner
     ) : (
       <StandardWidth
-        className={clsx({ "h-[calc(100vh-6rem)]": useFriendsFrame })}
+        className={clsx({ "h-[calc(100vh-6rem)]": useLightBlueFrame })}
       >
         {inner}
       </StandardWidth>
@@ -605,7 +605,7 @@ export function SharedLayout({
   return (
     <Layout
       className={clsx({
-        "bg-friends-bg": useFriendsFrame,
+        "bg-lightblue-bg": useLightBlueFrame,
         "min-w-[768px]": !isMapsPage,
       })}
     >

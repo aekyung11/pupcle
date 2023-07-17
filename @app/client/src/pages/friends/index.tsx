@@ -237,7 +237,7 @@ const Friends: NextPage = () => {
     <SharedLayout
       title="friends"
       query={query}
-      useFriendsFrame
+      useLightBlueFrame
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
       <div style={{ padding: "40px 50px", height: "15%" }}>

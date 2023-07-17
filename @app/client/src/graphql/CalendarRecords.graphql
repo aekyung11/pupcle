@@ -33,6 +33,7 @@ fragment CalendarRecords_SharedDailyRecord on SharedDailyRecord {
 fragment CalendarRecords_Pet on Pet {
   id
   gender
+  userId
   privateDailyRecords(
     filter: { day: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end } }
   ) {

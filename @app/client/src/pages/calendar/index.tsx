@@ -5,11 +5,12 @@ import {
   useCalendarRecordsQuery,
   useFriendsAndPetsQuery,
 } from "@app/graphql";
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { ko } from "date-fns/locale";
 import { keyBy } from "lodash";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { DayContent, DayContentProps, DayPicker } from "react-day-picker";
@@ -30,6 +31,7 @@ const useToday = () => {
 };
 
 const Calendar: NextPage = () => {
+  const router = useRouter();
   const {
     day: today,
     dayDate: todayDate,
@@ -85,35 +87,44 @@ const Calendar: NextPage = () => {
         >
           <DayContent {...props} />
           {sharedDailyRecord && completePercentage ? (
-            <div
-              className="radial-progress"
-              style={{
-                // width: "1rem",
-                // height: "1rem",
-                // @ts-ignore
-                "--value": completePercentage,
-                // @ts-ignore
-                "--size": "3vw",
-                // @ts-ignore
-                "--thickness": "1vw",
-                color:
-                  DailyRecordDayStatus.AllGood === sharedDailyRecord.dayStatus
-                    ? "#7fb3e8"
-                    : DailyRecordDayStatus.Mixed === sharedDailyRecord.dayStatus
-                    ? "#A0B0EB"
-                    : DailyRecordDayStatus.AllBad ===
-                      sharedDailyRecord.dayStatus
-                    ? "#E35B67"
-                    : undefined,
-              }}
-            ></div>
+            <Button
+              style={{ display: "contents" }}
+              onClick={() =>
+                router.push(`/calendar/pet/${selectedPet?.id}/day/${dateTime}`)
+              }
+              disabled={selectedPet?.userId !== query.data?.currentUser?.id}
+            >
+              <div
+                className="radial-progress"
+                style={{
+                  // width: "1rem",
+                  // height: "1rem",
+                  // @ts-ignore
+                  "--value": completePercentage,
+                  // @ts-ignore
+                  "--size": "3vw",
+                  // @ts-ignore
+                  "--thickness": "1vw",
+                  color:
+                    DailyRecordDayStatus.AllGood === sharedDailyRecord.dayStatus
+                      ? "#7fb3e8"
+                      : DailyRecordDayStatus.Mixed ===
+                        sharedDailyRecord.dayStatus
+                      ? "#A0B0EB"
+                      : DailyRecordDayStatus.AllBad ===
+                        sharedDailyRecord.dayStatus
+                      ? "#E35B67"
+                      : undefined,
+                }}
+              ></div>
+            </Button>
           ) : null}
         </time>
       );
     };
     c.displayName = "CustomDayContent";
     return c;
-  }, [sharedDailyRecords]);
+  }, [router, selectedPet?.id, sharedDailyRecords]);
 
   return (
     <SharedLayout
