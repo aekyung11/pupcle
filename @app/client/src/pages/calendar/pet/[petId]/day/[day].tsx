@@ -1,3 +1,4 @@
+import { DownOutlined } from "@ant-design/icons";
 import { AuthRestrict, SharedLayout } from "@app/components";
 import {
   CalendarRecords_PrivateDailyRecordFragment,
@@ -6,12 +7,13 @@ import {
   useCalendarPageQuery,
   useCalendarRecordsQuery,
 } from "@app/graphql";
-import { Button } from "antd";
+import { Button, Typography } from "antd";
 import { format, parseISO } from "date-fns";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { type } from "os";
-import React from "react";
+import React, { useEffect, useState } from "react";
+const { Paragraph } = Typography;
 
 export function usePetId() {
   const router = useRouter();
@@ -24,6 +26,135 @@ export function useDay() {
   const { day } = router.query;
   return String(day);
 }
+
+const TestExpandable = ({
+  setIsExpandable,
+}: {
+  setIsExpandable: (isExpandable: boolean) => void;
+}) => {
+  useEffect(() => {
+    setIsExpandable(true);
+    return () => {
+      setIsExpandable(false);
+    };
+  });
+  return null;
+};
+
+type CommentRowProps = {
+  statusImage: string;
+  statusComment: string | null;
+};
+
+const CommentRow: React.FC<CommentRowProps> = ({
+  statusImage,
+  statusComment,
+}: CommentRowProps) => {
+  const [isCommentExpanded, setIsCommentExpanded] = useState(false);
+  const [isExpandable, setIsExpandable] = useState(false);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        margin: "30px 0px",
+      }}
+    >
+      <div style={{ width: "15%" }}>
+        <img src={statusImage} style={{ width: "36px" }} />
+      </div>
+      <div
+        style={{
+          width: "70%",
+          textOverflow: "ellipsis",
+          // whiteSpace: "nowrap",
+          overflow: "hidden",
+          paddingRight: "20px",
+        }}
+      >
+        {isCommentExpanded ? (
+          <Paragraph
+            key={`isExpanded-${true}`}
+            style={{
+              marginBottom: 0,
+              fontFamily: "Poppins",
+              fontWeight: 600,
+              fontSize: "min(16px, 12 + 0.5vw)",
+              color: "#8F9092",
+            }}
+          >
+            {statusComment} &nbsp;&nbsp;
+            {isCommentExpanded && (
+              <Button
+                onClick={() => setIsCommentExpanded(false)}
+                style={{
+                  // width: "min(74px, 4rem + 0.5vw)",
+                  height: "27px",
+                  display: "inline-block",
+                  borderWidth: "2px",
+                  borderRadius: "14px",
+                  alignItems: "center",
+                  fontFamily: "Poppins",
+                  fontWeight: 600,
+                  fontSize: "min(16px, 12 + 0.5vw)",
+                  color: "#7FB3E8",
+                  borderColor: "#7FB3E8",
+                  backgroundColor: "white",
+                  padding: "0 10px",
+                }}
+              >
+                접기
+              </Button>
+            )}
+          </Paragraph>
+        ) : (
+          <Paragraph
+            key={`isExpanded-${false}`}
+            style={{
+              marginBottom: 0,
+              fontFamily: "Poppins",
+              fontWeight: 600,
+              fontSize: "min(16px, 12 + 0.5vw)",
+              color: "#8F9092",
+            }}
+            ellipsis={{
+              rows: 1,
+              expandable: true,
+              onExpand: () => setIsCommentExpanded(true),
+              symbol: <TestExpandable setIsExpandable={setIsExpandable} />,
+            }}
+          >
+            {statusComment}
+          </Paragraph>
+        )}
+      </div>
+      <div style={{ width: "15%" }}>
+        {isExpandable && (
+          <Button
+            onClick={() => setIsCommentExpanded(true)}
+            style={{
+              // width: "min(74px, 4rem + 0.5vw)",
+              height: "27px",
+              display: "flex",
+              borderRadius: "14px",
+              alignItems: "center",
+              fontFamily: "Poppins",
+              fontWeight: 600,
+              fontSize: "min(16px, 12 + 0.5vw)",
+              color: "white",
+              backgroundColor: "#7FB3E8",
+              borderStyle: "none",
+            }}
+          >
+            펼치기
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
 
 type StatusTableProps = {
   status: DailyRecordStatus;
@@ -43,6 +174,7 @@ const StatusTable: React.FC<StatusTableProps> = ({
         borderRadius: "30px",
         justifyContent: "center",
         padding: "80px 0px",
+        height: "calc(100vh - 6rem - 140px - 20px)",
       }}
     >
       <div
@@ -90,329 +222,45 @@ const StatusTable: React.FC<StatusTableProps> = ({
             alignItems: "center",
             flexDirection: "column",
             width: "90%",
-            paddingTop: "30px",
+            marginTop: "30px",
+            overflow: "scroll",
           }}
         >
           {status === privateDailyRecord.sleepStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img src="/sleep_status_grey.png" style={{ width: "36px" }} />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.sleepComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/sleep_status_grey.png"}
+              statusComment={privateDailyRecord.sleepComment}
+            />
           )}
           {status === privateDailyRecord.dietStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img src="/diet_status_grey.png" style={{ width: "36px" }} />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.dietComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/diet_status_grey.png"}
+              statusComment={privateDailyRecord.dietComment}
+            />
           )}
           {status === privateDailyRecord.walkingStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img src="/walking_status_grey.png" style={{ width: "36px" }} />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.walkingComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/walking_status_grey.png"}
+              statusComment={privateDailyRecord.walkingComment}
+            />
           )}
           {status === privateDailyRecord.playStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img src="/play_status_grey.png" style={{ width: "36px" }} />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.playComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/play_status_grey.png"}
+              statusComment={privateDailyRecord.playComment}
+            />
           )}
           {status === privateDailyRecord.bathroomStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img
-                  src="/bathroom_status_grey.png"
-                  style={{ width: "36px" }}
-                />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.bathroomComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/bathroom_status_grey.png"}
+              statusComment={privateDailyRecord.bathroomComment}
+            />
           )}
           {status === privateDailyRecord.healthStatus && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                margin: "30px 0px",
-              }}
-            >
-              <div style={{ width: "15%" }}>
-                <img src="/health_status_grey.png" style={{ width: "36px" }} />
-              </div>
-              <div
-                style={{
-                  width: "70%",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "#8F9092",
-                  }}
-                >
-                  {privateDailyRecord.healthComment}
-                </span>
-              </div>
-              <div style={{ width: "15%" }}>
-                <Button
-                  style={{
-                    // width: "min(74px, 4rem + 0.5vw)",
-                    height: "27px",
-                    display: "flex",
-                    borderRadius: "14px",
-                    alignItems: "center",
-                    fontFamily: "Poppins",
-                    fontWeight: 600,
-                    fontSize: "min(16px, 12 + 0.5vw)",
-                    color: "white",
-                    backgroundColor: "#7FB3E8",
-                    borderStyle: "none",
-                  }}
-                >
-                  펼치기
-                </Button>
-              </div>
-            </div>
+            <CommentRow
+              statusImage={"/health_status_grey.png"}
+              statusComment={privateDailyRecord.healthComment}
+            />
           )}
         </div>
       </div>
