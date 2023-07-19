@@ -438,6 +438,9 @@ const Maps: NextPage = () => {
                 onInteractOutside={(event) => {
                   event.preventDefault();
                 }}
+                onOpenAutoFocus={(event) => {
+                  event.preventDefault();
+                }}
               >
                 <div
                   style={{
