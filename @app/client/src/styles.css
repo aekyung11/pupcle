@@ -504,6 +504,18 @@ a.ant-btn-primary:hover {
   height: 100%;
 }
 
+.calendar-day-home-button {
+  background-image: url("/calendar_day_home.png");
+}
+
+.calendar-day-home-button:hover {
+  background-image: url("/calendar_day_home_selected.png");
+}
+
+.calendar-day-home-button.active {
+  background-image: url("/calendar_day_home_selected.png");
+}
+
 .friends-tab[data-state="active"] {
   background-color: rgba(127, 179, 232, 0.3);
 }

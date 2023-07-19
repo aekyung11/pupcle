@@ -58,7 +58,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
       style={{
         width: "100%",
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         margin: "30px 0px",
       }}
     >
@@ -72,6 +72,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
           // whiteSpace: "nowrap",
           overflow: "hidden",
           paddingRight: "20px",
+          paddingTop: "8px",
         }}
       >
         {isCommentExpanded ? (
@@ -130,7 +131,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
           </Paragraph>
         )}
       </div>
-      <div style={{ width: "15%" }}>
+      <div>
         {isExpandable && (
           <Button
             onClick={() => setIsCommentExpanded(true)}
@@ -146,6 +147,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
               color: "white",
               backgroundColor: "#7FB3E8",
               borderStyle: "none",
+              marginTop: "5px",
             }}
           >
             펼치기

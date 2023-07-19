@@ -6,6 +6,7 @@ import {
   useFriendsAndPetsQuery,
 } from "@app/graphql";
 import { Button, Col, Row } from "antd";
+import clsx from "clsx";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { ko } from "date-fns/locale";
 import { keyBy } from "lodash";
@@ -247,29 +248,36 @@ const Calendar: NextPage = () => {
                   height: "90%",
                 }}
               >
-                <div
+                <Button
+                  className={clsx("calendar-day-home-button", {
+                    active: selectedPetId === currentUserFirstPet?.id,
+                  })}
                   style={{
                     borderRadius: "50%",
                     width: "min(57px, 3rem + 0.2vw)",
                     height: "min(57px, 3rem + 0.2vw)",
                     marginBottom: "1rem",
-                    backgroundImage: `url(${
-                      query.data?.currentUser?.avatarUrl ??
-                      "/calendar_friends_avatar_default.png"
-                    })`,
                     backgroundSize: "cover",
+                    borderStyle: "none",
                   }}
-                ></div>
+                  onClick={() => {
+                    const currentUserFirstPetId = currentUserFirstPet?.id;
+                    if (currentUserFirstPetId) {
+                      setSelectedPetId(currentUserFirstPetId);
+                    }
+                  }}
+                ></Button>
 
                 <div
                   style={{
                     width: "100%",
                     height: "calc(100% - 1rem - min(57px, 3rem + 0.2vw))",
-                    display: "flex",
+                    display: "grid",
+                    overflow: "scroll",
                   }}
                 >
                   {friendEdges?.map((edge) => (
-                    <div
+                    <Button
                       key={edge.toUser?.id}
                       style={{
                         borderRadius: "50%",
@@ -281,8 +289,15 @@ const Calendar: NextPage = () => {
                           "/calendar_friends_avatar_default.png"
                         })`,
                         backgroundSize: "cover",
+                        borderStyle: "none",
                       }}
-                    ></div>
+                      onClick={() => {
+                        const friendFirstPetId = edge.toUser?.pets.nodes[0]?.id;
+                        if (friendFirstPetId) {
+                          setSelectedPetId(friendFirstPetId);
+                        }
+                      }}
+                    ></Button>
                   ))}
                 </div>
               </div>
