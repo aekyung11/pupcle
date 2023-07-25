@@ -1,5 +1,6 @@
 mutation UpsertPrivateDailyRecord($input: UpsertPrivateDailyRecordInput!) {
   upsertPrivateDailyRecord(input: $input) {
+    clientMutationId
     privateDailyRecord {
       userId
       petId

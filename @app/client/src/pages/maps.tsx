@@ -1,8 +1,14 @@
 import { DownOutlined } from "@ant-design/icons";
 import { MapSheet, SharedLayout } from "@app/components";
-import { useSharedQuery } from "@app/graphql";
+import {
+  PoiSummaries_PoiFragment,
+  usePoiSummariesQuery,
+  useSharedQuery,
+  useUpsertPoiReviewMutation,
+} from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Col, Input, Rate, Select, Typography } from "antd";
+import { keyBy } from "lodash";
 const { Paragraph } = Typography;
 
 import { NextPage } from "next";
@@ -33,8 +39,22 @@ type Place = {
   y: string;
 };
 
-const PlaceItem = ({ place }: { place: Place }) => {
+type PlaceItemProps = {
+  place: Place;
+  rating: number | undefined;
+  currentUserId: string | undefined;
+  onRatingChange: () => Promise<void>;
+};
+
+const PlaceItem = ({
+  place,
+  rating,
+  currentUserId,
+  onRatingChange: handleRatingChange,
+}: PlaceItemProps) => {
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+
+  const [upsertPoiReview] = useUpsertPoiReviewMutation();
 
   return (
     <div
@@ -92,8 +112,30 @@ const PlaceItem = ({ place }: { place: Place }) => {
             {place.distance ? `${place.distance}m` : "-"}
           </span>
           <div className="map-rate">
-            <Rate disabled defaultValue={4.5} />
-            <span className="map-list-details">(4.9)</span>
+            {/* TODO: disable this and move this to the poi detail */}
+            <Rate
+              allowHalf
+              allowClear
+              value={rating != null ? rating / 2 : undefined}
+              onChange={async (value) => {
+                await upsertPoiReview({
+                  variables: {
+                    input: {
+                      poiReview: {
+                        poiId: "00000000-0000-0000-0000-000000000000",
+                        kakaoId: place.id,
+                        userId: currentUserId,
+                        rating: value * 2,
+                      },
+                    },
+                  },
+                });
+                await handleRatingChange();
+              }}
+            />
+            <span className="map-list-details">
+              ({rating != null ? rating / 2 : "N/A"})
+            </span>
           </div>
           <div>
             {isAddressExpanded ? (
@@ -136,6 +178,7 @@ const PlaceItem = ({ place }: { place: Place }) => {
 
 const Maps: NextPage = () => {
   const query = useSharedQuery();
+  const currentUserId: string | undefined = query.data?.currentUser?.id;
 
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.EXPLORE);
   // is there a better way?
@@ -148,6 +191,24 @@ const Maps: NextPage = () => {
   const [map, setMap] = useState<any>();
   const [mapMarkers, setMapMarkers] = useState<any[]>([]);
   const [listResults, setListResults] = useState<Place[]>([]);
+  const placeKakaoIds = (listResults ?? []).map((p) => p.id);
+
+  const {
+    data: poiSummaries,
+    previousData: previousPoiSummaries,
+    refetch: poiSummariesRefetch,
+  } = usePoiSummariesQuery({
+    variables: {
+      kakaoIds: placeKakaoIds,
+    },
+  });
+  const handleRatingChange = async () => {
+    await poiSummariesRefetch();
+  };
+  const poiSummariesByKakaoId: Record<string, PoiSummaries_PoiFragment> = keyBy(
+    (poiSummaries ?? previousPoiSummaries)?.pois?.nodes,
+    "kakaoId"
+  );
 
   // @ts-ignore
   const kakao = typeof window !== "undefined" && window?.kakao;
@@ -502,7 +563,13 @@ const Maps: NextPage = () => {
                     }}
                   >
                     {listResults?.map((place) => (
-                      <PlaceItem key={place.id} place={place} />
+                      <PlaceItem
+                        key={place.id}
+                        place={place}
+                        rating={poiSummariesByKakaoId[place.id]?.rating}
+                        onRatingChange={handleRatingChange}
+                        currentUserId={currentUserId}
+                      />
                     ))}
                   </Tabs.Content>
                   <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>

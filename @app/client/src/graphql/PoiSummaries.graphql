@@ -1,0 +1,15 @@
+fragment PoiSummaries_Poi on Poi {
+  id
+  kakaoId
+  rating
+  ratingCount
+}
+
+query PoiSummaries($kakaoIds: [String!]) {
+  pois(filter: { kakaoId: { in: $kakaoIds } }) {
+    nodes {
+      id
+      ...PoiSummaries_Poi
+    }
+  }
+}

@@ -20,11 +20,11 @@ create trigger _100_timestamps
   execute procedure app_private.tg__timestamps();
 
 create table poi_reviews (
-  id              uuid primary key default gen_random_uuid(),
-  kakao_id        varchar(255) not null,
   -- always set by trigger
   poi_id          uuid references app_public.poi on delete cascade,
   user_id         uuid not null references app_public.users on delete cascade,
+  primary key (user_id, poi_id),
+  kakao_id        varchar(255) not null,
   comment         text,
   rating          integer not null check (rating >= 1 and rating <= 10),
   created_at    timestamptz not null default now(),
@@ -44,7 +44,6 @@ create policy select_all on app_public.poi_reviews for select using (true);
 
 grant select on app_public.poi_reviews to :DATABASE_VISITOR;
 grant insert (
-  id,
   kakao_id,
   poi_id,
   user_id,
@@ -52,7 +51,6 @@ grant insert (
   rating
 ) on app_public.poi_reviews to :DATABASE_VISITOR;
 grant update (
-  id,
   kakao_id,
   poi_id,
   user_id,
@@ -69,6 +67,10 @@ create trigger _100_timestamps
 create or replace function app_public.tg__poi_related__create_poi()
 returns trigger as $$
 begin
+  if NEW.poi_id = '00000000-0000-0000-0000-000000000000' then
+    NEW.poi_id := null;
+  end if;
+
   if NEW.poi_id is null then
     select id
     into NEW.poi_id

@@ -767,7 +767,8 @@ input DeletePoiReviewInput {
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  id: UUID!
+  poiId: UUID!
+  userId: UUID!
 }
 
 """The output of our delete `PoiReview` mutation."""
@@ -2272,12 +2273,11 @@ input PoiFilter {
 type PoiReview {
   comment: String
   createdAt: Datetime!
-  id: UUID!
   kakaoId: String!
 
   """Reads a single `Poi` that is related to this `PoiReview`."""
   poi: Poi
-  poiId: UUID
+  poiId: UUID!
   rating: Int!
   updatedAt: Datetime!
 
@@ -2291,9 +2291,6 @@ A condition to be used against `PoiReview` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input PoiReviewCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
   """Checks for equality with the object’s `kakaoId` field."""
   kakaoId: String
 
@@ -2310,9 +2307,6 @@ A filter to be used against `PoiReview` object types. All fields are combined wi
 input PoiReviewFilter {
   """Checks for all expressions in this list."""
   and: [PoiReviewFilter!]
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
 
   """Filter by the object’s `kakaoId` field."""
   kakaoId: StringFilter
@@ -2333,9 +2327,8 @@ input PoiReviewFilter {
 """An input for mutations affecting `PoiReview`"""
 input PoiReviewInput {
   comment: String
-  id: UUID
   kakaoId: String!
-  poiId: UUID
+  poiId: UUID!
   rating: Int!
   userId: UUID!
 }
@@ -2345,7 +2338,6 @@ Represents an update to a `PoiReview`. Fields that are set will be updated.
 """
 input PoiReviewPatch {
   comment: String
-  id: UUID
   kakaoId: String
   poiId: UUID
   rating: Int
@@ -2380,8 +2372,6 @@ type PoiReviewsEdge {
 
 """Methods to use when ordering `PoiReview`."""
 enum PoiReviewsOrderBy {
-  ID_ASC
-  ID_DESC
   KAKAO_ID_ASC
   KAKAO_ID_DESC
   NATURAL
@@ -2749,7 +2739,7 @@ type Query {
     """The method to use when ordering `PoiFavorite`."""
     orderBy: [PoiFavoritesOrderBy!] = [PRIMARY_KEY_ASC]
   ): PoiFavoritesConnection
-  poiReview(id: UUID!): PoiReview
+  poiReview(poiId: UUID!, userId: UUID!): PoiReview
 
   """Reads and enables pagination through a set of `PoiReview`."""
   poiReviews(
@@ -3568,12 +3558,13 @@ input UpdatePoiReviewInput {
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  id: UUID!
 
   """
   An object where the defined keys will be set on the `PoiReview` being updated.
   """
   patch: PoiReviewPatch!
+  poiId: UUID!
+  userId: UUID!
 }
 
 """The output of our update `PoiReview` mutation."""
