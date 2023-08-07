@@ -1,0 +1,11 @@
+mutation UpsertPoiFavorite($input: UpsertPoiFavoriteInput!) {
+  upsertPoiFavorite(input: $input) {
+    clientMutationId
+    poiFavorite {
+      kakaoId
+      poiId
+      createdAt
+      updatedAt
+    }
+  }
+}

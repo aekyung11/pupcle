@@ -1,9 +1,13 @@
 import { DownOutlined } from "@ant-design/icons";
 import { MapSheet, SharedLayout } from "@app/components";
 import {
+  PoiFavorites_PoiFavoriteFragment,
   PoiSummaries_PoiFragment,
+  useDeletePoiFavoriteMutation,
+  usePoiFavoritesQuery,
   usePoiSummariesQuery,
   useSharedQuery,
+  useUpsertPoiFavoriteMutation,
   useUpsertPoiReviewMutation,
 } from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -42,19 +46,25 @@ type Place = {
 type PlaceItemProps = {
   place: Place;
   rating: number | undefined;
+  poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
   currentUserId: string | undefined;
   onRatingChange: () => Promise<void>;
+  onFavoriteChange: () => Promise<void>;
 };
 
 const PlaceItem = ({
   place,
   rating,
   currentUserId,
+  poiFavorite,
   onRatingChange: handleRatingChange,
+  onFavoriteChange: handleFavoriteChange,
 }: PlaceItemProps) => {
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
 
   const [upsertPoiReview] = useUpsertPoiReviewMutation();
+  const [upsertPoiFavorite] = useUpsertPoiFavoriteMutation();
+  const [deletePoiFavorite] = useDeletePoiFavoriteMutation();
 
   return (
     <div
@@ -171,7 +181,74 @@ const PlaceItem = ({
           </span>
         </div>
       </Col>
-      <Col span={4} style={{ height: "100%" }}></Col>
+      <Col
+        span={4}
+        style={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img
+            style={{ width: "55%", height: "55%", paddingRight: "5px" }}
+            src="/pupcle_count.png"
+          />
+          <Button
+            onClick={async () => {
+              if (poiFavorite) {
+                await deletePoiFavorite({
+                  variables: {
+                    input: {
+                      poiId: poiFavorite.poiId,
+                      userId: currentUserId,
+                    },
+                  },
+                });
+              } else {
+                await upsertPoiFavorite({
+                  variables: {
+                    input: {
+                      poiFavorite: {
+                        poiId: "00000000-0000-0000-0000-000000000000",
+                        kakaoId: place.id,
+                        userId: currentUserId,
+                      },
+                    },
+                  },
+                });
+              }
+
+              await handleFavoriteChange();
+            }}
+            style={{
+              border: "none",
+              borderRadius: "50%",
+              padding: 0,
+              width: "45%",
+            }}
+          >
+            {poiFavorite ? (
+              <img src="/map_minus.png" />
+            ) : (
+              <img src="/map_plus.png" />
+            )}
+          </Button>
+        </div>
+
+        <div>
+          <span
+            style={{
+              fontSize: "12px",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: "bolder",
+            }}
+          >
+            {poiFavorite ? "내 장소 삭제" : "내 장소 추가"}
+          </span>
+        </div>
+      </Col>
     </div>
   );
 };
@@ -207,6 +284,26 @@ const Maps: NextPage = () => {
   };
   const poiSummariesByKakaoId: Record<string, PoiSummaries_PoiFragment> = keyBy(
     (poiSummaries ?? previousPoiSummaries)?.pois?.nodes,
+    "kakaoId"
+  );
+
+  const {
+    data: poiFavorites,
+    previousData: previousPoiFavorites,
+    refetch: poiFavoritesRefetch,
+  } = usePoiFavoritesQuery({
+    variables: {
+      kakaoIds: placeKakaoIds,
+    },
+  });
+  const handleFavoriteChange = async () => {
+    await poiFavoritesRefetch();
+  };
+  const poiFavoritesByKakaoId: Record<
+    string,
+    PoiFavorites_PoiFavoriteFragment
+  > = keyBy(
+    (poiFavorites ?? previousPoiFavorites)?.currentUser?.poiFavorites.nodes,
     "kakaoId"
   );
 
@@ -567,7 +664,9 @@ const Maps: NextPage = () => {
                         key={place.id}
                         place={place}
                         rating={poiSummariesByKakaoId[place.id]?.rating}
+                        poiFavorite={poiFavoritesByKakaoId[place.id]}
                         onRatingChange={handleRatingChange}
+                        onFavoriteChange={handleFavoriteChange}
                         currentUserId={currentUserId}
                       />
                     ))}

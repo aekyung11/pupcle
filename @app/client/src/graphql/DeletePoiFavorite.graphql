@@ -1,0 +1,6 @@
+mutation DeletePoiFavorite($input: DeletePoiFavoriteInput!) {
+  deletePoiFavorite(input: $input) {
+    clientMutationId
+    deletedPoiFavoriteNodeId
+  }
+}

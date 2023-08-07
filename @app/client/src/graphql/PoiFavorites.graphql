@@ -1,0 +1,17 @@
+fragment PoiFavorites_PoiFavorite on PoiFavorite {
+  kakaoId
+  poiId
+  updatedAt
+  createdAt
+}
+
+query PoiFavorites($kakaoIds: [String!]) {
+  currentUser {
+    id
+    poiFavorites(filter: { kakaoId: { in: $kakaoIds } }) {
+      nodes {
+        ...PoiFavorites_PoiFavorite
+      }
+    }
+  }
+}
