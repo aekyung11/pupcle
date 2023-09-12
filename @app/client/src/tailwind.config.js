@@ -18,6 +18,17 @@ module.exports = {
     fontSize: {
       "pupcle-24px": "min(24px, 2vw)",
       "pupcle-30px": "min(30px, 2.4vw)",
+      "pupcle-48px": "min(calc(16px + 2vw), 48px)",
+    },
+    fontFamily: {
+      sans: '"DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      poppins: '"Poppins"',
+    },
+    fontWeight: {
+      bold: 700,
+      semibold: 600,
+      medium: 500,
+      light: 100,
     },
     extend: {
       colors: {
