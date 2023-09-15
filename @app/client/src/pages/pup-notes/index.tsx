@@ -170,7 +170,7 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
             width: "calc(100vw - 280px)",
             margin: "0px 0px 20px 40px",
             borderRadius: "30px",
-            display: "flex",
+            // display: "flex",
           }}
         >
           <Tabs.Content
@@ -191,7 +191,85 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
             {/* <div className="flex w-1/2 flex-col items-center justify-center border-r-2 border-[#D9D9D9] p-10"></div>
             <div className="w-1/2 p-10"></div> */}
           </Tabs.Content>
-          <Tabs.Content key={Tab.BASIC} value={Tab.BASIC}></Tabs.Content>
+          <Tabs.Content key={Tab.BASIC} value={Tab.BASIC}>
+            <div className="flex w-full flex-col items-center">
+              <div className="mx-[65px] flex w-full max-w-[965px] flex-col py-[34px]">
+                <div className="mb-5 flex w-full flex-row justify-between">
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      치과 검진
+                    </span>
+                  </Button>
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      슬개골 검사
+                    </span>
+                  </Button>
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      피부 검사
+                    </span>
+                  </Button>
+                </div>
+                <div className="flex w-full flex-row justify-between">
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      심장 청잔
+                    </span>
+                  </Button>
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      신체 검사
+                    </span>
+                  </Button>
+                  <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      추가 등록
+                    </span>
+                  </Button>
+                </div>
+              </div>
+              <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+              <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
+                <span className="font-poppins text-pupcle-24px font-semibold">
+                  히스토리
+                </span>
+                <img
+                  src="/pup_notes_caret_icon.png"
+                  className="ml-3 h-[13px] w-5"
+                />
+              </div>
+              <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
+                <div className="flex w-[70%] items-center justify-between">
+                  <div className="flex flex-row items-center">
+                    <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+                    <div className="mx-9 flex flex-col">
+                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                        <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                          치과 검진
+                        </span>
+                      </div>
+                      <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                        서울동물병원
+                      </span>
+                      <span className="font-poppins text-[15px]">
+                        추가 메모{") "}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-poppins text-[15px]">2023.04.21</span>
+                </div>
+
+                <div className="w-[30%] px-5">
+                  <Button className="bg-pupcleDarkBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
+                    <span className="font-poppins text-[20px] font-semibold text-white">
+                      보기
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Tabs.Content>
           <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}></Tabs.Content>
           <Tabs.Content key={Tab.CHART} value={Tab.CHART}></Tabs.Content>
         </div>
