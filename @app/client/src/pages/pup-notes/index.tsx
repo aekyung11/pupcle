@@ -176,7 +176,7 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
           <Tabs.Content
             key={Tab.INFO}
             value={Tab.INFO}
-            style={{ display: "flex", width: "100%" }}
+            className="flex h-full w-full"
           >
             <div className="flex w-full items-center">
               {query.data?.currentUser && (
@@ -315,9 +315,9 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue }) => (
-            <Form className="flex w-full">
+            <Form className="flex h-full w-full">
               <div
-                className="flex h-full w-1/2 flex-col items-center justify-center p-20"
+                className="flex h-full w-1/2 flex-col items-center justify-center p-10"
                 // style={{
                 //   display: "flex",
                 //   justifyContent: "center",
@@ -330,8 +330,10 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                   name="avatarUrl"
                   valuePropName="avatarUrl"
                   trigger="onUpload"
+                  className="mb-0"
                 >
                   <FramedAvatarUpload
+                    size={"medium"}
                     disabled={false}
                     avatarUrl={values.avatarUrl}
                     onUpload={async (avatarUrl) =>

@@ -15,7 +15,7 @@ a.ant-btn-primary:hover {
 }
 
 .framed-avatar-upload {
-  height: 180px;
+  /* height: 180px; */
   display: flex;
   justify-content: center;
   align-items: center;

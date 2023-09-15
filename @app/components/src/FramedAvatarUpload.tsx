@@ -7,6 +7,7 @@ import { getExceptionFromError } from "@app/lib";
 import { Col, message, Row, Upload } from "antd";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import axios from "axios";
+import { cva, type VariantProps } from "class-variance-authority";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import React, { useState } from "react";
 import slugify from "slugify";
@@ -31,15 +32,58 @@ const ALLOWED_UPLOAD_CONTENT_TYPES_STRING = Object.keys(
   ALLOWED_UPLOAD_CONTENT_TYPES
 ).join(",");
 
+const cvaFramedAvatarUpload = cva("framed-avatar-upload", {
+  variants: {
+    size: {
+      small: [],
+      medium: [],
+    },
+  },
+  defaultVariants: {
+    size: "small",
+  },
+});
+
+const cvaAvatarImage = cva("avatar-image rounded-full", {
+  variants: {
+    size: {
+      small: ["w-[140px] h-[140px]"],
+      medium: ["w-[200px] h-[200px]"],
+    },
+  },
+  defaultVariants: {
+    size: "small",
+  },
+});
+
+const cvaPlusIcon = cva(["absolute", "z-10", "w-[60px]"], {
+  variants: {
+    size: {
+      small: ["right-10 bottom-10"],
+      medium: ["right-[70px] bottom-[70px]"],
+    },
+  },
+  defaultVariants: {
+    size: "small",
+  },
+});
+
+export interface FramedAvatarUploadProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof cvaFramedAvatarUpload> {
+  avatarUrl: string | null | undefined;
+  disabled: boolean;
+  onUpload?: (avatarUrl: string) => Promise<void>;
+}
+
 export function FramedAvatarUpload({
   avatarUrl,
   disabled,
   onUpload,
-}: {
-  avatarUrl: string | null | undefined;
-  disabled: boolean;
-  onUpload?: (avatarUrl: string) => Promise<void>;
-}) {
+  className,
+  size,
+  ...props
+}: FramedAvatarUploadProps) {
   const beforeUpload = (file: any) => {
     file.uid = getUid(file.name);
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -135,7 +179,7 @@ export function FramedAvatarUpload({
   };
 
   return (
-    <div className="framed-avatar-upload">
+    <div className={cvaFramedAvatarUpload({ size, className })} {...props}>
       <Upload
         accept={ALLOWED_UPLOAD_CONTENT_TYPES_STRING}
         name="avatar"
@@ -153,13 +197,11 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
+                  className={cvaAvatarImage({ size })}
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
-                    borderRadius: "70px",
                     borderStyle: "none",
-                    width: "140px",
-                    height: "140px",
                     // marginTop: "60px",
                   }}
                   src={avatarUrl}
@@ -171,16 +213,14 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
+                  className={cvaAvatarImage({ size })}
                   style={{
                     objectFit: "cover",
                     objectPosition: "center top",
                     borderStyle: "none",
-                    borderRadius: "70px",
                     // marginTop: "60px",
                   }}
                   src="/profile_default_avatar.png"
-                  width="140px"
-                  height="140px"
                   alt={"avatar"}
                 />
               </Col>
@@ -190,13 +230,7 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
-                  style={{
-                    position: "absolute",
-                    zIndex: 100,
-                    right: "40px",
-                    bottom: "40px",
-                    width: "60px",
-                  }}
+                  className={cvaPlusIcon({ size })}
                   src="/plus_icon.png"
                   alt="plus"
                 />
