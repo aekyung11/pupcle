@@ -44,6 +44,7 @@ module.exports = {
         "friends-requests-bg": "#F2F7FD",
         pupcleOrange: "#FF9C06",
         pupcleBlue: "#7FB3E8",
+        pupcleMiddleBlue: "#D9E8F8",
         pupcleLightBlue: "#F2F7FD",
         pupcleLightGray: "#D9D9D9",
         pupcleLightLightGray: "#F5F5F5",

@@ -239,6 +239,7 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
                   className="ml-3 h-[13px] w-5"
                 />
               </div>
+              {/* map() */}
               <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
                 <div className="flex w-[70%] items-center justify-between">
                   <div className="flex flex-row items-center">
@@ -261,7 +262,7 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
                 </div>
 
                 <div className="w-[30%] px-5">
-                  <Button className="bg-pupcleDarkBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
+                  <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
                     <span className="font-poppins text-[20px] font-semibold text-white">
                       보기
                     </span>
