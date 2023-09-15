@@ -14,6 +14,14 @@ a.ant-btn-primary:hover {
   color: #f0faff;
 }
 
+.framed-avatar-upload {
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
 .homepage-title {
   display: flex;
   justify-content: space-evenly;

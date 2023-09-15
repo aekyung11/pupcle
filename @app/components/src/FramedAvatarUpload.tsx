@@ -135,16 +135,7 @@ export function FramedAvatarUpload({
   };
 
   return (
-    <div
-      style={{
-        height: "180px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: "32px",
-      }}
-      className="framed-avatar-upload"
-    >
+    <div className="framed-avatar-upload">
       <Upload
         accept={ALLOWED_UPLOAD_CONTENT_TYPES_STRING}
         name="avatar"

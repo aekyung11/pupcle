@@ -240,7 +240,15 @@ const Friends: NextPage = () => {
       useLightBlueFrame
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
-      <div style={{ padding: "40px 50px", height: "15%" }}>
+      <div
+        style={{
+          padding: "40px 0px",
+          display: "flex",
+          justifyContent: "center",
+          width: "220px",
+          height: "15%",
+        }}
+      >
         <span
           style={{
             fontFamily: "Poppins, sans-serif",

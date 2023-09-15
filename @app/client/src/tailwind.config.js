@@ -16,9 +16,16 @@ module.exports = {
   ],
   theme: {
     fontSize: {
+      "pupcle-20px": "min(20px, 14px + 0.2vw)",
       "pupcle-24px": "min(24px, 2vw)",
       "pupcle-30px": "min(30px, 2.4vw)",
-      "pupcle-48px": "min(calc(16px + 2vw), 48px)",
+      "pupcle-48px": [
+        "min(calc(16px + 2vw), 48px)",
+        {
+          letterSpacing: "1.5%",
+          lineHeight: "0.96",
+        },
+      ],
     },
     fontFamily: {
       sans: '"DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -36,6 +43,8 @@ module.exports = {
         "lightblue-bg": "rgba(127, 179, 232, 0.1)",
         "friends-requests-bg": "#F2F7FD",
         pupcleOrange: "#FF9C06",
+        pupcleBlue: "#7FB3E8",
+        pupcleLightBlue: "#F2F7FD",
       },
     },
   },
