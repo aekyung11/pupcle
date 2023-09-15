@@ -40,4 +40,4 @@ create trigger _100_timestamps
 create trigger _200_poi_favorites_create_poi
   before insert on app_public.poi_favorites
   for each row
-  execute procedure app_public.tg__poi_related__create_poi();
+  execute procedure app_public.tg__poi_related__create_or_replace_poi();

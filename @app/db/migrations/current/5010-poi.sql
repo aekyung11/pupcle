@@ -64,10 +64,21 @@ create trigger _100_timestamps
   for each row
   execute procedure app_private.tg__timestamps();
 
-create or replace function app_public.tg__poi_related__create_poi()
+create or replace function app_public.tg__poi_related__create_or_replace_poi()
 returns trigger as $$
 begin
+  if NEW.kakao_id is null then
+    NEW.poi_id := null;
+    return NEW;
+  end if;
+
+  -- when poi_id for the kakao_id is unknown, use zero UUID on create or on setting the kakao_id
   if NEW.poi_id = '00000000-0000-0000-0000-000000000000' then
+    NEW.poi_id := null;
+  end if;
+
+  -- force update poi_id when kakao_id changes
+  if tg_op = 'UPDATE' and OLD.kakao_id <> NEW.kakao_id then
     NEW.poi_id := null;
   end if;
 
@@ -89,8 +100,8 @@ $$ language plpgsql volatile security definer set search_path to pg_catalog, pub
 create trigger _200_poi_reviews_create_poi
   before insert on app_public.poi_reviews
   for each row
-  execute procedure app_public.tg__poi_related__create_poi();
-comment on function app_public.tg__poi_related__create_poi() is
+  execute procedure app_public.tg__poi_related__create_or_replace_poi();
+comment on function app_public.tg__poi_related__create_or_replace_poi() is
   E'Inserts a poi for this poi related object';
 
 create or replace function app_public.tg__poi_reviews__check_kakao_id()

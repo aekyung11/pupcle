@@ -1,0 +1,10 @@
+drop table if exists app_public.basic_exam_result_assets;
+drop table if exists app_public.user_asset_kind;
+drop trigger if exists _200_poi_basic_exam_results_create_or_update_poi on app_public.basic_exam_results;
+drop trigger if exists _100_timestamps on app_public.basic_exam_results;
+drop trigger if exists _570_insert_basic_exam_categories on app_public.users;
+drop function if exists app_public.tg_basic_exam_categories__insert_with_user();
+drop trigger if exists _100_timestamps on app_public.basic_exam_categories;
+drop table if exists app_public.basic_exam_results;
+drop table if exists app_public.basic_exam_categories;
+drop type if exists app_public.money;
