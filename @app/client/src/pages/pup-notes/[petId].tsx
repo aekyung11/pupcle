@@ -768,12 +768,14 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
         >
           <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
             {categories.map(({ id, name }) => (
-              <ToggleGroup.Item key={id} value={id}>
-                <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                    {name}
-                  </span>
-                </Button>
+              <ToggleGroup.Item
+                key={id}
+                value={id}
+                className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]"
+              >
+                <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                  {name}
+                </span>
               </ToggleGroup.Item>
             ))}
             <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
