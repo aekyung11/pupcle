@@ -65,7 +65,7 @@ const PetProfilePageInner: FC<PetProfilePageInnerProps> = ({
   }, [next, refetch]);
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    usePetInfoForm(currentUser.id, postResult);
+    usePetInfoForm(currentUser.id, undefined, postResult);
 
   const focusElement = useRef<InputRef>(null);
   useEffect(

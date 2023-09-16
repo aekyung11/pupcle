@@ -11,7 +11,6 @@ import { Button, Typography } from "antd";
 import { format, parseISO } from "date-fns";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { type } from "os";
 import React, { useEffect, useState } from "react";
 const { Paragraph } = Typography;
 

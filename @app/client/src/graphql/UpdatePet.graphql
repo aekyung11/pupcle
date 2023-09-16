@@ -1,0 +1,27 @@
+mutation UpdatePet($input: UpdatePetInput!) {
+  updatePet(input: $input) {
+    clientMutationId
+    pet {
+      id
+      userId
+      avatarUrl
+      createdAt
+      dob
+      gender
+      injections
+      kind
+      name
+      neutered
+      updatedAt
+      userId
+      vaccinations
+      weight {
+        value
+        unit
+      }
+    }
+    query {
+      ...SharedLayout_Query
+    }
+  }
+}

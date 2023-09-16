@@ -3,9 +3,13 @@ import {
   CreatePetMutation,
   PetGender,
   PetKind,
+  SharedLayout_PetFragment,
+  UpdatePetMutation,
   useCreatePetMutation,
+  useUpdatePetMutation,
   WeightUnit,
 } from "@app/graphql";
+import { format, parseISO } from "date-fns";
 import { FormikConfig } from "formik";
 import { useCallback, useState } from "react";
 import * as yup from "yup";
@@ -30,40 +34,65 @@ type PetInfoFormInput = InferType<typeof validationSchema>;
 
 export function usePetInfoForm(
   userId: string,
-  postResult: (result: FetchResult<CreatePetMutation>) => Promise<any> | void
+  pet: SharedLayout_PetFragment | undefined,
+  postResult: (
+    result: FetchResult<CreatePetMutation> | FetchResult<UpdatePetMutation>
+  ) => Promise<any> | void
 ) {
+  console.log({ pet });
   const [error, setError] = useState<Error | ApolloError | null>(null);
   const [createPet] = useCreatePetMutation();
+  const [updatePet] = useUpdatePetMutation();
   const initialValues: PetInfoFormInput = {
-    name: "",
-    dob: undefined,
-    weight: undefined,
-    sex: undefined,
-    neutered: undefined,
+    name: pet?.name ?? "",
+    dob: pet?.dob ? parseISO(pet?.dob) : undefined,
+    weight: pet?.weight?.value,
+    sex: pet?.gender,
+    neutered: pet?.neutered,
   } as unknown as PetInfoFormInput;
   const handleSubmit: FormikConfig<PetInfoFormInput>["onSubmit"] = useCallback(
     async (values, { setErrors: _setErrors }) => {
       setError(null);
       try {
-        const result = await createPet({
-          variables: {
-            input: {
-              pet: {
-                userId,
-                avatarUrl: values.avatarUrl,
-                dob: values.dob,
-                gender: values.sex,
-                kind: PetKind.Dog,
-                name: values.name,
-                neutered: values.neutered,
-                weight: {
-                  unit: WeightUnit.Kg,
-                  value: Number(values.weight),
+        const currentPetId = pet?.id;
+        const result = currentPetId
+          ? await updatePet({
+              variables: {
+                input: {
+                  id: currentPetId,
+                  patch: {
+                    avatarUrl: values.avatarUrl,
+                    dob: format(values.dob, "yyyy-MM-dd"),
+                    gender: values.sex,
+                    name: values.name,
+                    neutered: values.neutered,
+                    weight: {
+                      unit: WeightUnit.Kg,
+                      value: Number(values.weight),
+                    },
+                  },
                 },
               },
-            },
-          },
-        });
+            })
+          : await createPet({
+              variables: {
+                input: {
+                  pet: {
+                    userId,
+                    avatarUrl: values.avatarUrl,
+                    dob: format(values.dob, "yyyy-MM-dd"),
+                    gender: values.sex,
+                    kind: PetKind.Dog,
+                    name: values.name,
+                    neutered: values.neutered,
+                    weight: {
+                      unit: WeightUnit.Kg,
+                      value: Number(values.weight),
+                    },
+                  },
+                },
+              },
+            });
 
         const postResultReturn = postResult(result);
         if (postResultReturn instanceof Promise) {
@@ -75,7 +104,7 @@ export function usePetInfoForm(
         }
       }
     },
-    [createPet, postResult, userId]
+    [createPet, updatePet, postResult, pet, userId]
   );
 
   return {

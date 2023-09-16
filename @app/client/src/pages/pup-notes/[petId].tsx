@@ -2,11 +2,13 @@ import { usePetInfoForm } from "@app/componentlib";
 import {
   AuthRestrict,
   DayPickerInput,
+  FourOhFour,
   FramedAvatarUpload,
   SharedLayout,
 } from "@app/components";
 import {
   PetGender,
+  SharedLayout_PetFragment,
   SharedLayout_UserFragment,
   useSharedQuery,
 } from "@app/graphql";
@@ -14,14 +16,13 @@ import { extractError, getCodeFromError } from "@app/lib";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Alert, Button, Col, InputRef, Row } from "antd";
+import clsx from "clsx";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import * as React from "react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
-
-import { isSafe } from "../login";
 
 interface PupNotesPageProps {
   next: string | null;
@@ -34,14 +35,37 @@ enum Tab {
   CHART = "chart",
 }
 
-const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
+export function usePetId() {
+  const router = useRouter();
+  const { petId } = router.query;
+  return String(petId);
+}
+
+const PupNotes: NextPage<PupNotesPageProps> = () => {
   const query = useSharedQuery();
   const refetch = async () => query.refetch();
-  const next: string = isSafe(rawNext) ? rawNext! : "/";
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.INFO);
 
   const currentUserId = query.data?.currentUser?.id as string | undefined;
-  // const currentPet = query.data?.currentUser?.pets[0];
+  const petId = usePetId();
+  const currentPet = query.data?.currentUser?.pets.nodes.find(
+    (p) => p.id === petId
+  );
+  if (query.loading) {
+    return <p>Loading...</p>;
+  }
+  if (!currentPet || !currentUserId) {
+    return (
+      <SharedLayout
+        title="pup-notes"
+        query={query}
+        useLightBlueFrame
+        forbidWhen={AuthRestrict.LOGGED_OUT}
+      >
+        <FourOhFour currentUser={query.data?.currentUser} />
+      </SharedLayout>
+    );
+  }
 
   return (
     <SharedLayout
@@ -182,8 +206,8 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
               {query.data?.currentUser && (
                 <PupNotesPageInner
                   refetch={refetch}
-                  next={next}
                   currentUser={query.data?.currentUser}
+                  currentPet={currentPet}
                 />
               )}
             </div>
@@ -290,23 +314,23 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
 };
 
 interface PupNotesPageInnerProps {
-  next: string;
   currentUser: SharedLayout_UserFragment;
+  currentPet: SharedLayout_PetFragment;
   refetch: () => Promise<any>;
 }
 
 const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
   currentUser,
-  next,
-  refetch,
+  currentPet,
 }) => {
+  const [editingPetInfo, setEditingPetInfo] = useState(false);
+
   const postResult = useCallback(async () => {
-    await refetch();
-    Router.push(next);
-  }, [next, refetch]);
+    setEditingPetInfo(false);
+  }, []);
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    usePetInfoForm(currentUser.id, postResult);
+    usePetInfoForm(currentUser.id, currentPet, postResult);
 
   const focusElement = useRef<InputRef>(null);
   useEffect(
@@ -344,7 +368,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                 >
                   <FramedAvatarUpload
                     size={"medium"}
-                    disabled={false}
+                    disabled={!editingPetInfo}
                     avatarUrl={values.avatarUrl}
                     onUpload={async (avatarUrl) =>
                       setFieldValue("avatarUrl", avatarUrl)
@@ -353,14 +377,22 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                 </Form.Item>
                 <div className="flex items-center">
                   <span className="font-poppins mr-2 text-[24px] font-semibold">
-                    {currentUser.pets.nodes[0].name}
+                    {currentPet.name}
                   </span>
                   <img src="/paw.png" className="h-fit w-[43px]" alt="" />
                 </div>
               </div>
               <div className="h-full w-1/2 border-l-2 p-10">
                 <div className="mb-[100px] flex w-full justify-end">
-                  <Button className="bg-pupcleLightBlue h-[63px] w-[179px] rounded-[30px] border-none">
+                  <Button
+                    className={clsx(
+                      "bg-pupcleLightBlue h-[63px] w-[179px] rounded-[30px] border-none",
+                      {
+                        invisible: editingPetInfo,
+                      }
+                    )}
+                    onClick={() => setEditingPetInfo(true)}
+                  >
                     <span className="text-pupcleBlue font-poppins text-pupcle-20px font-semibold">
                       프로필 수정
                     </span>
@@ -408,6 +440,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           ref={focusElement}
                           data-cy="petprofilepage-input-name"
                           suffix
+                          disabled={!editingPetInfo}
                         />
                       </Form.Item>
                     </Col>
@@ -439,6 +472,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                         <DayPickerInput
                           selected={values.dob}
                           setSelected={(d) => setFieldValue("dob", d)}
+                          disabled={!editingPetInfo}
                         />
                       </Form.Item>
                     </Col>
@@ -484,6 +518,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           autoComplete="weight"
                           data-cy="petprofilepage-input-weight"
                           suffix="kg"
+                          disabled={!editingPetInfo}
                         />
                       </Form.Item>
                     </Col>
@@ -542,6 +577,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             width: "100%",
                             maxWidth: 400,
                           }}
+                          disabled={!editingPetInfo}
                         >
                           <div
                             style={{
@@ -552,7 +588,13 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             }}
                           >
                             <RadioGroupPrimitive.Item
-                              className="circular-radio-button"
+                              className={clsx("circular-radio-button", {
+                                hidden:
+                                  !editingPetInfo && values.sex !== PetGender.M,
+                                flex: !(
+                                  !editingPetInfo && values.sex !== PetGender.M
+                                ),
+                              })}
                               value={PetGender.M}
                             >
                               <img
@@ -570,7 +612,13 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                               />
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
-                              className="circular-radio-button"
+                              className={clsx("circular-radio-button", {
+                                hidden:
+                                  !editingPetInfo && values.sex !== PetGender.F,
+                                flex: !(
+                                  !editingPetInfo && values.sex !== PetGender.F
+                                ),
+                              })}
                               value={PetGender.F}
                             >
                               <img
@@ -634,6 +682,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             width: "100%",
                             maxWidth: 400,
                           }}
+                          disabled={!editingPetInfo}
                         >
                           <div
                             style={{
@@ -644,7 +693,10 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             }}
                           >
                             <RadioGroupPrimitive.Item
-                              className="circular-radio-button"
+                              className={clsx("circular-radio-button", {
+                                hidden: !editingPetInfo && !values.neutered,
+                                flex: !(!editingPetInfo && !values.neutered),
+                              })}
                               value="true"
                             >
                               <img
@@ -662,7 +714,10 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                               />
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
-                              className="circular-radio-button"
+                              className={clsx("circular-radio-button", {
+                                hidden: !editingPetInfo && values.neutered,
+                                flex: !(!editingPetInfo && values.neutered),
+                              })}
                               value="false"
                             >
                               <img
@@ -704,27 +759,29 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                       />
                     </Form.Item>
                   ) : null}
-                  <Form.Item name="_submit" style={{ marginBottom: "12px" }}>
-                    <SubmitButton
-                      style={{
-                        backgroundColor: "#7FB3E8",
-                        height: "40px",
-                        width: "100%",
-                        borderRadius: "20px",
-                        borderStyle: "none",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        color: "white",
-                        textAlign: "center",
-                        marginTop: "2rem",
-                      }}
-                      htmlType="submit"
-                      data-cy="registerpage-submit-button"
-                    >
-                      {submitLabel}
-                    </SubmitButton>
-                  </Form.Item>
+                  {editingPetInfo && (
+                    <Form.Item name="_submit" style={{ marginBottom: "12px" }}>
+                      <SubmitButton
+                        style={{
+                          backgroundColor: "#7FB3E8",
+                          height: "40px",
+                          width: "100%",
+                          borderRadius: "20px",
+                          borderStyle: "none",
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          fontWeight: 600,
+                          color: "white",
+                          textAlign: "center",
+                          marginTop: "2rem",
+                        }}
+                        htmlType="submit"
+                        data-cy="registerpage-submit-button"
+                      >
+                        {submitLabel}
+                      </SubmitButton>
+                    </Form.Item>
+                  )}
                 </div>
               </div>
             </Form>

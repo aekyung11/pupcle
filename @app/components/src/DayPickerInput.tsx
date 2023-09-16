@@ -7,16 +7,23 @@ import { usePopper } from "react-popper";
 export type DayPickerInputProps = {
   selected: Date;
   setSelected: (date: Date | undefined) => void;
+  disabled?: boolean;
 };
 
-export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
+export function DayPickerInput({
+  selected,
+  setSelected,
+  disabled,
+}: DayPickerInputProps) {
   const [currentYear, setCurrentYear] = useState(2023);
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>(
+    selected ? format(selected, "yyyy-MM-dd") : ""
+  );
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 
   const popperRef = useRef<HTMLDivElement>(null);
@@ -70,6 +77,7 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
           style={{
             position: "absolute",
           }}
+          disabled={disabled}
           // className="input-reset pa2 ma2 black ba bg-white"
         />
         <button
@@ -83,6 +91,7 @@ export function DayPickerInput({ selected, setSelected }: DayPickerInputProps) {
             top: "10px",
             left: "calc(100% - 20px - 1.5rem)",
           }}
+          disabled={disabled}
           // style={{ position: "absolute" }}
         >
           <img src="/calendar_icon.png" style={{ width: "20px" }} />

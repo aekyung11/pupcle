@@ -352,7 +352,6 @@ a.ant-btn-primary:hover {
   height: 78;
   border-radius: 50%;
   border-style: none;
-  display: flex;
   justify-content: center;
   position: relative;
   padding: 0;

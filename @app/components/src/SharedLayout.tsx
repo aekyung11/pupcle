@@ -202,6 +202,8 @@ export function SharedLayout({
 
   const isMapsPage = currentUrl.startsWith("/maps");
 
+  const firstPet = data?.currentUser?.pets.nodes[0];
+
   const headerContent: React.ReactNode = (
     <Row
       style={{
@@ -347,7 +349,10 @@ export function SharedLayout({
                       borderBottom: "#D9D9D9 2px solid",
                     }}
                   >
-                    <Link href="/pup-notes" data-cy="layout-link-pup-notes">
+                    <Link
+                      href={`/pup-notes/${firstPet?.id}`}
+                      data-cy="layout-link-pup-notes"
+                    >
                       <Row style={{ alignItems: "center" }}>
                         <Col
                           span={4}
