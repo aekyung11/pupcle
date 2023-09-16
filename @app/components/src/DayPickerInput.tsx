@@ -24,6 +24,11 @@ export function DayPickerInput({
   const [inputValue, setInputValue] = useState<string>(
     selected ? format(selected, "yyyy-MM-dd") : ""
   );
+
+  useEffect(() => {
+    setInputValue(selected ? format(selected, "yyyy-MM-dd") : "");
+  }, [selected]);
+
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 
   const popperRef = useRef<HTMLDivElement>(null);

@@ -44,7 +44,7 @@ export function useBasicExamResultsForm(
   } as unknown as BasicExamResultsInput;
   const handleSubmit: FormikConfig<BasicExamResultsInput>["onSubmit"] =
     useCallback(
-      async (values, { setErrors: _setErrors }) => {
+      async (values, { setErrors: _setErrors, resetForm }) => {
         setError(null);
         try {
           const result = await upsertBasicExamResults({
@@ -71,6 +71,7 @@ export function useBasicExamResultsForm(
               },
             },
           });
+          resetForm();
           const postResultReturn = postResult(result);
           if (postResultReturn instanceof Promise) {
             await postResultReturn;
