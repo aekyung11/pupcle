@@ -5,7 +5,7 @@ import { DayPicker } from "react-day-picker";
 import { usePopper } from "react-popper";
 
 export type DayPickerInputProps = {
-  selected: Date;
+  selected: Date | undefined;
   setSelected: (date: Date | undefined) => void;
   disabled?: boolean;
 };

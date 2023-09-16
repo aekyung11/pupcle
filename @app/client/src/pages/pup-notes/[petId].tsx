@@ -1,6 +1,7 @@
 import { FetchResult } from "@apollo/client";
 import {
   useBasicExamCategoryForm,
+  useBasicExamResultsForm,
   useNewBasicExamResultsCategoryForm,
   usePetInfoForm,
 } from "@app/componentlib";
@@ -19,6 +20,7 @@ import {
   SharedLayout_PetFragment,
   SharedLayout_UserFragment,
   UpsertBasicExamCategoryMutation,
+  UpsertBasicExamResultsMutation,
   usePupNotesPageQuery,
   useSharedQuery,
 } from "@app/graphql";
@@ -30,6 +32,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Alert, Button, Col, InputRef, Row } from "antd";
 import clsx from "clsx";
+import { format, parseISO } from "date-fns";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { chain, sortBy } from "lodash";
@@ -748,6 +751,15 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
+  const basicExamResults = currentPet.basicExamResults.nodes;
+  const filteredBasicExamResults = useMemo(() => {
+    return selectedCategoryId
+      ? basicExamResults.filter(
+          (ber) => ber.basicExamCategory?.id === selectedCategoryId
+        )
+      : basicExamResults;
+  }, [basicExamResults, selectedCategoryId]);
+
   const onBasicExamCategoryFormComplete = useCallback(
     (result: FetchResult<UpsertBasicExamCategoryMutation>) => {
       const upsertedCategoryId =
@@ -949,35 +961,45 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           <img src="/pup_notes_caret_icon.png" className="ml-3 h-[13px] w-5" />
         </div>
         {/* map() */}
-        <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
-          <div className="flex w-[70%] items-center justify-between">
-            <div className="flex flex-row items-center">
-              <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-              <div className="mx-9 flex flex-col">
-                <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
-                  <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                    치과 검진
-                  </span>
+        {filteredBasicExamResults.map(
+          ({ id, memo, takenAt, basicExamCategory }) => (
+            <div
+              className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
+              key={id}
+            >
+              <div className="flex w-[70%] items-center justify-between">
+                <div className="flex flex-row items-center">
+                  <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+                  <div className="mx-9 flex flex-col">
+                    <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                      <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                        {basicExamCategory?.name}
+                      </span>
+                    </div>
+                    <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                      서울동물병원
+                    </span>
+                    <span className="font-poppins text-[15px]">
+                      추가 메모{") "}
+                      {memo}
+                    </span>
+                  </div>
                 </div>
-                <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                  서울동물병원
-                </span>
                 <span className="font-poppins text-[15px]">
-                  추가 메모{") "}
+                  {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
                 </span>
               </div>
-            </div>
-            <span className="font-poppins text-[15px]">2023.04.21</span>
-          </div>
 
-          <div className="w-[30%] px-5">
-            <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
-              <span className="font-poppins text-[20px] font-semibold text-white">
-                보기
-              </span>
-            </Button>
-          </div>
-        </div>
+              <div className="w-[30%] px-5">
+                <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
+                  <span className="font-poppins text-[20px] font-semibold text-white">
+                    보기
+                  </span>
+                </Button>
+              </div>
+            </div>
+          )
+        )}
       </div>
       <div
         className={clsx({
@@ -1005,6 +1027,10 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               <BasicExamResultsForm
                 currentUser={currentUser}
                 currentPet={currentPet}
+                basicExamCategoryId={newBasicExamResultsCategoryId}
+                onComplete={() => {
+                  setNewBasicExamResults(false);
+                }}
               />
             </div>
           </div>
@@ -1026,6 +1052,8 @@ const NewBasicExamResultsCategoryForm: FC<
 > = ({ defaultCategoryId, categories, onComplete, onCancel }) => {
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     useNewBasicExamResultsCategoryForm(defaultCategoryId, onComplete);
+
+  const code = getCodeFromError(error);
   return (
     <>
       <Formik
@@ -1093,6 +1121,26 @@ const NewBasicExamResultsCategoryForm: FC<
                 </Select.Portal>
               </Select.Root>
             </Form.Item>
+
+            {error ? (
+              <Form.Item name="_error">
+                <Alert
+                  type="error"
+                  message={`**Saving basic exam category failed**`}
+                  description={
+                    <span>
+                      {extractError(error).message}
+                      {code ? (
+                        <span>
+                          {" "}
+                          (Error code: <code>ERR_{code}</code>)
+                        </span>
+                      ) : null}
+                    </span>
+                  }
+                />
+              </Form.Item>
+            ) : null}
             <Form.Item name="_submit" className="mt-12">
               <SubmitButton
                 className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
@@ -1120,16 +1168,31 @@ const NewBasicExamResultsCategoryForm: FC<
 interface BasicExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
+  basicExamCategoryId: string;
+  onComplete: (result: any) => Promise<void> | void;
 }
 
 const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   currentUser,
   currentPet,
+  basicExamCategoryId,
+  onComplete,
 }) => {
-  const postResult = useCallback(async () => {}, []);
+  const postResult = useCallback(
+    async (result: FetchResult<UpsertBasicExamResultsMutation>) => {
+      await onComplete(result);
+    },
+    [onComplete]
+  );
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    usePetInfoForm(currentUser.id, currentPet, postResult);
+    useBasicExamResultsForm(
+      currentUser.id,
+      currentPet.id,
+      basicExamCategoryId,
+      undefined,
+      postResult
+    );
 
   const code = getCodeFromError(error);
 
@@ -1153,10 +1216,9 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                   <div className="flex w-[calc(100%-80px)] pl-9">
                     <Form.Item name="date" className="mb-0 w-full">
                       <DayPickerInput
-                        selected={values.dob}
-                        setSelected={(d) => setFieldValue("dob", d)}
+                        selected={values.takenAt}
+                        setSelected={(d) => setFieldValue("takenAt", d)}
                       />
-                      {/* TODO: change values.dob */}
                     </Form.Item>
                   </div>
                 </div>
@@ -1168,13 +1230,13 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                     </span>
                   </div>
                   <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="expense" className="mb-0 w-full">
+                    <Form.Item name="cost" className="mb-0 w-full">
                       <Input
-                        name="expense"
+                        name="cost"
                         className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                         // size="large"
-                        autoComplete="expense"
-                        data-cy="pup-notes-basic-input-expense"
+                        autoComplete="cost"
+                        data-cy="pup-notes-basic-input-cost"
                         suffix
                       />
                     </Form.Item>
@@ -1188,13 +1250,14 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                     </span>
                   </div>
                   <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="vet" className="mb-0 w-full">
+                    <Form.Item name="locationKakaoId" className="mb-0 w-full">
                       <Input
-                        name="vet"
+                        name="locationKakaoId"
+                        placeholder="TODO location chooser"
                         className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                         // size="large"
-                        autoComplete="vet"
-                        data-cy="pup-notes-basic-input-vet"
+                        autoComplete="locationKakaoId"
+                        data-cy="pup-notes-basic-input-locationKakaoId"
                         suffix
                       />
                     </Form.Item>
@@ -1208,12 +1271,11 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                     </span>
                   </div>
                   <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="appointment" className="mb-0 w-full">
+                    <Form.Item name="nextReservation" className="mb-0 w-full">
                       <DayPickerInput
-                        selected={values.dob}
-                        setSelected={(d) => setFieldValue("appointment", d)}
+                        selected={values.nextReservation}
+                        setSelected={(d) => setFieldValue("nextReservation", d)}
                       />
-                      {/* TODO: change values.dob */}
                     </Form.Item>
                   </div>
                 </div>

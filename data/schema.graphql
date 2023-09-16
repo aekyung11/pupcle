@@ -459,8 +459,10 @@ input BasicExamResultPatch {
   kakaoId: String
   memo: String
   nextReservation: Datetime
+  petId: UUID
   poiId: UUID
   takenAt: Datetime
+  userId: UUID
 }
 
 """A connection to a list of `BasicExamResult` values."""

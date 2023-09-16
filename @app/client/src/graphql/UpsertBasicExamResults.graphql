@@ -1,0 +1,11 @@
+mutation UpsertBasicExamResults($input: UpsertBasicExamResultInput!) {
+  upsertBasicExamResult(input: $input) {
+    clientMutationId
+    basicExamResult {
+      id
+    }
+    query {
+      ...PupNotesPage_Query
+    }
+  }
+}

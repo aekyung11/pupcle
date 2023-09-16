@@ -95,6 +95,8 @@ grant insert (
   memo
 ) on app_public.basic_exam_results to :DATABASE_VISITOR;
 grant update (
+  user_id,
+  pet_id,
   basic_exam_category_id,
   taken_at,
   cost,
