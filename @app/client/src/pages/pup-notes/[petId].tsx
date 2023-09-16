@@ -46,7 +46,8 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
   const refetch = async () => query.refetch();
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.INFO);
 
-  const currentUserId = query.data?.currentUser?.id as string | undefined;
+  const currentUser = query.data?.currentUser;
+  const currentUserId = currentUser?.id as string | undefined;
   const petId = usePetId();
   const currentPet = query.data?.currentUser?.pets.nodes.find(
     (p) => p.id === petId
@@ -54,7 +55,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
   if (query.loading) {
     return <p>Loading...</p>;
   }
-  if (!currentPet || !currentUserId) {
+  if (!currentPet || !currentUser || !currentUserId) {
     return (
       <SharedLayout
         title="pup-notes"
@@ -82,7 +83,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
           alignItems: "center",
           marginLeft: "10px",
           width: "220px",
-          height: "15%",
+          height: "125px",
         }}
       >
         <span className="font-poppins text-pupcle-30px font-semibold">
@@ -94,7 +95,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
         onValueChange={(newValue) => {
           setSelectedTab(newValue as Tab);
         }}
-        style={{ display: "flex", height: "85%" }}
+        style={{ display: "flex", height: "calc(100vh - 96px - 125px)" }}
       >
         <Tabs.List>
           <div
@@ -203,13 +204,11 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             className="flex h-full w-full"
           >
             <div className="flex w-full items-center">
-              {query.data?.currentUser && (
-                <PupNotesPageInner
-                  refetch={refetch}
-                  currentUser={query.data?.currentUser}
-                  currentPet={currentPet}
-                />
-              )}
+              <PupNotesPageInner
+                refetch={refetch}
+                currentUser={currentUser}
+                currentPet={currentPet}
+              />
             </div>
 
             {/* <div className="flex w-1/2 flex-col items-center justify-center border-r-2 border-[#D9D9D9] p-10"></div>
@@ -297,13 +296,24 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
           </Tabs.Content>
           <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}>
             <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-              <span className="font-poppins text-pupcle-24px font-semibold">
-                히스토리
-              </span>
               <img
                 src="/pup_notes_caret_icon.png"
-                className="ml-3 h-[13px] w-5"
+                className="mr-3 h-[13px] w-5 rotate-90"
               />
+              <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+                치과 검진
+              </span>
+            </div>
+            <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+              <div className="h-full w-1/2 overflow-scroll">
+                <div className="w-full">
+                  <PupNotesPageBasicInner
+                    currentUser={currentUser}
+                    currentPet={currentPet}
+                    refetch={refetch}
+                  />
+                </div>
+              </div>
             </div>
           </Tabs.Content>
           <Tabs.Content key={Tab.CHART} value={Tab.CHART}></Tabs.Content>
@@ -783,6 +793,196 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                     </Form.Item>
                   )}
                 </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </>
+  );
+};
+
+interface PupNotesPageBasicInnerProps {
+  currentUser: SharedLayout_UserFragment;
+  currentPet: SharedLayout_PetFragment;
+  refetch: () => Promise<any>;
+}
+
+const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
+  currentUser,
+  currentPet,
+  refetch,
+}) => {
+  const postResult = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    usePetInfoForm(currentUser.id, currentPet, postResult);
+
+  const focusElement = useRef<InputRef>(null);
+  useEffect(
+    () => void (focusElement.current && focusElement.current!.focus()),
+    [focusElement]
+  );
+
+  const code = getCodeFromError(error);
+
+  return (
+    <>
+      <div className="flex h-full w-full flex-row">
+        <Formik
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="flex h-full w-full">
+              <div className="w-full">
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      날짜
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="date" className="mb-0 w-full">
+                      <DayPickerInput
+                        selected={values.dob}
+                        setSelected={(d) => setFieldValue("dob", d)}
+                      />
+                      {/* TODO: change values.dob */}
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      비용
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="expense" className="mb-0 w-full">
+                      <Input
+                        name="expense"
+                        className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                        // size="large"
+                        autoComplete="expense"
+                        ref={focusElement}
+                        data-cy="pup-notes-basic-input-expense"
+                        suffix
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      병원
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="vet" className="mb-0 w-full">
+                      <Input
+                        name="vet"
+                        className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                        // size="large"
+                        autoComplete="vet"
+                        ref={focusElement}
+                        data-cy="pup-notes-basic-input-vet"
+                        suffix
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      다음 예약일
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="appointment" className="mb-0 w-full">
+                      <DayPickerInput
+                        selected={values.dob}
+                        setSelected={(d) => setFieldValue("appointment", d)}
+                      />
+                      {/* TODO: change values.dob */}
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      사진
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="photos" className="mb-0 w-full">
+                      <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
+                        <img
+                          className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
+                          src="/pup_notes_add_pics.png"
+                        />
+                      </div>
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="mb-12 flex">
+                  <div className="flex w-20 items-center justify-end">
+                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                      메모
+                    </span>
+                  </div>
+                  <div className="flex w-[calc(100%-80px)] pl-9">
+                    <Form.Item name="memo" className="mb-0 w-full">
+                      <Input
+                        name="memo"
+                        className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
+                        // size="large"
+                        autoComplete="memo"
+                        ref={focusElement}
+                        data-cy="pup-notes-basic-input-memo"
+                        suffix
+                        placeholder="자세한 내용을 기록해보세요."
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                {error ? (
+                  <Form.Item name="_error">
+                    <Alert
+                      type="error"
+                      message={`Registration failed`}
+                      description={
+                        <span>
+                          {extractError(error).message}
+                          {code ? (
+                            <span>
+                              {" "}
+                              (Error code: <code>ERR_{code}</code>)
+                            </span>
+                          ) : null}
+                        </span>
+                      }
+                    />
+                  </Form.Item>
+                ) : null}
+                <Form.Item name="_submit" className="mt-12">
+                  <SubmitButton
+                    className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                    htmlType="submit"
+                    data-cy="pup-notes-basic-submit-button"
+                  >
+                    {submitLabel}
+                  </SubmitButton>
+                </Form.Item>
               </div>
             </Form>
           )}
