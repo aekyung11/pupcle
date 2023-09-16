@@ -1,0 +1,57 @@
+fragment PupNotesPage_Pet on Pet {
+  id
+  basicExamResults {
+    nodes {
+      basicExamCategoryId
+      basicExamResultAssets {
+        nodes {
+          assetUrl
+          createdAt
+          id
+          kind
+          metadata
+          updatedAt
+        }
+      }
+      cost {
+        amount
+        currency
+      }
+      createdAt
+      id
+      kakaoId
+      memo
+      nextReservation
+      poiId
+      takenAt
+      updatedAt
+    }
+  }
+}
+
+fragment PupNotesPage_User on User {
+  id
+  basicExamCategories {
+    nodes {
+      id
+      isDefaultCategory
+      name
+    }
+  }
+  pets(first: 20) {
+    nodes {
+      id
+      ...SharedLayout_Pet
+      ...PupNotesPage_Pet
+    }
+    totalCount
+  }
+}
+
+fragment PupNotesPage_Query on Query {
+  currentUser {
+    id
+    ...SharedLayout_User
+    ...PupNotesPage_User
+  }
+}

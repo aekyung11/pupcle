@@ -8,13 +8,17 @@ import {
 } from "@app/components";
 import {
   PetGender,
+  PupNotesPage_PetFragment,
+  PupNotesPage_UserFragment,
   SharedLayout_PetFragment,
   SharedLayout_UserFragment,
+  usePupNotesPageQuery,
   useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Tabs from "@radix-ui/react-tabs";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Alert, Button, Col, InputRef, Row } from "antd";
 import clsx from "clsx";
 import { Formik } from "formik";
@@ -42,7 +46,7 @@ export function usePetId() {
 }
 
 const PupNotes: NextPage<PupNotesPageProps> = () => {
-  const query = useSharedQuery();
+  const query = usePupNotesPageQuery();
   const refetch = async () => query.refetch();
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.INFO);
 
@@ -739,52 +743,50 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
 };
 
 type PupNotesPageBasicExamsInnerProps = {
-  currentUser: SharedLayout_UserFragment;
-  currentPet: SharedLayout_PetFragment;
+  currentUser: SharedLayout_UserFragment & PupNotesPage_UserFragment;
+  currentPet: SharedLayout_PetFragment & PupNotesPage_PetFragment;
 };
 
-const PupNotesPageBasicExamsInner: FC<
-  PupNotesPageBasicExamsInnerProps
-> = ({}) => {
+const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
+  currentUser,
+  currentPet,
+}) => {
+  const categories = currentUser.basicExamCategories.nodes;
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    string | undefined
+  >(undefined);
+  console.log({ selectedCategoryId });
   return (
     <div className="flex w-full flex-col items-center">
       <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
-        <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              치과 검진
-            </span>
-          </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              슬개골 검사
-            </span>
-          </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              피부 검사
-            </span>
-          </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              심장 청잔
-            </span>
-          </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              신체 검사
-            </span>
-          </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-            <img
-              src="/pup_notes_add_pics.png"
-              className="mr-1 h-[34px] w-[34px]"
-            />
-            <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-              추가 등록
-            </span>
-          </Button>
-        </div>
+        <ToggleGroup.Root
+          className="ToggleGroup"
+          type="single"
+          value={selectedCategoryId}
+          onValueChange={(value) => setSelectedCategoryId(value)}
+          aria-label="Text alignment"
+        >
+          <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+            {categories.map(({ id, name }) => (
+              <ToggleGroup.Item key={id} value={id}>
+                <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
+                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                    {name}
+                  </span>
+                </Button>
+              </ToggleGroup.Item>
+            ))}
+            <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
+              <img
+                src="/pup_notes_add_pics.png"
+                className="mr-1 h-[34px] w-[34px]"
+              />
+              <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                추가 등록
+              </span>
+            </Button>
+          </div>
+        </ToggleGroup.Root>
       </div>
       <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
       <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
