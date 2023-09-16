@@ -748,36 +748,38 @@ const PupNotesPageBasicExamsInner: FC<
 > = ({}) => {
   return (
     <div className="flex w-full flex-col items-center">
-      <div className="mx-[65px] flex w-full max-w-[965px] flex-col py-[34px]">
-        <div className="mb-5 flex w-full flex-row justify-between">
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+      <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
+        <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               치과 검진
             </span>
           </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               슬개골 검사
             </span>
           </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               피부 검사
             </span>
           </Button>
-        </div>
-        <div className="flex w-full flex-row justify-between">
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               심장 청잔
             </span>
           </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               신체 검사
             </span>
           </Button>
-          <Button className="border-pupcleLightGray flex h-[63px] w-[287px] items-center justify-center rounded-full border-[3px]">
+          <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
+            <img
+              src="/pup_notes_add_pics.png"
+              className="mr-1 h-[34px] w-[34px]"
+            />
             <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
               추가 등록
             </span>
