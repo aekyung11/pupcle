@@ -69,7 +69,7 @@ export function DayPickerInput({
     <div style={{ height: "40px" }}>
       <div ref={popperRef} style={{ height: "40px" }}>
         <input
-          className="dob-input"
+          className="dob-input disabled:text-pupcleDisabled"
           type="text"
           placeholder={format(new Date(), "y-MM-dd")}
           value={inputValue}

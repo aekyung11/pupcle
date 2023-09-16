@@ -50,6 +50,7 @@ module.exports = {
         pupcleLightLightGray: "#F5F5F5",
         pupcleGray: "#8F9092",
         pupcleDarkBlue: "#B1C1D2",
+        pupcleDisabled: "rgba(10, 10, 10, 0.25)",
       },
       dropShadow: {
         lg: "2px 3px 3px rgba(0, 0, 0, 0.15)",
