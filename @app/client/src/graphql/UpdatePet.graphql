@@ -21,7 +21,7 @@ mutation UpdatePet($input: UpdatePetInput!) {
       }
     }
     query {
-      ...SharedLayout_Query
+      ...PupNotesPage_Query
     }
   }
 }

@@ -1,4 +1,5 @@
-import { usePetInfoForm } from "@app/componentlib";
+import { FetchResult } from "@apollo/client";
+import { useBasicExamCategoryForm, usePetInfoForm } from "@app/componentlib";
 import {
   AuthRestrict,
   DayPickerInput,
@@ -12,21 +13,29 @@ import {
   PupNotesPage_UserFragment,
   SharedLayout_PetFragment,
   SharedLayout_UserFragment,
+  UpsertBasicExamCategoryMutation,
   usePupNotesPageQuery,
   useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import * as Dialog from "@radix-ui/react-dialog";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
+import * as Select from "@radix-ui/react-select";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Alert, Button, Col, InputRef, Row } from "antd";
 import clsx from "clsx";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
+import { chain, sortBy } from "lodash";
 import { NextPage } from "next";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+function localeCompare(a: string, b: string) {
+  return a.localeCompare(b);
+}
 
 interface PupNotesPageProps {
   next: string | null;
@@ -223,12 +232,6 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             value={Tab.BASIC}
             className="relative h-full"
           >
-            <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
-              <img
-                src="/pup_notes_add_new_floating_button.png"
-                className="h-[100px] w-[100px]"
-              />
-            </Button>
             <PupNotesPageBasicExamsInner
               currentUser={currentUser}
               currentPet={currentPet}
@@ -281,12 +284,6 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     usePetInfoForm(currentUser.id, currentPet, postResult);
-
-  const focusElement = useRef<InputRef>(null);
-  useEffect(
-    () => void (focusElement.current && focusElement.current!.focus()),
-    [focusElement]
-  );
 
   const code = getCodeFromError(error);
 
@@ -387,7 +384,6 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             padding: "0 1.5rem",
                           }}
                           autoComplete="name"
-                          ref={focusElement}
                           data-cy="petprofilepage-input-name"
                           suffix
                           disabled={!editingPetInfo}
@@ -512,7 +508,6 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             padding: "0 1.5rem",
                           }}
                           autoComplete="sex"
-                          ref={focusElement}
                           suffix
                         />
                       </Form.Item> */}
@@ -751,18 +746,86 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   currentUser,
   currentPet,
 }) => {
-  const categories = currentUser.basicExamCategories.nodes;
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string | undefined
-  >(undefined);
-  console.log({ selectedCategoryId });
+  const [newCategoryDialogOpen, setNewCategoryDialogOpen] =
+    React.useState(false);
+
+  const categories = useMemo(
+    () =>
+      [...currentUser.basicExamCategories.nodes].sort((a, b) => {
+        return localeCompare(a.name, b.name);
+      }),
+    [currentUser.basicExamCategories.nodes]
+  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+
+  const onBasicExamCategoryFormComplete = useCallback(
+    (result: FetchResult<UpsertBasicExamCategoryMutation>) => {
+      const upsertedCategoryId =
+        result.data?.upsertBasicExamCategory?.basicExamCategory?.id;
+      setSelectedCategoryId(upsertedCategoryId ?? null);
+      setNewCategoryDialogOpen(false);
+    },
+    [setSelectedCategoryId, setNewCategoryDialogOpen]
+  );
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useBasicExamCategoryForm(
+      currentUser.id,
+      undefined,
+      onBasicExamCategoryFormComplete
+    );
+
+  const code = getCodeFromError(error);
+
   return (
     <div className="flex w-full flex-col items-center">
+      <Dialog.Root>
+        <Dialog.Trigger asChild>
+          <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+            <img
+              src="/pup_notes_add_new_floating_button.png"
+              className="h-[100px] w-[100px]"
+            />
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+          <Dialog.Content
+            className={clsx(
+              "fixed z-20",
+              "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+            )}
+          >
+            <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+              <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                항목을 선택해주세요.
+              </span>
+              <img src="/paw.png" className="h-fit w-[43px]" alt="" />
+            </Dialog.Title>
+            <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+            <Select.Root defaultValue={selectedCategoryId ?? undefined}>
+              <Select.Trigger asChild aria-label="Food">
+                <Button>
+                  <Select.Value />
+                  <Select.Icon className="ml-2">
+                    <img
+                      src="/pup_notes_caret_icon.png"
+                      className="h-[13px] w-5"
+                    />
+                  </Select.Icon>
+                </Button>
+              </Select.Trigger>
+            </Select.Root>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
         <ToggleGroup.Root
           className="ToggleGroup"
           type="single"
-          value={selectedCategoryId}
+          value={selectedCategoryId ?? undefined}
           onValueChange={(value) => setSelectedCategoryId(value)}
           aria-label="Text alignment"
         >
@@ -771,22 +834,112 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               <ToggleGroup.Item
                 key={id}
                 value={id}
-                className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]"
+                className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
               >
                 <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
                   {name}
                 </span>
               </ToggleGroup.Item>
             ))}
-            <Button className="border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px]">
-              <img
-                src="/pup_notes_add_pics.png"
-                className="mr-1 h-[34px] w-[34px]"
-              />
-              <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                추가 등록
-              </span>
-            </Button>
+            <Dialog.Root
+              open={newCategoryDialogOpen}
+              onOpenChange={setNewCategoryDialogOpen}
+            >
+              <Dialog.Trigger asChild>
+                <Button className="hover:bg-pupcleLightLightGray border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none">
+                  <img
+                    src="/pup_notes_add_pics.png"
+                    className="mr-1 h-[34px] w-[34px]"
+                  />
+                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                    추가 등록
+                  </span>
+                </Button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                <Dialog.Content
+                  className={clsx(
+                    "fixed z-20",
+                    "w-[95vw] max-w-md rounded-lg p-4 md:w-full",
+                    "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]",
+                    "bg-white dark:bg-gray-800",
+                    "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                  )}
+                >
+                  <Dialog.Title className="DialogTitle">
+                    **New basic exam category**
+                  </Dialog.Title>
+                  <Dialog.Description className="DialogDescription">
+                    **Make changes to your basic exam category here. Click save
+                    when you're done.**
+                  </Dialog.Description>
+                  <Formik
+                    validationSchema={validationSchema}
+                    initialValues={initialValues}
+                    onSubmit={handleSubmit}
+                  >
+                    <Form className="flex h-full w-full">
+                      <div className="w-full">
+                        <div className="mb-12 flex">
+                          <div className="flex w-20 items-center justify-end">
+                            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                              **Name**
+                            </span>
+                          </div>
+                          <div className="flex w-[calc(100%-80px)] pl-9">
+                            <Form.Item name="name" className="mb-0 w-full">
+                              <Input
+                                name="name"
+                                className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                                // size="large"
+                                autoComplete="basic-category-name"
+                                data-cy="pup-notes-basic-category-name"
+                                suffix
+                              />
+                            </Form.Item>
+                          </div>
+                        </div>
+
+                        {error ? (
+                          <Form.Item name="_error">
+                            <Alert
+                              type="error"
+                              message={`**Saving basic exam category failed**`}
+                              description={
+                                <span>
+                                  {extractError(error).message}
+                                  {code ? (
+                                    <span>
+                                      {" "}
+                                      (Error code: <code>ERR_{code}</code>)
+                                    </span>
+                                  ) : null}
+                                </span>
+                              }
+                            />
+                          </Form.Item>
+                        ) : null}
+                        <Form.Item name="_submit" className="mt-12">
+                          <SubmitButton
+                            className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                            htmlType="submit"
+                            data-cy="pup-notes-basic-submit-button"
+                          >
+                            {submitLabel}
+                          </SubmitButton>
+                        </Form.Item>
+                        <Form.Item name="_cancel" className="mt-12">
+                          <Dialog.Close asChild>
+                            <button className="Button">취소</button>
+                          </Dialog.Close>
+                        </Form.Item>
+                      </div>
+                    </Form>
+                  </Formik>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
           </div>
         </ToggleGroup.Root>
       </div>
@@ -847,12 +1000,6 @@ const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     usePetInfoForm(currentUser.id, currentPet, postResult);
 
-  const focusElement = useRef<InputRef>(null);
-  useEffect(
-    () => void (focusElement.current && focusElement.current!.focus()),
-    [focusElement]
-  );
-
   const code = getCodeFromError(error);
 
   return (
@@ -896,7 +1043,6 @@ const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
                         className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                         // size="large"
                         autoComplete="expense"
-                        ref={focusElement}
                         data-cy="pup-notes-basic-input-expense"
                         suffix
                       />
@@ -917,7 +1063,6 @@ const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
                         className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                         // size="large"
                         autoComplete="vet"
-                        ref={focusElement}
                         data-cy="pup-notes-basic-input-vet"
                         suffix
                       />
@@ -973,7 +1118,6 @@ const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
                         className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
                         // size="large"
                         autoComplete="memo"
-                        ref={focusElement}
                         data-cy="pup-notes-basic-input-memo"
                         suffix
                         placeholder="자세한 내용을 기록해보세요."

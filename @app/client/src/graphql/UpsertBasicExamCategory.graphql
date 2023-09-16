@@ -1,0 +1,11 @@
+mutation UpsertBasicExamCategory($input: UpsertBasicExamCategoryInput!) {
+  upsertBasicExamCategory(input: $input) {
+    clientMutationId
+    basicExamCategory {
+      id
+    }
+    query {
+      ...PupNotesPage_Query
+    }
+  }
+}

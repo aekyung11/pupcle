@@ -14,10 +14,12 @@ create table app_public.basic_exam_categories (
 );
 alter table app_public.basic_exam_categories enable row level security;
 
+create index on app_public.basic_exam_categories (name);
+
 create policy select_own on app_public.basic_exam_categories for select using (user_id = app_public.current_user_id());
-create policy insert_own on app_public.basic_exam_categories for insert with check (user_id = app_public.current_user_id() and is_default_category is false);
-create policy update_own on app_public.basic_exam_categories for update using (user_id = app_public.current_user_id() and is_default_category is false);
-create policy delete_own on app_public.basic_exam_categories for delete using (user_id = app_public.current_user_id() and is_default_category is false);
+create policy insert_own on app_public.basic_exam_categories for insert with check (user_id = app_public.current_user_id() and is_default_category is not true);
+create policy update_own on app_public.basic_exam_categories for update using (user_id = app_public.current_user_id() and is_default_category is not true);
+create policy delete_own on app_public.basic_exam_categories for delete using (user_id = app_public.current_user_id() and is_default_category is not true);
 
 grant select, delete on app_public.basic_exam_categories to :DATABASE_VISITOR;
 grant insert (
@@ -26,6 +28,8 @@ grant insert (
   name
 ) on app_public.basic_exam_categories to :DATABASE_VISITOR;
 grant update (
+  id,
+  user_id,
   name
 ) on app_public.basic_exam_categories to :DATABASE_VISITOR;
 

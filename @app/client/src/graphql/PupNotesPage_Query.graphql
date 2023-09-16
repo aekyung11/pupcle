@@ -29,13 +29,18 @@ fragment PupNotesPage_Pet on Pet {
   }
 }
 
+fragment PupNotesPage_BasicExamCategory on BasicExamCategory {
+  id
+  isDefaultCategory
+  name
+}
+
 fragment PupNotesPage_User on User {
   id
-  basicExamCategories {
+  basicExamCategories(orderBy: NAME_ASC) {
     nodes {
       id
-      isDefaultCategory
-      name
+      ...PupNotesPage_BasicExamCategory
     }
   }
   pets(first: 20) {

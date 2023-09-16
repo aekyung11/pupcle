@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "@radix-ui/colors/black-alpha.css";
 @import "react-day-picker/dist/style.css";
 
 /*
