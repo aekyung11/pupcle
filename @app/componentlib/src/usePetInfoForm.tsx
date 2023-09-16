@@ -39,7 +39,6 @@ export function usePetInfoForm(
     result: FetchResult<CreatePetMutation> | FetchResult<UpdatePetMutation>
   ) => Promise<any> | void
 ) {
-  console.log({ pet });
   const [error, setError] = useState<Error | ApolloError | null>(null);
   const [createPet] = useCreatePetMutation();
   const [updatePet] = useUpdatePetMutation();
