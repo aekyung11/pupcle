@@ -51,6 +51,9 @@ module.exports = {
         pupcleGray: "#8F9092",
         pupcleDarkBlue: "#B1C1D2",
       },
+      dropShadow: {
+        lg: "2px 3px 3px rgba(0, 0, 0, 0.15)",
+      },
     },
   },
   variants: {},

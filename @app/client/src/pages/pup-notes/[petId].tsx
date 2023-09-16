@@ -214,7 +214,17 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             {/* <div className="flex w-1/2 flex-col items-center justify-center border-r-2 border-[#D9D9D9] p-10"></div>
             <div className="w-1/2 p-10"></div> */}
           </Tabs.Content>
-          <Tabs.Content key={Tab.BASIC} value={Tab.BASIC}>
+          <Tabs.Content
+            key={Tab.BASIC}
+            value={Tab.BASIC}
+            className="relative h-full"
+          >
+            <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+              <img
+                src="/pup_notes_add_new_floating_button.png"
+                className="h-[100px] w-[100px]"
+              />
+            </Button>
             <PupNotesPageBasicExamsInner
               currentUser={currentUser}
               currentPet={currentPet}
