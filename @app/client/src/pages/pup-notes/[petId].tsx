@@ -1,5 +1,9 @@
 import { FetchResult } from "@apollo/client";
-import { useBasicExamCategoryForm, usePetInfoForm } from "@app/componentlib";
+import {
+  useBasicExamCategoryForm,
+  useNewBasicExamResultsCategoryForm,
+  usePetInfoForm,
+} from "@app/componentlib";
 import {
   AuthRestrict,
   DayPickerInput,
@@ -9,6 +13,7 @@ import {
 } from "@app/components";
 import {
   PetGender,
+  PupNotesPage_BasicExamCategoryFragment,
   PupNotesPage_PetFragment,
   PupNotesPage_UserFragment,
   SharedLayout_PetFragment,
@@ -726,8 +731,12 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   currentPet,
 }) => {
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
-  const [selectCategoryDialogOpen, setSelectCategoryDialogOpen] =
-    useState(false);
+  const [
+    newBasicExamResultsCategoryDialogOpen,
+    setNewBasicExamResultsCategoryDialogOpen,
+  ] = useState(false);
+  const [newBasicExamResultsCategory, setNewBasicExamResultsCategory] =
+    useState("");
   const [newBasicExamResults, setNewBasicExamResults] = useState(false);
 
   const categories = useMemo(
@@ -737,9 +746,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
       }),
     [currentUser.basicExamCategories.nodes]
   );
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
   const onBasicExamCategoryFormComplete = useCallback(
     (result: FetchResult<UpsertBasicExamCategoryMutation>) => {
@@ -766,7 +773,10 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           hidden: newBasicExamResults,
         })}
       >
-        <Dialog.Root>
+        <Dialog.Root
+          open={newBasicExamResultsCategoryDialogOpen}
+          onOpenChange={setNewBasicExamResultsCategoryDialogOpen}
+        >
           <Dialog.Trigger asChild>
             <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
               <img
@@ -791,19 +801,18 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                 <img src="/paw.png" className="h-fit w-[43px]" alt="" />
               </Dialog.Title>
               <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-              <Select.Root defaultValue={selectedCategoryId ?? undefined}>
-                <Select.Trigger asChild aria-label="Food">
-                  <Button>
-                    <Select.Value />
-                    <Select.Icon className="ml-2">
-                      <img
-                        src="/pup_notes_caret_icon.png"
-                        className="h-[13px] w-5"
-                      />
-                    </Select.Icon>
-                  </Button>
-                </Select.Trigger>
-              </Select.Root>
+              <NewBasicExamResultsCategoryForm
+                categories={categories}
+                defaultCategoryId={selectedCategoryId}
+                onComplete={(categoryId) => {
+                  setNewBasicExamResultsCategoryDialogOpen(false);
+                  setNewBasicExamResultsCategory(categoryId);
+                  setNewBasicExamResults(true);
+                }}
+                onCancel={() => {
+                  setNewBasicExamResultsCategoryDialogOpen(false);
+                }}
+              />
             </Dialog.Content>
           </Dialog.Portal>
         </Dialog.Root>
@@ -811,7 +820,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           <ToggleGroup.Root
             className="ToggleGroup"
             type="single"
-            value={selectedCategoryId ?? undefined}
+            value={selectedCategoryId}
             onValueChange={(value) => setSelectedCategoryId(value)}
             aria-label="Text alignment"
           >
@@ -916,8 +925,11 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                             </SubmitButton>
                           </Form.Item>
                           <Form.Item name="_cancel" className="mt-12">
+                            <button className="Button"></button>
                             <Dialog.Close asChild>
-                              <button className="Button">취소</button>
+                              <Button className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white">
+                                취소
+                              </Button>
                             </Dialog.Close>
                           </Form.Item>
                         </div>
@@ -992,6 +1004,109 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           </div>
         </div>
       </div>
+    </>
+  );
+};
+
+type NewBasicExamResultsCategoryFormProps = {
+  defaultCategoryId: string | undefined;
+  categories: PupNotesPage_BasicExamCategoryFragment[];
+  onComplete: (result: string) => Promise<void> | void;
+  onCancel: () => Promise<void> | void;
+};
+
+const NewBasicExamResultsCategoryForm: FC<
+  NewBasicExamResultsCategoryFormProps
+> = ({ defaultCategoryId, categories, onComplete, onCancel }) => {
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useNewBasicExamResultsCategoryForm(defaultCategoryId, onComplete);
+  return (
+    <>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ values, setFieldValue }) => (
+          <Form className="flex h-full w-full">
+            <Form.Item name="categoryId">
+              <Select.Root
+                defaultValue={values.categoryId}
+                onValueChange={(value) => {
+                  setFieldValue("categoryId", value);
+                }}
+              >
+                <Select.Trigger asChild aria-label="Category">
+                  <Button>
+                    <Select.Value placeholder="**항목을 선택해주세요.**" />
+                    <Select.Icon className="ml-2">
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.Icon>
+                  </Button>
+                </Select.Trigger>
+                <Select.Portal>
+                  <Select.Content className="z-20">
+                    <Select.ScrollUpButton className="flex items-center justify-center text-gray-700 dark:text-gray-300">
+                      {/* should be chevron up? <ChevronUpIcon /> */}
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.ScrollUpButton>
+                    <Select.Viewport className="rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+                      <Select.Group>
+                        {categories.map(({ id, name }) => (
+                          <Select.Item
+                            key={id}
+                            value={id}
+                            className={clsx(
+                              "relative flex items-center rounded-md px-8 py-2 text-sm font-medium text-gray-700 focus:bg-gray-100 dark:text-gray-300 dark:focus:bg-gray-900",
+                              "radix-disabled:opacity-50",
+                              "select-none focus:outline-none"
+                            )}
+                          >
+                            <Select.ItemText>{name}</Select.ItemText>
+                            <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                              {/* <CheckIcon /> */}
+                              CheckIcon
+                            </Select.ItemIndicator>
+                          </Select.Item>
+                        ))}
+                      </Select.Group>
+                    </Select.Viewport>
+                    <Select.ScrollDownButton className="flex items-center justify-center text-gray-700 dark:text-gray-300">
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.ScrollDownButton>
+                  </Select.Content>
+                </Select.Portal>
+              </Select.Root>
+            </Form.Item>
+            <Form.Item name="_submit" className="mt-12">
+              <SubmitButton
+                className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                htmlType="submit"
+                data-cy="pup-notes-basic-submit-button"
+              >
+                {submitLabel}
+              </SubmitButton>
+            </Form.Item>
+            <Form.Item name="_cancel" className="mt-12">
+              <Button
+                className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                onClick={onCancel}
+              >
+                취소
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Formik>
     </>
   );
 };
