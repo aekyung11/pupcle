@@ -271,7 +271,17 @@ const PupNotes: NextPage<PupNotesPageProps> = ({ next: rawNext }) => {
               </div>
             </div>
           </Tabs.Content>
-          <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}></Tabs.Content>
+          <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}>
+            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+              <span className="font-poppins text-pupcle-24px font-semibold">
+                히스토리
+              </span>
+              <img
+                src="/pup_notes_caret_icon.png"
+                className="ml-3 h-[13px] w-5"
+              />
+            </div>
+          </Tabs.Content>
           <Tabs.Content key={Tab.CHART} value={Tab.CHART}></Tabs.Content>
         </div>
       </Tabs.Root>
