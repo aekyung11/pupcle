@@ -673,7 +673,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                     <Form.Item name="_error">
                       <Alert
                         type="error"
-                        message={`Registration failed`}
+                        message={`Failed to save pet info`}
                         description={
                           <span>
                             {extractError(error).message}
@@ -735,7 +735,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
     newBasicExamResultsCategoryDialogOpen,
     setNewBasicExamResultsCategoryDialogOpen,
   ] = useState(false);
-  const [newBasicExamResultsCategory, setNewBasicExamResultsCategory] =
+  const [newBasicExamResultsCategoryId, setNewBasicExamResultsCategoryId] =
     useState("");
   const [newBasicExamResults, setNewBasicExamResults] = useState(false);
 
@@ -806,7 +806,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                 defaultCategoryId={selectedCategoryId}
                 onComplete={(categoryId) => {
                   setNewBasicExamResultsCategoryDialogOpen(false);
-                  setNewBasicExamResultsCategory(categoryId);
+                  setNewBasicExamResultsCategoryId(categoryId);
                   setNewBasicExamResults(true);
                 }}
                 onCancel={() => {
@@ -984,15 +984,21 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           hidden: !newBasicExamResults,
         })}
       >
-        <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+        <Button
+          onClick={() => setNewBasicExamResults(false)}
+          className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]"
+        >
           <img
             src="/pup_notes_caret_icon.png"
             className="mr-3 h-[13px] w-5 rotate-90"
           />
           <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-            치과 검진
+            {
+              categories.find(({ id }) => id === newBasicExamResultsCategoryId)
+                ?.name
+            }
           </span>
-        </div>
+        </Button>
         <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
           <div className="h-full w-1/2 overflow-scroll">
             <div className="w-full">
@@ -1255,7 +1261,7 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                   <Form.Item name="_error">
                     <Alert
                       type="error"
-                      message={`Registration failed`}
+                      message={`Failed to save exam results`}
                       description={
                         <span>
                           {extractError(error).message}
