@@ -48,6 +48,7 @@ export function usePetInfoForm(
     weight: pet?.weight?.value,
     sex: pet?.gender,
     neutered: pet?.neutered,
+    avatarUrl: pet?.avatarUrl,
   } as unknown as PetInfoFormInput;
   const handleSubmit: FormikConfig<PetInfoFormInput>["onSubmit"] = useCallback(
     async (values, { setErrors: _setErrors }) => {
