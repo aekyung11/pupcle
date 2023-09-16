@@ -237,28 +237,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
               currentPet={currentPet}
             />
           </Tabs.Content>
-          <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}>
-            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-              <img
-                src="/pup_notes_caret_icon.png"
-                className="mr-3 h-[13px] w-5 rotate-90"
-              />
-              <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-                치과 검진
-              </span>
-            </div>
-            <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
-              <div className="h-full w-1/2 overflow-scroll">
-                <div className="w-full">
-                  <PupNotesPageBasicInner
-                    currentUser={currentUser}
-                    currentPet={currentPet}
-                    refetch={refetch}
-                  />
-                </div>
-              </div>
-            </div>
-          </Tabs.Content>
+          <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}></Tabs.Content>
           <Tabs.Content key={Tab.CHART} value={Tab.CHART}></Tabs.Content>
         </div>
       </Tabs.Root>
@@ -746,8 +725,10 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   currentUser,
   currentPet,
 }) => {
-  const [newCategoryDialogOpen, setNewCategoryDialogOpen] =
-    React.useState(false);
+  const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
+  const [selectCategoryDialogOpen, setSelectCategoryDialogOpen] =
+    useState(false);
+  const [newBasicExamResults, setNewBasicExamResults] = useState(false);
 
   const categories = useMemo(
     () =>
@@ -779,223 +760,252 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   const code = getCodeFromError(error);
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <Dialog.Root>
-        <Dialog.Trigger asChild>
-          <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
-            <img
-              src="/pup_notes_add_new_floating_button.png"
-              className="h-[100px] w-[100px]"
-            />
-          </Button>
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
-          <Dialog.Content
-            className={clsx(
-              "fixed z-20",
-              "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
-              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
-            )}
-          >
-            <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
-              <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
-                항목을 선택해주세요.
-              </span>
-              <img src="/paw.png" className="h-fit w-[43px]" alt="" />
-            </Dialog.Title>
-            <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-            <Select.Root defaultValue={selectedCategoryId ?? undefined}>
-              <Select.Trigger asChild aria-label="Food">
-                <Button>
-                  <Select.Value />
-                  <Select.Icon className="ml-2">
-                    <img
-                      src="/pup_notes_caret_icon.png"
-                      className="h-[13px] w-5"
-                    />
-                  </Select.Icon>
-                </Button>
-              </Select.Trigger>
-            </Select.Root>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-      <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
-        <ToggleGroup.Root
-          className="ToggleGroup"
-          type="single"
-          value={selectedCategoryId ?? undefined}
-          onValueChange={(value) => setSelectedCategoryId(value)}
-          aria-label="Text alignment"
-        >
-          <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-            {categories.map(({ id, name }) => (
-              <ToggleGroup.Item
-                key={id}
-                value={id}
-                className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-              >
-                <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                  {name}
-                </span>
-              </ToggleGroup.Item>
-            ))}
-            <Dialog.Root
-              open={newCategoryDialogOpen}
-              onOpenChange={setNewCategoryDialogOpen}
+    <>
+      <div
+        className={clsx("flex w-full flex-col items-center", {
+          hidden: newBasicExamResults,
+        })}
+      >
+        <Dialog.Root>
+          <Dialog.Trigger asChild>
+            <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+              <img
+                src="/pup_notes_add_new_floating_button.png"
+                className="h-[100px] w-[100px]"
+              />
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+            <Dialog.Content
+              className={clsx(
+                "fixed z-20",
+                "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+              )}
             >
-              <Dialog.Trigger asChild>
-                <Button className="hover:bg-pupcleLightLightGray border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none">
-                  <img
-                    src="/pup_notes_add_pics.png"
-                    className="mr-1 h-[34px] w-[34px]"
-                  />
-                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                    추가 등록
-                  </span>
-                </Button>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
-                <Dialog.Content
-                  className={clsx(
-                    "fixed z-20",
-                    "w-[95vw] max-w-md rounded-lg p-4 md:w-full",
-                    "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]",
-                    "bg-white dark:bg-gray-800",
-                    "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
-                  )}
+              <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                  항목을 선택해주세요.
+                </span>
+                <img src="/paw.png" className="h-fit w-[43px]" alt="" />
+              </Dialog.Title>
+              <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+              <Select.Root defaultValue={selectedCategoryId ?? undefined}>
+                <Select.Trigger asChild aria-label="Food">
+                  <Button>
+                    <Select.Value />
+                    <Select.Icon className="ml-2">
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.Icon>
+                  </Button>
+                </Select.Trigger>
+              </Select.Root>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+        <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
+          <ToggleGroup.Root
+            className="ToggleGroup"
+            type="single"
+            value={selectedCategoryId ?? undefined}
+            onValueChange={(value) => setSelectedCategoryId(value)}
+            aria-label="Text alignment"
+          >
+            <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+              {categories.map(({ id, name }) => (
+                <ToggleGroup.Item
+                  key={id}
+                  value={id}
+                  className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
                 >
-                  <Dialog.Title className="DialogTitle">
-                    **New basic exam category**
-                  </Dialog.Title>
-                  <Dialog.Description className="DialogDescription">
-                    **Make changes to your basic exam category here. Click save
-                    when you're done.**
-                  </Dialog.Description>
-                  <Formik
-                    validationSchema={validationSchema}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
+                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                    {name}
+                  </span>
+                </ToggleGroup.Item>
+              ))}
+              <Dialog.Root
+                open={newCategoryDialogOpen}
+                onOpenChange={setNewCategoryDialogOpen}
+              >
+                <Dialog.Trigger asChild>
+                  <Button className="hover:bg-pupcleLightLightGray border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none">
+                    <img
+                      src="/pup_notes_add_pics.png"
+                      className="mr-1 h-[34px] w-[34px]"
+                    />
+                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                      추가 등록
+                    </span>
+                  </Button>
+                </Dialog.Trigger>
+                <Dialog.Portal>
+                  <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                  <Dialog.Content
+                    className={clsx(
+                      "fixed z-20",
+                      "w-[95vw] max-w-md rounded-lg p-4 md:w-full",
+                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]",
+                      "bg-white dark:bg-gray-800",
+                      "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                    )}
                   >
-                    <Form className="flex h-full w-full">
-                      <div className="w-full">
-                        <div className="mb-12 flex">
-                          <div className="flex w-20 items-center justify-end">
-                            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                              **Name**
-                            </span>
+                    <Dialog.Title className="DialogTitle">
+                      **New basic exam category**
+                    </Dialog.Title>
+                    <Dialog.Description className="DialogDescription">
+                      **Make changes to your basic exam category here. Click
+                      save when you're done.**
+                    </Dialog.Description>
+                    <Formik
+                      validationSchema={validationSchema}
+                      initialValues={initialValues}
+                      onSubmit={handleSubmit}
+                    >
+                      <Form className="flex h-full w-full">
+                        <div className="w-full">
+                          <div className="mb-12 flex">
+                            <div className="flex w-20 items-center justify-end">
+                              <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+                                **Name**
+                              </span>
+                            </div>
+                            <div className="flex w-[calc(100%-80px)] pl-9">
+                              <Form.Item name="name" className="mb-0 w-full">
+                                <Input
+                                  name="name"
+                                  className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                                  // size="large"
+                                  autoComplete="basic-category-name"
+                                  data-cy="pup-notes-basic-category-name"
+                                  suffix
+                                />
+                              </Form.Item>
+                            </div>
                           </div>
-                          <div className="flex w-[calc(100%-80px)] pl-9">
-                            <Form.Item name="name" className="mb-0 w-full">
-                              <Input
-                                name="name"
-                                className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
-                                // size="large"
-                                autoComplete="basic-category-name"
-                                data-cy="pup-notes-basic-category-name"
-                                suffix
+
+                          {error ? (
+                            <Form.Item name="_error">
+                              <Alert
+                                type="error"
+                                message={`**Saving basic exam category failed**`}
+                                description={
+                                  <span>
+                                    {extractError(error).message}
+                                    {code ? (
+                                      <span>
+                                        {" "}
+                                        (Error code: <code>ERR_{code}</code>)
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                }
                               />
                             </Form.Item>
-                          </div>
-                        </div>
-
-                        {error ? (
-                          <Form.Item name="_error">
-                            <Alert
-                              type="error"
-                              message={`**Saving basic exam category failed**`}
-                              description={
-                                <span>
-                                  {extractError(error).message}
-                                  {code ? (
-                                    <span>
-                                      {" "}
-                                      (Error code: <code>ERR_{code}</code>)
-                                    </span>
-                                  ) : null}
-                                </span>
-                              }
-                            />
+                          ) : null}
+                          <Form.Item name="_submit" className="mt-12">
+                            <SubmitButton
+                              className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                              htmlType="submit"
+                              data-cy="pup-notes-basic-submit-button"
+                            >
+                              {submitLabel}
+                            </SubmitButton>
                           </Form.Item>
-                        ) : null}
-                        <Form.Item name="_submit" className="mt-12">
-                          <SubmitButton
-                            className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
-                            htmlType="submit"
-                            data-cy="pup-notes-basic-submit-button"
-                          >
-                            {submitLabel}
-                          </SubmitButton>
-                        </Form.Item>
-                        <Form.Item name="_cancel" className="mt-12">
-                          <Dialog.Close asChild>
-                            <button className="Button">취소</button>
-                          </Dialog.Close>
-                        </Form.Item>
-                      </div>
-                    </Form>
-                  </Formik>
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
-          </div>
-        </ToggleGroup.Root>
-      </div>
-      <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-      <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
-        <span className="font-poppins text-pupcle-24px font-semibold">
-          히스토리
-        </span>
-        <img src="/pup_notes_caret_icon.png" className="ml-3 h-[13px] w-5" />
-      </div>
-      {/* map() */}
-      <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
-        <div className="flex w-[70%] items-center justify-between">
-          <div className="flex flex-row items-center">
-            <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-            <div className="mx-9 flex flex-col">
-              <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
-                <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                  치과 검진
+                          <Form.Item name="_cancel" className="mt-12">
+                            <Dialog.Close asChild>
+                              <button className="Button">취소</button>
+                            </Dialog.Close>
+                          </Form.Item>
+                        </div>
+                      </Form>
+                    </Formik>
+                  </Dialog.Content>
+                </Dialog.Portal>
+              </Dialog.Root>
+            </div>
+          </ToggleGroup.Root>
+        </div>
+        <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+        <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
+          <span className="font-poppins text-pupcle-24px font-semibold">
+            히스토리
+          </span>
+          <img src="/pup_notes_caret_icon.png" className="ml-3 h-[13px] w-5" />
+        </div>
+        {/* map() */}
+        <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
+          <div className="flex w-[70%] items-center justify-between">
+            <div className="flex flex-row items-center">
+              <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+              <div className="mx-9 flex flex-col">
+                <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                  <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                    치과 검진
+                  </span>
+                </div>
+                <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                  서울동물병원
+                </span>
+                <span className="font-poppins text-[15px]">
+                  추가 메모{") "}
                 </span>
               </div>
-              <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                서울동물병원
-              </span>
-              <span className="font-poppins text-[15px]">추가 메모{") "}</span>
             </div>
+            <span className="font-poppins text-[15px]">2023.04.21</span>
           </div>
-          <span className="font-poppins text-[15px]">2023.04.21</span>
-        </div>
 
-        <div className="w-[30%] px-5">
-          <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
-            <span className="font-poppins text-[20px] font-semibold text-white">
-              보기
-            </span>
-          </Button>
+          <div className="w-[30%] px-5">
+            <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
+              <span className="font-poppins text-[20px] font-semibold text-white">
+                보기
+              </span>
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      <div
+        className={clsx({
+          hidden: !newBasicExamResults,
+        })}
+      >
+        <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+          <img
+            src="/pup_notes_caret_icon.png"
+            className="mr-3 h-[13px] w-5 rotate-90"
+          />
+          <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+            치과 검진
+          </span>
+        </div>
+        <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+          <div className="h-full w-1/2 overflow-scroll">
+            <div className="w-full">
+              <BasicExamResultsForm
+                currentUser={currentUser}
+                currentPet={currentPet}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
-interface PupNotesPageBasicInnerProps {
+interface BasicExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
-  refetch: () => Promise<any>;
 }
 
-const PupNotesPageBasicInner: FC<PupNotesPageBasicInnerProps> = ({
+const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   currentUser,
   currentPet,
-  refetch,
 }) => {
-  const postResult = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
+  const postResult = useCallback(async () => {}, []);
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     usePetInfoForm(currentUser.id, currentPet, postResult);
