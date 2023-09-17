@@ -100,7 +100,10 @@ function UserSearchBox({
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <img src="/default_avatar.png" width="38px" height="38px" />
+                    <img
+                      className="h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+                      src={user.avatarUrl || "/default_avatar.png"}
+                    />
                     <span
                       style={{
                         fontFamily: "Poppins, sans-serif",
@@ -355,9 +358,8 @@ const Friends: NextPage = () => {
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <img
-                        src="/default_avatar.png"
-                        width="38px"
-                        height="38px"
+                        className="h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+                        src={friend.toUser?.avatarUrl || "/default_avatar.png"}
                       />
                       <span
                         style={{
@@ -496,9 +498,11 @@ const Friends: NextPage = () => {
                         }}
                       >
                         <img
-                          src="/default_avatar.png"
-                          width="36px"
-                          height="36px"
+                          className="h-9 w-9 rounded-full border-none object-cover object-top"
+                          src={
+                            friendRequest.fromUser?.avatarUrl ||
+                            "/default_avatar.png"
+                          }
                         />
                         <div
                           style={{
