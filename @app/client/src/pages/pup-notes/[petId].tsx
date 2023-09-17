@@ -245,8 +245,148 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
               currentPet={currentPet}
             />
           </Tabs.Content>
-          <Tabs.Content key={Tab.DETAILED} value={Tab.DETAILED}></Tabs.Content>
-          <Tabs.Content key={Tab.CHART} value={Tab.CHART}></Tabs.Content>
+          <Tabs.Content
+            key={Tab.DETAILED}
+            value={Tab.DETAILED}
+            className="flex h-full"
+          >
+            <div className="border-pupcleLightLightGray flex h-full w-1/2 flex-col items-center justify-center border-r-[8px]">
+              <img
+                src="/pup_notes_register_detail.png"
+                className="mb-14 h-[302px] w-[322px]"
+              />
+              <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                  세부검사 등록하기
+                </span>
+              </Button>
+            </div>
+            <div className="flex h-full w-1/2 flex-col items-center justify-center">
+              <img
+                src="/pup_notes_register_examination_result.png"
+                className="mb-14 h-[302px] w-[322px]"
+              />
+              <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                  검사수치 등록하기
+                </span>
+              </Button>
+            </div>
+          </Tabs.Content>
+          <Tabs.Content
+            key={Tab.CHART}
+            value={Tab.CHART}
+            className="relative h-full"
+          >
+            <div className="flex w-full flex-col items-center">
+              <Dialog.Root>
+                <Dialog.Trigger asChild>
+                  <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+                    <img
+                      src="/pup_notes_add_new_floating_button.png"
+                      className="h-[100px] w-[100px]"
+                    />
+                  </Button>
+                </Dialog.Trigger>
+                <Dialog.Portal>
+                  <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                  <Dialog.Content
+                    className={clsx(
+                      "fixed z-20",
+                      "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+                    )}
+                  >
+                    <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                      <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                        항목을 선택해주세요.
+                      </span>
+                      <img src="/paw.png" className="h-fit w-[43px]" alt="" />
+                    </Dialog.Title>
+                    <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+                  </Dialog.Content>
+                </Dialog.Portal>
+              </Dialog.Root>
+              <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
+                <ToggleGroup.Root
+                  className="ToggleGroup"
+                  type="single"
+                  aria-label="Text alignment"
+                >
+                  <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+                    <ToggleGroup.Item
+                      key="CBC"
+                      value="CBC"
+                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+                    >
+                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                        기본혈액검사{"("}CBC{")"}
+                      </span>
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      key="XRAY"
+                      value="XRAY"
+                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+                    >
+                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                        X-RAY
+                      </span>
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      key="PEE"
+                      value="PEE"
+                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+                    >
+                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                        소변 검사
+                      </span>
+                    </ToggleGroup.Item>
+                  </div>
+                </ToggleGroup.Root>
+              </div>
+              <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+              <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
+                <span className="font-poppins text-pupcle-24px font-semibold">
+                  히스토리
+                </span>
+                <img
+                  src="/pup_notes_caret_icon.png"
+                  className="ml-3 h-[13px] w-5"
+                />
+              </div>
+              <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
+                <div className="flex w-[70%] items-center justify-between">
+                  <div className="flex flex-row items-center">
+                    <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+                    <div className="mx-9 flex flex-col">
+                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                        <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                          기본혈액검사
+                        </span>
+                      </div>
+                      <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                        서울동물병원
+                      </span>
+                      <span className="font-poppins text-[15px]">
+                        추가 메모{") "}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-poppins text-[15px]">
+                    {/* {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")} */}
+                    2023.09.14
+                  </span>
+                </div>
+                <div className="w-[30%] px-5">
+                  <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                    <span className="font-poppins text-[20px] font-semibold text-white">
+                      보기
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Tabs.Content>
         </div>
       </Tabs.Root>
     </SharedLayout>
@@ -991,7 +1131,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               </div>
 
               <div className="w-[30%] px-5">
-                <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none">
+                <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
                   <span className="font-poppins text-[20px] font-semibold text-white">
                     보기
                   </span>
