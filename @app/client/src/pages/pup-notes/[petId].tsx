@@ -978,18 +978,20 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                 <img src="/paw.png" className="h-fit w-[43px]" alt="" />
               </Dialog.Title>
               <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-              <NewBasicExamResultsCategoryForm
-                categories={categories}
-                defaultCategoryId={selectedCategoryId}
-                onComplete={(categoryId) => {
-                  setNewBasicExamResultsCategoryDialogOpen(false);
-                  setNewBasicExamResultsCategoryId(categoryId);
-                  setNewBasicExamResults(true);
-                }}
-                onCancel={() => {
-                  setNewBasicExamResultsCategoryDialogOpen(false);
-                }}
-              />
+              <div className="flex w-full justify-center">
+                <NewBasicExamResultsCategoryForm
+                  categories={categories}
+                  defaultCategoryId={selectedCategoryId || categories[0]?.id}
+                  onComplete={(categoryId) => {
+                    setNewBasicExamResultsCategoryDialogOpen(false);
+                    setNewBasicExamResultsCategoryId(categoryId);
+                    setNewBasicExamResults(true);
+                  }}
+                  onCancel={() => {
+                    setNewBasicExamResultsCategoryDialogOpen(false);
+                  }}
+                />
+              </div>
             </Dialog.Content>
           </Dialog.Portal>
         </Dialog.Root>
@@ -1171,21 +1173,24 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           hidden: !newBasicExamResults,
         })}
       >
-        <Button
-          onClick={() => setNewBasicExamResults(false)}
-          className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]"
-        >
-          <img
-            src="/pup_notes_caret_icon.png"
-            className="mr-3 h-[13px] w-5 rotate-90"
-          />
+        <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+          <Button
+            className="mr-3 h-[13px] w-5 border-none p-0"
+            onClick={() => setNewBasicExamResults(false)}
+          >
+            <img
+              src="/pup_notes_caret_icon.png"
+              className="h-[13px] w-5 rotate-90"
+            />
+          </Button>
           <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
             {
               categories.find(({ id }) => id === newBasicExamResultsCategoryId)
                 ?.name
             }
           </span>
-        </Button>
+        </div>
+
         <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
           <div className="h-full w-1/2 overflow-scroll">
             <div className="w-full">
@@ -1228,18 +1233,29 @@ const NewBasicExamResultsCategoryForm: FC<
         onSubmit={handleSubmit}
       >
         {({ values, setFieldValue }) => (
-          <Form className="flex h-full w-full">
-            <Form.Item name="categoryId">
+          <Form className="flex h-full w-[400px] flex-col justify-center">
+            <Form.Item
+              name="categoryId"
+              className="mb-0 w-full justify-center pt-[96px]"
+            >
               <Select.Root
                 defaultValue={values.categoryId}
                 onValueChange={(value) => {
                   setFieldValue("categoryId", value);
                 }}
               >
-                <Select.Trigger asChild aria-label="Category">
-                  <Button>
-                    <Select.Value placeholder="**항목을 선택해주세요.**" />
-                    <Select.Icon className="ml-2">
+                <Select.Trigger
+                  asChild
+                  aria-label="Category"
+                  className="w-full"
+                >
+                  <Button
+                    className={clsx(
+                      "font-poppins text-pupcleGray border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[24px] font-semibold"
+                    )}
+                  >
+                    <Select.Value placeholder="항목을 선택해주세요." />
+                    <Select.Icon className="absolute right-8">
                       <img
                         src="/pup_notes_caret_icon.png"
                         className="h-[13px] w-5"
@@ -1247,8 +1263,12 @@ const NewBasicExamResultsCategoryForm: FC<
                     </Select.Icon>
                   </Button>
                 </Select.Trigger>
-                <Select.Portal>
-                  <Select.Content className="z-20">
+                <Select.Portal className="relative flex w-full">
+                  <Select.Content
+                    position="popper"
+                    sideOffset={2}
+                    className="z-20 w-[400px]"
+                  >
                     <Select.ScrollUpButton className="flex items-center justify-center text-gray-700 dark:text-gray-300">
                       {/* should be chevron up? <ChevronUpIcon /> */}
                       <img
@@ -1256,23 +1276,30 @@ const NewBasicExamResultsCategoryForm: FC<
                         className="h-[13px] w-5"
                       />
                     </Select.ScrollUpButton>
-                    <Select.Viewport className="rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+                    <Select.Viewport className="flex justify-center rounded-b-[15px] bg-white shadow-lg">
                       <Select.Group>
                         {categories.map(({ id, name }) => (
                           <Select.Item
                             key={id}
                             value={id}
                             className={clsx(
-                              "relative flex items-center rounded-md px-8 py-2 text-sm font-medium text-gray-700 focus:bg-gray-100 dark:text-gray-300 dark:focus:bg-gray-900",
+                              "relative flex h-[50px] w-[400px] items-center justify-center rounded-[5px] px-[75px] py-[10px] text-center text-[20px]",
                               "radix-disabled:opacity-50",
-                              "select-none focus:outline-none"
+                              "hover:bg-pupcleLightLightGray select-none focus:outline-none"
                             )}
                           >
-                            <Select.ItemText>{name}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                            <Select.ItemIndicator className="absolute left-[25px] inline-flex items-center">
                               {/* <CheckIcon /> */}
-                              CheckIcon
+                              <img
+                                src="/checkbox.png"
+                                className="h-[25px] w-[25px]"
+                              />
                             </Select.ItemIndicator>
+                            <Select.ItemText className="">
+                              <span className="font-poppins font-medium">
+                                {name}
+                              </span>
+                            </Select.ItemText>
                           </Select.Item>
                         ))}
                       </Select.Group>
@@ -1307,18 +1334,22 @@ const NewBasicExamResultsCategoryForm: FC<
                 />
               </Form.Item>
             ) : null}
-            <Form.Item name="_submit" className="mt-12">
+            <Form.Item name="_submit" className="mt-[96px] mb-3">
               <SubmitButton
-                className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                className="bg-pupcleBlue font-poppins text-pupcle-20px relative flex h-[63px] w-full items-center justify-center rounded-full border-none text-center font-bold text-white"
                 htmlType="submit"
                 data-cy="pup-notes-basic-submit-button"
               >
+                <img
+                  src="/pup_notes_next_icon.png"
+                  className="absolute right-8 h-5 w-3"
+                />
                 {submitLabel}
               </SubmitButton>
             </Form.Item>
-            <Form.Item name="_cancel" className="mt-12">
+            <Form.Item name="_cancel" className="mb-10">
               <Button
-                className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+                className="font-poppins text-pupcle-20px border-pupcleLightGray text-pupcleGray h-[63px] w-full rounded-full border-[3px] bg-transparent text-center font-bold"
                 onClick={onCancel}
               >
                 취소
