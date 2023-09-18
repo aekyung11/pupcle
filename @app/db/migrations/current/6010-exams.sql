@@ -68,12 +68,14 @@ create table app_public.basic_exam_results (
   next_reservation        timestamptz,
   memo                    text,
   created_at              timestamptz not null default now(),
-  updated_at              timestamptz not null default now()
+  updated_at              timestamptz not null default now(),
+  sort_datetime           timestamptz generated always as (coalesce(taken_at, created_at)) stored
 );
 alter table app_public.basic_exam_results enable row level security;
 
-create index on app_public.basic_exam_results (user_id, pet_id, basic_exam_category_id);
-create index on app_public.basic_exam_results (pet_id, basic_exam_category_id);
+create index on app_public.basic_exam_results (user_id, pet_id, sort_datetime, basic_exam_category_id);
+create index on app_public.basic_exam_results (pet_id, sort_datetime, basic_exam_category_id);
+create index on app_public.basic_exam_results (sort_datetime, basic_exam_category_id);
 create index on app_public.basic_exam_results (basic_exam_category_id);
 
 create policy select_own on app_public.basic_exam_results for select using (user_id = app_public.current_user_id());

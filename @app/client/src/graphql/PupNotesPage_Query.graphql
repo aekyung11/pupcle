@@ -26,11 +26,12 @@ fragment PupNotesPage_BasicExamResults on BasicExamResult {
   poiId
   takenAt
   updatedAt
+  sortDatetime
 }
 
 fragment PupNotesPage_Pet on Pet {
   id
-  basicExamResults {
+  basicExamResults(orderBy: SORT_DATETIME_DESC) {
     nodes {
       id
       ...PupNotesPage_BasicExamResults

@@ -267,6 +267,7 @@ type BasicExamResult {
   pet: Pet
   petId: UUID!
   poiId: UUID
+  sortDatetime: Datetime
   takenAt: Datetime
   updatedAt: Datetime!
 
@@ -406,6 +407,9 @@ input BasicExamResultCondition {
   """Checks for equality with the object’s `petId` field."""
   petId: UUID
 
+  """Checks for equality with the object’s `sortDatetime` field."""
+  sortDatetime: Datetime
+
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
 }
@@ -431,6 +435,9 @@ input BasicExamResultFilter {
 
   """Filter by the object’s `petId` field."""
   petId: UUIDFilter
+
+  """Filter by the object’s `sortDatetime` field."""
+  sortDatetime: DatetimeFilter
 
   """Filter by the object’s `userId` field."""
   userId: UUIDFilter
@@ -504,6 +511,8 @@ enum BasicExamResultsOrderBy {
   PET_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  SORT_DATETIME_ASC
+  SORT_DATETIME_DESC
   USER_ID_ASC
   USER_ID_DESC
 }
@@ -1175,6 +1184,48 @@ A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
+
+"""
+A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
+"""
+input DatetimeFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Datetime
+
+  """Equal to the specified value."""
+  equalTo: Datetime
+
+  """Greater than the specified value."""
+  greaterThan: Datetime
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Datetime
+
+  """Included in the specified list."""
+  in: [Datetime!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: Datetime
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Datetime
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Datetime
+
+  """Not equal to the specified value."""
+  notEqualTo: Datetime
+
+  """Not included in the specified list."""
+  notIn: [Datetime!]
+}
 
 """All input for the `deleteBasicExamCategory` mutation."""
 input DeleteBasicExamCategoryInput {
