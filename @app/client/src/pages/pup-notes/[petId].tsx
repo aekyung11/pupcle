@@ -22,7 +22,6 @@ import {
   UpsertBasicExamCategoryMutation,
   UpsertBasicExamResultsMutation,
   usePupNotesPageQuery,
-  useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -30,16 +29,21 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Select from "@radix-ui/react-select";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { Alert, Button, Col, InputRef, Row } from "antd";
+import { Alert, Button, Col, Row } from "antd";
 import clsx from "clsx";
 import { format, parseISO } from "date-fns";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
-import { chain, sortBy } from "lodash";
 import { NextPage } from "next";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
+import {
+  InputAttributes,
+  NumberFormatBase,
+  NumericFormatProps,
+  useNumericFormat,
+} from "react-number-format";
 
 function localeCompare(a: string, b: string) {
   return a.localeCompare(b);
@@ -60,6 +64,27 @@ export function usePetId() {
   const router = useRouter();
   const { petId } = router.query;
   return String(petId);
+}
+
+// Allows empty formatting
+export function CustomNumberFormat<BaseType = InputAttributes>(
+  props: NumericFormatProps<BaseType> & {
+    allowEmptyFormatting?: boolean;
+  }
+) {
+  const { prefix = "", suffix = "", allowEmptyFormatting } = props;
+  const numberFormatBaseProps = useNumericFormat<BaseType>(props);
+  const { format } = numberFormatBaseProps;
+  const _format = (numStr: string) => {
+    const formattedValue = (format && format(numStr)) || "";
+    return allowEmptyFormatting && formattedValue === ""
+      ? prefix + suffix
+      : formattedValue;
+  };
+
+  return (
+    <NumberFormatBase<BaseType> {...numberFormatBaseProps} format={_format} />
+  );
 }
 
 const PupNotes: NextPage<PupNotesPageProps> = () => {
@@ -1372,13 +1397,18 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                   </div>
                   <div className="flex w-[calc(100%-80px)] pl-9">
                     <Form.Item name="cost" className="mb-0 w-full">
-                      <Input
-                        name="cost"
+                      <CustomNumberFormat
                         className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
-                        // size="large"
                         autoComplete="cost"
                         data-cy="pup-notes-basic-input-cost"
-                        suffix
+                        thousandSeparator={true}
+                        prefix={"₩"}
+                        value={values.cost}
+                        onValueChange={({ value }) =>
+                          setFieldValue("cost", value)
+                        }
+                        allowEmptyFormatting
+                        decimalScale={0}
                       />
                     </Form.Item>
                   </div>
