@@ -1170,6 +1170,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                 basicExamCategoryId={newBasicExamResultsCategoryId}
                 onComplete={() => {
                   setNewBasicExamResults(false);
+                  setSelectedCategoryId("");
                 }}
               />
             </div>
