@@ -18,7 +18,7 @@ export function getUid(name: string) {
   return randomHex() + "-" + fileNameSlug;
 }
 
-const ALLOWED_UPLOAD_CONTENT_TYPES = {
+export const ALLOWED_UPLOAD_CONTENT_TYPES = {
   "image/apng": "ImageApng",
   "image/bmp": "ImageBmp",
   "image/gif": "ImageGif",

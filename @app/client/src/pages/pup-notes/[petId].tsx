@@ -6,6 +6,7 @@ import {
   usePetInfoForm,
 } from "@app/componentlib";
 import {
+  ALLOWED_UPLOAD_CONTENT_TYPES,
   AuthRestrict,
   DayPickerInput,
   FourOhFour,
@@ -13,6 +14,8 @@ import {
   SharedLayout,
 } from "@app/components";
 import {
+  AllowedUploadContentType,
+  BasicExamResultAsset,
   PetGender,
   PupNotesPage_BasicExamCategoryFragment,
   PupNotesPage_PetFragment,
@@ -21,6 +24,7 @@ import {
   SharedLayout_UserFragment,
   UpsertBasicExamCategoryMutation,
   UpsertBasicExamResultsMutation,
+  useCreateUploadUrlMutation,
   usePupNotesPageQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
@@ -29,7 +33,13 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Select from "@radix-ui/react-select";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import AwsS3 from "@uppy/aws-s3";
+import Uppy from "@uppy/core";
+import { UppyEventMap } from "@uppy/core/types";
+import { Dashboard } from "@uppy/react";
+import Webcam from "@uppy/webcam";
 import { Alert, Button, Col, Row } from "antd";
+import axios from "axios";
 import clsx from "clsx";
 import { format, parseISO } from "date-fns";
 import { Formik } from "formik";
@@ -37,7 +47,7 @@ import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import Router, { useRouter } from "next/router";
 import * as React from "react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   InputAttributes,
   NumberFormatBase,
@@ -1362,6 +1372,203 @@ const NewBasicExamResultsCategoryForm: FC<
   );
 };
 
+// from the db
+type AssetMetadata = {
+  name: string;
+  type: string;
+  size: number;
+};
+
+type UseUppyProps = {
+  // files that have previously been uploaded to the server. only read on initialization
+  initialFiles: BasicExamResultAsset[];
+
+  // no files value, this is uncontrolled
+
+  // validation: check progress.uploadComplete on uppy.getFiles()
+
+  // onFilesChange (trigger on file-added, file-removed, upload-success)
+};
+
+type FormFile = {
+  kind: string; // photo (?)
+  assetUrl: string;
+  metadata: AssetMetadata;
+
+  // used to track removal
+  uppyFileId?: string;
+};
+
+const useUppy = ({ initialFiles }: UseUppyProps) => {
+  const [createUploadUrl] = useCreateUploadUrlMutation();
+  const [uppy, setUppy] = useState<Uppy | null>(null);
+  const [files, setFiles] = useState<FormFile[]>(
+    initialFiles
+      .filter((asset) => asset.assetUrl)
+      .map((asset) => ({
+        kind: asset.kind,
+        assetUrl: asset.assetUrl!,
+        metadata: {
+          name: "" + (asset.metadata["name"] || ""),
+          size: Number(asset.metadata["size"] || 0),
+          type: "" + (asset.metadata["type"] || ""),
+        },
+      }))
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const uppy = new Uppy({
+        autoProceed: false,
+        // to customize strings: see https://uppy.io/docs/dashboard/#locale
+        // locale: {
+
+        // },
+        restrictions: {
+          maxNumberOfFiles: 10,
+        },
+      })
+        .use(Webcam)
+        .use(AwsS3, {
+          shouldUseMultipart: false,
+          async getUploadParameters(file) {
+            const contentType =
+              file.type as unknown as keyof typeof ALLOWED_UPLOAD_CONTENT_TYPES;
+            const allowedUploadContentType = ALLOWED_UPLOAD_CONTENT_TYPES[
+              contentType
+            ] as unknown as keyof typeof AllowedUploadContentType;
+            const { data } = await createUploadUrl({
+              variables: {
+                input: {
+                  contentType:
+                    AllowedUploadContentType[allowedUploadContentType],
+                },
+              },
+            });
+            const uploadUrl = data?.createUploadUrl?.uploadUrl;
+            if (!uploadUrl) {
+              throw new Error("Failed to generate upload URL");
+            }
+            return {
+              method: "PUT",
+              url: uploadUrl,
+              headers: {
+                "Content-Type": contentType,
+              },
+              fields: {},
+            };
+          },
+        });
+
+      setUppy(uppy);
+    }
+    // TODO: depend on exam results id
+  }, []);
+
+  useEffect(() => {
+    if (uppy) {
+      const fileAddedHandler: UppyEventMap["file-added"] = (file) => {
+        if (file.meta["existingFile"] === true) {
+          // this file was previously uploaded
+          uppy.setFileState(file.id, {
+            progress: {
+              uploadComplete: true,
+              uploadStarted: true,
+            },
+          });
+        }
+        console.log("file-added: UppyFile", { file });
+      };
+      uppy.on("file-added", fileAddedHandler);
+
+      const fileRemovedHandler: UppyEventMap["file-removed"] = (file) => {
+        const newFiles = files.filter((f) => {
+          return file.id !== f.uppyFileId;
+        });
+        setFiles(newFiles);
+        console.log("file-removed", { newFiles });
+        // NOTE: could remove uploaded files upon form submit
+      };
+      uppy.on("file-removed", fileRemovedHandler);
+
+      const uploadSuccessHandler: UppyEventMap["upload-success"] = (
+        file,
+        response
+      ) => {
+        if (file && response.uploadURL) {
+          const newFiles = [
+            ...files,
+            {
+              assetUrl: response.uploadURL,
+              kind: "photo", // hardcoded
+              metadata: {
+                name: file.name,
+                size: file.size,
+                type: file.type ?? "",
+              },
+              uppyFileId: file.id,
+            },
+          ];
+          setFiles(newFiles);
+          console.log("upload-success", { newFiles });
+        }
+      };
+      uppy.on("upload-success", uploadSuccessHandler);
+
+      return () => {
+        uppy.off("file-added", fileAddedHandler);
+        uppy.off("file-removed", fileRemovedHandler);
+        uppy.off("upload-success", uploadSuccessHandler);
+      };
+    }
+  }, [uppy, files]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (uppy) {
+      // initialize - load files and add them to uppy
+      const initializeFiles = async () => {
+        const initializedFiles = await Promise.all(
+          files.map(async (f) => {
+            return axios
+              .get(f.assetUrl, { responseType: "blob" })
+              .then((response) => {
+                const uppyFileId = uppy.addFile({
+                  name: f.metadata.name,
+                  type: f.metadata.type, // blob type
+                  data: response.data,
+                  meta: { existingFile: true },
+                });
+                return {
+                  ...f,
+                  uppyFileId,
+                };
+              });
+          })
+        );
+        setFiles(initializedFiles);
+
+        // after initialization, auto-upload files
+        uppy.setOptions({
+          autoProceed: true,
+        });
+
+        setIsLoading(false);
+      };
+
+      console.log("initializing files");
+      initializeFiles();
+    }
+    // do not include files here. only initialize once (per uppy instance)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uppy]);
+
+  return {
+    uppy,
+    isLoading,
+  };
+};
+
 interface BasicExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
@@ -1375,6 +1582,8 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   basicExamCategoryId,
   onComplete,
 }) => {
+  const { uppy, isLoading: uppyIsLoading } = useUppy({ initialFiles: [] });
+
   const postResult = useCallback(
     async (result: FetchResult<UpsertBasicExamResultsMutation>) => {
       await onComplete(result);
@@ -1392,6 +1601,10 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
     );
 
   const code = getCodeFromError(error);
+
+  if (!uppyIsLoading && uppy) {
+    console.log("uppy files", uppy.getFiles());
+  }
 
   return (
     <>
@@ -1490,12 +1703,29 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
                   </div>
                   <div className="flex w-[calc(100%-80px)] pl-9">
                     <Form.Item name="photos" className="mb-0 w-full">
-                      <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
+                      {/* <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
                         <img
                           className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
                           src="/pup_notes_add_pics.png"
                         />
-                      </div>
+                      </div> */}
+                      {/* show something for uppy is loading */}
+                      {uppyIsLoading && <span>Loading files...</span>}
+                      {!uppyIsLoading && uppy && (
+                        <Dashboard
+                          uppy={uppy}
+                          plugins={["Webcam"]}
+                          replaceTargetContent
+                          showProgressDetails
+                          hideUploadButton
+                          hideRetryButton
+                          hideCancelButton
+                          showRemoveButtonAfterComplete
+                          proudlyDisplayPoweredByUppy={false}
+                          doneButtonHandler={undefined}
+                          // height={470}
+                        />
+                      )}
                     </Form.Item>
                   </div>
                 </div>

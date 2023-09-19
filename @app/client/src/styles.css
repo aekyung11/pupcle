@@ -3,6 +3,9 @@
 @tailwind utilities;
 @import "@radix-ui/colors/black-alpha.css";
 @import "react-day-picker/dist/style.css";
+@import "@uppy/core/dist/style.min.css";
+@import "@uppy/dashboard/dist/style.min.css";
+@import "@uppy/webcam/dist/style.min.css";
 
 /*
  * Work around a bug in antd where a <Button type="primary" block href="...">
