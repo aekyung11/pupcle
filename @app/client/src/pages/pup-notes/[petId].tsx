@@ -1430,7 +1430,6 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
       })
         .use(Webcam)
         .use(AwsS3, {
-          shouldUseMultipart: false,
           async getUploadParameters(file) {
             const contentType =
               file.type as unknown as keyof typeof ALLOWED_UPLOAD_CONTENT_TYPES;
@@ -1482,11 +1481,12 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
       uppy.on("file-added", fileAddedHandler);
 
       const fileRemovedHandler: UppyEventMap["file-removed"] = (file) => {
-        const newFiles = files.filter((f) => {
-          return file.id !== f.uppyFileId;
-        });
-        setFiles(newFiles);
-        console.log("file-removed", { newFiles });
+        setFiles((files) =>
+          files.filter((f) => {
+            return file.id !== f.uppyFileId;
+          })
+        );
+        console.log("file-removed", { removedFile: file });
         // NOTE: could remove uploaded files upon form submit
       };
       uppy.on("file-removed", fileRemovedHandler);
@@ -1495,11 +1495,12 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
         file,
         response
       ) => {
-        if (file && response.uploadURL) {
-          const newFiles = [
+        const assetUrl = response.uploadURL;
+        if (file && assetUrl) {
+          setFiles((files) => [
             ...files,
             {
-              assetUrl: response.uploadURL,
+              assetUrl: assetUrl,
               kind: "photo", // hardcoded
               metadata: {
                 name: file.name,
@@ -1508,9 +1509,8 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
               },
               uppyFileId: file.id,
             },
-          ];
-          setFiles(newFiles);
-          console.log("upload-success", { newFiles });
+          ]);
+          console.log("upload-success", { newFile: file });
         }
       };
       uppy.on("upload-success", uploadSuccessHandler);
@@ -1562,6 +1562,8 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
     // do not include files here. only initialize once (per uppy instance)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uppy]);
+
+  console.log({ files });
 
   return {
     uppy,
