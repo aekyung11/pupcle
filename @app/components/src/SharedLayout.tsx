@@ -610,7 +610,7 @@ export function SharedLayout({
   return (
     <Layout
       className={clsx({
-        "bg-lightblue-bg": useLightBlueFrame,
+        "bg-pupcleLightBlue": useLightBlueFrame,
         "min-w-[768px]": !isMapsPage,
       })}
     >

@@ -1,5 +1,5 @@
 import { DownOutlined } from "@ant-design/icons";
-import { AuthRestrict, SharedLayout } from "@app/components";
+import { AuthRestrict, FourOhFour, SharedLayout } from "@app/components";
 import {
   CalendarRecords_PrivateDailyRecordFragment,
   DailyRecordDayStatus,
@@ -53,72 +53,32 @@ const CommentRow: React.FC<CommentRowProps> = ({
   const [isExpandable, setIsExpandable] = useState(false);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        alignItems: "flex-start",
-        margin: "30px 0px",
-      }}
-    >
-      <div style={{ width: "15%" }}>
+    <div className="my-[30px] flex w-full items-center justify-between">
+      <div className="flex w-[50px] justify-center">
         <img src={statusImage} style={{ width: "36px" }} />
       </div>
-      <div
-        style={{
-          width: "70%",
-          textOverflow: "ellipsis",
-          // whiteSpace: "nowrap",
-          overflow: "hidden",
-          paddingRight: "20px",
-          paddingTop: "8px",
-        }}
-      >
+      <div className="w-[300px] overflow-hidden text-ellipsis">
         {isCommentExpanded ? (
           <Paragraph
+            className="calendar-comment font-poppins text-pupcleGray mb-0 text-[16px] font-semibold"
             key={`isExpanded-${true}`}
-            style={{
-              marginBottom: 0,
-              fontFamily: "Poppins",
-              fontWeight: 600,
-              fontSize: "min(16px, 12 + 0.5vw)",
-              color: "#8F9092",
-            }}
           >
             {statusComment} &nbsp;&nbsp;
             {isCommentExpanded && (
               <Button
+                className="border-pupcleBlue inline-block h-[27px] w-[51px] rounded-full border-2 p-0"
                 onClick={() => setIsCommentExpanded(false)}
-                style={{
-                  // width: "min(74px, 4rem + 0.5vw)",
-                  height: "27px",
-                  display: "inline-block",
-                  borderWidth: "2px",
-                  borderRadius: "14px",
-                  alignItems: "center",
-                  fontFamily: "Poppins",
-                  fontWeight: 600,
-                  fontSize: "min(16px, 12 + 0.5vw)",
-                  color: "#7FB3E8",
-                  borderColor: "#7FB3E8",
-                  backgroundColor: "white",
-                  padding: "0 10px",
-                }}
               >
-                접기
+                <span className="font-poppins text-pupcleBlue text-[16px] font-semibold">
+                  접기
+                </span>
               </Button>
             )}
           </Paragraph>
         ) : (
           <Paragraph
             key={`isExpanded-${false}`}
-            style={{
-              marginBottom: 0,
-              fontFamily: "Poppins",
-              fontWeight: 600,
-              fontSize: "min(16px, 12 + 0.5vw)",
-              color: "#8F9092",
-            }}
+            className="calendar-comment font-poppins text-pupcleGray mb-0 text-[16px] font-semibold"
             ellipsis={{
               rows: 1,
               expandable: true,
@@ -131,25 +91,16 @@ const CommentRow: React.FC<CommentRowProps> = ({
         )}
       </div>
       <div>
-        {isExpandable && (
+        {!isExpandable || !statusComment?.length ? (
+          <div className="w-[74px]"></div>
+        ) : (
           <Button
             onClick={() => setIsCommentExpanded(true)}
-            style={{
-              // width: "min(74px, 4rem + 0.5vw)",
-              height: "27px",
-              display: "flex",
-              borderRadius: "14px",
-              alignItems: "center",
-              fontFamily: "Poppins",
-              fontWeight: 600,
-              fontSize: "min(16px, 12 + 0.5vw)",
-              color: "white",
-              backgroundColor: "#7FB3E8",
-              borderStyle: "none",
-              marginTop: "5px",
-            }}
+            className="bg-pupcleBlue flex h-[27px] w-[74px] items-center rounded-full border-none"
           >
-            펼치기
+            <span className="font-poppins text-[16px] font-semibold text-white">
+              펼치기
+            </span>
           </Button>
         )}
       </div>
@@ -167,26 +118,10 @@ const StatusTable: React.FC<StatusTableProps> = ({
   privateDailyRecord,
 }: StatusTableProps) => {
   return (
-    <div
-      style={{
-        width: "48%",
-        display: "flex",
-        backgroundColor: "white",
-        borderRadius: "30px",
-        justifyContent: "center",
-        padding: "80px 0px",
-        height: "calc(100vh - 6rem - 140px - 20px)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          width: "80%",
-        }}
-      >
+    <div className="flex h-full w-full overflow-scroll rounded-[30px] bg-white px-[68px] pt-16 pb-[30px]">
+      <div className="flex w-full flex-col items-center">
         <img
+          className="w-[180px]"
           src={
             status === DailyRecordStatus.Good
               ? "/good_puppy.png"
@@ -194,39 +129,13 @@ const StatusTable: React.FC<StatusTableProps> = ({
               ? "/bad_puppy.png"
               : undefined
           }
-          style={{ width: "min(180px, 150px + 2vw)" }}
         />
-        <span
-          style={{
-            fontFamily: "Poppins",
-            fontWeight: 600,
-            fontSize: "min(28px, 2.2vw)",
-            color: "#FF9C06",
-            marginTop: "1rem",
-          }}
-        >
+        <span className="font-poppins text-pupcleOrange mt-[14px] mb-[10px] text-[28px] font-semibold">
           {status === DailyRecordStatus.Good && "GOOD"}
           {status === DailyRecordStatus.Bad && "BAD"}
         </span>
-        <div
-          style={{
-            height: "2px",
-            width: "100%",
-            borderRadius: "1px",
-            backgroundColor: "#7FB3E8",
-            marginTop: "0.5rem",
-          }}
-        ></div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            width: "90%",
-            marginTop: "30px",
-            overflow: "scroll",
-          }}
-        >
+        <div className="bg-pupcleBlue h-[2px] w-full rounded-full border-none"></div>
+        <div className="mt-[30px] flex w-[90%] flex-col items-center overflow-scroll">
           {status === privateDailyRecord.sleepStatus && (
             <CommentRow
               statusImage={"/sleep_status_grey.png"}
@@ -293,70 +202,36 @@ const CalendarPetDay: NextPage = () => {
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
       {!dailyRecord ? (
-        <>404 Not Found</>
+        <FourOhFour />
       ) : (
         <>
-          {" "}
-          <div
-            style={{
-              padding: "40px 50px",
-              height: "15%",
-              display: "flex",
-              alignItems: "baseline",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "min(48px, 3.8vw)",
-                fontWeight: 700,
-                textAlign: "center",
-                marginRight: "1rem",
-              }}
-            >
+          <div className="flex h-[140px] items-baseline px-20 pt-[68px]">
+            <span className="font-poppins mr-4 text-[48px] font-bold">
               {pet.name}
             </span>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <span
-                style={{
-                  fontFamily: "Poppins, sans-serif",
-                  fontSize: "min(30px, 2.4vw)",
-                  fontWeight: 600,
-                  textAlign: "center",
-                }}
-              >
-                {formattedDay}
-              </span>
+            <span className="font-poppins flex items-center text-[30px] font-semibold">
+              {formattedDay}
+              &nbsp;
               <img
                 src="/calendar_blk.png"
-                style={{
-                  width: "min(30px, 2.4vw)",
-                  height: "min(30px, 2.4vw)",
-                  margin: "0 0 1px 2px",
-                }}
+                className="mb-[1px] h-[30px] w-[30px]"
               />
-            </div>
+            </span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              height: "85%",
-              justifyContent: "space-around",
-              padding: "0px 20px 40px",
-            }}
-          >
-            <div style={{ display: "contents" }}>
-              <StatusTable
-                status={DailyRecordStatus.Good}
-                privateDailyRecord={dailyRecord}
-              />
-            </div>
-            <div style={{ display: "contents" }}>
-              <StatusTable
-                status={DailyRecordStatus.Bad}
-                privateDailyRecord={dailyRecord}
-              />
+          <div className="flex w-full justify-center">
+            <div className="mt-7 mb-10 flex h-[calc(100vh-6rem-140px-68px)] w-full max-w-[1440px]">
+              <div className="flex w-1/2 max-w-[720px] pr-[14px] pl-7">
+                <StatusTable
+                  status={DailyRecordStatus.Good}
+                  privateDailyRecord={dailyRecord}
+                />
+              </div>
+              <div className="flex w-1/2 max-w-[720px] pl-[14px] pr-7">
+                <StatusTable
+                  status={DailyRecordStatus.Bad}
+                  privateDailyRecord={dailyRecord}
+                />
+              </div>
             </div>
           </div>
         </>

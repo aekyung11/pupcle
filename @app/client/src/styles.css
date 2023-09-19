@@ -489,6 +489,13 @@ a.ant-btn-primary:hover {
   font-size: min(30px, 2.4vw);
   font-weight: 600;
 }
+.calendar-pupcle-calendar .rdp-dropdown_icon {
+  width: 25px;
+  height: 16px;
+  background-image: url("/pup_notes_caret_icon.png");
+  background-size: cover;
+  color: black;
+}
 
 .calendar-pupcle-calendar .rdp-months {
   display: flex;
@@ -525,6 +532,10 @@ a.ant-btn-primary:hover {
 
 .calendar-day-home-button.active {
   background-image: url("/calendar_day_home_selected.png");
+}
+
+.calendar-comment.ant-typography {
+  margin-bottom: 0;
 }
 
 .friends-tab[data-state="active"] {
