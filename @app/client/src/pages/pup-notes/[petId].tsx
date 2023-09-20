@@ -1045,85 +1045,90 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                   <Dialog.Content
                     className={clsx(
                       "fixed z-20",
-                      "w-[95vw] max-w-md rounded-lg p-4 md:w-full",
-                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]",
-                      "bg-white dark:bg-gray-800",
-                      "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                      "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
                     )}
                   >
-                    <Dialog.Title className="DialogTitle">
-                      **New basic exam category**
+                    <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                      <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                        추가할 항목을 입력해주세요.
+                      </span>
+                      <img src="/paw.png" className="h-fit w-[43px]" alt="" />
                     </Dialog.Title>
-                    <Dialog.Description className="DialogDescription">
-                      **Make changes to your basic exam category here. Click
-                      save when you're done.**
-                    </Dialog.Description>
-                    <Formik
-                      validationSchema={validationSchema}
-                      initialValues={initialValues}
-                      onSubmit={handleSubmit}
-                    >
-                      <Form className="flex h-full w-full">
-                        <div className="w-full">
-                          <div className="mb-12 flex">
-                            <div className="flex w-20 items-center justify-end">
-                              <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                                **Name**
+                    <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+                    <div className="flex w-full justify-center">
+                      <Formik
+                        validationSchema={validationSchema}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                      >
+                        <Form className="flex h-full w-[400px] flex-col justify-center">
+                          <div className="w-full">
+                            <div className="mb-0 flex items-baseline justify-between pt-[96px]">
+                              <span className="font-poppins text-pupcleBlue text-[24px] font-medium">
+                                Name
                               </span>
+                              <div className="flex w-[300px]">
+                                <Form.Item name="name" className="mb-0 w-full">
+                                  <Input
+                                    name="name"
+                                    className="text-pupcleGray pup-notes-add-category font-poppins border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[20px] font-semibold"
+                                    // size="large"
+                                    autoComplete="basic-category-name"
+                                    data-cy="pup-notes-basic-category-name"
+                                    suffix
+                                  />
+                                </Form.Item>
+                              </div>
                             </div>
-                            <div className="flex w-[calc(100%-80px)] pl-9">
-                              <Form.Item name="name" className="mb-0 w-full">
-                                <Input
-                                  name="name"
-                                  className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
-                                  // size="large"
-                                  autoComplete="basic-category-name"
-                                  data-cy="pup-notes-basic-category-name"
-                                  suffix
+
+                            {error ? (
+                              <Form.Item name="_error">
+                                <Alert
+                                  type="error"
+                                  message={`**Saving basic exam category failed**`}
+                                  description={
+                                    <span>
+                                      {extractError(error).message}
+                                      {code ? (
+                                        <span>
+                                          {" "}
+                                          (Error code: <code>ERR_{code}</code>)
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  }
                                 />
                               </Form.Item>
-                            </div>
-                          </div>
-
-                          {error ? (
-                            <Form.Item name="_error">
-                              <Alert
-                                type="error"
-                                message={`**Saving basic exam category failed**`}
-                                description={
-                                  <span>
-                                    {extractError(error).message}
-                                    {code ? (
-                                      <span>
-                                        {" "}
-                                        (Error code: <code>ERR_{code}</code>)
-                                      </span>
-                                    ) : null}
-                                  </span>
-                                }
-                              />
-                            </Form.Item>
-                          ) : null}
-                          <Form.Item name="_submit" className="mt-12">
-                            <SubmitButton
-                              className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
-                              htmlType="submit"
-                              data-cy="pup-notes-basic-submit-button"
+                            ) : null}
+                            <Form.Item
+                              name="_submit"
+                              className="mt-[96px] mb-3"
                             >
-                              {submitLabel}
-                            </SubmitButton>
-                          </Form.Item>
-                          <Form.Item name="_cancel" className="mt-12">
-                            <button className="Button"></button>
-                            <Dialog.Close asChild>
-                              <Button className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white">
-                                취소
-                              </Button>
-                            </Dialog.Close>
-                          </Form.Item>
-                        </div>
-                      </Form>
-                    </Formik>
+                              <SubmitButton
+                                className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                                htmlType="submit"
+                                data-cy="pup-notes-basic-submit-button"
+                              >
+                                <span className="font-poppins text-pupcle-20px text-center font-bold text-white">
+                                  {submitLabel}
+                                </span>
+                              </SubmitButton>
+                            </Form.Item>
+                            <Form.Item name="_cancel" className="mb-10">
+                              <button className="Button"></button>
+                              <Dialog.Close asChild>
+                                <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray h-[63px] w-full rounded-full border-[3px] bg-transparent hover:border-none">
+                                  <span className="font-poppins text-pupcle-20px text-pupcleGray text-center font-bold">
+                                    취소
+                                  </span>
+                                </Button>
+                              </Dialog.Close>
+                            </Form.Item>
+                          </div>
+                        </Form>
+                      </Formik>
+                    </div>
                   </Dialog.Content>
                 </Dialog.Portal>
               </Dialog.Root>
@@ -1244,10 +1249,7 @@ const NewBasicExamResultsCategoryForm: FC<
       >
         {({ values, setFieldValue }) => (
           <Form className="flex h-full w-[400px] flex-col justify-center">
-            <Form.Item
-              name="categoryId"
-              className="mb-0 w-full justify-center pt-[96px]"
-            >
+            <Form.Item name="categoryId" className="mb-0 w-full pt-[96px]">
               <Select.Root
                 defaultValue={values.categoryId}
                 onValueChange={(value) => {
@@ -1346,7 +1348,7 @@ const NewBasicExamResultsCategoryForm: FC<
             ) : null}
             <Form.Item name="_submit" className="mt-[96px] mb-3">
               <SubmitButton
-                className="bg-pupcleBlue font-poppins text-pupcle-20px relative flex h-[63px] w-full items-center justify-center rounded-full border-none text-center font-bold text-white"
+                className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
                 htmlType="submit"
                 data-cy="pup-notes-basic-submit-button"
               >
@@ -1354,15 +1356,19 @@ const NewBasicExamResultsCategoryForm: FC<
                   src="/pup_notes_next_icon.png"
                   className="absolute right-8 h-5 w-3"
                 />
-                {submitLabel}
+                <span className="font-poppins text-pupcle-20px text-center font-bold text-white">
+                  {submitLabel}
+                </span>
               </SubmitButton>
             </Form.Item>
             <Form.Item name="_cancel" className="mb-10">
               <Button
-                className="font-poppins text-pupcle-20px border-pupcleLightGray text-pupcleGray h-[63px] w-full rounded-full border-[3px] bg-transparent text-center font-bold"
+                className="border-pupcleLightGray hover:bg-pupcleLightLightGray h-[63px] w-full rounded-full border-[3px] bg-transparent hover:border-none"
                 onClick={onCancel}
               >
-                취소
+                <span className="font-poppins text-pupcle-20px text-pupcleGray text-center font-bold">
+                  취소
+                </span>
               </Button>
             </Form.Item>
           </Form>

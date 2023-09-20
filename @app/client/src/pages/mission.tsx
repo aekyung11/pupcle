@@ -146,7 +146,7 @@ const Mission: NextPage = () => {
                     <div className="mt-[30px] w-full">
                       <Dialog.Root>
                         <Dialog.Trigger asChild>
-                          <Button className="bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+                          <Button className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
                             <img
                               src="/paw_white.png"
                               className="h-fit w-[58px]"
@@ -186,7 +186,7 @@ const Mission: NextPage = () => {
                                       *제출한 사진은 수정이 불가능합니다.
                                     </span>
                                   </div>
-                                  <Button className="bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+                                  <Button className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
                                     <img
                                       src="/paw_white.png"
                                       className="h-fit w-[58px]"
