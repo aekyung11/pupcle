@@ -1496,35 +1496,33 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
       };
       uppy.on("file-removed", fileRemovedHandler);
 
-      const uploadSuccessHandler: UppyEventMap["upload-success"] = (
-        file,
-        response
-      ) => {
-        const assetUrl = response.uploadURL;
-        if (file && assetUrl) {
-          setFiles((files) => [
-            ...files,
-            {
-              assetUrl: assetUrl,
+      const getFormFilesFromUppyFiles = () => {
+        setFiles(
+          uppy
+            .getFiles()
+            .filter((f) => f.response?.uploadURL)
+            .map((f) => ({
+              assetUrl: f.response?.uploadURL!,
               kind: "photo", // hardcoded
               metadata: {
-                name: file.name,
-                size: file.size,
-                type: file.type ?? "",
+                name: f.name,
+                size: f.size,
+                type: f.type ?? "",
               },
-              uppyFileId: file.id,
-              uppyPreview: file.preview,
-            },
-          ]);
-          console.log("upload-success", { newFile: file });
-        }
+              uppyFileId: f.id,
+              uppyPreview: f.preview,
+            }))
+        );
       };
-      uppy.on("upload-success", uploadSuccessHandler);
+
+      uppy.on("upload-success", getFormFilesFromUppyFiles);
+      uppy.on("thumbnail:generated", getFormFilesFromUppyFiles);
 
       return () => {
         uppy.off("file-added", fileAddedHandler);
         uppy.off("file-removed", fileRemovedHandler);
-        uppy.off("upload-success", uploadSuccessHandler);
+        uppy.off("upload-success", getFormFilesFromUppyFiles);
+        uppy.off("thumbnail:generated", getFormFilesFromUppyFiles);
       };
     }
   }, [uppy, files]);
