@@ -25,7 +25,7 @@ const validationSchema = yup.object({
       /^[a-zA-Z0-9_]*$/,
       "Must contain only alphanumeric characters and underscores."
     ),
-  // TODO: avatarUrl
+  avatarUrl: yup.string(),
 });
 
 type SocialInfoFormInput = InferType<typeof validationSchema>;
@@ -34,13 +34,15 @@ export function useSocialInfoForm(
   userId: string,
   postResult: (result: FetchResult<UpdateUserMutation>) => Promise<any> | void,
   initialNickname?: string | null,
-  initialUsername?: string | null
+  initialUsername?: string | null,
+  initialAvatarUrl?: string | null
 ) {
   const [error, setError] = useState<Error | ApolloError | null>(null);
   const [updateUser] = useUpdateUserMutation();
   const initialValues: SocialInfoFormInput = {
     nickname: initialNickname || "",
     username: initialUsername || "",
+    avatarUrl: initialAvatarUrl || "",
   };
   const handleSubmit: FormikConfig<SocialInfoFormInput>["onSubmit"] =
     useCallback(

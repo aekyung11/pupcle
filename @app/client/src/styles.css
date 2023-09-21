@@ -564,6 +564,17 @@ a.ant-btn-primary:hover {
   filter: contrast(0.8);
 }
 
+.account-submit-button.ant-btn-primary:not(:disabled):hover {
+  background-color: #7fb3e8;
+  filter: contrast(0.8);
+}
+
+.account-edit-button:hover {
+  background-color: #f5f5f5;
+  filter: contrast();
+  border-color: #7fb3e8 !important;
+}
+
 .pup-notes-add-category.ant-input-affix-wrapper {
   border-color: rgb(217 217 217 / var(--tw-border-opacity)) !important;
 }
