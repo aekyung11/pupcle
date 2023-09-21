@@ -1,5 +1,7 @@
-import { FetchResult } from "@apollo/client";
+import { ApolloError, FetchResult } from "@apollo/client";
 import {
+  BasicExamResultsInput,
+  FormFile,
   useBasicExamCategoryForm,
   useBasicExamResultsForm,
   useNewBasicExamResultsCategoryForm,
@@ -35,13 +37,14 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import AwsS3 from "@uppy/aws-s3";
 import Uppy from "@uppy/core";
 import { UppyEventMap } from "@uppy/core/types";
-import { Dashboard } from "@uppy/react";
+import Dashboard from "@uppy/dashboard";
+// import { Dashboard } from "@uppy/react";
 import Webcam from "@uppy/webcam";
 import { Alert, Button, Col, Row } from "antd";
 import axios from "axios";
 import clsx from "clsx";
 import { format, parseISO } from "date-fns";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import Router, { useRouter } from "next/router";
@@ -1392,16 +1395,9 @@ const NewBasicExamResultsCategoryForm: FC<
   );
 };
 
-// from the db
-type AssetMetadata = {
-  name: string;
-  type: string;
-  size: number;
-};
-
 type UseUppyProps = {
   // files that have previously been uploaded to the server. only read on initialization
-  initialFiles: BasicExamResultAsset[];
+  initialFiles: FormFile[];
 
   // no files value, this is uncontrolled
 
@@ -1410,31 +1406,10 @@ type UseUppyProps = {
   onFilesChange?: (formFiles: FormFile[]) => Promise<void> | void;
 };
 
-type FormFile = {
-  kind: string; // photo (?)
-  assetUrl: string;
-  metadata: AssetMetadata;
-
-  // used to track removal
-  uppyFileId?: string;
-};
-
 const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   const [createUploadUrl] = useCreateUploadUrlMutation();
   const [uppy, setUppy] = useState<Uppy | null>(null);
-  const [files, setFiles] = useState<FormFile[]>(
-    initialFiles
-      .filter((asset) => asset.assetUrl)
-      .map((asset) => ({
-        kind: asset.kind,
-        assetUrl: asset.assetUrl!,
-        metadata: {
-          name: "" + (asset.metadata["name"] || ""),
-          size: Number(asset.metadata["size"] || 0),
-          type: "" + (asset.metadata["type"] || ""),
-        },
-      }))
-  );
+  const [files, setFiles] = useState<FormFile[]>(initialFiles);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -1489,7 +1464,6 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
             };
           },
         });
-
       setUppy(uppy);
     }
     // TODO: depend on exam results id
@@ -1539,6 +1513,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
                 type: file.type ?? "",
               },
               uppyFileId: file.id,
+              uppyPreview: file.preview,
             },
           ]);
           console.log("upload-success", { newFile: file });
@@ -1608,6 +1583,228 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   };
 };
 
+const BasicExamResultsFormInner: FC<{
+  error: Error | ApolloError | null;
+  submitLabel: string;
+}> = ({ error, submitLabel }) => {
+  const { values, setFieldValue, initialValues } =
+    useFormikContext<BasicExamResultsInput>();
+
+  const onFilesChange = useCallback(
+    (formFiles: FormFile[]) => {
+      setFieldValue("files", formFiles);
+    },
+    [setFieldValue]
+  );
+
+  const { uppy, isLoading: uppyIsLoading } = useUppy({
+    initialFiles: initialValues.files,
+    onFilesChange,
+  });
+
+  useEffect(() => {
+    if (!uppyIsLoading && uppy) {
+      uppy.use(Dashboard, {
+        inline: false,
+        target: "#uppy-dashboard",
+        trigger: "#uppy-trigger",
+        plugins: ["Webcam"],
+        replaceTargetContent: true,
+        showProgressDetails: true,
+        hideUploadButton: true,
+        hideRetryButton: true,
+        hideCancelButton: true,
+        showRemoveButtonAfterComplete: true,
+        proudlyDisplayPoweredByUppy: false,
+        doneButtonHandler: undefined,
+        // height: 470,
+      });
+    }
+  }, [uppy, uppyIsLoading]);
+
+  const code = getCodeFromError(error);
+  return (
+    <Form className="flex h-full w-full">
+      <div className="w-full">
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              날짜
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="date" className="mb-0 w-full">
+              <DayPickerInput
+                selected={values.takenAt}
+                setSelected={(d) => setFieldValue("takenAt", d)}
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              비용
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="cost" className="mb-0 w-full">
+              <CustomNumberFormat
+                className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                autoComplete="cost"
+                data-cy="pup-notes-basic-input-cost"
+                thousandSeparator={true}
+                prefix={"₩"}
+                value={values.cost}
+                onValueChange={({ value }) => setFieldValue("cost", value)}
+                allowEmptyFormatting
+                decimalScale={0}
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              병원
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="locationKakaoId" className="mb-0 w-full">
+              <Input
+                name="locationKakaoId"
+                placeholder="TODO location chooser"
+                className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
+                // size="large"
+                autoComplete="locationKakaoId"
+                data-cy="pup-notes-basic-input-locationKakaoId"
+                suffix
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              다음 예약일
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="nextReservation" className="mb-0 w-full">
+              <DayPickerInput
+                selected={values.nextReservation}
+                setSelected={(d) => setFieldValue("nextReservation", d)}
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              사진
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="photos" className="mb-0 w-full">
+              {/* <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
+                        <img
+                          className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
+                          src="/pup_notes_add_pics.png"
+                        />
+                      </div> */}
+              {/* show something for uppy is loading */}
+              {uppyIsLoading && <span>Loading files...</span>}
+              {!uppyIsLoading && uppy && (
+                <div
+                  id="uppy-trigger"
+                  className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none"
+                >
+                  <img
+                    className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
+                    src="/pup_notes_add_pics.png"
+                  />
+                </div>
+              )}
+              <div id="uppy-dashboard"></div>
+
+              {values.files.map((f) => (
+                <span
+                  key={f.uppyFileId ?? f.assetUrl}
+                  onClick={() => f.uppyFileId && uppy?.removeFile(f.uppyFileId)}
+                >
+                  asset url: {f.assetUrl}
+                  <br />
+                  {f.uppyPreview && (
+                    <>
+                      preview: <img src={f.uppyPreview} />
+                      <br />
+                    </>
+                  )}
+                  type: {f.metadata.type}
+                </span>
+              ))}
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="mb-12 flex">
+          <div className="flex w-20 items-center justify-end">
+            <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
+              메모
+            </span>
+          </div>
+          <div className="flex w-[calc(100%-80px)] pl-9">
+            <Form.Item name="memo" className="mb-0 w-full">
+              <Input
+                name="memo"
+                className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
+                // size="large"
+                autoComplete="memo"
+                data-cy="pup-notes-basic-input-memo"
+                suffix
+                placeholder="자세한 내용을 기록해보세요."
+              />
+            </Form.Item>
+          </div>
+        </div>
+
+        {error ? (
+          <Form.Item name="_error">
+            <Alert
+              type="error"
+              message={`Failed to save exam results`}
+              description={
+                <span>
+                  {extractError(error).message}
+                  {code ? (
+                    <span>
+                      {" "}
+                      (Error code: <code>ERR_{code}</code>)
+                    </span>
+                  ) : null}
+                </span>
+              }
+            />
+          </Form.Item>
+        ) : null}
+        <Form.Item name="_submit" className="mt-12">
+          <SubmitButton
+            className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
+            htmlType="submit"
+            data-cy="pup-notes-basic-submit-button"
+          >
+            {submitLabel}
+          </SubmitButton>
+        </Form.Item>
+      </div>
+    </Form>
+  );
+};
+
 interface BasicExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
@@ -1621,14 +1818,6 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   basicExamCategoryId,
   onComplete,
 }) => {
-  const onFilesChange = (formFiles) => {
-    // setFieldValue("assets", formFiles);
-  };
-  const { uppy, isLoading: uppyIsLoading } = useUppy({
-    initialFiles: [],
-    onFilesChange,
-  });
-
   const postResult = useCallback(
     async (result: FetchResult<UpsertBasicExamResultsMutation>) => {
       await onComplete(result);
@@ -1645,12 +1834,6 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
       postResult
     );
 
-  const code = getCodeFromError(error);
-
-  if (!uppyIsLoading && uppy) {
-    console.log("uppy files", uppy.getFiles());
-  }
-
   return (
     <>
       <div className="flex h-full w-full flex-row">
@@ -1659,174 +1842,14 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          {({ values, setFieldValue }) => (
-            <Form className="flex h-full w-full">
-              <div className="w-full">
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      날짜
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="date" className="mb-0 w-full">
-                      <DayPickerInput
-                        selected={values.takenAt}
-                        setSelected={(d) => setFieldValue("takenAt", d)}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      비용
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="cost" className="mb-0 w-full">
-                      <CustomNumberFormat
-                        className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
-                        autoComplete="cost"
-                        data-cy="pup-notes-basic-input-cost"
-                        thousandSeparator={true}
-                        prefix={"₩"}
-                        value={values.cost}
-                        onValueChange={({ value }) =>
-                          setFieldValue("cost", value)
-                        }
-                        allowEmptyFormatting
-                        decimalScale={0}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      병원
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="locationKakaoId" className="mb-0 w-full">
-                      <Input
-                        name="locationKakaoId"
-                        placeholder="TODO location chooser"
-                        className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
-                        // size="large"
-                        autoComplete="locationKakaoId"
-                        data-cy="pup-notes-basic-input-locationKakaoId"
-                        suffix
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      다음 예약일
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="nextReservation" className="mb-0 w-full">
-                      <DayPickerInput
-                        selected={values.nextReservation}
-                        setSelected={(d) => setFieldValue("nextReservation", d)}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      사진
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="photos" className="mb-0 w-full">
-                      {/* <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
-                        <img
-                          className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
-                          src="/pup_notes_add_pics.png"
-                        />
-                      </div> */}
-                      {/* show something for uppy is loading */}
-                      {uppyIsLoading && <span>Loading files...</span>}
-                      {!uppyIsLoading && uppy && (
-                        <Dashboard
-                          uppy={uppy}
-                          plugins={["Webcam"]}
-                          replaceTargetContent
-                          showProgressDetails
-                          hideUploadButton
-                          hideRetryButton
-                          hideCancelButton
-                          showRemoveButtonAfterComplete
-                          proudlyDisplayPoweredByUppy={false}
-                          doneButtonHandler={undefined}
-                          // height={470}
-                        />
-                      )}
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="mb-12 flex">
-                  <div className="flex w-20 items-center justify-end">
-                    <span className="font-poppins text-pupcle-20px text-pupcleBlue font-medium">
-                      메모
-                    </span>
-                  </div>
-                  <div className="flex w-[calc(100%-80px)] pl-9">
-                    <Form.Item name="memo" className="mb-0 w-full">
-                      <Input
-                        name="memo"
-                        className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
-                        // size="large"
-                        autoComplete="memo"
-                        data-cy="pup-notes-basic-input-memo"
-                        suffix
-                        placeholder="자세한 내용을 기록해보세요."
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-
-                {error ? (
-                  <Form.Item name="_error">
-                    <Alert
-                      type="error"
-                      message={`Failed to save exam results`}
-                      description={
-                        <span>
-                          {extractError(error).message}
-                          {code ? (
-                            <span>
-                              {" "}
-                              (Error code: <code>ERR_{code}</code>)
-                            </span>
-                          ) : null}
-                        </span>
-                      }
-                    />
-                  </Form.Item>
-                ) : null}
-                <Form.Item name="_submit" className="mt-12">
-                  <SubmitButton
-                    className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
-                    htmlType="submit"
-                    data-cy="pup-notes-basic-submit-button"
-                  >
-                    {submitLabel}
-                  </SubmitButton>
-                </Form.Item>
-              </div>
-            </Form>
-          )}
+          <BasicExamResultsFormInner
+            basicExamCategoryId={basicExamCategoryId}
+            currentPet={currentPet}
+            currentUser={currentUser}
+            onComplete={onComplete}
+            error={error}
+            submitLabel={submitLabel}
+          />
         </Formik>
       </div>
     </>
