@@ -6,7 +6,6 @@ import {
   usePetInfoForm,
 } from "@app/componentlib";
 import {
-  ALLOWED_UPLOAD_CONTENT_TYPES,
   AuthRestrict,
   DayPickerInput,
   FourOhFour,
@@ -54,6 +53,21 @@ import {
   NumericFormatProps,
   useNumericFormat,
 } from "react-number-format";
+
+export const ALLOWED_UPLOAD_CONTENT_TYPES = {
+  "image/apng": "ImageApng",
+  "image/bmp": "ImageBmp",
+  "image/gif": "ImageGif",
+  "image/jpeg": "ImageJpeg",
+  "image/png": "ImagePng",
+  "image/svg+xml": "ImageSvgXml",
+  "image/tiff": "ImageTiff",
+  "image/webp": "ImageWebp",
+  "application/pdf": "ApplicationPdf",
+};
+const ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY = Object.keys(
+  ALLOWED_UPLOAD_CONTENT_TYPES
+);
 
 function localeCompare(a: string, b: string) {
   return a.localeCompare(b);
@@ -1393,7 +1407,7 @@ type UseUppyProps = {
 
   // validation: check progress.uploadComplete on uppy.getFiles()
 
-  // onFilesChange (trigger on file-added, file-removed, upload-success)
+  onFilesChange?: (formFiles: FormFile[]) => Promise<void> | void;
 };
 
 type FormFile = {
@@ -1405,7 +1419,7 @@ type FormFile = {
   uppyFileId?: string;
 };
 
-const useUppy = ({ initialFiles }: UseUppyProps) => {
+const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   const [createUploadUrl] = useCreateUploadUrlMutation();
   const [uppy, setUppy] = useState<Uppy | null>(null);
   const [files, setFiles] = useState<FormFile[]>(
@@ -1427,11 +1441,22 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
       const uppy = new Uppy({
         autoProceed: false,
         // to customize strings: see https://uppy.io/docs/dashboard/#locale
-        // locale: {
-
-        // },
+        locale: {
+          strings: {
+            uploadComplete: "uploadComplete placeholder",
+            browseFiles: "browseFiles placeholder",
+            uploadingXFiles: {
+              0: "**Uploading %{smart_count} file**",
+              1: "**Uploading %{smart_count} files**",
+            },
+            dropPasteImportFiles:
+              "**Drop files here, %{browseFiles} or import from:**",
+            addMoreFiles: "Add more files (hover text)",
+          },
+        },
         restrictions: {
           maxNumberOfFiles: 10,
+          allowedFileTypes: ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY,
         },
       })
         .use(Webcam)
@@ -1571,6 +1596,12 @@ const useUppy = ({ initialFiles }: UseUppyProps) => {
 
   console.log({ files });
 
+  useEffect(() => {
+    if (onFilesChange) {
+      onFilesChange(files);
+    }
+  }, [files, onFilesChange]);
+
   return {
     uppy,
     isLoading,
@@ -1590,7 +1621,13 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   basicExamCategoryId,
   onComplete,
 }) => {
-  const { uppy, isLoading: uppyIsLoading } = useUppy({ initialFiles: [] });
+  const onFilesChange = (formFiles) => {
+    // setFieldValue("assets", formFiles);
+  };
+  const { uppy, isLoading: uppyIsLoading } = useUppy({
+    initialFiles: [],
+    onFilesChange,
+  });
 
   const postResult = useCallback(
     async (result: FetchResult<UpsertBasicExamResultsMutation>) => {

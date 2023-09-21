@@ -15,6 +15,7 @@ import { OurGraphQLContext } from "../graphile.config";
 const isDev = process.env.NODE_ENV !== "production";
 
 enum AllowedUploadContentType {
+  APPLICATION_PDF = "application/pdf",
   IMAGE_APNG = "image/apng",
   IMAGE_BMP = "image/bmp",
   IMAGE_GIF = "image/gif",
@@ -70,6 +71,10 @@ const CreateUploadUrlPlugin = makeExtendSchemaPlugin(() => ({
     The set of content types that we allow users to upload.
     """
     enum AllowedUploadContentType {
+      """
+      application/pdf
+      """
+      APPLICATION_PDF
       """
       image/apng
       """

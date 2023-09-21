@@ -45,6 +45,9 @@ type AcceptInvitationToOrganizationPayload {
 
 """The set of content types that we allow users to upload."""
 enum AllowedUploadContentType {
+  """application/pdf"""
+  APPLICATION_PDF
+
   """image/apng"""
   IMAGE_APNG
 
