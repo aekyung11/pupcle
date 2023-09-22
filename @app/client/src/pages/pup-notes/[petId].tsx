@@ -1872,14 +1872,7 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          <BasicExamResultsFormInner
-            basicExamCategoryId={basicExamCategoryId}
-            currentPet={currentPet}
-            currentUser={currentUser}
-            onComplete={onComplete}
-            error={error}
-            submitLabel={submitLabel}
-          />
+          <BasicExamResultsFormInner error={error} submitLabel={submitLabel} />
         </Formik>
       </div>
     </>
