@@ -26,6 +26,7 @@ import {
   UpsertBasicExamResultsMutation,
   useCreateUploadUrlMutation,
   usePupNotesPageQuery,
+  UserAssetKind,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
@@ -1506,7 +1507,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
             .map((f) => ({
               assetId: f.meta["assetId"] as string | undefined,
               assetUrl: f.response?.uploadURL!,
-              kind: "photo", // hardcoded
+              kind: UserAssetKind.Image, // TODO: hardcoded
               metadata: {
                 name: f.name,
                 size: f.size,
@@ -1607,17 +1608,20 @@ const BasicExamResultsFormInner: FC<{
     onFilesChange,
   });
 
+  const checkUppyFiles = useCallback(() => {
+    return uppy && uppy.getFiles().every((f) => f.progress?.uploadComplete);
+  }, [uppy]);
+
   const validateUppyFiles = useCallback(
     (event: Event) => {
-      const valid =
-        uppy && uppy.getFiles().every((f) => f.progress?.uploadComplete);
+      const valid = checkUppyFiles();
 
       if (!valid) {
         event.preventDefault();
         setUppyFilesInvalidAlertOpen(true);
       }
     },
-    [uppy, setUppyFilesInvalidAlertOpen]
+    [checkUppyFiles, setUppyFilesInvalidAlertOpen]
   );
 
   const code = getCodeFromError(error);
@@ -1778,11 +1782,18 @@ const BasicExamResultsFormInner: FC<{
                         </div>
 
                         <Button
+                          onClick={() => {
+                            const valid = checkUppyFiles();
+                            if (!valid) {
+                              setUppyFilesInvalidAlertOpen(true);
+                            } else {
+                              setUppyDialogOpen(false);
+                            }
+                          }}
                           className={clsx(
                             "absolute top-10 right-10 h-[18px] w-[18px] border-none p-0"
                           )}
                         >
-                          {/* <Cross1Icon className="h-4 w-4 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400" /> */}
                           <img
                             src="/close_button_blue.png"
                             className="h-[18px] w-[18px]"
