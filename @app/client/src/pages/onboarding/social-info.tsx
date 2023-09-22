@@ -5,13 +5,9 @@ import {
   FramedAvatarUpload,
   SharedLayout,
 } from "@app/components";
-import {
-  SharedLayout_UserFragment,
-  useSharedQuery,
-  useUpdateUserMutation,
-} from "@app/graphql";
+import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import { Alert, Col, InputRef, message, Row } from "antd";
+import { Alert, Col, InputRef, Row } from "antd";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
@@ -62,7 +58,8 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
       currentUser.id,
       postResult,
       currentUser.nickname,
-      currentUser.username
+      currentUser.username,
+      currentUser.avatarUrl
     );
 
   const focusElement = useRef<InputRef>(null);
@@ -72,27 +69,6 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
   );
 
   const code = getCodeFromError(error);
-
-  const [updateUser] = useUpdateUserMutation();
-
-  const handleAvatarUpload = useCallback(
-    async (avatarUrl: string) => {
-      try {
-        await updateUser({
-          variables: {
-            id: currentUser.id,
-            patch: {
-              avatarUrl,
-            },
-          },
-        });
-        message.success("Successfully updated profile picture");
-      } catch (e) {
-        message.error("Error updating profile picture");
-      }
-    },
-    [currentUser.id, updateUser]
-  );
 
   return (
     <>
@@ -138,18 +114,27 @@ const SocialInfoPageInner: FC<SocialInfoPageInnerProps> = ({
                 alt=""
               />
             </Row>
-            <FramedAvatarUpload
-              avatarUrl={currentUser.avatarUrl}
-              disabled={false}
-              onUpload={handleAvatarUpload}
-            />
             <Formik
               validationSchema={validationSchema}
               initialValues={initialValues}
               onSubmit={handleSubmit}
             >
-              {() => (
+              {({ values, setFieldValue }) => (
                 <Form>
+                  <Form.Item
+                    name="avatarUrl"
+                    valuePropName="avatarUrl"
+                    trigger="onUpload"
+                    className="mb-0"
+                  >
+                    <FramedAvatarUpload
+                      disabled={false}
+                      avatarUrl={values.avatarUrl}
+                      onUpload={async (avatarUrl) =>
+                        setFieldValue("avatarUrl", avatarUrl)
+                      }
+                    />
+                  </Form.Item>
                   <Row
                     style={{
                       display: "flex",
