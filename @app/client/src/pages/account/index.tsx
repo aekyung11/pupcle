@@ -233,6 +233,7 @@ const AccountBasicPageInner: FC<AccountBasicPageInnerProps> = ({
                       autoComplete="nickname name"
                       ref={focusElement}
                       data-cy="registerpage-input-name"
+                      placeholder="닉네임을 입력하세요"
                       suffix
                       disabled={!editingBasicInfo}
                     />
@@ -247,6 +248,7 @@ const AccountBasicPageInner: FC<AccountBasicPageInnerProps> = ({
                       autoComplete="username"
                       ref={focusElement}
                       data-cy="registerpage-input-username"
+                      placeholder="ID를 입력하세요(‘_’, ’.’ 제외한 특수문자 불가)"
                       suffix
                       disabled={!editingBasicInfo}
                     />
