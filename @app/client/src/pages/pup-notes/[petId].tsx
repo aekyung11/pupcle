@@ -37,8 +37,7 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import AwsS3 from "@uppy/aws-s3";
 import Uppy from "@uppy/core";
 import { UppyEventMap } from "@uppy/core/types";
-import Dashboard from "@uppy/dashboard";
-// import { Dashboard } from "@uppy/react";
+import { Dashboard } from "@uppy/react";
 import Webcam from "@uppy/webcam";
 import { Alert, Button, Col, Row } from "antd";
 import axios from "axios";
@@ -1600,27 +1599,9 @@ const BasicExamResultsFormInner: FC<{
     onFilesChange,
   });
 
-  useEffect(() => {
-    if (!uppyIsLoading && uppy) {
-      uppy.use(Dashboard, {
-        inline: false,
-        target: "#uppy-dashboard",
-        trigger: "#uppy-trigger",
-        plugins: ["Webcam"],
-        replaceTargetContent: true,
-        showProgressDetails: true,
-        hideUploadButton: true,
-        hideRetryButton: true,
-        hideCancelButton: true,
-        showRemoveButtonAfterComplete: true,
-        proudlyDisplayPoweredByUppy: false,
-        doneButtonHandler: undefined,
-        // height: 470,
-      });
-    }
-  }, [uppy, uppyIsLoading]);
-
   const code = getCodeFromError(error);
+
+  const [uppyDialogOpen, setUppyDialogOpen] = useState(false);
   return (
     <Form className="flex h-full w-full">
       <div className="w-full">
@@ -1717,17 +1698,68 @@ const BasicExamResultsFormInner: FC<{
               {/* show something for uppy is loading */}
               {uppyIsLoading && <span>Loading files...</span>}
               {!uppyIsLoading && uppy && (
-                <div
-                  id="uppy-trigger"
-                  className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none"
-                >
-                  <img
-                    className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
-                    src="/pup_notes_add_pics.png"
-                  />
-                </div>
+                <>
+                  <div
+                    onClick={() => setUppyDialogOpen(true)}
+                    className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none"
+                  >
+                    <img
+                      className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
+                      src="/pup_notes_add_pics.png"
+                    />
+                  </div>
+                  <Dialog.Root
+                    open={uppyDialogOpen}
+                    onOpenChange={setUppyDialogOpen}
+                  >
+                    <Dialog.Trigger asChild>
+                      <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+                        <img
+                          src="/pup_notes_add_new_floating_button.png"
+                          className="h-[100px] w-[100px]"
+                        />
+                      </Button>
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                      <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                      <Dialog.Content
+                        className={clsx(
+                          "fixed z-20",
+                          "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                          "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+                        )}
+                      >
+                        <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                          <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                            항목을 선택해주세요.
+                          </span>
+                          <img
+                            src="/paw.png"
+                            className="h-fit w-[43px]"
+                            alt=""
+                          />
+                        </Dialog.Title>
+                        <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+                        <div className="flex w-full justify-center">
+                          <Dashboard
+                            uppy={uppy}
+                            plugins={["Webcam"]}
+                            replaceTargetContent
+                            showProgressDetails
+                            hideUploadButton
+                            hideRetryButton
+                            hideCancelButton
+                            showRemoveButtonAfterComplete
+                            proudlyDisplayPoweredByUppy={false}
+                            doneButtonHandler={undefined}
+                            // height={470}
+                          />
+                        </div>
+                      </Dialog.Content>
+                    </Dialog.Portal>
+                  </Dialog.Root>
+                </>
               )}
-              <div id="uppy-dashboard"></div>
 
               {values.files.map((f) => (
                 <span
