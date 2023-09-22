@@ -16,7 +16,6 @@ import {
 } from "@app/components";
 import {
   AllowedUploadContentType,
-  BasicExamResultAsset,
   PetGender,
   PupNotesPage_BasicExamCategoryFragment,
   PupNotesPage_PetFragment,
@@ -29,6 +28,7 @@ import {
   usePupNotesPageQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as Select from "@radix-ui/react-select";
@@ -46,7 +46,7 @@ import { format, parseISO } from "date-fns";
 import { Formik, useFormikContext } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -66,6 +66,8 @@ export const ALLOWED_UPLOAD_CONTENT_TYPES = {
   "image/tiff": "ImageTiff",
   "image/webp": "ImageWebp",
   "application/pdf": "ApplicationPdf",
+  "video/quicktime": "VideoQuicktime",
+  "application/zip": "ApplicationZip",
 };
 const ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY = Object.keys(
   ALLOWED_UPLOAD_CONTENT_TYPES
@@ -1132,7 +1134,6 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                               </SubmitButton>
                             </Form.Item>
                             <Form.Item name="_cancel" className="mb-10">
-                              <button className="Button"></button>
                               <Dialog.Close asChild>
                                 <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray h-[63px] w-full rounded-full border-[3px] bg-transparent hover:border-none">
                                   <span className="font-poppins text-pupcle-20px text-pupcleGray text-center font-bold">
@@ -1584,6 +1585,10 @@ const BasicExamResultsFormInner: FC<{
   error: Error | ApolloError | null;
   submitLabel: string;
 }> = ({ error, submitLabel }) => {
+  const [uppyDialogOpen, setUppyDialogOpen] = useState(false);
+  const [uppyFilesInvalidAlertOpen, setUppyFilesInvalidAlertOpen] =
+    useState(false);
+
   const { values, setFieldValue, initialValues } =
     useFormikContext<BasicExamResultsInput>();
 
@@ -1599,9 +1604,20 @@ const BasicExamResultsFormInner: FC<{
     onFilesChange,
   });
 
-  const code = getCodeFromError(error);
+  const validateUppyFiles = useCallback(
+    (event: Event) => {
+      const valid =
+        uppy && uppy.getFiles().every((f) => f.progress?.uploadComplete);
 
-  const [uppyDialogOpen, setUppyDialogOpen] = useState(false);
+      if (!valid) {
+        event.preventDefault();
+        setUppyFilesInvalidAlertOpen(true);
+      }
+    },
+    [uppy, setUppyFilesInvalidAlertOpen]
+  );
+
+  const code = getCodeFromError(error);
   return (
     <Form className="flex h-full w-full">
       <div className="w-full">
@@ -1728,6 +1744,8 @@ const BasicExamResultsFormInner: FC<{
                           "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
                           "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
                         )}
+                        onEscapeKeyDown={validateUppyFiles}
+                        onPointerDownOutside={validateUppyFiles}
                       >
                         <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
                           <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
@@ -1765,6 +1783,44 @@ const BasicExamResultsFormInner: FC<{
                           {/* <Cross1Icon className="h-4 w-4 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400" /> */}
                           X
                         </Dialog.Close>
+
+                        <AlertDialog.Root
+                          open={uppyFilesInvalidAlertOpen}
+                          onOpenChange={setUppyFilesInvalidAlertOpen}
+                        >
+                          <AlertDialog.Portal>
+                            <AlertDialog.Overlay className="fixed inset-0 z-20 bg-black/50" />
+                            <AlertDialog.Content
+                              forceMount
+                              className={clsx(
+                                "fixed z-50",
+                                "w-[95vw] max-w-md rounded-lg p-4 md:w-full",
+                                "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+                                "bg-white dark:bg-gray-800",
+                                "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                              )}
+                            >
+                              <AlertDialog.Title className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                Your files have not completed uploading
+                              </AlertDialog.Title>
+                              <AlertDialog.Description className="mt-2 text-sm font-normal text-gray-700 dark:text-gray-400">
+                                Please remove or retry incomplete files
+                              </AlertDialog.Description>
+                              <div className="mt-4 flex justify-end space-x-2">
+                                <AlertDialog.Action
+                                  className={clsx(
+                                    "inline-flex select-none justify-center rounded-md px-4 py-2 text-sm font-medium",
+                                    "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-700 dark:text-gray-100 dark:hover:bg-purple-600",
+                                    "border border-transparent",
+                                    "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                                  )}
+                                >
+                                  OK
+                                </AlertDialog.Action>
+                              </div>
+                            </AlertDialog.Content>
+                          </AlertDialog.Portal>
+                        </AlertDialog.Root>
                       </Dialog.Content>
                     </Dialog.Portal>
                   </Dialog.Root>
