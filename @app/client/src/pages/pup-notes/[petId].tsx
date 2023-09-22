@@ -1755,6 +1755,16 @@ const BasicExamResultsFormInner: FC<{
                             // height={470}
                           />
                         </div>
+
+                        <Dialog.Close
+                          className={clsx(
+                            "absolute top-3.5 right-3.5 inline-flex items-center justify-center rounded-full p-1",
+                            "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                          )}
+                        >
+                          {/* <Cross1Icon className="h-4 w-4 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400" /> */}
+                          X
+                        </Dialog.Close>
                       </Dialog.Content>
                     </Dialog.Portal>
                   </Dialog.Root>
