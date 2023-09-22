@@ -646,3 +646,243 @@ a.ant-btn-primary:hover {
 .ant-form input {
   background-color: rgb(245, 245, 245) !important;
 }
+
+.uppy-Dashboard-inner {
+  background-color: transparent;
+  border: none;
+}
+
+[data-uppy-drag-drop-supported="true"] .uppy-Dashboard-AddFiles {
+  border: none;
+}
+
+.uppy-Dashboard-dropFilesHereHint {
+  border-color: #7fb3e8;
+  border-style: dashed;
+  border-width: 1px;
+  color: #8f9092;
+  background-image: url("/upload_arrow_icon.svg");
+}
+
+.uppy-DashboardContent-bar {
+  background-color: transparent;
+  border-style: none;
+}
+
+.uppy-DashboardContent-title {
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.uppy-DashboardContent-addMore {
+  font-family: Poppins;
+  font-size: 14px;
+  color: #7fb3e8;
+}
+
+.uppy-size--md .uppy-DashboardContent-title {
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.uppy-size--md .uppy-DashboardContent-addMore {
+  font-family: Poppins;
+  font-size: 14px;
+  color: #7fb3e8;
+}
+
+.uppy-DashboardContent-back {
+  font-family: Poppins;
+  font-size: 14px;
+  color: #7fb3e8;
+  border-style: none;
+  background-color: transparent;
+}
+
+.uppy-size--md .uppy-Dashboard-files {
+  padding-top: 0;
+}
+
+[dir="ltr"]
+  .uppy-Dashboard:not(.uppy-Dashboard--singleFile)
+  .uppy-Dashboard-Item {
+  padding-right: 0;
+  width: 140px;
+}
+
+.uppy-size--lg .uppy-Dashboard-Item-preview {
+  height: 140px;
+}
+
+.uppy-Dashboard-Item-fileName {
+  align-items: baseline;
+  display: flex;
+  width: 140px;
+  overflow: scroll;
+  white-space: nowrap;
+}
+
+.uppy-Dashboard--singleFile .uppy-Dashboard-Item-fileName {
+  align-items: baseline;
+  display: flex;
+  width: 100%;
+}
+
+.uppy-Dashboard--singleFile .uppy-Dashboard-Item {
+  padding: 0;
+  margin: 0;
+  width: 320px;
+  height: 380px;
+  justify-content: space-between;
+}
+
+.uppy-size--md .uppy-Dashboard-Item-action--remove {
+  position: absolute;
+  top: -6px;
+  right: -4px !important;
+}
+
+.uppy-Dashboard--singleFile.uppy-size--height-md
+  .uppy-Dashboard-Item-action--remove {
+  position: absolute;
+  top: -6px;
+  right: -4px !important;
+}
+
+.uppy-Dashboard-Item-preview {
+  border-style: solid;
+  border-width: 2px;
+  width: 320px;
+  height: 320px;
+}
+
+.uppy-Dashboard--singleFile.uppy-size--md .uppy-Dashboard-Item-preview {
+  max-height: none;
+  width: 320px;
+  height: 320px;
+}
+
+.uppy-Dashboard--singleFile .uppy-Dashboard-Item-preview {
+  flex-grow: unset;
+}
+
+.uppy-Dashboard-Item-name {
+  font-family: Poppins;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.uppy-size--md.uppy-Dashboard--singleFile .uppy-Dashboard-Item-name {
+  font-family: Poppins;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.uppy-Dashboard-Item-statusSize {
+  font-family: Poppins;
+  font-size: 14px;
+  color: #8f9092;
+}
+
+.uppy-size--md.uppy-Dashboard--singleFile .uppy-Dashboard-Item-statusSize {
+  font-family: Poppins;
+  font-size: 14px;
+  color: #8f9092;
+}
+
+.uppy-Dashboard-Item-preview {
+  border-style: solid;
+  border-color: #f5f5f5;
+  border-width: 2px;
+}
+
+.uppy-Dashboard-AddFiles-title {
+  margin: 0;
+  padding: 0;
+}
+
+.uppy-size--md .uppy-Dashboard-AddFiles-title {
+  margin: 0;
+  padding: 0;
+}
+
+.uppy-Dashboard-AddFiles-list {
+  margin: 0;
+}
+
+.uppy-size--md .uppy-Dashboard-AddFiles-list {
+  margin: 0;
+}
+
+.uppy-DashboardTab {
+  margin-bottom: 0;
+  margin: 0 30px;
+}
+
+.uppy-DashboardTab .uppy-DashboardTab-btn:not([aria-controls])::before {
+  content: "";
+  background-image: url("/uppy_gallery_icon.svg");
+  background-size: 100px 100px;
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+}
+
+.uppy-DashboardTab .uppy-DashboardTab-btn:not([aria-controls]) svg {
+  display: none;
+}
+
+.uppy-DashboardTab .uppy-DashboardTab-btn:not([aria-controls]) {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+}
+
+.uppy-DashboardTab
+  button[aria-controls="uppy-DashboardContent-panel--Webcam"]::before {
+  content: "";
+  background-image: url("/uppy_camera_icon.svg");
+  background-size: 100px 100px;
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+}
+
+.uppy-DashboardTab
+  button[aria-controls="uppy-DashboardContent-panel--Webcam"]
+  svg {
+  display: none;
+}
+
+.uppy-DashboardTab button[aria-controls="uppy-DashboardContent-panel--Webcam"] {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+}
+
+.uppy-size--md .uppy-DashboardTab {
+  margin-bottom: 0;
+  margin: 0 30px;
+}
+
+.uppy-size--md .uppy-DashboardTab-btn {
+  flex-direction: row;
+  padding: 0;
+}
+
+.uppy-size--md .uppy-DashboardTab-btn:hover {
+  filter: contrast(0.8);
+}
+
+.uppy-DashboardTab-inner {
+  display: none;
+  margin: 0;
+}
+
+.uppy-StatusBar-statusPrimary {
+  font-family: Poppins;
+  font-weight: 500;
+  font-size: 16px;
+}

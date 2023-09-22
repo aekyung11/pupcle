@@ -269,6 +269,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             width: "calc(100vw - 280px)",
             margin: "0px 0px 20px 40px",
             borderRadius: "30px",
+            overflow: "scroll",
             // display: "flex",
           }}
         >
@@ -1418,15 +1419,16 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
         // to customize strings: see https://uppy.io/docs/dashboard/#locale
         locale: {
           strings: {
-            uploadComplete: "uploadComplete placeholder",
+            uploadComplete: "사진이 정상적으로 업로드 되었습니다.",
             browseFiles: "browseFiles placeholder",
             uploadingXFiles: {
               0: "**Uploading %{smart_count} file**",
               1: "**Uploading %{smart_count} files**",
             },
-            dropPasteImportFiles:
-              "**Drop files here, %{browseFiles} or import from:**",
+            dropPasteImportFiles: "",
             addMoreFiles: "Add more files (hover text)",
+            myDevice: "",
+            pluginNameCamera: " ",
           },
         },
         restrictions: {
@@ -1750,7 +1752,7 @@ const BasicExamResultsFormInner: FC<{
                       >
                         <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
                           <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
-                            항목을 선택해주세요.
+                            사진을 추가해주세요.
                           </span>
                           <img
                             src="/paw.png"
@@ -1759,7 +1761,7 @@ const BasicExamResultsFormInner: FC<{
                           />
                         </Dialog.Title>
                         <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-                        <div className="flex w-full justify-center">
+                        <div className="flex w-full justify-center pt-5">
                           <Dashboard
                             uppy={uppy}
                             plugins={["Webcam"]}
@@ -1775,15 +1777,17 @@ const BasicExamResultsFormInner: FC<{
                           />
                         </div>
 
-                        <Dialog.Close
+                        <Button
                           className={clsx(
-                            "absolute top-3.5 right-3.5 inline-flex items-center justify-center rounded-full p-1",
-                            "focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+                            "absolute top-10 right-10 h-[18px] w-[18px] border-none p-0"
                           )}
                         >
                           {/* <Cross1Icon className="h-4 w-4 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400" /> */}
-                          X
-                        </Dialog.Close>
+                          <img
+                            src="/close_button_blue.png"
+                            className="h-[18px] w-[18px]"
+                          />
+                        </Button>
 
                         <AlertDialog.Root
                           open={uppyFilesInvalidAlertOpen}
