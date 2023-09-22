@@ -1502,6 +1502,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
             .getFiles()
             .filter((f) => f.response?.uploadURL)
             .map((f) => ({
+              assetId: f.meta["assetId"] as string | undefined,
               assetUrl: f.response?.uploadURL!,
               kind: "photo", // hardcoded
               metadata: {
@@ -1541,7 +1542,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
                   name: f.metadata.name,
                   type: f.metadata.type, // blob type
                   data: response.data,
-                  meta: { existingFile: true },
+                  meta: { existingFile: true, assetId: f.assetId },
                 });
                 return {
                   ...f,

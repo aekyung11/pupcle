@@ -2,6 +2,9 @@ import { ApolloError, FetchResult } from "@apollo/client";
 import {
   PupNotesPage_BasicExamResultsFragment,
   UpsertBasicExamResultsMutation,
+  useDeleteBasicExamResultsAssetMutation,
+  UserAssetKind,
+  useUpsertBasicExamResultsAssetBatchMutation,
   useUpsertBasicExamResultsMutation,
 } from "@app/graphql";
 import { formatISO } from "date-fns";
@@ -18,6 +21,7 @@ const assetMetadataSchema = yup.object({
 });
 
 const formFileSchema = yup.object({
+  assetId: yup.string().optional(),
   kind: yup.string().required(), // photo (?)
   assetUrl: yup.string().required(),
   metadata: assetMetadataSchema.required(),
@@ -53,6 +57,10 @@ export function useBasicExamResultsForm(
 ) {
   const [error, setError] = useState<Error | ApolloError | null>(null);
   const [upsertBasicExamResults] = useUpsertBasicExamResultsMutation();
+  const [deleteBasicExamResultsAsset] =
+    useDeleteBasicExamResultsAssetMutation();
+  const [upsertBasicExamResultsAssetBatch] =
+    useUpsertBasicExamResultsAssetBatchMutation();
   const initialValues: BasicExamResultsInput = {
     name: basicExamResults?.takenAt ?? "",
     cost: basicExamResults?.cost?.amount,
@@ -101,6 +109,41 @@ export function useBasicExamResultsForm(
               },
             },
           });
+
+          const newAssetIds = new Set(
+            values.files.map((f) => f.assetId).filter((x) => !!x)
+          );
+          const removedAssetIds = initialValues.files
+            .map((f) => f.assetId)
+            .filter((id) => !!id && !newAssetIds.has(id));
+          await Promise.all(
+            removedAssetIds.map((id) =>
+              deleteBasicExamResultsAsset({
+                variables: {
+                  input: {
+                    id,
+                  },
+                },
+              })
+            )
+          );
+
+          // TODO: order assets
+          await upsertBasicExamResultsAssetBatch({
+            variables: {
+              input: {
+                basicExamResultAssets: values.files.map((f) => ({
+                  id: f.assetId,
+                  basicExamResultId: result.data?.upsertBasicExamResult
+                    ?.basicExamResult?.id as unknown as string,
+                  userId,
+                  assetUrl: f.assetUrl,
+                  kind: UserAssetKind.Image, // TODO: hardcoded
+                  metadata: f.metadata,
+                })),
+              },
+            },
+          });
           resetForm();
           const postResultReturn = postResult(result);
           if (postResultReturn instanceof Promise) {
@@ -113,12 +156,15 @@ export function useBasicExamResultsForm(
         }
       },
       [
-        basicExamResults?.id,
         upsertBasicExamResults,
+        basicExamResults?.id,
         basicExamCategoryId,
         petId,
         userId,
+        initialValues.files,
+        upsertBasicExamResultsAssetBatch,
         postResult,
+        deleteBasicExamResultsAsset,
       ]
     );
 

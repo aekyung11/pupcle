@@ -1,0 +1,6 @@
+mutation DeleteBasicExamResultsAsset($input: DeleteBasicExamResultAssetInput!) {
+  deleteBasicExamResultAsset(input: $input) {
+    clientMutationId
+    deletedBasicExamResultAssetNodeId
+  }
+}

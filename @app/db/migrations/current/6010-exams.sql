@@ -162,6 +162,8 @@ grant insert (
   metadata
 ) on app_public.basic_exam_result_assets to :DATABASE_VISITOR;
 grant update (
+  user_id,
+  basic_exam_result_id,
   kind,
   asset_url,
   metadata

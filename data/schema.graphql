@@ -351,8 +351,10 @@ Represents an update to a `BasicExamResultAsset`. Fields that are set will be up
 """
 input BasicExamResultAssetPatch {
   assetUrl: String
+  basicExamResultId: UUID
   kind: UserAssetKind
   metadata: JSON
+  userId: UUID
 }
 
 """A connection to a list of `BasicExamResultAsset` values."""
