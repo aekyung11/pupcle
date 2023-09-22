@@ -32,12 +32,12 @@ export type FormFile = InferType<typeof formFileSchema>;
 const submitLabel = "Save";
 
 const validationSchema = yup.object({
-  takenAt: yup.date().required(),
-  cost: yup.string().required(),
-  locationKakaoId: yup.string().required(),
-  nextReservation: yup.date().required(),
+  takenAt: yup.date().optional(),
+  cost: yup.string().optional(),
+  locationKakaoId: yup.string().optional(),
+  nextReservation: yup.date().optional(),
   files: yup.array(formFileSchema).required(),
-  memo: yup.string().required(),
+  memo: yup.string().optional(),
 });
 
 export type BasicExamResultsInput = InferType<typeof validationSchema>;
