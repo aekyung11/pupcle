@@ -4,12 +4,13 @@ create type app_public.money as (
 );
 
 create table app_public.exam_categories (
-  id              uuid primary key default gen_random_uuid(),
-  user_id         uuid not null references app_public.users on delete cascade,
-  name            text not null,
+  id                  uuid primary key default gen_random_uuid(),
+  user_id             uuid not null references app_public.users on delete cascade,
+  name                text not null,
   is_default_category boolean not null default false,
-  created_at      timestamptz not null default now(),
-  updated_at      timestamptz not null default now(),
+  has_data            boolean not null default false,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now(),
   unique (user_id, name)
 );
 alter table app_public.exam_categories enable row level security;
@@ -25,12 +26,14 @@ grant select, delete on app_public.exam_categories to :DATABASE_VISITOR;
 grant insert (
   id,
   user_id,
-  name
+  name,
+  has_data
 ) on app_public.exam_categories to :DATABASE_VISITOR;
 grant update (
   id,
   user_id,
-  name
+  name,
+  has_data
 ) on app_public.exam_categories to :DATABASE_VISITOR;
 
 create trigger _100_timestamps
@@ -45,6 +48,7 @@ begin
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '피부 검사', true) on conflict do nothing;
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '심장 청진', true) on conflict do nothing;
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '신체 검사', true) on conflict do nothing;
+  insert into app_public.exam_categories(user_id, name, is_default_category, has_data) values(NEW.id, '기본혈액검사(CBC)', true, true) on conflict do nothing;
   return NEW;
 end;
 $$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
@@ -67,6 +71,10 @@ create table app_public.exam_results (
   kakao_id                varchar(255),
   next_reservation        timestamptz,
   memo                    text,
+  --  we only support numbers here
+  -- json data is only read when the exam_category specifies has_data
+  -- data defaults to null
+  -- add a json data here {values: [{name: "WBC", type: "number", value: 11.8}]}
   created_at              timestamptz not null default now(),
   updated_at              timestamptz not null default now(),
   sort_datetime           timestamptz generated always as (coalesce(taken_at, created_at)) stored
@@ -173,5 +181,3 @@ create trigger _100_timestamps
   before insert or update on app_public.exam_result_assets
   for each row
   execute procedure app_private.tg__timestamps();
-
--- special_exam_results

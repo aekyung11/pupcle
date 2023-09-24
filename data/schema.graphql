@@ -1273,6 +1273,7 @@ type ExamCategory {
     """The method to use when ordering `ExamResult`."""
     orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
   ): ExamResultsConnection!
+  hasData: Boolean!
   id: UUID!
   isDefaultCategory: Boolean!
   name: String!
@@ -1323,6 +1324,7 @@ input ExamCategoryFilter {
 
 """An input for mutations affecting `ExamCategory`"""
 input ExamCategoryInput {
+  hasData: Boolean
   id: UUID
   name: String!
   userId: UUID!
@@ -1332,6 +1334,7 @@ input ExamCategoryInput {
 Represents an update to a `ExamCategory`. Fields that are set will be updated.
 """
 input ExamCategoryPatch {
+  hasData: Boolean
   id: UUID
   name: String
   userId: UUID

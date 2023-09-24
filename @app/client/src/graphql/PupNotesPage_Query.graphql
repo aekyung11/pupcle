@@ -3,6 +3,7 @@ fragment PupNotesPage_ExamResults on ExamResult {
   examCategory {
     id
     name
+    hasData
   }
   examResultAssets {
     nodes {
@@ -43,6 +44,7 @@ fragment PupNotesPage_ExamCategory on ExamCategory {
   id
   isDefaultCategory
   name
+  hasData
 }
 
 fragment PupNotesPage_User on User {
