@@ -43,7 +43,7 @@ import Uppy from "@uppy/core";
 import { UppyEventMap } from "@uppy/core/types";
 import { Dashboard } from "@uppy/react";
 import Webcam from "@uppy/webcam";
-import { Alert, Button, Col, Row } from "antd";
+import { Alert, Button, Col, Row, Tooltip } from "antd";
 import axios from "axios";
 import clsx from "clsx";
 import { format, parseISO } from "date-fns";
@@ -313,22 +313,34 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                 src="/pup_notes_register_detail.png"
                 className="mb-14 h-[302px] w-[322px]"
               />
-              <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
-                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
-                  세부검사 등록하기
-                </span>
-              </Button>
+              <Tooltip
+                placement="bottom"
+                title={
+                  "슬개골 검사, 치과 검사, X-RAY 등 수치 입력이 필요없는 진료예요."
+                }
+              >
+                <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                  <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                    수치 입력이 필요없어요
+                  </span>
+                </Button>
+              </Tooltip>
             </div>
             <div className="flex h-full w-1/2 flex-col items-center justify-center">
               <img
                 src="/pup_notes_register_examination_result.png"
                 className="mb-14 h-[302px] w-[322px]"
               />
-              <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
-                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
-                  검사수치 등록하기
-                </span>
-              </Button>
+              <Tooltip
+                placement="bottom"
+                title={"혈액 검사(CBC)와 같이 수치가 존재하는 진료예요."}
+              >
+                <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                  <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                    수치 입력이 필요해요
+                  </span>
+                </Button>
+              </Tooltip>
             </div>
           </Tabs.Content>
           <Tabs.Content
