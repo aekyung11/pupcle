@@ -410,83 +410,10 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                 기본혈액검사
               </span>
             </div>
-            <div className="h-[calc(100vh-6rem-125px-91px-20px)] w-full px-16">
-              <div className="relative h-full w-1/2">
-                <VictoryChart
-                  title="MCV"
-                  theme={pupcle}
-                  domainPadding={{ x: 50, y: 10 }}
-                >
-                  <VictoryAxis
-                    style={{
-                      tickLabels: {
-                        fontFamily: "Poppins",
-                        fontWeight: 500,
-                      },
-                    }}
-                    tickValues={chartdata.map((e) => e.x)}
-                    tickFormat={(tick) => {
-                      return `${format(tick, "yyyy")}\n${format(
-                        tick,
-                        "MM.dd"
-                      )}`;
-                    }}
-                  />
-                  <VictoryAxis
-                    style={{
-                      tickLabels: {
-                        fontFamily: "Poppins",
-                        fontWeight: 500,
-                      },
-                    }}
-                    dependentAxis
-                  />
-                  <VictoryLine
-                    style={{
-                      data: { stroke: "#d9d9d9" },
-                      parent: { border: "1px solid #ccc" },
-                    }}
-                    // data={[
-                    //   { x: 1, y: 2 },
-                    //   { x: 2, y: 3 },
-                    //   { x: 3, y: 5 },
-                    //   { x: 4, y: 4 },
-                    //   { x: 5, y: 7 },
-                    // ]}
-                    data={chartdata}
-                    labels={({ datum }) => datum.y}
-                    labelComponent={
-                      <VictoryLabel
-                        lineHeight={1}
-                        capHeight={0.8}
-                        backgroundStyle={{
-                          fill: "#D9D9D9",
-                        }}
-                        style={{
-                          fill: "white",
-                          fontFamily: "Poppins",
-                          fontWeight: 500,
-                          fontSize: "16px",
-                        }}
-                        backgroundPadding={{
-                          top: 6,
-                          bottom: 6,
-                          left: 20,
-                          right: 20,
-                        }}
-                        backgroundComponent={<Rect rx={12} />}
-                        renderInPortal
-                        dy={-20}
-                      />
-                    }
-                  />
-                </VictoryChart>
-                <div className="bg-pupcleLightLightGray absolute left-0 top-[72px] flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
-                  <span className="font-poppins text-pupcleGray text-[16px] font-medium">
-                    MCV
-                  </span>
-                </div>
-              </div>
+            <div className="my-[72px] grid h-[calc(100vh-6rem-125px-91px-20px-144px)] w-full grid-cols-2 justify-items-center overflow-scroll px-16">
+              <ExamDataChart />
+              <ExamDataChart />
+              <ExamDataChart />
             </div>
             {/* <div className="flex w-full flex-col items-center">
               <Dialog.Root>
@@ -2200,6 +2127,80 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
         </Formik>
       </div>
     </>
+  );
+};
+
+const ExamDataChart: FC<{}> = () => {
+  return (
+    <div className="relative h-[600px] w-[500px]">
+      <VictoryChart title="MCV" theme={pupcle} domainPadding={{ x: 50, y: 10 }}>
+        <VictoryAxis
+          style={{
+            tickLabels: {
+              fontFamily: "Poppins",
+              fontWeight: 500,
+            },
+          }}
+          tickValues={chartdata.map((e) => e.x)}
+          tickFormat={(tick) => {
+            return `${format(tick, "yyyy")}\n${format(tick, "MM.dd")}`;
+          }}
+        />
+        <VictoryAxis
+          style={{
+            tickLabels: {
+              fontFamily: "Poppins",
+              fontWeight: 500,
+            },
+          }}
+          dependentAxis
+        />
+        <VictoryLine
+          style={{
+            data: { stroke: "#d9d9d9" },
+            parent: { border: "1px solid #ccc" },
+          }}
+          // data={[
+          //   { x: 1, y: 2 },
+          //   { x: 2, y: 3 },
+          //   { x: 3, y: 5 },
+          //   { x: 4, y: 4 },
+          //   { x: 5, y: 7 },
+          // ]}
+          data={chartdata}
+          labels={({ datum }) => datum.y}
+          labelComponent={
+            <VictoryLabel
+              lineHeight={1}
+              capHeight={0.8}
+              backgroundStyle={{
+                fill: "#D9D9D9",
+              }}
+              style={{
+                fill: "white",
+                fontFamily: "Poppins",
+                fontWeight: 500,
+                fontSize: "16px",
+              }}
+              backgroundPadding={{
+                top: 6,
+                bottom: 6,
+                left: 20,
+                right: 20,
+              }}
+              backgroundComponent={<Rect rx={12} />}
+              renderInPortal
+              dy={-20}
+            />
+          }
+        />
+      </VictoryChart>
+      <div className="bg-pupcleLightLightGray absolute left-0 top-0 flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
+        <span className="font-poppins text-pupcleGray text-[16px] font-medium">
+          MCV
+        </span>
+      </div>
+    </div>
   );
 };
 
