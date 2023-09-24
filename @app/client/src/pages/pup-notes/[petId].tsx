@@ -1728,15 +1728,15 @@ const BasicExamResultsFormInner: FC<{
                     open={uppyDialogOpen}
                     onOpenChange={setUppyDialogOpen}
                   >
-                    <div className="grid max-w-[400px] grid-cols-3 gap-y-6">
+                    <div className="grid max-w-[378px] grid-cols-3 gap-y-5">
                       {values.files.map((f) => (
                         <Link
                           href={f.assetUrl}
                           key={f.uppyFileId ?? f.assetUrl}
                           target="_blank"
-                          onClick={() =>
-                            f.uppyFileId && uppy?.removeFile(f.uppyFileId)
-                          }
+                          // onClick={() =>
+                          //   f.uppyFileId && uppy?.removeFile(f.uppyFileId)
+                          // }
                         >
                           {f.uppyPreview ? (
                             <div
