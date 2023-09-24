@@ -1,3 +1,4 @@
+import { FilePdfOutlined } from "@ant-design/icons";
 import { ApolloError, FetchResult } from "@apollo/client";
 import {
   BasicExamResultsInput,
@@ -12,6 +13,7 @@ import {
   DayPickerInput,
   FourOhFour,
   FramedAvatarUpload,
+  Link,
   SharedLayout,
 } from "@app/components";
 import {
@@ -1722,27 +1724,70 @@ const BasicExamResultsFormInner: FC<{
               {uppyIsLoading && <span>Loading files...</span>}
               {!uppyIsLoading && uppy && (
                 <>
-                  <div
-                    onClick={() => setUppyDialogOpen(true)}
-                    className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none"
-                  >
-                    <img
-                      className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
-                      src="/pup_notes_add_pics.png"
-                    />
-                  </div>
                   <Dialog.Root
                     open={uppyDialogOpen}
                     onOpenChange={setUppyDialogOpen}
                   >
-                    <Dialog.Trigger asChild>
-                      <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
-                        <img
-                          src="/pup_notes_add_new_floating_button.png"
-                          className="h-[100px] w-[100px]"
-                        />
-                      </Button>
-                    </Dialog.Trigger>
+                    <div className="grid max-w-[400px] grid-cols-3 gap-y-6">
+                      {values.files.map((f) => (
+                        <Link
+                          href={f.assetUrl}
+                          key={f.uppyFileId ?? f.assetUrl}
+                          target="_blank"
+                          onClick={() =>
+                            f.uppyFileId && uppy?.removeFile(f.uppyFileId)
+                          }
+                        >
+                          {f.uppyPreview ? (
+                            <div
+                              // key={f.uppyFileId ?? f.assetUrl}
+                              className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px] border-none bg-cover bg-top"
+                              style={{
+                                backgroundImage: `url(${f.uppyPreview})`,
+                              }}
+                            ></div>
+                          ) : f.metadata.type.startsWith("image/") ? (
+                            <div
+                              // key={f.uppyFileId ?? f.assetUrl}
+                              className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px] border-none bg-cover bg-top"
+                              style={{ backgroundImage: `url(${f.assetUrl})` }}
+                            ></div>
+                          ) : f.metadata.type === "application/pdf" ? (
+                            <div className="flex h-[106px] w-[106px] flex-col items-center justify-center rounded-[20px] border-none bg-[#E25149] hover:contrast-[.8]">
+                              <FilePdfOutlined className="mt-2 text-[45px] text-white" />
+                              <span className="font-poppins mt-1 w-[85px] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[12px] text-white">
+                                {f.metadata.name}
+                              </span>
+                            </div>
+                          ) : null}
+                        </Link>
+
+                        // <span
+                        //   key={f.uppyFileId ?? f.assetUrl}
+                        //
+                        // >
+                        //   asset url: {f.assetUrl}
+                        //   <br />
+                        //   {f.uppyPreview ? (
+                        //     <>
+                        //       preview: <img src={f.uppyPreview} />
+                        //       <br />
+                        //     </>
+                        //   ) : f.metadata.type === "application/pdf" ? (
+                        //     <span>pdf icon</span>
+                        //   ) : null}
+                        // </span>
+                      ))}
+                      <Dialog.Trigger asChild>
+                        <Button className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
+                          <img
+                            className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
+                            src="/pup_notes_add_pics.png"
+                          />
+                        </Button>
+                      </Dialog.Trigger>
+                    </div>
+
                     <Dialog.Portal>
                       <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
                       <Dialog.Content
@@ -1842,23 +1887,6 @@ const BasicExamResultsFormInner: FC<{
                   </Dialog.Root>
                 </>
               )}
-
-              {values.files.map((f) => (
-                <span
-                  key={f.uppyFileId ?? f.assetUrl}
-                  onClick={() => f.uppyFileId && uppy?.removeFile(f.uppyFileId)}
-                >
-                  asset url: {f.assetUrl}
-                  <br />
-                  {f.uppyPreview && (
-                    <>
-                      preview: <img src={f.uppyPreview} />
-                      <br />
-                    </>
-                  )}
-                  type: {f.metadata.type}
-                </span>
-              ))}
             </Form.Item>
           </div>
         </div>
