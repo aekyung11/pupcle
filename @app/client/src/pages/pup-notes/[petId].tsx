@@ -20,6 +20,7 @@ import {
   AllowedUploadContentType,
   PetGender,
   PupNotesPage_BasicExamCategoryFragment,
+  PupNotesPage_BasicExamResultsFragment,
   PupNotesPage_PetFragment,
   PupNotesPage_UserFragment,
   SharedLayout_PetFragment,
@@ -718,7 +719,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           >
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                hidden:
+                                invisible:
                                   !editingPetInfo && values.sex !== PetGender.M,
                                 flex: !(
                                   !editingPetInfo && values.sex !== PetGender.M
@@ -742,7 +743,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                hidden:
+                                invisible:
                                   !editingPetInfo && values.sex !== PetGender.F,
                                 flex: !(
                                   !editingPetInfo && values.sex !== PetGender.F
@@ -823,7 +824,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           >
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                hidden: !editingPetInfo && !values.neutered,
+                                invisible: !editingPetInfo && !values.neutered,
                                 flex: !(!editingPetInfo && !values.neutered),
                               })}
                               value="true"
@@ -844,7 +845,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                hidden: !editingPetInfo && values.neutered,
+                                invisible: !editingPetInfo && values.neutered,
                                 flex: !(!editingPetInfo && values.neutered),
                               })}
                               value="false"
@@ -930,6 +931,13 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   currentUser,
   currentPet,
 }) => {
+  // if present, show the specified basic exam results and allow editing
+  const [selectedBasicExamResultsId, setSelectedBasicExamResultsId] = useState<
+    string | null
+  >(null);
+
+  // otherwise show the basic exam results list screen
+  // a new basic exam results can be added in this screen
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [
     newBasicExamResultsCategoryDialogOpen,
@@ -937,6 +945,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   ] = useState(false);
   const [newBasicExamResultsCategoryId, setNewBasicExamResultsCategoryId] =
     useState("");
+  // if true, show screen for adding a new basic exam results
   const [newBasicExamResults, setNewBasicExamResults] = useState(false);
 
   const categories = useMemo(
@@ -949,6 +958,9 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
   const basicExamResults = currentPet.basicExamResults.nodes;
+  const selectedBasicExamResults = basicExamResults.find(
+    (ber) => ber.id === selectedBasicExamResultsId
+  );
   const filteredBasicExamResults = useMemo(() => {
     return selectedCategoryId
       ? basicExamResults.filter(
@@ -977,9 +989,47 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
 
   return (
     <>
+      {selectedBasicExamResultsId && (
+        <div className={clsx("flex w-full flex-col items-center")}>
+          <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+            <Button
+              className="mr-3 h-[13px] w-5 border-none p-0"
+              onClick={() => setSelectedBasicExamResultsId(null)}
+            >
+              <img
+                src="/pup_notes_caret_icon.png"
+                className="h-[13px] w-5 rotate-90"
+              />
+            </Button>
+            <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+              {selectedBasicExamResults?.basicExamCategory?.name}
+            </span>
+          </div>
+
+          <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+            <div className="h-full w-1/2 overflow-scroll">
+              <div className="w-full">
+                {selectedBasicExamResults ? (
+                  <BasicExamResultsForm
+                    currentUser={currentUser}
+                    currentPet={currentPet}
+                    basicExamCategoryId={
+                      selectedBasicExamResults.basicExamCategory?.id
+                    }
+                    basicExamResults={selectedBasicExamResults}
+                    onComplete={() => {}}
+                  />
+                ) : (
+                  <FourOhFour />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className={clsx("flex w-full flex-col items-center", {
-          hidden: newBasicExamResults,
+          invisible: !(!selectedBasicExamResultsId && !newBasicExamResults),
         })}
       >
         <Dialog.Root
@@ -987,7 +1037,11 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           onOpenChange={setNewBasicExamResultsCategoryDialogOpen}
         >
           <Dialog.Trigger asChild>
-            <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
+            <Button
+              className={clsx(
+                "z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl"
+              )}
+            >
               <img
                 src="/pup_notes_add_new_floating_button.png"
                 className="h-[100px] w-[100px]"
@@ -1194,7 +1248,10 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               </div>
 
               <div className="w-[30%] px-5">
-                <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
+                <Button
+                  onClick={() => setSelectedBasicExamResultsId(id)}
+                  className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                >
                   <span className="font-poppins text-[20px] font-semibold text-white">
                     보기
                   </span>
@@ -1206,7 +1263,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
       </div>
       <div
         className={clsx({
-          hidden: !newBasicExamResults,
+          invisible: !(!selectedBasicExamResultsId && newBasicExamResults),
         })}
       >
         <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
@@ -1505,10 +1562,12 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
         setFiles(
           uppy
             .getFiles()
-            .filter((f) => f.response?.uploadURL)
+            .filter((f) => f.response?.uploadURL || f.meta["existingFile"])
             .map((f) => ({
               assetId: f.meta["assetId"] as string | undefined,
-              assetUrl: f.response?.uploadURL!,
+              assetUrl: f.meta["existingFile"]
+                ? (f.meta["assetUrl"] as unknown as string)
+                : f.response?.uploadURL!,
               kind: UserAssetKind.Image, // TODO: hardcoded
               metadata: {
                 name: f.name,
@@ -1547,7 +1606,17 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
                   name: f.metadata.name,
                   type: f.metadata.type, // blob type
                   data: response.data,
-                  meta: { existingFile: true, assetId: f.assetId },
+                  // NOTE: it doesn't look like uppy saves this, so stick it in the meta
+                  response: {
+                    body: {},
+                    status: 200,
+                    uploadURL: f.assetUrl,
+                  },
+                  meta: {
+                    existingFile: true,
+                    assetId: f.assetId,
+                    assetUrl: f.assetUrl,
+                  },
                 });
                 return {
                   ...f,
@@ -1597,6 +1666,8 @@ const BasicExamResultsFormInner: FC<{
 
   const { values, setFieldValue, initialValues } =
     useFormikContext<BasicExamResultsInput>();
+
+  console.log({ values });
 
   const onFilesChange = useCallback(
     (formFiles: FormFile[]) => {
@@ -1713,7 +1784,7 @@ const BasicExamResultsFormInner: FC<{
             </span>
           </div>
           <div className="flex w-[calc(100%-80px)] pl-9">
-            <Form.Item name="photos" className="mb-0 w-full">
+            <Form.Item name="files" className="mb-0 w-full">
               {/* <div className="bg-pupcleLightLightGray relative h-[106px] w-[106px] rounded-[20px] border-none">
                         <img
                           className="absolute left-[34px] top-[34px] h-[34px] w-[34px]"
@@ -1949,6 +2020,7 @@ interface BasicExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
   basicExamCategoryId: string;
+  basicExamResults?: PupNotesPage_BasicExamResultsFragment;
   onComplete: (result: any) => Promise<void> | void;
 }
 
@@ -1956,6 +2028,7 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
   currentUser,
   currentPet,
   basicExamCategoryId,
+  basicExamResults,
   onComplete,
 }) => {
   const postResult = useCallback(
@@ -1970,7 +2043,7 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
       currentUser.id,
       currentPet.id,
       basicExamCategoryId,
-      undefined,
+      basicExamResults,
       postResult
     );
 

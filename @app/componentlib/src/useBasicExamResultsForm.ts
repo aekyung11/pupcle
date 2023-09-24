@@ -36,10 +36,10 @@ export type FormFile = InferType<typeof formFileSchema>;
 const submitLabel = "Save";
 
 const validationSchema = yup.object({
-  takenAt: yup.date().optional(),
+  takenAt: yup.date().optional().nullable(),
   cost: yup.string().optional(),
-  locationKakaoId: yup.string().optional(),
-  nextReservation: yup.date().optional(),
+  locationKakaoId: yup.string().optional().nullable(),
+  nextReservation: yup.date().optional().nullable(),
   files: yup.array(formFileSchema).required(),
   memo: yup.string().optional(),
 });
@@ -62,14 +62,17 @@ export function useBasicExamResultsForm(
   const [upsertBasicExamResultsAssetBatch] =
     useUpsertBasicExamResultsAssetBatchMutation();
   const initialValues: BasicExamResultsInput = {
-    name: basicExamResults?.takenAt ?? "",
+    takenAt: basicExamResults?.takenAt && new Date(basicExamResults?.takenAt),
     cost: basicExamResults?.cost?.amount,
     locationKakaoId: basicExamResults?.kakaoId,
-    nextReservation: basicExamResults?.nextReservation,
+    nextReservation:
+      basicExamResults?.nextReservation &&
+      new Date(basicExamResults?.nextReservation),
     files:
       basicExamResults?.basicExamResultAssets.nodes
         .filter((asset) => asset.assetUrl)
         .map((asset) => ({
+          assetId: asset.id,
           kind: asset.kind,
           assetUrl: asset.assetUrl!,
           metadata: {
@@ -144,7 +147,12 @@ export function useBasicExamResultsForm(
               },
             },
           });
-          resetForm();
+
+          // if creating a basic exam results, reset
+          if (!basicExamResults?.id) {
+            resetForm();
+          }
+
           const postResultReturn = postResult(result);
           if (postResultReturn instanceof Promise) {
             await postResultReturn;

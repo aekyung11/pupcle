@@ -14,6 +14,7 @@ module.exports = {
       "*.{js,jsx,ts,tsx}"
     ),
   ],
+  safelist: ["invisible"],
   theme: {
     fontSize: {
       "pupcle-20px": "min(20px, 14px + 0.2vw)",
