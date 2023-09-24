@@ -59,6 +59,54 @@ import {
   NumericFormatProps,
   useNumericFormat,
 } from "react-number-format";
+import {
+  Rect,
+  VictoryAxis,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLine,
+  VictoryTheme,
+} from "victory";
+
+import { pupcle } from "../victory/pupcle-theme";
+
+// const chartdata = [
+//   {
+//     takenAt: new Date(2022, 10, 10, 0, 0, 0, 0),
+//     MCV: 68,
+//     MCH: 30,
+//   },
+//   {
+//     takenAt: new Date(2022, 11, 14, 0, 0, 0, 0),
+//     MCV: 2,
+//     MCH: 1000,
+//   },
+//   {
+//     takenAt: new Date(2023, 0, 16, 0, 0, 0, 0),
+//     MCV: 59,
+//     MCH: 21,
+//   },
+//   //...
+// ];
+
+const chartdata = [
+  {
+    x: new Date(2022, 10, 10, 0, 0, 0, 0),
+    y: 68,
+  },
+  {
+    x: new Date(2022, 11, 14, 0, 0, 0, 0),
+    y: 2,
+  },
+  {
+    x: new Date(2023, 0, 16, 0, 0, 0, 0),
+    y: 59,
+  },
+  //...
+];
+
+const dataFormatter = (number: number) =>
+  `${Intl.NumberFormat("us").format(number).toString()}`;
 
 export const ALLOWED_UPLOAD_CONTENT_TYPES = {
   "image/apng": "ImageApng",
@@ -348,7 +396,99 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             value={Tab.CHART}
             className="relative h-full"
           >
-            <div className="flex w-full flex-col items-center">
+            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+              <Button
+                className="mr-3 h-[13px] w-5 border-none p-0"
+                // onClick={() => setSelectedBasicExamResultsId(null)}
+              >
+                <img
+                  src="/pup_notes_caret_icon.png"
+                  className="h-[13px] w-5 rotate-90"
+                />
+              </Button>
+              <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+                기본혈액검사
+              </span>
+            </div>
+            <div className="h-[calc(100vh-6rem-125px-91px-20px)] w-full px-16">
+              <div className="relative h-full w-1/2">
+                <VictoryChart
+                  title="MCV"
+                  theme={pupcle}
+                  domainPadding={{ x: 50, y: 10 }}
+                >
+                  <VictoryAxis
+                    style={{
+                      tickLabels: {
+                        fontFamily: "Poppins",
+                        fontWeight: 500,
+                      },
+                    }}
+                    tickValues={chartdata.map((e) => e.x)}
+                    tickFormat={(tick) => {
+                      return `${format(tick, "yyyy")}\n${format(
+                        tick,
+                        "MM.dd"
+                      )}`;
+                    }}
+                  />
+                  <VictoryAxis
+                    style={{
+                      tickLabels: {
+                        fontFamily: "Poppins",
+                        fontWeight: 500,
+                      },
+                    }}
+                    dependentAxis
+                  />
+                  <VictoryLine
+                    style={{
+                      data: { stroke: "#d9d9d9" },
+                      parent: { border: "1px solid #ccc" },
+                    }}
+                    // data={[
+                    //   { x: 1, y: 2 },
+                    //   { x: 2, y: 3 },
+                    //   { x: 3, y: 5 },
+                    //   { x: 4, y: 4 },
+                    //   { x: 5, y: 7 },
+                    // ]}
+                    data={chartdata}
+                    labels={({ datum }) => datum.y}
+                    labelComponent={
+                      <VictoryLabel
+                        lineHeight={1}
+                        capHeight={0.8}
+                        backgroundStyle={{
+                          fill: "#D9D9D9",
+                        }}
+                        style={{
+                          fill: "white",
+                          fontFamily: "Poppins",
+                          fontWeight: 500,
+                          fontSize: "16px",
+                        }}
+                        backgroundPadding={{
+                          top: 6,
+                          bottom: 6,
+                          left: 20,
+                          right: 20,
+                        }}
+                        backgroundComponent={<Rect rx={12} />}
+                        renderInPortal
+                        dy={-20}
+                      />
+                    }
+                  />
+                </VictoryChart>
+                <div className="bg-pupcleLightLightGray absolute left-0 top-[72px] flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
+                  <span className="font-poppins text-pupcleGray text-[16px] font-medium">
+                    MCV
+                  </span>
+                </div>
+              </div>
+            </div>
+            {/* <div className="flex w-full flex-col items-center">
               <Dialog.Root>
                 <Dialog.Trigger asChild>
                   <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
@@ -444,7 +584,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                   </div>
                   <span className="font-poppins text-[15px]">
                     {/* {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")} */}
-                    2023.09.14
+            {/* 2023.09.14
                   </span>
                 </div>
                 <div className="w-[30%] px-5">
@@ -455,7 +595,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                   </Button>
                 </div>
               </div>
-            </div>
+            </div>  */}
           </Tabs.Content>
         </div>
       </Tabs.Root>
