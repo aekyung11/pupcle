@@ -333,7 +333,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
               />
               <Tooltip
                 placement="bottom"
-                title={"혈액 검사(CBC)와 같이 수치가 존재하는 진료예요."}
+                title={"혈액 검사(CBC)와 같이 수치가 중요한 검사예요."}
               >
                 <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
                   <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
