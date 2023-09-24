@@ -1,10 +1,10 @@
-fragment PupNotesPage_BasicExamResults on BasicExamResult {
+fragment PupNotesPage_ExamResults on ExamResult {
   id
-  basicExamCategory {
+  examCategory {
     id
     name
   }
-  basicExamResultAssets {
+  examResultAssets {
     nodes {
       assetUrl
       createdAt
@@ -31,15 +31,15 @@ fragment PupNotesPage_BasicExamResults on BasicExamResult {
 
 fragment PupNotesPage_Pet on Pet {
   id
-  basicExamResults(orderBy: SORT_DATETIME_DESC) {
+  examResults(orderBy: SORT_DATETIME_DESC) {
     nodes {
       id
-      ...PupNotesPage_BasicExamResults
+      ...PupNotesPage_ExamResults
     }
   }
 }
 
-fragment PupNotesPage_BasicExamCategory on BasicExamCategory {
+fragment PupNotesPage_ExamCategory on ExamCategory {
   id
   isDefaultCategory
   name
@@ -47,10 +47,10 @@ fragment PupNotesPage_BasicExamCategory on BasicExamCategory {
 
 fragment PupNotesPage_User on User {
   id
-  basicExamCategories(orderBy: NAME_ASC) {
+  examCategories(orderBy: NAME_ASC) {
     nodes {
       id
-      ...PupNotesPage_BasicExamCategory
+      ...PupNotesPage_ExamCategory
     }
   }
   pets(first: 20) {

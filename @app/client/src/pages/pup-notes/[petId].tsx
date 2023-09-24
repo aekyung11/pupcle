@@ -1,11 +1,11 @@
 import { FilePdfOutlined } from "@ant-design/icons";
 import { ApolloError, FetchResult } from "@apollo/client";
 import {
-  BasicExamResultsInput,
+  ExamResultsInput,
   FormFile,
-  useBasicExamCategoryForm,
-  useBasicExamResultsForm,
-  useNewBasicExamResultsCategoryForm,
+  useExamCategoryForm,
+  useExamResultsForm,
+  useNewExamResultsCategoryForm,
   usePetInfoForm,
 } from "@app/componentlib";
 import {
@@ -19,14 +19,14 @@ import {
 import {
   AllowedUploadContentType,
   PetGender,
-  PupNotesPage_BasicExamCategoryFragment,
-  PupNotesPage_BasicExamResultsFragment,
+  PupNotesPage_ExamCategoryFragment,
+  PupNotesPage_ExamResultsFragment,
   PupNotesPage_PetFragment,
   PupNotesPage_UserFragment,
   SharedLayout_PetFragment,
   SharedLayout_UserFragment,
-  UpsertBasicExamCategoryMutation,
-  UpsertBasicExamResultsMutation,
+  UpsertExamCategoryMutation,
+  UpsertExamResultsMutation,
   useCreateUploadUrlMutation,
   usePupNotesPageQuery,
   UserAssetKind,
@@ -87,7 +87,7 @@ interface PupNotesPageProps {
 
 enum Tab {
   INFO = "info",
-  BASIC = "basic",
+  EXAMS = "exams",
   DETAILED = "detailed",
   CHART = "chart",
 }
@@ -205,7 +205,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                 </span>
               </Button>
             </Tabs.Trigger>
-            <Tabs.Trigger key={Tab.BASIC} value={Tab.BASIC} asChild>
+            <Tabs.Trigger key={Tab.EXAMS} value={Tab.EXAMS} asChild>
               <Button
                 className="friends-tab"
                 style={{
@@ -294,11 +294,11 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             <div className="w-1/2 p-10"></div> */}
           </Tabs.Content>
           <Tabs.Content
-            key={Tab.BASIC}
-            value={Tab.BASIC}
+            key={Tab.EXAMS}
+            value={Tab.EXAMS}
             className="relative h-full"
           >
-            <PupNotesPageBasicExamsInner
+            <PupNotesPageExamsInner
               currentUser={currentUser}
               currentPet={currentPet}
             />
@@ -934,79 +934,72 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
   );
 };
 
-type PupNotesPageBasicExamsInnerProps = {
+type PupNotesPageExamsInnerProps = {
   currentUser: SharedLayout_UserFragment & PupNotesPage_UserFragment;
   currentPet: SharedLayout_PetFragment & PupNotesPage_PetFragment;
 };
 
-const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
+const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
   currentUser,
   currentPet,
 }) => {
-  // if present, show the specified basic exam results and allow editing
-  const [selectedBasicExamResultsId, setSelectedBasicExamResultsId] = useState<
+  // if present, show the specified exam results and allow editing
+  const [selectedExamResultsId, setSelectedExamResultsId] = useState<
     string | null
   >(null);
 
-  // otherwise show the basic exam results list screen
-  // a new basic exam results can be added in this screen
+  // otherwise show the exam results list screen
+  // a new exam results can be added in this screen
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [
-    newBasicExamResultsCategoryDialogOpen,
-    setNewBasicExamResultsCategoryDialogOpen,
+    newExamResultsCategoryDialogOpen,
+    setNewExamResultsCategoryDialogOpen,
   ] = useState(false);
-  const [newBasicExamResultsCategoryId, setNewBasicExamResultsCategoryId] =
-    useState("");
-  // if true, show screen for adding a new basic exam results
-  const [newBasicExamResults, setNewBasicExamResults] = useState(false);
+  const [newExamResultsCategoryId, setNewExamResultsCategoryId] = useState("");
+  // if true, show screen for adding a new exam results
+  const [newExamResults, setNewExamResults] = useState(false);
 
   const categories = useMemo(
     () =>
-      [...currentUser.basicExamCategories.nodes].sort((a, b) => {
+      [...currentUser.examCategories.nodes].sort((a, b) => {
         return localeCompare(a.name, b.name);
       }),
-    [currentUser.basicExamCategories.nodes]
+    [currentUser.examCategories.nodes]
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
-  const basicExamResults = currentPet.basicExamResults.nodes;
-  const selectedBasicExamResults = basicExamResults.find(
-    (ber) => ber.id === selectedBasicExamResultsId
+  const examResults = currentPet.examResults.nodes;
+  const selectedExamResults = examResults.find(
+    (ber) => ber.id === selectedExamResultsId
   );
-  const filteredBasicExamResults = useMemo(() => {
+  const filteredExamResults = useMemo(() => {
     return selectedCategoryId
-      ? basicExamResults.filter(
-          (ber) => ber.basicExamCategory?.id === selectedCategoryId
-        )
-      : basicExamResults;
-  }, [basicExamResults, selectedCategoryId]);
+      ? examResults.filter((ber) => ber.examCategory?.id === selectedCategoryId)
+      : examResults;
+  }, [examResults, selectedCategoryId]);
 
-  const onBasicExamCategoryFormComplete = useCallback(
-    (result: FetchResult<UpsertBasicExamCategoryMutation>) => {
+  const onExamCategoryFormComplete = useCallback(
+    (result: FetchResult<UpsertExamCategoryMutation>) => {
       const upsertedCategoryId =
-        result.data?.upsertBasicExamCategory?.basicExamCategory?.id;
+        result.data?.upsertExamCategory?.examCategory?.id;
       setSelectedCategoryId(upsertedCategoryId ?? null);
       setNewCategoryDialogOpen(false);
     },
     [setSelectedCategoryId, setNewCategoryDialogOpen]
   );
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useBasicExamCategoryForm(
-      currentUser.id,
-      undefined,
-      onBasicExamCategoryFormComplete
-    );
+    useExamCategoryForm(currentUser.id, undefined, onExamCategoryFormComplete);
 
   const code = getCodeFromError(error);
 
   return (
     <>
-      {selectedBasicExamResultsId && (
+      {selectedExamResultsId && (
         <div className={clsx("flex w-full flex-col items-center")}>
           <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
             <Button
               className="mr-3 h-[13px] w-5 border-none p-0"
-              onClick={() => setSelectedBasicExamResultsId(null)}
+              onClick={() => setSelectedExamResultsId(null)}
             >
               <img
                 src="/pup_notes_caret_icon.png"
@@ -1014,21 +1007,19 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               />
             </Button>
             <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-              {selectedBasicExamResults?.basicExamCategory?.name}
+              {selectedExamResults?.examCategory?.name}
             </span>
           </div>
 
           <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
             <div className="h-full w-1/2 overflow-scroll">
               <div className="w-full">
-                {selectedBasicExamResults ? (
-                  <BasicExamResultsForm
+                {selectedExamResults ? (
+                  <ExamResultsForm
                     currentUser={currentUser}
                     currentPet={currentPet}
-                    basicExamCategoryId={
-                      selectedBasicExamResults.basicExamCategory?.id
-                    }
-                    basicExamResults={selectedBasicExamResults}
+                    examCategoryId={selectedExamResults.examCategory?.id}
+                    examResults={selectedExamResults}
                     onComplete={() => {}}
                   />
                 ) : (
@@ -1041,12 +1032,12 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
       )}
       <div
         className={clsx("flex w-full flex-col items-center", {
-          invisible: !(!selectedBasicExamResultsId && !newBasicExamResults),
+          invisible: !(!selectedExamResultsId && !newExamResults),
         })}
       >
         <Dialog.Root
-          open={newBasicExamResultsCategoryDialogOpen}
-          onOpenChange={setNewBasicExamResultsCategoryDialogOpen}
+          open={newExamResultsCategoryDialogOpen}
+          onOpenChange={setNewExamResultsCategoryDialogOpen}
         >
           <Dialog.Trigger asChild>
             <Button
@@ -1077,16 +1068,16 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
               </Dialog.Title>
               <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
               <div className="flex w-full justify-center">
-                <NewBasicExamResultsCategoryForm
+                <NewExamResultsCategoryForm
                   categories={categories}
                   defaultCategoryId={selectedCategoryId || categories[0]?.id}
                   onComplete={(categoryId) => {
-                    setNewBasicExamResultsCategoryDialogOpen(false);
-                    setNewBasicExamResultsCategoryId(categoryId);
-                    setNewBasicExamResults(true);
+                    setNewExamResultsCategoryDialogOpen(false);
+                    setNewExamResultsCategoryId(categoryId);
+                    setNewExamResults(true);
                   }}
                   onCancel={() => {
-                    setNewBasicExamResultsCategoryDialogOpen(false);
+                    setNewExamResultsCategoryDialogOpen(false);
                   }}
                 />
               </div>
@@ -1162,8 +1153,8 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                                     name="name"
                                     className="text-pupcleGray pup-notes-add-category font-poppins border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[20px] font-semibold"
                                     // size="large"
-                                    autoComplete="basic-category-name"
-                                    data-cy="pup-notes-basic-category-name"
+                                    autoComplete="exam-category-name"
+                                    data-cy="pup-notes-exam-category-name"
                                     suffix
                                   />
                                 </Form.Item>
@@ -1174,7 +1165,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                               <Form.Item name="_error">
                                 <Alert
                                   type="error"
-                                  message={`**Saving basic exam category failed**`}
+                                  message={`**Saving exam category failed**`}
                                   description={
                                     <span>
                                       {extractError(error).message}
@@ -1196,7 +1187,7 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
                               <SubmitButton
                                 className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
                                 htmlType="submit"
-                                data-cy="pup-notes-basic-submit-button"
+                                data-cy="pup-notes-submit-button"
                               >
                                 <span className="font-poppins text-pupcle-20px text-center font-bold text-white">
                                   {submitLabel}
@@ -1230,58 +1221,56 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
           <img src="/pup_notes_caret_icon.png" className="ml-3 h-[13px] w-5" />
         </div>
         {/* map() */}
-        {filteredBasicExamResults.map(
-          ({ id, memo, takenAt, basicExamCategory }) => (
-            <div
-              className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
-              key={id}
-            >
-              <div className="flex w-[70%] items-center justify-between">
-                <div className="flex flex-row items-center">
-                  <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-                  <div className="mx-9 flex flex-col">
-                    <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
-                      <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                        {basicExamCategory?.name}
-                      </span>
-                    </div>
-                    <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                      서울동물병원
-                    </span>
-                    <span className="font-poppins text-[15px]">
-                      추가 메모{") "}
-                      {memo}
+        {filteredExamResults.map(({ id, memo, takenAt, examCategory }) => (
+          <div
+            className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
+            key={id}
+          >
+            <div className="flex w-[70%] items-center justify-between">
+              <div className="flex flex-row items-center">
+                <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+                <div className="mx-9 flex flex-col">
+                  <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                    <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                      {examCategory?.name}
                     </span>
                   </div>
-                </div>
-                <span className="font-poppins text-[15px]">
-                  {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
-                </span>
-              </div>
-
-              <div className="w-[30%] px-5">
-                <Button
-                  onClick={() => setSelectedBasicExamResultsId(id)}
-                  className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
-                >
-                  <span className="font-poppins text-[20px] font-semibold text-white">
-                    보기
+                  <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                    서울동물병원
                   </span>
-                </Button>
+                  <span className="font-poppins text-[15px]">
+                    추가 메모{") "}
+                    {memo}
+                  </span>
+                </div>
               </div>
+              <span className="font-poppins text-[15px]">
+                {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
+              </span>
             </div>
-          )
-        )}
+
+            <div className="w-[30%] px-5">
+              <Button
+                onClick={() => setSelectedExamResultsId(id)}
+                className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+              >
+                <span className="font-poppins text-[20px] font-semibold text-white">
+                  보기
+                </span>
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
       <div
         className={clsx({
-          invisible: !(!selectedBasicExamResultsId && newBasicExamResults),
+          invisible: !(!selectedExamResultsId && newExamResults),
         })}
       >
         <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
           <Button
             className="mr-3 h-[13px] w-5 border-none p-0"
-            onClick={() => setNewBasicExamResults(false)}
+            onClick={() => setNewExamResults(false)}
           >
             <img
               src="/pup_notes_caret_icon.png"
@@ -1289,22 +1278,19 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
             />
           </Button>
           <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-            {
-              categories.find(({ id }) => id === newBasicExamResultsCategoryId)
-                ?.name
-            }
+            {categories.find(({ id }) => id === newExamResultsCategoryId)?.name}
           </span>
         </div>
 
         <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
           <div className="h-full w-1/2 overflow-scroll">
             <div className="w-full">
-              <BasicExamResultsForm
+              <ExamResultsForm
                 currentUser={currentUser}
                 currentPet={currentPet}
-                basicExamCategoryId={newBasicExamResultsCategoryId}
+                examCategoryId={newExamResultsCategoryId}
                 onComplete={() => {
-                  setNewBasicExamResults(false);
+                  setNewExamResults(false);
                   setSelectedCategoryId("");
                 }}
               />
@@ -1316,18 +1302,21 @@ const PupNotesPageBasicExamsInner: FC<PupNotesPageBasicExamsInnerProps> = ({
   );
 };
 
-type NewBasicExamResultsCategoryFormProps = {
+type NewExamResultsCategoryFormProps = {
   defaultCategoryId: string | undefined;
-  categories: PupNotesPage_BasicExamCategoryFragment[];
+  categories: PupNotesPage_ExamCategoryFragment[];
   onComplete: (result: string) => Promise<void> | void;
   onCancel: () => Promise<void> | void;
 };
 
-const NewBasicExamResultsCategoryForm: FC<
-  NewBasicExamResultsCategoryFormProps
-> = ({ defaultCategoryId, categories, onComplete, onCancel }) => {
+const NewExamResultsCategoryForm: FC<NewExamResultsCategoryFormProps> = ({
+  defaultCategoryId,
+  categories,
+  onComplete,
+  onCancel,
+}) => {
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useNewBasicExamResultsCategoryForm(defaultCategoryId, onComplete);
+    useNewExamResultsCategoryForm(defaultCategoryId, onComplete);
 
   const code = getCodeFromError(error);
   return (
@@ -1421,7 +1410,7 @@ const NewBasicExamResultsCategoryForm: FC<
               <Form.Item name="_error">
                 <Alert
                   type="error"
-                  message={`**Saving basic exam category failed**`}
+                  message={`**Saving exam category failed**`}
                   description={
                     <span>
                       {extractError(error).message}
@@ -1440,7 +1429,7 @@ const NewBasicExamResultsCategoryForm: FC<
               <SubmitButton
                 className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
                 htmlType="submit"
-                data-cy="pup-notes-basic-submit-button"
+                data-cy="pup-notes-submit-button"
               >
                 <img
                   src="/pup_notes_next_icon.png"
@@ -1668,7 +1657,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   };
 };
 
-const BasicExamResultsFormInner: FC<{
+const ExamResultsFormInner: FC<{
   error: Error | ApolloError | null;
   submitLabel: string;
 }> = ({ error, submitLabel }) => {
@@ -1677,7 +1666,7 @@ const BasicExamResultsFormInner: FC<{
     useState(false);
 
   const { values, setFieldValue, initialValues } =
-    useFormikContext<BasicExamResultsInput>();
+    useFormikContext<ExamResultsInput>();
 
   console.log({ values });
 
@@ -1740,7 +1729,7 @@ const BasicExamResultsFormInner: FC<{
               <CustomNumberFormat
                 className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                 autoComplete="cost"
-                data-cy="pup-notes-basic-input-cost"
+                data-cy="pup-notes-input-cost"
                 thousandSeparator={true}
                 prefix={"₩"}
                 value={values.cost}
@@ -1766,7 +1755,7 @@ const BasicExamResultsFormInner: FC<{
                 className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                 // size="large"
                 autoComplete="locationKakaoId"
-                data-cy="pup-notes-basic-input-locationKakaoId"
+                data-cy="pup-notes-exam-input-locationKakaoId"
                 suffix
               />
             </Form.Item>
@@ -1987,7 +1976,7 @@ const BasicExamResultsFormInner: FC<{
                 className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
                 // size="large"
                 autoComplete="memo"
-                data-cy="pup-notes-basic-input-memo"
+                data-cy="pup-notes-exam-input-memo"
                 suffix
                 placeholder="자세한 내용을 기록해보세요."
               />
@@ -2018,7 +2007,7 @@ const BasicExamResultsFormInner: FC<{
           <SubmitButton
             className="bg-pupcleBlue font-poppins text-pupcle-20px h-10 w-full rounded-full border-none text-center font-bold text-white"
             htmlType="submit"
-            data-cy="pup-notes-basic-submit-button"
+            data-cy="pup-notes-exam-submit-button"
           >
             {submitLabel}
           </SubmitButton>
@@ -2028,34 +2017,34 @@ const BasicExamResultsFormInner: FC<{
   );
 };
 
-interface BasicExamResultsFormProps {
+interface ExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
-  basicExamCategoryId: string;
-  basicExamResults?: PupNotesPage_BasicExamResultsFragment;
+  examCategoryId: string;
+  examResults?: PupNotesPage_ExamResultsFragment;
   onComplete: (result: any) => Promise<void> | void;
 }
 
-const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
+const ExamResultsForm: FC<ExamResultsFormProps> = ({
   currentUser,
   currentPet,
-  basicExamCategoryId,
-  basicExamResults,
+  examCategoryId,
+  examResults,
   onComplete,
 }) => {
   const postResult = useCallback(
-    async (result: FetchResult<UpsertBasicExamResultsMutation>) => {
+    async (result: FetchResult<UpsertExamResultsMutation>) => {
       await onComplete(result);
     },
     [onComplete]
   );
 
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useBasicExamResultsForm(
+    useExamResultsForm(
       currentUser.id,
       currentPet.id,
-      basicExamCategoryId,
-      basicExamResults,
+      examCategoryId,
+      examResults,
       postResult
     );
 
@@ -2067,7 +2056,7 @@ const BasicExamResultsForm: FC<BasicExamResultsFormProps> = ({
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          <BasicExamResultsFormInner error={error} submitLabel={submitLabel} />
+          <ExamResultsFormInner error={error} submitLabel={submitLabel} />
         </Formik>
       </div>
     </>

@@ -1,9 +1,7 @@
-mutation UpsertBasicExamResultsAssetBatch(
-  $input: UpsertBasicExamResultAssetBatchInput!
-) {
-  upsertBasicExamResultAssetBatch(input: $input) {
+mutation UpsertExamResultsAssetBatch($input: UpsertExamResultAssetBatchInput!) {
+  upsertExamResultAssetBatch(input: $input) {
     clientMutationId
-    basicExamResultAssets {
+    examResultAssets {
       id
     }
   }

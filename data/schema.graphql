@@ -79,449 +79,6 @@ enum AllowedUploadContentType {
   VIDEO_QUICKTIME
 }
 
-"""A connection to a list of `BasicExamCategory` values."""
-type BasicExamCategoriesConnection {
-  """
-  A list of edges which contains the `BasicExamCategory` and cursor to aid in pagination.
-  """
-  edges: [BasicExamCategoriesEdge!]!
-
-  """A list of `BasicExamCategory` objects."""
-  nodes: [BasicExamCategory!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `BasicExamCategory` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `BasicExamCategory` edge in the connection."""
-type BasicExamCategoriesEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `BasicExamCategory` at the end of the edge."""
-  node: BasicExamCategory!
-}
-
-"""Methods to use when ordering `BasicExamCategory`."""
-enum BasicExamCategoriesOrderBy {
-  ID_ASC
-  ID_DESC
-  NAME_ASC
-  NAME_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-}
-
-type BasicExamCategory {
-  """Reads and enables pagination through a set of `BasicExamResult`."""
-  basicExamResults(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsConnection!
-  createdAt: Datetime!
-  id: UUID!
-  isDefaultCategory: Boolean!
-  name: String!
-  updatedAt: Datetime!
-
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
-  user: User
-  userId: UUID!
-}
-
-"""
-A condition to be used against `BasicExamCategory` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input BasicExamCategoryCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `name` field."""
-  name: String
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""
-A filter to be used against `BasicExamCategory` object types. All fields are combined with a logical ‘and.’
-"""
-input BasicExamCategoryFilter {
-  """Checks for all expressions in this list."""
-  and: [BasicExamCategoryFilter!]
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Filter by the object’s `name` field."""
-  name: StringFilter
-
-  """Negates the expression."""
-  not: BasicExamCategoryFilter
-
-  """Checks for any expressions in this list."""
-  or: [BasicExamCategoryFilter!]
-
-  """Filter by the object’s `userId` field."""
-  userId: UUIDFilter
-}
-
-"""An input for mutations affecting `BasicExamCategory`"""
-input BasicExamCategoryInput {
-  id: UUID
-  name: String!
-  userId: UUID!
-}
-
-"""
-Represents an update to a `BasicExamCategory`. Fields that are set will be updated.
-"""
-input BasicExamCategoryPatch {
-  id: UUID
-  name: String
-  userId: UUID
-}
-
-type BasicExamResult {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-  basicExamCategoryId: UUID!
-
-  """Reads and enables pagination through a set of `BasicExamResultAsset`."""
-  basicExamResultAssets(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultAssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultAssetFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsConnection!
-  cost: Money
-  createdAt: Datetime!
-  id: UUID!
-  kakaoId: String
-  memo: String
-  nextReservation: Datetime
-
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
-  pet: Pet
-  petId: UUID!
-  poiId: UUID
-  sortDatetime: Datetime
-  takenAt: Datetime
-  updatedAt: Datetime!
-
-  """Reads a single `User` that is related to this `BasicExamResult`."""
-  user: User
-  userId: UUID!
-}
-
-type BasicExamResultAsset {
-  assetUrl: String
-
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-  basicExamResultId: UUID!
-  createdAt: Datetime!
-  id: UUID!
-  kind: UserAssetKind!
-  metadata: JSON!
-  updatedAt: Datetime!
-
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
-  user: User
-  userId: UUID!
-}
-
-"""
-A condition to be used against `BasicExamResultAsset` object types. All fields
-are tested for equality and combined with a logical ‘and.’
-"""
-input BasicExamResultAssetCondition {
-  """Checks for equality with the object’s `basicExamResultId` field."""
-  basicExamResultId: UUID
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""
-A filter to be used against `BasicExamResultAsset` object types. All fields are combined with a logical ‘and.’
-"""
-input BasicExamResultAssetFilter {
-  """Checks for all expressions in this list."""
-  and: [BasicExamResultAssetFilter!]
-
-  """Filter by the object’s `basicExamResultId` field."""
-  basicExamResultId: UUIDFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Negates the expression."""
-  not: BasicExamResultAssetFilter
-
-  """Checks for any expressions in this list."""
-  or: [BasicExamResultAssetFilter!]
-
-  """Filter by the object’s `userId` field."""
-  userId: UUIDFilter
-}
-
-"""An input for mutations affecting `BasicExamResultAsset`"""
-input BasicExamResultAssetInput {
-  assetUrl: String
-  basicExamResultId: UUID!
-  id: UUID
-  kind: UserAssetKind!
-  metadata: JSON
-  userId: UUID!
-}
-
-"""
-Represents an update to a `BasicExamResultAsset`. Fields that are set will be updated.
-"""
-input BasicExamResultAssetPatch {
-  assetUrl: String
-  basicExamResultId: UUID
-  kind: UserAssetKind
-  metadata: JSON
-  userId: UUID
-}
-
-"""A connection to a list of `BasicExamResultAsset` values."""
-type BasicExamResultAssetsConnection {
-  """
-  A list of edges which contains the `BasicExamResultAsset` and cursor to aid in pagination.
-  """
-  edges: [BasicExamResultAssetsEdge!]!
-
-  """A list of `BasicExamResultAsset` objects."""
-  nodes: [BasicExamResultAsset!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `BasicExamResultAsset` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `BasicExamResultAsset` edge in the connection."""
-type BasicExamResultAssetsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `BasicExamResultAsset` at the end of the edge."""
-  node: BasicExamResultAsset!
-}
-
-"""Methods to use when ordering `BasicExamResultAsset`."""
-enum BasicExamResultAssetsOrderBy {
-  BASIC_EXAM_RESULT_ID_ASC
-  BASIC_EXAM_RESULT_ID_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-}
-
-"""
-A condition to be used against `BasicExamResult` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input BasicExamResultCondition {
-  """Checks for equality with the object’s `basicExamCategoryId` field."""
-  basicExamCategoryId: UUID
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `petId` field."""
-  petId: UUID
-
-  """Checks for equality with the object’s `sortDatetime` field."""
-  sortDatetime: Datetime
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""
-A filter to be used against `BasicExamResult` object types. All fields are combined with a logical ‘and.’
-"""
-input BasicExamResultFilter {
-  """Checks for all expressions in this list."""
-  and: [BasicExamResultFilter!]
-
-  """Filter by the object’s `basicExamCategoryId` field."""
-  basicExamCategoryId: UUIDFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Negates the expression."""
-  not: BasicExamResultFilter
-
-  """Checks for any expressions in this list."""
-  or: [BasicExamResultFilter!]
-
-  """Filter by the object’s `petId` field."""
-  petId: UUIDFilter
-
-  """Filter by the object’s `sortDatetime` field."""
-  sortDatetime: DatetimeFilter
-
-  """Filter by the object’s `userId` field."""
-  userId: UUIDFilter
-}
-
-"""An input for mutations affecting `BasicExamResult`"""
-input BasicExamResultInput {
-  basicExamCategoryId: UUID!
-  cost: MoneyInput
-  id: UUID
-  kakaoId: String
-  memo: String
-  nextReservation: Datetime
-  petId: UUID!
-  poiId: UUID
-  takenAt: Datetime
-  userId: UUID!
-}
-
-"""
-Represents an update to a `BasicExamResult`. Fields that are set will be updated.
-"""
-input BasicExamResultPatch {
-  basicExamCategoryId: UUID
-  cost: MoneyInput
-  kakaoId: String
-  memo: String
-  nextReservation: Datetime
-  petId: UUID
-  poiId: UUID
-  takenAt: Datetime
-  userId: UUID
-}
-
-"""A connection to a list of `BasicExamResult` values."""
-type BasicExamResultsConnection {
-  """
-  A list of edges which contains the `BasicExamResult` and cursor to aid in pagination.
-  """
-  edges: [BasicExamResultsEdge!]!
-
-  """A list of `BasicExamResult` objects."""
-  nodes: [BasicExamResult!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `BasicExamResult` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `BasicExamResult` edge in the connection."""
-type BasicExamResultsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `BasicExamResult` at the end of the edge."""
-  node: BasicExamResult!
-}
-
-"""Methods to use when ordering `BasicExamResult`."""
-enum BasicExamResultsOrderBy {
-  BASIC_EXAM_CATEGORY_ID_ASC
-  BASIC_EXAM_CATEGORY_ID_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PET_ID_ASC
-  PET_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  SORT_DATETIME_ASC
-  SORT_DATETIME_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-}
-
 """
 A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’
 """
@@ -615,122 +172,118 @@ type ConfirmAccountDeletionPayload {
   success: Boolean
 }
 
-"""All input for the create `BasicExamCategory` mutation."""
-input CreateBasicExamCategoryInput {
-  """The `BasicExamCategory` to be created by this mutation."""
-  basicExamCategory: BasicExamCategoryInput!
-
+"""All input for the create `ExamCategory` mutation."""
+input CreateExamCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamCategory` to be created by this mutation."""
+  examCategory: ExamCategoryInput!
 }
 
-"""The output of our create `BasicExamCategory` mutation."""
-type CreateBasicExamCategoryPayload {
-  """The `BasicExamCategory` that was created by this mutation."""
-  basicExamCategory: BasicExamCategory
-
-  """An edge for our `BasicExamCategory`. May be used by Relay 1."""
-  basicExamCategoryEdge(
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesEdge
-
+"""The output of our create `ExamCategory` mutation."""
+type CreateExamCategoryPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """The `ExamCategory` that was created by this mutation."""
+  examCategory: ExamCategory
+
+  """An edge for our `ExamCategory`. May be used by Relay 1."""
+  examCategoryEdge(
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
+  """Reads a single `User` that is related to this `ExamCategory`."""
   user: User
 }
 
-"""All input for the create `BasicExamResultAsset` mutation."""
-input CreateBasicExamResultAssetInput {
-  """The `BasicExamResultAsset` to be created by this mutation."""
-  basicExamResultAsset: BasicExamResultAssetInput!
-
+"""All input for the create `ExamResultAsset` mutation."""
+input CreateExamResultAssetInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamResultAsset` to be created by this mutation."""
+  examResultAsset: ExamResultAssetInput!
 }
 
-"""The output of our create `BasicExamResultAsset` mutation."""
-type CreateBasicExamResultAssetPayload {
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-
-  """The `BasicExamResultAsset` that was created by this mutation."""
-  basicExamResultAsset: BasicExamResultAsset
-
-  """An edge for our `BasicExamResultAsset`. May be used by Relay 1."""
-  basicExamResultAssetEdge(
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsEdge
-
+"""The output of our create `ExamResultAsset` mutation."""
+type CreateExamResultAssetPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+
+  """The `ExamResultAsset` that was created by this mutation."""
+  examResultAsset: ExamResultAsset
+
+  """An edge for our `ExamResultAsset`. May be used by Relay 1."""
+  examResultAssetEdge(
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
   user: User
 }
 
-"""All input for the create `BasicExamResult` mutation."""
-input CreateBasicExamResultInput {
-  """The `BasicExamResult` to be created by this mutation."""
-  basicExamResult: BasicExamResultInput!
-
+"""All input for the create `ExamResult` mutation."""
+input CreateExamResultInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamResult` to be created by this mutation."""
+  examResult: ExamResultInput!
 }
 
-"""The output of our create `BasicExamResult` mutation."""
-type CreateBasicExamResultPayload {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-
-  """The `BasicExamResult` that was created by this mutation."""
-  basicExamResult: BasicExamResult
-
-  """An edge for our `BasicExamResult`. May be used by Relay 1."""
-  basicExamResultEdge(
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsEdge
-
+"""The output of our create `ExamResult` mutation."""
+type CreateExamResultPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+
+  """The `ExamResult` that was created by this mutation."""
+  examResult: ExamResult
+
+  """An edge for our `ExamResult`. May be used by Relay 1."""
+  examResultEdge(
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsEdge
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
   pet: Pet
 
   """
@@ -738,7 +291,7 @@ type CreateBasicExamResultPayload {
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResult`."""
+  """Reads a single `User` that is related to this `ExamResult`."""
   user: User
 }
 
@@ -1232,8 +785,8 @@ input DatetimeFilter {
   notIn: [Datetime!]
 }
 
-"""All input for the `deleteBasicExamCategory` mutation."""
-input DeleteBasicExamCategoryInput {
+"""All input for the `deleteExamCategory` mutation."""
+input DeleteExamCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1242,35 +795,35 @@ input DeleteBasicExamCategoryInput {
   id: UUID!
 }
 
-"""The output of our delete `BasicExamCategory` mutation."""
-type DeleteBasicExamCategoryPayload {
-  """The `BasicExamCategory` that was deleted by this mutation."""
-  basicExamCategory: BasicExamCategory
-
-  """An edge for our `BasicExamCategory`. May be used by Relay 1."""
-  basicExamCategoryEdge(
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesEdge
-
+"""The output of our delete `ExamCategory` mutation."""
+type DeleteExamCategoryPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  deletedBasicExamCategoryNodeId: ID
+  deletedExamCategoryNodeId: ID
+
+  """The `ExamCategory` that was deleted by this mutation."""
+  examCategory: ExamCategory
+
+  """An edge for our `ExamCategory`. May be used by Relay 1."""
+  examCategoryEdge(
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
+  """Reads a single `User` that is related to this `ExamCategory`."""
   user: User
 }
 
-"""All input for the `deleteBasicExamResultAsset` mutation."""
-input DeleteBasicExamResultAssetInput {
+"""All input for the `deleteExamResultAsset` mutation."""
+input DeleteExamResultAssetInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1279,40 +832,38 @@ input DeleteBasicExamResultAssetInput {
   id: UUID!
 }
 
-"""The output of our delete `BasicExamResultAsset` mutation."""
-type DeleteBasicExamResultAssetPayload {
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-
-  """The `BasicExamResultAsset` that was deleted by this mutation."""
-  basicExamResultAsset: BasicExamResultAsset
-
-  """An edge for our `BasicExamResultAsset`. May be used by Relay 1."""
-  basicExamResultAssetEdge(
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsEdge
-
+"""The output of our delete `ExamResultAsset` mutation."""
+type DeleteExamResultAssetPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  deletedBasicExamResultAssetNodeId: ID
+  deletedExamResultAssetNodeId: ID
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+
+  """The `ExamResultAsset` that was deleted by this mutation."""
+  examResultAsset: ExamResultAsset
+
+  """An edge for our `ExamResultAsset`. May be used by Relay 1."""
+  examResultAssetEdge(
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
   user: User
 }
 
-"""All input for the `deleteBasicExamResult` mutation."""
-input DeleteBasicExamResultInput {
+"""All input for the `deleteExamResult` mutation."""
+input DeleteExamResultInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1321,30 +872,28 @@ input DeleteBasicExamResultInput {
   id: UUID!
 }
 
-"""The output of our delete `BasicExamResult` mutation."""
-type DeleteBasicExamResultPayload {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-
-  """The `BasicExamResult` that was deleted by this mutation."""
-  basicExamResult: BasicExamResult
-
-  """An edge for our `BasicExamResult`. May be used by Relay 1."""
-  basicExamResultEdge(
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsEdge
-
+"""The output of our delete `ExamResult` mutation."""
+type DeleteExamResultPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  deletedBasicExamResultNodeId: ID
+  deletedExamResultNodeId: ID
 
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+
+  """The `ExamResult` that was deleted by this mutation."""
+  examResult: ExamResult
+
+  """An edge for our `ExamResult`. May be used by Relay 1."""
+  examResultEdge(
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsEdge
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
   pet: Pet
 
   """
@@ -1352,7 +901,7 @@ type DeleteBasicExamResultPayload {
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResult`."""
+  """Reads a single `User` that is related to this `ExamResult`."""
   user: User
 }
 
@@ -1649,6 +1198,443 @@ type DeleteUserEmailPayload {
   ): UserEmailsEdge
 }
 
+"""A connection to a list of `ExamCategory` values."""
+type ExamCategoriesConnection {
+  """
+  A list of edges which contains the `ExamCategory` and cursor to aid in pagination.
+  """
+  edges: [ExamCategoriesEdge!]!
+
+  """A list of `ExamCategory` objects."""
+  nodes: [ExamCategory!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `ExamCategory` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `ExamCategory` edge in the connection."""
+type ExamCategoriesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ExamCategory` at the end of the edge."""
+  node: ExamCategory!
+}
+
+"""Methods to use when ordering `ExamCategory`."""
+enum ExamCategoriesOrderBy {
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+type ExamCategory {
+  createdAt: Datetime!
+
+  """Reads and enables pagination through a set of `ExamResult`."""
+  examResults(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsConnection!
+  id: UUID!
+  isDefaultCategory: Boolean!
+  name: String!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `ExamCategory`."""
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `ExamCategory` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ExamCategoryCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `ExamCategory` object types. All fields are combined with a logical ‘and.’
+"""
+input ExamCategoryFilter {
+  """Checks for all expressions in this list."""
+  and: [ExamCategoryFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Negates the expression."""
+  not: ExamCategoryFilter
+
+  """Checks for any expressions in this list."""
+  or: [ExamCategoryFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""An input for mutations affecting `ExamCategory`"""
+input ExamCategoryInput {
+  id: UUID
+  name: String!
+  userId: UUID!
+}
+
+"""
+Represents an update to a `ExamCategory`. Fields that are set will be updated.
+"""
+input ExamCategoryPatch {
+  id: UUID
+  name: String
+  userId: UUID
+}
+
+type ExamResult {
+  cost: Money
+  createdAt: Datetime!
+
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+  examCategoryId: UUID!
+
+  """Reads and enables pagination through a set of `ExamResultAsset`."""
+  examResultAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsConnection!
+  id: UUID!
+  kakaoId: String
+  memo: String
+  nextReservation: Datetime
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
+  pet: Pet
+  petId: UUID!
+  poiId: UUID
+  sortDatetime: Datetime
+  takenAt: Datetime
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `ExamResult`."""
+  user: User
+  userId: UUID!
+}
+
+type ExamResultAsset {
+  assetUrl: String
+  createdAt: Datetime!
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+  examResultId: UUID!
+  id: UUID!
+  kind: UserAssetKind!
+  metadata: JSON!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `ExamResultAsset` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ExamResultAssetCondition {
+  """Checks for equality with the object’s `examResultId` field."""
+  examResultId: UUID
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `ExamResultAsset` object types. All fields are combined with a logical ‘and.’
+"""
+input ExamResultAssetFilter {
+  """Checks for all expressions in this list."""
+  and: [ExamResultAssetFilter!]
+
+  """Filter by the object’s `examResultId` field."""
+  examResultId: UUIDFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: ExamResultAssetFilter
+
+  """Checks for any expressions in this list."""
+  or: [ExamResultAssetFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""An input for mutations affecting `ExamResultAsset`"""
+input ExamResultAssetInput {
+  assetUrl: String
+  examResultId: UUID!
+  id: UUID
+  kind: UserAssetKind!
+  metadata: JSON
+  userId: UUID!
+}
+
+"""
+Represents an update to a `ExamResultAsset`. Fields that are set will be updated.
+"""
+input ExamResultAssetPatch {
+  assetUrl: String
+  examResultId: UUID
+  kind: UserAssetKind
+  metadata: JSON
+  userId: UUID
+}
+
+"""A connection to a list of `ExamResultAsset` values."""
+type ExamResultAssetsConnection {
+  """
+  A list of edges which contains the `ExamResultAsset` and cursor to aid in pagination.
+  """
+  edges: [ExamResultAssetsEdge!]!
+
+  """A list of `ExamResultAsset` objects."""
+  nodes: [ExamResultAsset!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ExamResultAsset` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `ExamResultAsset` edge in the connection."""
+type ExamResultAssetsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ExamResultAsset` at the end of the edge."""
+  node: ExamResultAsset!
+}
+
+"""Methods to use when ordering `ExamResultAsset`."""
+enum ExamResultAssetsOrderBy {
+  EXAM_RESULT_ID_ASC
+  EXAM_RESULT_ID_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+"""
+A condition to be used against `ExamResult` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input ExamResultCondition {
+  """Checks for equality with the object’s `examCategoryId` field."""
+  examCategoryId: UUID
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `petId` field."""
+  petId: UUID
+
+  """Checks for equality with the object’s `sortDatetime` field."""
+  sortDatetime: Datetime
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `ExamResult` object types. All fields are combined with a logical ‘and.’
+"""
+input ExamResultFilter {
+  """Checks for all expressions in this list."""
+  and: [ExamResultFilter!]
+
+  """Filter by the object’s `examCategoryId` field."""
+  examCategoryId: UUIDFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: ExamResultFilter
+
+  """Checks for any expressions in this list."""
+  or: [ExamResultFilter!]
+
+  """Filter by the object’s `petId` field."""
+  petId: UUIDFilter
+
+  """Filter by the object’s `sortDatetime` field."""
+  sortDatetime: DatetimeFilter
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""An input for mutations affecting `ExamResult`"""
+input ExamResultInput {
+  cost: MoneyInput
+  examCategoryId: UUID!
+  id: UUID
+  kakaoId: String
+  memo: String
+  nextReservation: Datetime
+  petId: UUID!
+  poiId: UUID
+  takenAt: Datetime
+  userId: UUID!
+}
+
+"""
+Represents an update to a `ExamResult`. Fields that are set will be updated.
+"""
+input ExamResultPatch {
+  cost: MoneyInput
+  examCategoryId: UUID
+  kakaoId: String
+  memo: String
+  nextReservation: Datetime
+  petId: UUID
+  poiId: UUID
+  takenAt: Datetime
+  userId: UUID
+}
+
+"""A connection to a list of `ExamResult` values."""
+type ExamResultsConnection {
+  """
+  A list of edges which contains the `ExamResult` and cursor to aid in pagination.
+  """
+  edges: [ExamResultsEdge!]!
+
+  """A list of `ExamResult` objects."""
+  nodes: [ExamResult!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `ExamResult` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `ExamResult` edge in the connection."""
+type ExamResultsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ExamResult` at the end of the edge."""
+  node: ExamResult!
+}
+
+"""Methods to use when ordering `ExamResult`."""
+enum ExamResultsOrderBy {
+  EXAM_CATEGORY_ID_ASC
+  EXAM_CATEGORY_ID_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PET_ID_ASC
+  PET_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  SORT_DATETIME_ASC
+  SORT_DATETIME_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
 """All input for the `forgotPassword` mutation."""
 input ForgotPasswordInput {
   """
@@ -1893,29 +1879,29 @@ type Mutation {
     input: ConfirmAccountDeletionInput!
   ): ConfirmAccountDeletionPayload
 
-  """Creates a single `BasicExamCategory`."""
-  createBasicExamCategory(
+  """Creates a single `ExamCategory`."""
+  createExamCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateBasicExamCategoryInput!
-  ): CreateBasicExamCategoryPayload
+    input: CreateExamCategoryInput!
+  ): CreateExamCategoryPayload
 
-  """Creates a single `BasicExamResult`."""
-  createBasicExamResult(
+  """Creates a single `ExamResult`."""
+  createExamResult(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateBasicExamResultInput!
-  ): CreateBasicExamResultPayload
+    input: CreateExamResultInput!
+  ): CreateExamResultPayload
 
-  """Creates a single `BasicExamResultAsset`."""
-  createBasicExamResultAsset(
+  """Creates a single `ExamResultAsset`."""
+  createExamResultAsset(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateBasicExamResultAssetInput!
-  ): CreateBasicExamResultAssetPayload
+    input: CreateExamResultAssetInput!
+  ): CreateExamResultAssetPayload
 
   """Creates a single `FriendRequest`."""
   createFriendRequest(
@@ -1991,29 +1977,29 @@ type Mutation {
     input: CreateUserEmailInput!
   ): CreateUserEmailPayload
 
-  """Deletes a single `BasicExamCategory` using a unique key."""
-  deleteBasicExamCategory(
+  """Deletes a single `ExamCategory` using a unique key."""
+  deleteExamCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteBasicExamCategoryInput!
-  ): DeleteBasicExamCategoryPayload
+    input: DeleteExamCategoryInput!
+  ): DeleteExamCategoryPayload
 
-  """Deletes a single `BasicExamResult` using a unique key."""
-  deleteBasicExamResult(
+  """Deletes a single `ExamResult` using a unique key."""
+  deleteExamResult(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteBasicExamResultInput!
-  ): DeleteBasicExamResultPayload
+    input: DeleteExamResultInput!
+  ): DeleteExamResultPayload
 
-  """Deletes a single `BasicExamResultAsset` using a unique key."""
-  deleteBasicExamResultAsset(
+  """Deletes a single `ExamResultAsset` using a unique key."""
+  deleteExamResultAsset(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteBasicExamResultAssetInput!
-  ): DeleteBasicExamResultAssetPayload
+    input: DeleteExamResultAssetInput!
+  ): DeleteExamResultAssetPayload
 
   """Deletes a single `FriendRequest` using a unique key."""
   deleteFriendRequest(
@@ -2194,31 +2180,29 @@ type Mutation {
     input: TransferOrganizationOwnershipInput!
   ): TransferOrganizationOwnershipPayload
 
-  """Updates a single `BasicExamCategory` using a unique key and a patch."""
-  updateBasicExamCategory(
+  """Updates a single `ExamCategory` using a unique key and a patch."""
+  updateExamCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateBasicExamCategoryInput!
-  ): UpdateBasicExamCategoryPayload
+    input: UpdateExamCategoryInput!
+  ): UpdateExamCategoryPayload
 
-  """Updates a single `BasicExamResult` using a unique key and a patch."""
-  updateBasicExamResult(
+  """Updates a single `ExamResult` using a unique key and a patch."""
+  updateExamResult(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateBasicExamResultInput!
-  ): UpdateBasicExamResultPayload
+    input: UpdateExamResultInput!
+  ): UpdateExamResultPayload
 
-  """
-  Updates a single `BasicExamResultAsset` using a unique key and a patch.
-  """
-  updateBasicExamResultAsset(
+  """Updates a single `ExamResultAsset` using a unique key and a patch."""
+  updateExamResultAsset(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateBasicExamResultAssetInput!
-  ): UpdateBasicExamResultAssetPayload
+    input: UpdateExamResultAssetInput!
+  ): UpdateExamResultAssetPayload
 
   """Updates a single `Organization` using a unique key and a patch."""
   updateOrganization(
@@ -2284,53 +2268,53 @@ type Mutation {
     input: UpdateUserEntryInput!
   ): UpdateUserEntryPayload
 
-  """Upserts a single `BasicExamCategory`."""
-  upsertBasicExamCategory(
+  """Upserts a single `ExamCategory`."""
+  upsertExamCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamCategoryInput!
-  ): UpsertBasicExamCategoryPayload
+    input: UpsertExamCategoryInput!
+  ): UpsertExamCategoryPayload
 
-  """Upserts a batch of `BasicExamCategories`."""
-  upsertBasicExamCategoryBatch(
+  """Upserts a batch of `ExamCategories`."""
+  upsertExamCategoryBatch(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamCategoryBatchInput!
-  ): UpsertBasicExamCategoryBatchPayload
+    input: UpsertExamCategoryBatchInput!
+  ): UpsertExamCategoryBatchPayload
 
-  """Upserts a single `BasicExamResult`."""
-  upsertBasicExamResult(
+  """Upserts a single `ExamResult`."""
+  upsertExamResult(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamResultInput!
-  ): UpsertBasicExamResultPayload
+    input: UpsertExamResultInput!
+  ): UpsertExamResultPayload
 
-  """Upserts a single `BasicExamResultAsset`."""
-  upsertBasicExamResultAsset(
+  """Upserts a single `ExamResultAsset`."""
+  upsertExamResultAsset(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamResultAssetInput!
-  ): UpsertBasicExamResultAssetPayload
+    input: UpsertExamResultAssetInput!
+  ): UpsertExamResultAssetPayload
 
-  """Upserts a batch of `BasicExamResultAssets`."""
-  upsertBasicExamResultAssetBatch(
+  """Upserts a batch of `ExamResultAssets`."""
+  upsertExamResultAssetBatch(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamResultAssetBatchInput!
-  ): UpsertBasicExamResultAssetBatchPayload
+    input: UpsertExamResultAssetBatchInput!
+  ): UpsertExamResultAssetBatchPayload
 
-  """Upserts a batch of `BasicExamResults`."""
-  upsertBasicExamResultBatch(
+  """Upserts a batch of `ExamResults`."""
+  upsertExamResultBatch(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpsertBasicExamResultBatchInput!
-  ): UpsertBasicExamResultBatchPayload
+    input: UpsertExamResultBatchInput!
+  ): UpsertExamResultBatchPayload
 
   """Upserts a single `FriendRequest`."""
   upsertFriendRequest(
@@ -2700,9 +2684,11 @@ type PageInfo {
 
 type Pet {
   avatarUrl: String
+  createdAt: Datetime!
+  dob: Date!
 
-  """Reads and enables pagination through a set of `BasicExamResult`."""
-  basicExamResults(
+  """Reads and enables pagination through a set of `ExamResult`."""
+  examResults(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -2712,12 +2698,12 @@ type Pet {
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: BasicExamResultCondition
+    condition: ExamResultCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: BasicExamResultFilter
+    filter: ExamResultFilter
 
     """Only read the first `n` values of the set."""
     first: Int
@@ -2731,11 +2717,9 @@ type Pet {
     """
     offset: Int
 
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsConnection!
-  createdAt: Datetime!
-  dob: Date!
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsConnection!
   gender: PetGender!
   id: UUID!
   injections: JSON
@@ -3487,112 +3471,6 @@ enum PrivateDailyRecordsOrderBy {
 
 """The root query type which gives access points into the data universe."""
 type Query {
-  """Reads and enables pagination through a set of `BasicExamCategory`."""
-  basicExamCategories(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamCategoryCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamCategoryFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesConnection
-  basicExamCategory(id: UUID!): BasicExamCategory
-  basicExamCategoryByUserIdAndName(name: String!, userId: UUID!): BasicExamCategory
-  basicExamResult(id: UUID!): BasicExamResult
-  basicExamResultAsset(id: UUID!): BasicExamResultAsset
-
-  """Reads and enables pagination through a set of `BasicExamResultAsset`."""
-  basicExamResultAssets(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultAssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultAssetFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsConnection
-
-  """Reads and enables pagination through a set of `BasicExamResult`."""
-  basicExamResults(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsConnection
-
   """The currently logged in user (or null if not logged in)."""
   currentUser: User
   currentUserSharedFriendIds(
@@ -3619,6 +3497,112 @@ type Query {
     """
     offset: Int
   ): CurrentUserSharedFriendIdsConnection
+
+  """Reads and enables pagination through a set of `ExamCategory`."""
+  examCategories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamCategoryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamCategoryFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesConnection
+  examCategory(id: UUID!): ExamCategory
+  examCategoryByUserIdAndName(name: String!, userId: UUID!): ExamCategory
+  examResult(id: UUID!): ExamResult
+  examResultAsset(id: UUID!): ExamResultAsset
+
+  """Reads and enables pagination through a set of `ExamResultAsset`."""
+  examResultAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsConnection
+
+  """Reads and enables pagination through a set of `ExamResult`."""
+  examResults(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsConnection
   friendRequest(fromUserId: UUID!, toUserId: UUID!): FriendRequest
 
   """Reads and enables pagination through a set of `FriendRequest`."""
@@ -4501,8 +4485,8 @@ input UUIDFilter {
   notIn: [UUID!]
 }
 
-"""All input for the `updateBasicExamCategory` mutation."""
-input UpdateBasicExamCategoryInput {
+"""All input for the `updateExamCategory` mutation."""
+input UpdateExamCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4511,39 +4495,39 @@ input UpdateBasicExamCategoryInput {
   id: UUID!
 
   """
-  An object where the defined keys will be set on the `BasicExamCategory` being updated.
+  An object where the defined keys will be set on the `ExamCategory` being updated.
   """
-  patch: BasicExamCategoryPatch!
+  patch: ExamCategoryPatch!
 }
 
-"""The output of our update `BasicExamCategory` mutation."""
-type UpdateBasicExamCategoryPayload {
-  """The `BasicExamCategory` that was updated by this mutation."""
-  basicExamCategory: BasicExamCategory
-
-  """An edge for our `BasicExamCategory`. May be used by Relay 1."""
-  basicExamCategoryEdge(
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesEdge
-
+"""The output of our update `ExamCategory` mutation."""
+type UpdateExamCategoryPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """The `ExamCategory` that was updated by this mutation."""
+  examCategory: ExamCategory
+
+  """An edge for our `ExamCategory`. May be used by Relay 1."""
+  examCategoryEdge(
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
+  """Reads a single `User` that is related to this `ExamCategory`."""
   user: User
 }
 
-"""All input for the `updateBasicExamResultAsset` mutation."""
-input UpdateBasicExamResultAssetInput {
+"""All input for the `updateExamResultAsset` mutation."""
+input UpdateExamResultAssetInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4552,44 +4536,42 @@ input UpdateBasicExamResultAssetInput {
   id: UUID!
 
   """
-  An object where the defined keys will be set on the `BasicExamResultAsset` being updated.
+  An object where the defined keys will be set on the `ExamResultAsset` being updated.
   """
-  patch: BasicExamResultAssetPatch!
+  patch: ExamResultAssetPatch!
 }
 
-"""The output of our update `BasicExamResultAsset` mutation."""
-type UpdateBasicExamResultAssetPayload {
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-
-  """The `BasicExamResultAsset` that was updated by this mutation."""
-  basicExamResultAsset: BasicExamResultAsset
-
-  """An edge for our `BasicExamResultAsset`. May be used by Relay 1."""
-  basicExamResultAssetEdge(
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsEdge
-
+"""The output of our update `ExamResultAsset` mutation."""
+type UpdateExamResultAssetPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+
+  """The `ExamResultAsset` that was updated by this mutation."""
+  examResultAsset: ExamResultAsset
+
+  """An edge for our `ExamResultAsset`. May be used by Relay 1."""
+  examResultAssetEdge(
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
   user: User
 }
 
-"""All input for the `updateBasicExamResult` mutation."""
-input UpdateBasicExamResultInput {
+"""All input for the `updateExamResult` mutation."""
+input UpdateExamResultInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4598,34 +4580,32 @@ input UpdateBasicExamResultInput {
   id: UUID!
 
   """
-  An object where the defined keys will be set on the `BasicExamResult` being updated.
+  An object where the defined keys will be set on the `ExamResult` being updated.
   """
-  patch: BasicExamResultPatch!
+  patch: ExamResultPatch!
 }
 
-"""The output of our update `BasicExamResult` mutation."""
-type UpdateBasicExamResultPayload {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-
-  """The `BasicExamResult` that was updated by this mutation."""
-  basicExamResult: BasicExamResult
-
-  """An edge for our `BasicExamResult`. May be used by Relay 1."""
-  basicExamResultEdge(
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsEdge
-
+"""The output of our update `ExamResult` mutation."""
+type UpdateExamResultPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+
+  """The `ExamResult` that was updated by this mutation."""
+  examResult: ExamResult
+
+  """An edge for our `ExamResult`. May be used by Relay 1."""
+  examResultEdge(
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsEdge
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
   pet: Pet
 
   """
@@ -4633,7 +4613,7 @@ type UpdateBasicExamResultPayload {
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResult`."""
+  """Reads a single `User` that is related to this `ExamResult`."""
   user: User
 }
 
@@ -4978,199 +4958,193 @@ type UpdateUserPayload {
   ): UsersEdge
 }
 
-"""All input for the upsert `BasicExamCategory` batch mutation."""
-input UpsertBasicExamCategoryBatchInput {
-  """
-  The `BasicExamCategories` to be upserted by this mutation. Expects all records to conform to the structure of the first.
-  """
-  basicExamCategories: [BasicExamCategoryInput]!
-
+"""All input for the upsert `ExamCategory` batch mutation."""
+input UpsertExamCategoryBatchInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """
+  The `ExamCategories` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  examCategories: [ExamCategoryInput]!
 }
 
-"""The output of our upsert `BasicExamCategory` batch mutation."""
-type UpsertBasicExamCategoryBatchPayload {
-  """The `BasicExamCategories` that was upserted by this mutation."""
-  basicExamCategories: [BasicExamCategory]
-
-  """An edge for our `BasicExamCategory`. May be used by Relay 1."""
-  basicExamCategoryEdge(
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesEdge
-
+"""The output of our upsert `ExamCategory` batch mutation."""
+type UpsertExamCategoryBatchPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """The `ExamCategories` that was upserted by this mutation."""
+  examCategories: [ExamCategory]
+
+  """An edge for our `ExamCategory`. May be used by Relay 1."""
+  examCategoryEdge(
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
+  """Reads a single `User` that is related to this `ExamCategory`."""
   user: User
 }
 
-"""All input for the upsert `BasicExamCategory` mutation."""
-input UpsertBasicExamCategoryInput {
-  """The `BasicExamCategory` to be upserted by this mutation."""
-  basicExamCategory: BasicExamCategoryInput!
-
+"""All input for the upsert `ExamCategory` mutation."""
+input UpsertExamCategoryInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamCategory` to be upserted by this mutation."""
+  examCategory: ExamCategoryInput!
 }
 
-"""The output of our upsert `BasicExamCategory` mutation."""
-type UpsertBasicExamCategoryPayload {
-  """The `BasicExamCategory` that were upserted by this mutation."""
-  basicExamCategory: BasicExamCategory
-
-  """An edge for our `BasicExamCategory`. May be used by Relay 1."""
-  basicExamCategoryEdge(
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesEdge
-
+"""The output of our upsert `ExamCategory` mutation."""
+type UpsertExamCategoryPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """The `ExamCategory` that were upserted by this mutation."""
+  examCategory: ExamCategory
+
+  """An edge for our `ExamCategory`. May be used by Relay 1."""
+  examCategoryEdge(
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamCategory`."""
+  """Reads a single `User` that is related to this `ExamCategory`."""
   user: User
 }
 
-"""All input for the upsert `BasicExamResultAsset` batch mutation."""
-input UpsertBasicExamResultAssetBatchInput {
-  """
-  The `BasicExamResultAssets` to be upserted by this mutation. Expects all records to conform to the structure of the first.
-  """
-  basicExamResultAssets: [BasicExamResultAssetInput]!
-
+"""All input for the upsert `ExamResultAsset` batch mutation."""
+input UpsertExamResultAssetBatchInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """
+  The `ExamResultAssets` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  examResultAssets: [ExamResultAssetInput]!
 }
 
-"""The output of our upsert `BasicExamResultAsset` batch mutation."""
-type UpsertBasicExamResultAssetBatchPayload {
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-
-  """An edge for our `BasicExamResultAsset`. May be used by Relay 1."""
-  basicExamResultAssetEdge(
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsEdge
-
-  """The `BasicExamResultAssets` that was upserted by this mutation."""
-  basicExamResultAssets: [BasicExamResultAsset]
-
+"""The output of our upsert `ExamResultAsset` batch mutation."""
+type UpsertExamResultAssetBatchPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+
+  """An edge for our `ExamResultAsset`. May be used by Relay 1."""
+  examResultAssetEdge(
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsEdge
+
+  """The `ExamResultAssets` that was upserted by this mutation."""
+  examResultAssets: [ExamResultAsset]
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
   user: User
 }
 
-"""All input for the upsert `BasicExamResultAsset` mutation."""
-input UpsertBasicExamResultAssetInput {
-  """The `BasicExamResultAsset` to be upserted by this mutation."""
-  basicExamResultAsset: BasicExamResultAssetInput!
-
+"""All input for the upsert `ExamResultAsset` mutation."""
+input UpsertExamResultAssetInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamResultAsset` to be upserted by this mutation."""
+  examResultAsset: ExamResultAssetInput!
 }
 
-"""The output of our upsert `BasicExamResultAsset` mutation."""
-type UpsertBasicExamResultAssetPayload {
-  """
-  Reads a single `BasicExamResult` that is related to this `BasicExamResultAsset`.
-  """
-  basicExamResult: BasicExamResult
-
-  """The `BasicExamResultAsset` that were upserted by this mutation."""
-  basicExamResultAsset: BasicExamResultAsset
-
-  """An edge for our `BasicExamResultAsset`. May be used by Relay 1."""
-  basicExamResultAssetEdge(
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsEdge
-
+"""The output of our upsert `ExamResultAsset` mutation."""
+type UpsertExamResultAssetPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
+
+  """Reads a single `ExamResult` that is related to this `ExamResultAsset`."""
+  examResult: ExamResult
+
+  """The `ExamResultAsset` that were upserted by this mutation."""
+  examResultAsset: ExamResultAsset
+
+  """An edge for our `ExamResultAsset`. May be used by Relay 1."""
+  examResultAssetEdge(
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResultAsset`."""
+  """Reads a single `User` that is related to this `ExamResultAsset`."""
   user: User
 }
 
-"""All input for the upsert `BasicExamResult` batch mutation."""
-input UpsertBasicExamResultBatchInput {
-  """
-  The `BasicExamResults` to be upserted by this mutation. Expects all records to conform to the structure of the first.
-  """
-  basicExamResults: [BasicExamResultInput]!
-
+"""All input for the upsert `ExamResult` batch mutation."""
+input UpsertExamResultBatchInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """
+  The `ExamResults` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  examResults: [ExamResultInput]!
 }
 
-"""The output of our upsert `BasicExamResult` batch mutation."""
-type UpsertBasicExamResultBatchPayload {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-
-  """An edge for our `BasicExamResult`. May be used by Relay 1."""
-  basicExamResultEdge(
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsEdge
-
-  """The `BasicExamResults` that was upserted by this mutation."""
-  basicExamResults: [BasicExamResult]
-
+"""The output of our upsert `ExamResult` batch mutation."""
+type UpsertExamResultBatchPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+
+  """An edge for our `ExamResult`. May be used by Relay 1."""
+  examResultEdge(
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsEdge
+
+  """The `ExamResults` that was upserted by this mutation."""
+  examResults: [ExamResult]
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
   pet: Pet
 
   """
@@ -5178,43 +5152,41 @@ type UpsertBasicExamResultBatchPayload {
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResult`."""
+  """Reads a single `User` that is related to this `ExamResult`."""
   user: User
 }
 
-"""All input for the upsert `BasicExamResult` mutation."""
-input UpsertBasicExamResultInput {
-  """The `BasicExamResult` to be upserted by this mutation."""
-  basicExamResult: BasicExamResultInput!
-
+"""All input for the upsert `ExamResult` mutation."""
+input UpsertExamResultInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
+
+  """The `ExamResult` to be upserted by this mutation."""
+  examResult: ExamResultInput!
 }
 
-"""The output of our upsert `BasicExamResult` mutation."""
-type UpsertBasicExamResultPayload {
-  """
-  Reads a single `BasicExamCategory` that is related to this `BasicExamResult`.
-  """
-  basicExamCategory: BasicExamCategory
-
-  """The `BasicExamResult` that were upserted by this mutation."""
-  basicExamResult: BasicExamResult
-
-  """An edge for our `BasicExamResult`. May be used by Relay 1."""
-  basicExamResultEdge(
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsEdge
-
+"""The output of our upsert `ExamResult` mutation."""
+type UpsertExamResultPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """Reads a single `Pet` that is related to this `BasicExamResult`."""
+  """Reads a single `ExamCategory` that is related to this `ExamResult`."""
+  examCategory: ExamCategory
+
+  """The `ExamResult` that were upserted by this mutation."""
+  examResult: ExamResult
+
+  """An edge for our `ExamResult`. May be used by Relay 1."""
+  examResultEdge(
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsEdge
+
+  """Reads a single `Pet` that is related to this `ExamResult`."""
   pet: Pet
 
   """
@@ -5222,7 +5194,7 @@ type UpsertBasicExamResultPayload {
   """
   query: Query
 
-  """Reads a single `User` that is related to this `BasicExamResult`."""
+  """Reads a single `User` that is related to this `ExamResult`."""
   user: User
 }
 
@@ -5778,109 +5750,109 @@ type UpsertUserEmailPayload {
 type User {
   """Optional avatar URL."""
   avatarUrl: String
-
-  """Reads and enables pagination through a set of `BasicExamCategory`."""
-  basicExamCategories(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamCategoryCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamCategoryFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamCategory`."""
-    orderBy: [BasicExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamCategoriesConnection!
-
-  """Reads and enables pagination through a set of `BasicExamResultAsset`."""
-  basicExamResultAssets(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultAssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultAssetFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResultAsset`."""
-    orderBy: [BasicExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultAssetsConnection!
-
-  """Reads and enables pagination through a set of `BasicExamResult`."""
-  basicExamResults(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BasicExamResultCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BasicExamResultFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `BasicExamResult`."""
-    orderBy: [BasicExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): BasicExamResultsConnection!
   createdAt: Datetime!
+
+  """Reads and enables pagination through a set of `ExamCategory`."""
+  examCategories(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamCategoryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamCategoryFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamCategory`."""
+    orderBy: [ExamCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamCategoriesConnection!
+
+  """Reads and enables pagination through a set of `ExamResultAsset`."""
+  examResultAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResultAsset`."""
+    orderBy: [ExamResultAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultAssetsConnection!
+
+  """Reads and enables pagination through a set of `ExamResult`."""
+  examResults(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExamResultCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExamResultFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `ExamResult`."""
+    orderBy: [ExamResultsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ExamResultsConnection!
 
   """Reads and enables pagination through a set of `FriendRequest`."""
   friendRequestsByFromUserId(

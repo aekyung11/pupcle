@@ -9,17 +9,17 @@ const validationSchema = yup.object({
   categoryId: yup.string().required("**Please choose a category**"),
 });
 
-type NewBasicExamResultsCategoryForm = InferType<typeof validationSchema>;
+type NewExamResultsCategoryForm = InferType<typeof validationSchema>;
 
-export function useNewBasicExamResultsCategoryForm(
+export function useNewExamResultsCategoryForm(
   categoryId: string | undefined,
   postResult: (result: string) => Promise<any> | void
 ) {
   const [error, setError] = useState<Error | null>(null);
-  const initialValues: NewBasicExamResultsCategoryForm = {
+  const initialValues: NewExamResultsCategoryForm = {
     categoryId: categoryId || undefined,
-  } as unknown as NewBasicExamResultsCategoryForm;
-  const handleSubmit: FormikConfig<NewBasicExamResultsCategoryForm>["onSubmit"] =
+  } as unknown as NewExamResultsCategoryForm;
+  const handleSubmit: FormikConfig<NewExamResultsCategoryForm>["onSubmit"] =
     useCallback(
       async (values, { setErrors: _setErrors }) => {
         setError(null);

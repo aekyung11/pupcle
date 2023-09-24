@@ -1,7 +1,7 @@
-mutation UpsertBasicExamCategory($input: UpsertBasicExamCategoryInput!) {
-  upsertBasicExamCategory(input: $input) {
+mutation UpsertExamCategory($input: UpsertExamCategoryInput!) {
+  upsertExamCategory(input: $input) {
     clientMutationId
-    basicExamCategory {
+    examCategory {
       id
     }
     query {

@@ -1,6 +1,6 @@
-mutation DeleteBasicExamResultsAsset($input: DeleteBasicExamResultAssetInput!) {
-  deleteBasicExamResultAsset(input: $input) {
+mutation DeleteExamResultsAsset($input: DeleteExamResultAssetInput!) {
+  deleteExamResultAsset(input: $input) {
     clientMutationId
-    deletedBasicExamResultAssetNodeId
+    deletedExamResultAssetNodeId
   }
 }

@@ -1,7 +1,7 @@
-mutation UpsertBasicExamResults($input: UpsertBasicExamResultInput!) {
-  upsertBasicExamResult(input: $input) {
+mutation UpsertExamResults($input: UpsertExamResultInput!) {
+  upsertExamResult(input: $input) {
     clientMutationId
-    basicExamResult {
+    examResult {
       id
     }
     query {
