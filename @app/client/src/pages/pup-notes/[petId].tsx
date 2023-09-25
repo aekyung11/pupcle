@@ -1779,8 +1779,6 @@ const ExamResultsFormInner: FC<{
   const { values, setFieldValue, initialValues } =
     useFormikContext<ExamResultsInput>();
 
-  console.log({ values });
-
   const onFilesChange = useCallback(
     (formFiles: FormFile[]) => {
       setFieldValue("files", formFiles);

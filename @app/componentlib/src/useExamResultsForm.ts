@@ -51,6 +51,9 @@ const validationSchema = yup.object({
             bucket: yup.string().required(),
             type: yup.string().required(), // "number"
             value: yup.number().required(), // user needs to remove empty data points
+            tooltip: yup.string().optional(),
+            safeRangeStart: yup.number().optional(),
+            safeRangeEnd: yup.number().optional(),
           })
           .required()
       ),
