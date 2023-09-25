@@ -38,11 +38,11 @@ const submitLabel = "Save";
 
 const validationSchema = yup.object({
   takenAt: yup.date().optional().nullable(),
-  cost: yup.string().optional(),
+  cost: yup.string().optional().nullable(),
   locationKakaoId: yup.string().optional().nullable(),
   nextReservation: yup.date().optional().nullable(),
   files: yup.array(formFileSchema).required(),
-  memo: yup.string().optional(),
+  memo: yup.string().optional().nullable(),
   examData: yup
     .object({
       points: yup.array(
