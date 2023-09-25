@@ -1347,6 +1347,7 @@ type ExamResult {
   """Reads a single `ExamCategory` that is related to this `ExamResult`."""
   examCategory: ExamCategory
   examCategoryId: UUID!
+  examData: JSON
 
   """Reads and enables pagination through a set of `ExamResultAsset`."""
   examResultAssets(
@@ -1570,6 +1571,7 @@ input ExamResultFilter {
 input ExamResultInput {
   cost: MoneyInput
   examCategoryId: UUID!
+  examData: JSON
   id: UUID
   kakaoId: String
   memo: String
@@ -1586,6 +1588,7 @@ Represents an update to a `ExamResult`. Fields that are set will be updated.
 input ExamResultPatch {
   cost: MoneyInput
   examCategoryId: UUID
+  examData: JSON
   kakaoId: String
   memo: String
   nextReservation: Datetime

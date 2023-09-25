@@ -71,10 +71,10 @@ create table app_public.exam_results (
   kakao_id                varchar(255),
   next_reservation        timestamptz,
   memo                    text,
-  --  we only support numbers here
-  -- json data is only read when the exam_category specifies has_data
-  -- data defaults to null
-  -- add a json data here {values: [{name: "WBC", type: "number", value: 11.8}]}
+  -- only numeric values are currently supported
+  -- ex. {points: [{bucket: "WBC", type: "number", value: 11.8}]}
+  -- this field is only used when the exam_category specifies has_data
+  exam_data               jsonb,
   created_at              timestamptz not null default now(),
   updated_at              timestamptz not null default now(),
   sort_datetime           timestamptz generated always as (coalesce(taken_at, created_at)) stored
@@ -102,7 +102,8 @@ grant insert (
   poi_id,
   kakao_id,
   next_reservation,
-  memo
+  memo,
+  exam_data
 ) on app_public.exam_results to :DATABASE_VISITOR;
 grant update (
   user_id,
@@ -113,7 +114,8 @@ grant update (
   poi_id,
   kakao_id,
   next_reservation,
-  memo
+  memo,
+  exam_data
 ) on app_public.exam_results to :DATABASE_VISITOR;
 
 create trigger _100_timestamps

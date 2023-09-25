@@ -42,6 +42,20 @@ const validationSchema = yup.object({
   nextReservation: yup.date().optional().nullable(),
   files: yup.array(formFileSchema).required(),
   memo: yup.string().optional(),
+  examData: yup
+    .object({
+      points: yup.array(
+        yup
+          .object({
+            bucket: yup.string().required(),
+            type: yup.string().required(), // "number"
+            value: yup.number().required(), // user needs to remove empty data points
+          })
+          .required()
+      ),
+    })
+    .optional()
+    .nullable(),
 });
 
 export type ExamResultsInput = InferType<typeof validationSchema>;
@@ -50,6 +64,7 @@ export function useExamResultsForm(
   userId: string,
   petId: string,
   examCategoryId: string,
+  examCategoryHasData: boolean,
   examResults: PupNotesPage_ExamResultsFragment | undefined,
   postResult: (
     result: FetchResult<UpsertExamResultsMutation>
@@ -80,6 +95,7 @@ export function useExamResultsForm(
           },
         })) ?? [],
     memo: examResults?.memo,
+    examData: examCategoryHasData ? examResults?.examData : undefined,
   } as unknown as ExamResultsInput;
   const handleSubmit: FormikConfig<ExamResultsInput>["onSubmit"] = useCallback(
     async (values, { setErrors: _setErrors, resetForm }) => {
@@ -105,6 +121,10 @@ export function useExamResultsForm(
                 nextReservation:
                   values.nextReservation && formatISO(values.nextReservation),
                 takenAt: values.takenAt && formatISO(values.takenAt),
+                ...(examCategoryHasData &&
+                  values.examData && {
+                    examData: values.examData,
+                  }),
               },
             },
           },
@@ -166,6 +186,7 @@ export function useExamResultsForm(
       examCategoryId,
       petId,
       userId,
+      examCategoryHasData,
       initialValues.files,
       upsertExamResultsAssetBatch,
       postResult,

@@ -599,7 +599,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                     className={clsx(
                       "bg-pupcleLightBlue h-[63px] w-[179px] rounded-[30px] border-none",
                       {
-                        invisible: editingPetInfo,
+                        hidden: editingPetInfo,
                       }
                     )}
                     onClick={() => setEditingPetInfo(true)}
@@ -798,7 +798,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           >
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                invisible:
+                                hidden:
                                   !editingPetInfo && values.sex !== PetGender.M,
                                 flex: !(
                                   !editingPetInfo && values.sex !== PetGender.M
@@ -822,7 +822,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                invisible:
+                                hidden:
                                   !editingPetInfo && values.sex !== PetGender.F,
                                 flex: !(
                                   !editingPetInfo && values.sex !== PetGender.F
@@ -903,7 +903,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                           >
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                invisible: !editingPetInfo && !values.neutered,
+                                hidden: !editingPetInfo && !values.neutered,
                                 flex: !(!editingPetInfo && !values.neutered),
                               })}
                               value="true"
@@ -924,7 +924,7 @@ const PupNotesPageInner: FC<PupNotesPageInnerProps> = ({
                             </RadioGroupPrimitive.Item>
                             <RadioGroupPrimitive.Item
                               className={clsx("circular-radio-button", {
-                                invisible: !editingPetInfo && values.neutered,
+                                hidden: !editingPetInfo && values.neutered,
                                 flex: !(!editingPetInfo && values.neutered),
                               })}
                               value="false"
@@ -1010,6 +1010,14 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
   currentUser,
   currentPet,
 }) => {
+  // user must first choose whether to see exam categories that have no data or exam categories that have data
+  const [selectedExamCategoriesType, setSelectedExamCategoriesType] = useState<
+    null | "DATA" | "NO_DATA"
+  >(null);
+  const categoryHasData = selectedExamCategoriesType === "DATA";
+
+  // create back button which resets selectedExamCategoriesType, selectedExamResultsId
+
   // if present, show the specified exam results and allow editing
   const [selectedExamResultsId, setSelectedExamResultsId] = useState<
     string | null
@@ -1028,10 +1036,18 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
 
   const categories = useMemo(
     () =>
-      [...currentUser.examCategories.nodes].sort((a, b) => {
-        return localeCompare(a.name, b.name);
-      }),
-    [currentUser.examCategories.nodes]
+      [...currentUser.examCategories.nodes]
+        .sort((a, b) => {
+          return localeCompare(a.name, b.name);
+        })
+        .filter(
+          (c) => selectedExamCategoriesType && categoryHasData === c.hasData
+        ),
+    [
+      categoryHasData,
+      currentUser.examCategories.nodes,
+      selectedExamCategoriesType,
+    ]
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
@@ -1055,316 +1071,390 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
     [setSelectedCategoryId, setNewCategoryDialogOpen]
   );
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useExamCategoryForm(currentUser.id, undefined, onExamCategoryFormComplete);
+    useExamCategoryForm(
+      currentUser.id,
+      categoryHasData,
+      undefined,
+      onExamCategoryFormComplete
+    );
 
   const code = getCodeFromError(error);
 
   return (
     <>
-      {selectedExamResultsId && (
-        <div className={clsx("flex w-full flex-col items-center")}>
-          <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-            <Button
-              className="mr-3 h-[13px] w-5 border-none p-0"
-              onClick={() => setSelectedExamResultsId(null)}
+      {!selectedExamCategoriesType ? (
+        <div className="flex h-full">
+          <div className="border-pupcleLightLightGray flex h-full w-1/2 flex-col items-center justify-center border-r-[8px]">
+            <img
+              src="/pup_notes_register_detail.png"
+              className="mb-14 h-[302px] w-[322px]"
+            />
+            <Tooltip
+              placement="bottom"
+              title={
+                "슬개골 검사, 치과 검사, X-RAY 등 수치 입력이 필요없는 진료예요."
+              }
             >
-              <img
-                src="/pup_notes_caret_icon.png"
-                className="h-[13px] w-5 rotate-90"
-              />
-            </Button>
-            <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-              {selectedExamResults?.examCategory?.name}
-            </span>
-          </div>
-
-          <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
-            <div className="h-full w-1/2 overflow-scroll">
-              <div className="w-full">
-                {selectedExamResults ? (
-                  <ExamResultsForm
-                    currentUser={currentUser}
-                    currentPet={currentPet}
-                    examCategoryId={selectedExamResults.examCategory?.id}
-                    examResults={selectedExamResults}
-                    onComplete={() => {}}
-                  />
-                ) : (
-                  <FourOhFour />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <div
-        className={clsx("flex w-full flex-col items-center", {
-          invisible: !(!selectedExamResultsId && !newExamResults),
-        })}
-      >
-        <Dialog.Root
-          open={newExamResultsCategoryDialogOpen}
-          onOpenChange={setNewExamResultsCategoryDialogOpen}
-        >
-          <Dialog.Trigger asChild>
-            <Button
-              className={clsx(
-                "z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl"
-              )}
-            >
-              <img
-                src="/pup_notes_add_new_floating_button.png"
-                className="h-[100px] w-[100px]"
-              />
-            </Button>
-          </Dialog.Trigger>
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
-            <Dialog.Content
-              className={clsx(
-                "fixed z-20",
-                "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
-                "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
-              )}
-            >
-              <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
-                <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
-                  항목을 선택해주세요.
-                </span>
-                <img src="/paw.png" className="h-fit w-[43px]" alt="" />
-              </Dialog.Title>
-              <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-              <div className="flex w-full justify-center">
-                <NewExamResultsCategoryForm
-                  categories={categories}
-                  defaultCategoryId={selectedCategoryId || categories[0]?.id}
-                  onComplete={(categoryId) => {
-                    setNewExamResultsCategoryDialogOpen(false);
-                    setNewExamResultsCategoryId(categoryId);
-                    setNewExamResults(true);
-                  }}
-                  onCancel={() => {
-                    setNewExamResultsCategoryDialogOpen(false);
-                  }}
-                />
-              </div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
-        <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
-          <ToggleGroup.Root
-            className="ToggleGroup"
-            type="single"
-            value={selectedCategoryId}
-            onValueChange={(value) => setSelectedCategoryId(value)}
-            aria-label="Text alignment"
-          >
-            <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-              {categories.map(({ id, name }) => (
-                <ToggleGroup.Item
-                  key={id}
-                  value={id}
-                  className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-                >
-                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                    {name}
-                  </span>
-                </ToggleGroup.Item>
-              ))}
-              <Dialog.Root
-                open={newCategoryDialogOpen}
-                onOpenChange={setNewCategoryDialogOpen}
-              >
-                <Dialog.Trigger asChild>
-                  <Button className="hover:bg-pupcleLightLightGray border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none">
-                    <img
-                      src="/pup_notes_add_pics.png"
-                      className="mr-1 h-[34px] w-[34px]"
-                    />
-                    <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                      추가 등록
-                    </span>
-                  </Button>
-                </Dialog.Trigger>
-                <Dialog.Portal>
-                  <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
-                  <Dialog.Content
-                    className={clsx(
-                      "fixed z-20",
-                      "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
-                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
-                    )}
-                  >
-                    <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
-                      <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
-                        추가할 항목을 입력해주세요.
-                      </span>
-                      <img src="/paw.png" className="h-fit w-[43px]" alt="" />
-                    </Dialog.Title>
-                    <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-                    <div className="flex w-full justify-center">
-                      <Formik
-                        validationSchema={validationSchema}
-                        initialValues={initialValues}
-                        onSubmit={handleSubmit}
-                      >
-                        <Form className="flex h-full w-[400px] flex-col justify-center">
-                          <div className="w-full">
-                            <div className="mb-0 flex items-baseline justify-between pt-[96px]">
-                              <span className="font-poppins text-pupcleBlue text-[24px] font-medium">
-                                Name
-                              </span>
-                              <div className="flex w-[300px]">
-                                <Form.Item name="name" className="mb-0 w-full">
-                                  <Input
-                                    name="name"
-                                    className="text-pupcleGray pup-notes-add-category font-poppins border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[20px] font-semibold"
-                                    // size="large"
-                                    autoComplete="exam-category-name"
-                                    data-cy="pup-notes-exam-category-name"
-                                    suffix
-                                  />
-                                </Form.Item>
-                              </div>
-                            </div>
-
-                            {error ? (
-                              <Form.Item name="_error">
-                                <Alert
-                                  type="error"
-                                  message={`**Saving exam category failed**`}
-                                  description={
-                                    <span>
-                                      {extractError(error).message}
-                                      {code ? (
-                                        <span>
-                                          {" "}
-                                          (Error code: <code>ERR_{code}</code>)
-                                        </span>
-                                      ) : null}
-                                    </span>
-                                  }
-                                />
-                              </Form.Item>
-                            ) : null}
-                            <Form.Item
-                              name="_submit"
-                              className="mt-[96px] mb-3"
-                            >
-                              <SubmitButton
-                                className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
-                                htmlType="submit"
-                                data-cy="pup-notes-submit-button"
-                              >
-                                <span className="font-poppins text-pupcle-20px text-center font-bold text-white">
-                                  {submitLabel}
-                                </span>
-                              </SubmitButton>
-                            </Form.Item>
-                            <Form.Item name="_cancel" className="mb-10">
-                              <Dialog.Close asChild>
-                                <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray h-[63px] w-full rounded-full border-[3px] bg-transparent hover:border-none">
-                                  <span className="font-poppins text-pupcle-20px text-pupcleGray text-center font-bold">
-                                    취소
-                                  </span>
-                                </Button>
-                              </Dialog.Close>
-                            </Form.Item>
-                          </div>
-                        </Form>
-                      </Formik>
-                    </div>
-                  </Dialog.Content>
-                </Dialog.Portal>
-              </Dialog.Root>
-            </div>
-          </ToggleGroup.Root>
-        </div>
-        <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-        <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
-          <span className="font-poppins text-pupcle-24px font-semibold">
-            히스토리
-          </span>
-          <img src="/pup_notes_caret_icon.png" className="ml-3 h-[13px] w-5" />
-        </div>
-        {/* map() */}
-        {filteredExamResults.map(({ id, memo, takenAt, examCategory }) => (
-          <div
-            className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
-            key={id}
-          >
-            <div className="flex w-[70%] items-center justify-between">
-              <div className="flex flex-row items-center">
-                <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-                <div className="mx-9 flex flex-col">
-                  <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
-                    <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                      {examCategory?.name}
-                    </span>
-                  </div>
-                  <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                    서울동물병원
-                  </span>
-                  <span className="font-poppins text-[15px]">
-                    추가 메모{") "}
-                    {memo}
-                  </span>
-                </div>
-              </div>
-              <span className="font-poppins text-[15px]">
-                {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
-              </span>
-            </div>
-
-            <div className="w-[30%] px-5">
               <Button
-                onClick={() => setSelectedExamResultsId(id)}
-                className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                onClick={() => setSelectedExamCategoriesType("NO_DATA")}
+                className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
               >
-                <span className="font-poppins text-[20px] font-semibold text-white">
-                  보기
+                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                  수치 입력이 필요없어요
                 </span>
               </Button>
-            </div>
+            </Tooltip>
           </div>
-        ))}
-      </div>
-      <div
-        className={clsx({
-          invisible: !(!selectedExamResultsId && newExamResults),
-        })}
-      >
-        <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-          <Button
-            className="mr-3 h-[13px] w-5 border-none p-0"
-            onClick={() => setNewExamResults(false)}
-          >
+          <div className="flex h-full w-1/2 flex-col items-center justify-center">
             <img
-              src="/pup_notes_caret_icon.png"
-              className="h-[13px] w-5 rotate-90"
+              src="/pup_notes_register_examination_result.png"
+              className="mb-14 h-[302px] w-[322px]"
             />
-          </Button>
-          <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-            {categories.find(({ id }) => id === newExamResultsCategoryId)?.name}
-          </span>
+            <Tooltip
+              placement="bottom"
+              title={"혈액 검사(CBC)와 같이 수치가 중요한 검사예요."}
+            >
+              <Button
+                onClick={() => setSelectedExamCategoriesType("DATA")}
+                className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+              >
+                <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
+                  수치 입력이 필요해요
+                </span>
+              </Button>
+            </Tooltip>
+          </div>
         </div>
+      ) : (
+        <>
+          {selectedExamResultsId && (
+            <div className={clsx("flex w-full flex-col items-center")}>
+              <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+                <Button
+                  className="mr-3 h-[13px] w-5 border-none p-0"
+                  onClick={() => setSelectedExamResultsId(null)}
+                >
+                  <img
+                    src="/pup_notes_caret_icon.png"
+                    className="h-[13px] w-5 rotate-90"
+                  />
+                </Button>
+                <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+                  {selectedExamResults?.examCategory?.name}
+                </span>
+              </div>
 
-        <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
-          <div className="h-full w-1/2 overflow-scroll">
-            <div className="w-full">
-              <ExamResultsForm
-                currentUser={currentUser}
-                currentPet={currentPet}
-                examCategoryId={newExamResultsCategoryId}
-                onComplete={() => {
-                  setNewExamResults(false);
-                  setSelectedCategoryId("");
-                }}
+              <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+                <div className="h-full w-1/2 overflow-scroll">
+                  <div className="w-full">
+                    {selectedExamResults ? (
+                      <ExamResultsForm
+                        currentUser={currentUser}
+                        currentPet={currentPet}
+                        examCategoryHasData={
+                          selectedExamResults.examCategory?.hasData ?? false
+                        }
+                        examCategoryId={selectedExamResults.examCategory?.id}
+                        examResults={selectedExamResults}
+                        onComplete={() => {}}
+                      />
+                    ) : (
+                      <FourOhFour />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div
+            className={clsx("flex w-full flex-col items-center", {
+              hidden: !(!selectedExamResultsId && !newExamResults),
+            })}
+          >
+            <Dialog.Root
+              open={newExamResultsCategoryDialogOpen}
+              onOpenChange={setNewExamResultsCategoryDialogOpen}
+            >
+              <Dialog.Trigger asChild>
+                <Button
+                  className={clsx(
+                    "z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl"
+                  )}
+                >
+                  <img
+                    src="/pup_notes_add_new_floating_button.png"
+                    className="h-[100px] w-[100px]"
+                  />
+                </Button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                <Dialog.Content
+                  className={clsx(
+                    "fixed z-20",
+                    "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                    "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+                  )}
+                >
+                  <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                    <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                      항목을 선택해주세요.
+                    </span>
+                    <img src="/paw.png" className="h-fit w-[43px]" alt="" />
+                  </Dialog.Title>
+                  <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+                  <div className="flex w-full justify-center">
+                    <NewExamResultsCategoryForm
+                      categories={categories}
+                      defaultCategoryId={
+                        selectedCategoryId || categories[0]?.id
+                      }
+                      onComplete={(categoryId) => {
+                        setNewExamResultsCategoryDialogOpen(false);
+                        setNewExamResultsCategoryId(categoryId);
+                        setNewExamResults(true);
+                      }}
+                      onCancel={() => {
+                        setNewExamResultsCategoryDialogOpen(false);
+                      }}
+                    />
+                  </div>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+            <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
+              <ToggleGroup.Root
+                className="ToggleGroup"
+                type="single"
+                value={selectedCategoryId}
+                onValueChange={(value) => setSelectedCategoryId(value)}
+                aria-label="Text alignment"
+              >
+                <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+                  {categories.map(({ id, name }) => (
+                    <ToggleGroup.Item
+                      key={id}
+                      value={id}
+                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+                    >
+                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                        {name}
+                      </span>
+                    </ToggleGroup.Item>
+                  ))}
+                  <Dialog.Root
+                    open={newCategoryDialogOpen}
+                    onOpenChange={setNewCategoryDialogOpen}
+                  >
+                    <Dialog.Trigger asChild>
+                      <Button className="hover:bg-pupcleLightLightGray border-pupcleLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none">
+                        <img
+                          src="/pup_notes_add_pics.png"
+                          className="mr-1 h-[34px] w-[34px]"
+                        />
+                        <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                          추가 등록
+                        </span>
+                      </Button>
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                      <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                      <Dialog.Content
+                        className={clsx(
+                          "fixed z-20",
+                          "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
+                          "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
+                        )}
+                      >
+                        <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
+                          <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
+                            추가할 항목을 입력해주세요.
+                          </span>
+                          <img
+                            src="/paw.png"
+                            className="h-fit w-[43px]"
+                            alt=""
+                          />
+                        </Dialog.Title>
+                        <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+                        <div className="flex w-full justify-center">
+                          <Formik
+                            validationSchema={validationSchema}
+                            initialValues={initialValues}
+                            onSubmit={handleSubmit}
+                          >
+                            <Form className="flex h-full w-[400px] flex-col justify-center">
+                              <div className="w-full">
+                                <div className="mb-0 flex items-baseline justify-between pt-[96px]">
+                                  <span className="font-poppins text-pupcleBlue text-[24px] font-medium">
+                                    Name
+                                  </span>
+                                  <div className="flex w-[300px]">
+                                    <Form.Item
+                                      name="name"
+                                      className="mb-0 w-full"
+                                    >
+                                      <Input
+                                        name="name"
+                                        className="text-pupcleGray pup-notes-add-category font-poppins border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[20px] font-semibold"
+                                        // size="large"
+                                        autoComplete="exam-category-name"
+                                        data-cy="pup-notes-exam-category-name"
+                                        suffix
+                                      />
+                                    </Form.Item>
+                                  </div>
+                                </div>
+
+                                {error ? (
+                                  <Form.Item name="_error">
+                                    <Alert
+                                      type="error"
+                                      message={`**Saving exam category failed**`}
+                                      description={
+                                        <span>
+                                          {extractError(error).message}
+                                          {code ? (
+                                            <span>
+                                              {" "}
+                                              (Error code:{" "}
+                                              <code>ERR_{code}</code>)
+                                            </span>
+                                          ) : null}
+                                        </span>
+                                      }
+                                    />
+                                  </Form.Item>
+                                ) : null}
+                                <Form.Item
+                                  name="_submit"
+                                  className="mt-[96px] mb-3"
+                                >
+                                  <SubmitButton
+                                    className="pup-notes-submit-button bg-pupcleBlue relative flex h-[63px] w-full items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                                    htmlType="submit"
+                                    data-cy="pup-notes-submit-button"
+                                  >
+                                    <span className="font-poppins text-pupcle-20px text-center font-bold text-white">
+                                      {submitLabel}
+                                    </span>
+                                  </SubmitButton>
+                                </Form.Item>
+                                <Form.Item name="_cancel" className="mb-10">
+                                  <Dialog.Close asChild>
+                                    <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray h-[63px] w-full rounded-full border-[3px] bg-transparent hover:border-none">
+                                      <span className="font-poppins text-pupcle-20px text-pupcleGray text-center font-bold">
+                                        취소
+                                      </span>
+                                    </Button>
+                                  </Dialog.Close>
+                                </Form.Item>
+                              </div>
+                            </Form>
+                          </Formik>
+                        </div>
+                      </Dialog.Content>
+                    </Dialog.Portal>
+                  </Dialog.Root>
+                </div>
+              </ToggleGroup.Root>
+            </div>
+            <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+            <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
+              <span className="font-poppins text-pupcle-24px font-semibold">
+                히스토리
+              </span>
+              <img
+                src="/pup_notes_caret_icon.png"
+                className="ml-3 h-[13px] w-5"
               />
             </div>
+            {/* map() */}
+            {filteredExamResults.map(({ id, memo, takenAt, examCategory }) => (
+              <div
+                className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
+                key={id}
+              >
+                <div className="flex w-[70%] items-center justify-between">
+                  <div className="flex flex-row items-center">
+                    <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
+                    <div className="mx-9 flex flex-col">
+                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                        <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                          {examCategory?.name}
+                        </span>
+                      </div>
+                      <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                        서울동물병원
+                      </span>
+                      <span className="font-poppins text-[15px]">
+                        추가 메모{") "}
+                        {memo}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-poppins text-[15px]">
+                    {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
+                  </span>
+                </div>
+
+                <div className="w-[30%] px-5">
+                  <Button
+                    onClick={() => setSelectedExamResultsId(id)}
+                    className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                  >
+                    <span className="font-poppins text-[20px] font-semibold text-white">
+                      보기
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
+          {newExamResults && (
+            <div
+              className={clsx({
+                hidden: !(!selectedExamResultsId && newExamResults),
+              })}
+            >
+              <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+                <Button
+                  className="mr-3 h-[13px] w-5 border-none p-0"
+                  onClick={() => setNewExamResults(false)}
+                >
+                  <img
+                    src="/pup_notes_caret_icon.png"
+                    className="h-[13px] w-5 rotate-90"
+                  />
+                </Button>
+                <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+                  {
+                    categories.find(({ id }) => id === newExamResultsCategoryId)
+                      ?.name
+                  }
+                </span>
+              </div>
+
+              <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+                <div className="h-full w-1/2 overflow-scroll">
+                  <div className="w-full">
+                    <ExamResultsForm
+                      currentUser={currentUser}
+                      currentPet={currentPet}
+                      examCategoryId={newExamResultsCategoryId}
+                      examCategoryHasData={categoryHasData}
+                      onComplete={() => {
+                        setNewExamResults(false);
+                        setSelectedCategoryId("");
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };
@@ -1540,63 +1630,68 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   const [uppy, setUppy] = useState<Uppy | null>(null);
   const [files, setFiles] = useState<FormFile[]>(initialFiles);
   const [isLoading, setIsLoading] = useState(true);
+
+  const resetUppy = useCallback(() => {
+    const uppy = new Uppy({
+      autoProceed: false,
+      // to customize strings: see https://uppy.io/docs/dashboard/#locale
+      locale: {
+        strings: {
+          uploadComplete: "사진이 정상적으로 업로드 되었습니다.",
+          browseFiles: "browseFiles placeholder",
+          uploadingXFiles: {
+            0: "**Uploading %{smart_count} file**",
+            1: "**Uploading %{smart_count} files**",
+          },
+          dropPasteImportFiles: "",
+          addMoreFiles: "Add more files (hover text)",
+          myDevice: "",
+          pluginNameCamera: " ",
+        },
+      },
+      restrictions: {
+        maxNumberOfFiles: 10,
+        allowedFileTypes: ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY,
+      },
+    })
+      .use(Webcam)
+      .use(AwsS3, {
+        async getUploadParameters(file) {
+          const contentType =
+            file.type as unknown as keyof typeof ALLOWED_UPLOAD_CONTENT_TYPES;
+          const allowedUploadContentType = ALLOWED_UPLOAD_CONTENT_TYPES[
+            contentType
+          ] as unknown as keyof typeof AllowedUploadContentType;
+          const { data } = await createUploadUrl({
+            variables: {
+              input: {
+                contentType: AllowedUploadContentType[allowedUploadContentType],
+              },
+            },
+          });
+          const uploadUrl = data?.createUploadUrl?.uploadUrl;
+          if (!uploadUrl) {
+            throw new Error("Failed to generate upload URL");
+          }
+          return {
+            method: "PUT",
+            url: uploadUrl,
+            headers: {
+              "Content-Type": contentType,
+            },
+            fields: {},
+          };
+        },
+      });
+    setUppy(uppy);
+  }, [createUploadUrl]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const uppy = new Uppy({
-        autoProceed: false,
-        // to customize strings: see https://uppy.io/docs/dashboard/#locale
-        locale: {
-          strings: {
-            uploadComplete: "사진이 정상적으로 업로드 되었습니다.",
-            browseFiles: "browseFiles placeholder",
-            uploadingXFiles: {
-              0: "**Uploading %{smart_count} file**",
-              1: "**Uploading %{smart_count} files**",
-            },
-            dropPasteImportFiles: "",
-            addMoreFiles: "Add more files (hover text)",
-            myDevice: "",
-            pluginNameCamera: " ",
-          },
-        },
-        restrictions: {
-          maxNumberOfFiles: 10,
-          allowedFileTypes: ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY,
-        },
-      })
-        .use(Webcam)
-        .use(AwsS3, {
-          async getUploadParameters(file) {
-            const contentType =
-              file.type as unknown as keyof typeof ALLOWED_UPLOAD_CONTENT_TYPES;
-            const allowedUploadContentType = ALLOWED_UPLOAD_CONTENT_TYPES[
-              contentType
-            ] as unknown as keyof typeof AllowedUploadContentType;
-            const { data } = await createUploadUrl({
-              variables: {
-                input: {
-                  contentType:
-                    AllowedUploadContentType[allowedUploadContentType],
-                },
-              },
-            });
-            const uploadUrl = data?.createUploadUrl?.uploadUrl;
-            if (!uploadUrl) {
-              throw new Error("Failed to generate upload URL");
-            }
-            return {
-              method: "PUT",
-              url: uploadUrl,
-              headers: {
-                "Content-Type": contentType,
-              },
-              fields: {},
-            };
-          },
-        });
-      setUppy(uppy);
+      resetUppy();
     }
-    // TODO: depend on exam results id
+    // NOTE: depend on exam results id?
+    // do not depend on anything, only initialize once
   }, []);
 
   useEffect(() => {
@@ -1721,6 +1816,7 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
   return {
     uppy,
     isLoading,
+    resetUppy,
   };
 };
 
@@ -1744,7 +1840,11 @@ const ExamResultsFormInner: FC<{
     [setFieldValue]
   );
 
-  const { uppy, isLoading: uppyIsLoading } = useUppy({
+  const {
+    uppy,
+    isLoading: uppyIsLoading,
+    resetUppy,
+  } = useUppy({
     initialFiles: initialValues.files,
     onFilesChange,
   });
@@ -1818,7 +1918,7 @@ const ExamResultsFormInner: FC<{
             <Form.Item name="locationKakaoId" className="mb-0 w-full">
               <Input
                 name="locationKakaoId"
-                placeholder="TODO location chooser"
+                placeholder=""
                 className="bg-pupcleLightLightGray font-poppins h-10 w-full rounded-full border-none px-6 text-[15px]"
                 // size="large"
                 autoComplete="locationKakaoId"
@@ -2088,6 +2188,7 @@ interface ExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
   examCategoryId: string;
+  examCategoryHasData: boolean;
   examResults?: PupNotesPage_ExamResultsFragment;
   onComplete: (result: any) => Promise<void> | void;
 }
@@ -2096,6 +2197,7 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
   currentUser,
   currentPet,
   examCategoryId,
+  examCategoryHasData,
   examResults,
   onComplete,
 }) => {
@@ -2111,6 +2213,7 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
       currentUser.id,
       currentPet.id,
       examCategoryId,
+      examCategoryHasData,
       examResults,
       postResult
     );

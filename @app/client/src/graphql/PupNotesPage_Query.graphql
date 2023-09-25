@@ -20,6 +20,7 @@ fragment PupNotesPage_ExamResults on ExamResult {
     currency
   }
   createdAt
+  examData
   id
   kakaoId
   memo

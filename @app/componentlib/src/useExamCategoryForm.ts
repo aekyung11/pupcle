@@ -19,7 +19,7 @@ type ExamCategoryForm = InferType<typeof validationSchema>;
 
 export function useExamCategoryForm(
   userId: string,
-  // add a hasData, comes from the mode on the exams page
+  hasData: boolean,
   category: PupNotesPage_ExamCategoryFragment | undefined,
   postResult: (
     result: FetchResult<UpsertExamCategoryMutation>
@@ -41,6 +41,7 @@ export function useExamCategoryForm(
                 id: category?.id,
                 userId,
                 name: values.name,
+                hasData,
               },
             },
           },
@@ -56,7 +57,7 @@ export function useExamCategoryForm(
         }
       }
     },
-    [upsertExamCategory, category?.id, userId, postResult]
+    [upsertExamCategory, category?.id, userId, hasData, postResult]
   );
 
   return {
