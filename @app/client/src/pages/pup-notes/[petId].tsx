@@ -66,13 +66,12 @@ import {
   VictoryChart,
   VictoryLabel,
   VictoryLine,
-  VictoryTheme,
 } from "victory";
 
-import { pupcle } from "../victory/pupcle-theme";
+import { pupcle } from "../../victory/pupcle-theme";
 
-const dataFormatter = (number: number) =>
-  `${Intl.NumberFormat("us").format(number).toString()}`;
+// const dataFormatter = (number: number) =>
+//   `${Intl.NumberFormat("us").format(number).toString()}`;
 
 export const ALLOWED_UPLOAD_CONTENT_TYPES = {
   "image/apng": "ImageApng",
@@ -1663,7 +1662,7 @@ const ExamResultsFormInner: FC<{
           <div className="flex w-[calc(100%-80px)] pl-9">
             <Form.Item name="date" className="mb-0 w-full">
               <DayPickerInput
-                selected={values.takenAt}
+                selected={values.takenAt ?? undefined}
                 setSelected={(d) => setFieldValue("takenAt", d)}
               />
             </Form.Item>
@@ -1723,7 +1722,7 @@ const ExamResultsFormInner: FC<{
           <div className="flex w-[calc(100%-80px)] pl-9">
             <Form.Item name="nextReservation" className="mb-0 w-full">
               <DayPickerInput
-                selected={values.nextReservation}
+                selected={values.nextReservation ?? undefined}
                 setSelected={(d) => setFieldValue("nextReservation", d)}
               />
             </Form.Item>

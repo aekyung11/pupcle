@@ -1,8 +1,6 @@
-import { DownOutlined } from "@ant-design/icons";
 import { AuthRestrict, FourOhFour, SharedLayout } from "@app/components";
 import {
   CalendarRecords_PrivateDailyRecordFragment,
-  DailyRecordDayStatus,
   DailyRecordStatus,
   useCalendarPageQuery,
   useCalendarRecordsQuery,

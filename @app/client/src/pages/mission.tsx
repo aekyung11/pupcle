@@ -1,4 +1,4 @@
-import { AuthRestrict, FourOhFour, SharedLayout } from "@app/components";
+import { AuthRestrict, SharedLayout } from "@app/components";
 import { useSharedQuery } from "@app/graphql";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -24,15 +24,15 @@ export function usePetId() {
 
 const Mission: NextPage = () => {
   const query = useSharedQuery();
-  const refetch = async () => query.refetch();
+  // const refetch = async () => query.refetch();
   const [selectedTab, setSelectedTab] = useState<Tab>();
 
-  const currentUser = query.data?.currentUser;
-  const currentUserId = currentUser?.id as string | undefined;
-  const petId = usePetId();
-  const currentPet = query.data?.currentUser?.pets.nodes.find(
-    (p) => p.id === petId
-  );
+  // const currentUser = query.data?.currentUser;
+  // const currentUserId = currentUser?.id as string | undefined;
+  // const petId = usePetId();
+  // const currentPet = query.data?.currentUser?.pets.nodes.find(
+  //   (p) => p.id === petId
+  // );
 
   if (query.loading) {
     return <p>Loading...</p>;

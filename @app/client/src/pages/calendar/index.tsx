@@ -34,7 +34,7 @@ const useToday = () => {
 const Calendar: NextPage = () => {
   const router = useRouter();
   const {
-    day: today,
+    // day: today,
     dayDate: todayDate,
     monthStart,
     setMonthStart,

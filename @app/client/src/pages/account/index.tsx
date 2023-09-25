@@ -5,28 +5,13 @@ import {
   FramedAvatarUpload,
   SharedLayout,
 } from "@app/components";
-import {
-  Friends_UserEdgeFragment,
-  Friends_UserFragment,
-  SharedLayout_UserFragment,
-  useAcceptFriendRequestMutation,
-  useCreateFriendRequestMutation,
-  useDeleteFriendRequestMutation,
-  useFriendsQuery,
-  useReceivedFriendRequestsQuery,
-  useSentFriendRequestsQuery,
-  useSharedQuery,
-  useUnfriendMutation,
-  useUserSearchQuery,
-} from "@app/graphql";
+import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import * as Collapsible from "@radix-ui/react-collapsible";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Alert, Button, InputRef, Row, Spin } from "antd";
+import { Alert, Button, InputRef } from "antd";
 import clsx from "clsx";
 import { Formik } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
-import { keyBy } from "lodash";
 import { NextPage } from "next";
 import * as React from "react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
@@ -40,7 +25,6 @@ const Account: NextPage = () => {
   const query = useSharedQuery();
   const refetch = async () => query.refetch();
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.BASIC);
-  const [requestsPanelOpen, setRequestsPanelOpen] = useState(false);
 
   const currentUser = query.data?.currentUser;
   const currentUserId = currentUser?.id as string | undefined;
@@ -147,7 +131,7 @@ const AccountBasicPageInner: FC<AccountBasicPageInnerProps> = ({
     setEditingBasicInfo(false);
   }, []);
 
-  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+  const { validationSchema, initialValues, handleSubmit, error } =
     useSocialInfoForm(
       currentUser.id,
       postResult,

@@ -1,7 +1,6 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
 import {
   Friends_UserEdgeFragment,
-  Friends_UserFragment,
   useAcceptFriendRequestMutation,
   useCreateFriendRequestMutation,
   useDeleteFriendRequestMutation,
