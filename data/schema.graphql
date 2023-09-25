@@ -1239,6 +1239,7 @@ enum ExamCategoriesOrderBy {
 
 type ExamCategory {
   createdAt: Datetime!
+  defaultPointBuckets: JSON
 
   """Reads and enables pagination through a set of `ExamResult`."""
   examResults(
@@ -1324,6 +1325,7 @@ input ExamCategoryFilter {
 
 """An input for mutations affecting `ExamCategory`"""
 input ExamCategoryInput {
+  defaultPointBuckets: JSON
   hasData: Boolean
   id: UUID
   name: String!
@@ -1334,6 +1336,7 @@ input ExamCategoryInput {
 Represents an update to a `ExamCategory`. Fields that are set will be updated.
 """
 input ExamCategoryPatch {
+  defaultPointBuckets: JSON
   hasData: Boolean
   id: UUID
   name: String

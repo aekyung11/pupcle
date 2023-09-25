@@ -9,6 +9,9 @@ create table app_public.exam_categories (
   name                text not null,
   is_default_category boolean not null default false,
   has_data            boolean not null default false,
+  -- ex. [{bucket: "WBC", type: "number", safeRangeStart: 10, safeRangeEnd: 20, tooltip: "White blood cell count"}]
+  -- this field is only used when has_data is true
+  default_point_buckets jsonb,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now(),
   unique (user_id, name)
@@ -27,13 +30,15 @@ grant insert (
   id,
   user_id,
   name,
-  has_data
+  has_data,
+  default_point_buckets
 ) on app_public.exam_categories to :DATABASE_VISITOR;
 grant update (
   id,
   user_id,
   name,
-  has_data
+  has_data,
+  default_point_buckets
 ) on app_public.exam_categories to :DATABASE_VISITOR;
 
 create trigger _100_timestamps
@@ -48,7 +53,7 @@ begin
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '피부 검사', true) on conflict do nothing;
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '심장 청진', true) on conflict do nothing;
   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '신체 검사', true) on conflict do nothing;
-  insert into app_public.exam_categories(user_id, name, is_default_category, has_data) values(NEW.id, '기본혈액검사(CBC)', true, true) on conflict do nothing;
+  insert into app_public.exam_categories(user_id, name, is_default_category, has_data, default_point_buckets) values(NEW.id, '기본혈액검사(CBC)', true, true, '[{"bucket":"WBC","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"White Blood Cell Count"},{"bucket":"WBC-Lymph","type":"number","safeRangeStart":1,"safeRangeEnd":10,"tooltip":"Wite Blood Cell Lymph"},{"bucket":"WBC-Gran","type":"number","safeRangeStart":5,"safeRangeEnd":15,"tooltip":"WBC-Gran"},{"bucket":"RBC","type":"number","safeRangeStart":5,"safeRangeEnd":10,"tooltip":"Red Blood Cell Count"},{"bucket":"HGB","type":"number","safeRangeStart":10,"tooltip":"HGB"},{"bucket":"HCT","type":"number","safeRangeStart":10,"safeRangeEnd":100,"tooltip":"HCT"},{"bucket":"MCV","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"MCV"},{"bucket":"MCH","type":"number","safeRangeStart":300,"safeRangeEnd":500,"tooltip":"MCH"},{"bucket":"MCHC","type":"number","safeRangeStart":10,"safeRangeEnd":100,"tooltip":"MCHC"},{"bucket":"RDW-CV","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"RDW-CV"}]'::jsonb) on conflict do nothing;
   return NEW;
 end;
 $$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
