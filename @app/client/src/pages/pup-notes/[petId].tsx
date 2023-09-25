@@ -47,7 +47,7 @@ import { Alert, Button, Col, Row, Tooltip } from "antd";
 import axios from "axios";
 import clsx from "clsx";
 import { format, parseISO } from "date-fns";
-import { Formik, useFormikContext } from "formik";
+import { FieldArray, Formik, useFormikContext } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -136,7 +136,6 @@ interface PupNotesPageProps {
 enum Tab {
   INFO = "info",
   EXAMS = "exams",
-  DETAILED = "detailed",
   CHART = "chart",
 }
 
@@ -269,27 +268,7 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
                     fontWeight: 600,
                   }}
                 >
-                  기본 검사
-                </span>
-              </Button>
-            </Tabs.Trigger>
-            <Tabs.Trigger key={Tab.DETAILED} value={Tab.DETAILED} asChild>
-              <Button
-                className="friends-tab"
-                style={{
-                  width: "100%",
-                  height: "50px",
-                  borderRadius: "0 25px 25px 0",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "min(20px, 14px + 0.2vw)",
-                    fontWeight: 600,
-                  }}
-                >
-                  세부 검사
+                  검사 기록
                 </span>
               </Button>
             </Tabs.Trigger>
@@ -350,46 +329,6 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
               currentUser={currentUser}
               currentPet={currentPet}
             />
-          </Tabs.Content>
-          <Tabs.Content
-            key={Tab.DETAILED}
-            value={Tab.DETAILED}
-            className="flex h-full"
-          >
-            <div className="border-pupcleLightLightGray flex h-full w-1/2 flex-col items-center justify-center border-r-[8px]">
-              <img
-                src="/pup_notes_register_detail.png"
-                className="mb-14 h-[302px] w-[322px]"
-              />
-              <Tooltip
-                placement="bottom"
-                title={
-                  "슬개골 검사, 치과 검사, X-RAY 등 수치 입력이 필요없는 진료예요."
-                }
-              >
-                <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
-                  <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
-                    수치 입력이 필요없어요
-                  </span>
-                </Button>
-              </Tooltip>
-            </div>
-            <div className="flex h-full w-1/2 flex-col items-center justify-center">
-              <img
-                src="/pup_notes_register_examination_result.png"
-                className="mb-14 h-[302px] w-[322px]"
-              />
-              <Tooltip
-                placement="bottom"
-                title={"혈액 검사(CBC)와 같이 수치가 중요한 검사예요."}
-              >
-                <Button className="bg-pupcleLightBlue flex h-[63px] w-[358px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
-                  <span className="font-poppins text-pupcleBlue text-[24px] font-semibold">
-                    수치 입력이 필요해요
-                  </span>
-                </Button>
-              </Tooltip>
-            </div>
           </Tabs.Content>
           <Tabs.Content
             key={Tab.CHART}
@@ -1050,6 +989,9 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
     ]
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const newExamResultsCategory = categories.find(
+    (c) => c.id === newExamResultsCategoryId
+  );
 
   const examResults = currentPet.examResults.nodes;
   const selectedExamResults = examResults.find(
@@ -1159,14 +1101,12 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
               <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
                 <div className="h-full w-1/2 overflow-scroll">
                   <div className="w-full">
-                    {selectedExamResults ? (
+                    {selectedExamResults &&
+                    selectedExamResults?.examCategory ? (
                       <ExamResultsForm
                         currentUser={currentUser}
                         currentPet={currentPet}
-                        examCategoryHasData={
-                          selectedExamResults.examCategory?.hasData ?? false
-                        }
-                        examCategoryId={selectedExamResults.examCategory?.id}
+                        examCategory={selectedExamResults.examCategory}
                         examResults={selectedExamResults}
                         onComplete={() => {}}
                       />
@@ -1423,7 +1363,7 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
               </div>
             ))}
           </div>
-          {newExamResults && (
+          {newExamResults && newExamResultsCategory && (
             <div
               className={clsx({
                 hidden: !(!selectedExamResultsId && newExamResults),
@@ -1440,10 +1380,7 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
                   />
                 </Button>
                 <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-                  {
-                    categories.find(({ id }) => id === newExamResultsCategoryId)
-                      ?.name
-                  }
+                  {newExamResultsCategory.name}
                 </span>
               </div>
 
@@ -1453,8 +1390,7 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
                     <ExamResultsForm
                       currentUser={currentUser}
                       currentPet={currentPet}
-                      examCategoryId={newExamResultsCategoryId}
-                      examCategoryHasData={categoryHasData}
+                      examCategory={newExamResultsCategory}
                       onComplete={() => {
                         setNewExamResults(false);
                         setSelectedCategoryId("");
@@ -1852,11 +1788,7 @@ const ExamResultsFormInner: FC<{
     [setFieldValue]
   );
 
-  const {
-    uppy,
-    isLoading: uppyIsLoading,
-    resetUppy,
-  } = useUppy({
+  const { uppy, isLoading: uppyIsLoading } = useUppy({
     initialFiles: initialValues.files,
     onFilesChange,
   });
@@ -2163,6 +2095,49 @@ const ExamResultsFormInner: FC<{
           </div>
         </div>
 
+        <FieldArray
+          name="examData.points"
+          render={(arrayHelpers) => (
+            <div>
+              {values.examData?.points?.map((point, index) => (
+                <div key={index}>
+                  <Form.Item
+                    name={`examData.points.[${index}].bucket`}
+                    className="mb-0 w-full"
+                  >
+                    <Input
+                      className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
+                      name={`examData.points.[${index}].bucket`}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`examData.points.[${index}].value`}
+                    className="mb-0 w-full"
+                  >
+                    <Input
+                      className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-10 w-full rounded-full border-none px-6 text-[15px]"
+                      name={`examData.points.[${index}].value`}
+                    />
+                  </Form.Item>
+
+                  <button
+                    type="button"
+                    onClick={() => arrayHelpers.remove(index)}
+                  >
+                    -
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => arrayHelpers.push({ bucket: "", value: null })}
+              >
+                +
+              </button>
+            </div>
+          )}
+        />
+
         {error ? (
           <Form.Item name="_error">
             <Alert
@@ -2199,8 +2174,7 @@ const ExamResultsFormInner: FC<{
 interface ExamResultsFormProps {
   currentUser: SharedLayout_UserFragment;
   currentPet: SharedLayout_PetFragment;
-  examCategoryId: string;
-  examCategoryHasData: boolean;
+  examCategory: PupNotesPage_ExamCategoryFragment;
   examResults?: PupNotesPage_ExamResultsFragment;
   onComplete: (result: any) => Promise<void> | void;
 }
@@ -2208,8 +2182,7 @@ interface ExamResultsFormProps {
 const ExamResultsForm: FC<ExamResultsFormProps> = ({
   currentUser,
   currentPet,
-  examCategoryId,
-  examCategoryHasData,
+  examCategory,
   examResults,
   onComplete,
 }) => {
@@ -2224,8 +2197,7 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
     useExamResultsForm(
       currentUser.id,
       currentPet.id,
-      examCategoryId,
-      examCategoryHasData,
+      examCategory,
       examResults,
       postResult
     );
@@ -2275,13 +2247,6 @@ const ExamDataChart: FC<{}> = () => {
             data: { stroke: "#d9d9d9" },
             parent: { border: "1px solid #ccc" },
           }}
-          // data={[
-          //   { x: 1, y: 2 },
-          //   { x: 2, y: 3 },
-          //   { x: 3, y: 5 },
-          //   { x: 4, y: 4 },
-          //   { x: 5, y: 7 },
-          // ]}
           data={chartdata}
           labels={({ datum }) => datum.y}
           labelComponent={

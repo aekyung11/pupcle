@@ -1,5 +1,6 @@
 import { ApolloError, FetchResult } from "@apollo/client";
 import {
+  PupNotesPage_ExamCategoryFragment,
   PupNotesPage_ExamResultsFragment,
   UpsertExamResultsMutation,
   useDeleteExamResultsAssetMutation,
@@ -63,8 +64,7 @@ export type ExamResultsInput = InferType<typeof validationSchema>;
 export function useExamResultsForm(
   userId: string,
   petId: string,
-  examCategoryId: string,
-  examCategoryHasData: boolean,
+  examCategory: PupNotesPage_ExamCategoryFragment,
   examResults: PupNotesPage_ExamResultsFragment | undefined,
   postResult: (
     result: FetchResult<UpsertExamResultsMutation>
@@ -95,7 +95,12 @@ export function useExamResultsForm(
           },
         })) ?? [],
     memo: examResults?.memo,
-    examData: examCategoryHasData ? examResults?.examData : undefined,
+    examData: examCategory.hasData
+      ? examResults?.examData ??
+        (examCategory.defaultPointBuckets
+          ? { points: examCategory.defaultPointBuckets }
+          : { points: [] })
+      : undefined,
   } as unknown as ExamResultsInput;
   const handleSubmit: FormikConfig<ExamResultsInput>["onSubmit"] = useCallback(
     async (values, { setErrors: _setErrors, resetForm }) => {
@@ -106,7 +111,7 @@ export function useExamResultsForm(
             input: {
               examResult: {
                 id: examResults?.id,
-                examCategoryId,
+                examCategoryId: examCategory.id,
                 petId,
                 userId,
                 ...(values.cost != null && {
@@ -121,7 +126,7 @@ export function useExamResultsForm(
                 nextReservation:
                   values.nextReservation && formatISO(values.nextReservation),
                 takenAt: values.takenAt && formatISO(values.takenAt),
-                ...(examCategoryHasData &&
+                ...(examCategory.hasData &&
                   values.examData && {
                     examData: values.examData,
                   }),
@@ -183,10 +188,10 @@ export function useExamResultsForm(
     [
       upsertExamResults,
       examResults?.id,
-      examCategoryId,
+      examCategory.id,
+      examCategory.hasData,
       petId,
       userId,
-      examCategoryHasData,
       initialValues.files,
       upsertExamResultsAssetBatch,
       postResult,
