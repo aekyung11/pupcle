@@ -49,6 +49,7 @@ import clsx from "clsx";
 import { format, parseISO } from "date-fns";
 import { FieldArray, Formik, useFormikContext } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
+import { sortBy } from "lodash";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -69,41 +70,6 @@ import {
 } from "victory";
 
 import { pupcle } from "../victory/pupcle-theme";
-
-// const chartdata = [
-//   {
-//     takenAt: new Date(2022, 10, 10, 0, 0, 0, 0),
-//     MCV: 68,
-//     MCH: 30,
-//   },
-//   {
-//     takenAt: new Date(2022, 11, 14, 0, 0, 0, 0),
-//     MCV: 2,
-//     MCH: 1000,
-//   },
-//   {
-//     takenAt: new Date(2023, 0, 16, 0, 0, 0, 0),
-//     MCV: 59,
-//     MCH: 21,
-//   },
-//   //...
-// ];
-
-const chartdata = [
-  {
-    x: new Date(2022, 10, 10, 0, 0, 0, 0),
-    y: 68,
-  },
-  {
-    x: new Date(2022, 11, 14, 0, 0, 0, 0),
-    y: 2,
-  },
-  {
-    x: new Date(2023, 0, 16, 0, 0, 0, 0),
-    y: 59,
-  },
-  //...
-];
 
 const dataFormatter = (number: number) =>
   `${Intl.NumberFormat("us").format(number).toString()}`;
@@ -335,133 +301,10 @@ const PupNotes: NextPage<PupNotesPageProps> = () => {
             value={Tab.CHART}
             className="relative h-full"
           >
-            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-              <Button
-                className="mr-3 h-[13px] w-5 border-none p-0"
-                // onClick={() => setSelectedBasicExamResultsId(null)}
-              >
-                <img
-                  src="/pup_notes_caret_icon.png"
-                  className="h-[13px] w-5 rotate-90"
-                />
-              </Button>
-              <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-                기본혈액검사
-              </span>
-            </div>
-            <div className="my-[72px] grid h-[calc(100vh-6rem-125px-91px-20px-144px)] w-full grid-cols-2 justify-items-center overflow-scroll px-16">
-              <ExamDataChart />
-              <ExamDataChart />
-              <ExamDataChart />
-            </div>
-            {/* <div className="flex w-full flex-col items-center">
-              <Dialog.Root>
-                <Dialog.Trigger asChild>
-                  <Button className="z-90 fixed right-[60px] bottom-[56px] h-[100px] w-[100px] rounded-full border-none p-0 drop-shadow-lg duration-300 hover:animate-bounce hover:drop-shadow-2xl">
-                    <img
-                      src="/pup_notes_add_new_floating_button.png"
-                      className="h-[100px] w-[100px]"
-                    />
-                  </Button>
-                </Dialog.Trigger>
-                <Dialog.Portal>
-                  <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
-                  <Dialog.Content
-                    className={clsx(
-                      "fixed z-20",
-                      "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[60%]",
-                      "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] xl:left-[60%] 2xl:left-[57%]"
-                    )}
-                  >
-                    <Dialog.Title className="flex h-[84px] w-full flex-row items-center justify-center px-[65px]">
-                      <span className="font-poppins text-pupcle-24px mr-2 font-semibold">
-                        항목을 선택해주세요.
-                      </span>
-                      <img src="/paw.png" className="h-fit w-[43px]" alt="" />
-                    </Dialog.Title>
-                    <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-                  </Dialog.Content>
-                </Dialog.Portal>
-              </Dialog.Root>
-              <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
-                <ToggleGroup.Root
-                  className="ToggleGroup"
-                  type="single"
-                  aria-label="Text alignment"
-                >
-                  <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-                    <ToggleGroup.Item
-                      key="CBC"
-                      value="CBC"
-                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-                    >
-                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                        기본혈액검사{"("}CBC{")"}
-                      </span>
-                    </ToggleGroup.Item>
-                    <ToggleGroup.Item
-                      key="XRAY"
-                      value="XRAY"
-                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-                    >
-                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                        X-RAY
-                      </span>
-                    </ToggleGroup.Item>
-                    <ToggleGroup.Item
-                      key="PEE"
-                      value="PEE"
-                      className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-                    >
-                      <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                        소변 검사
-                      </span>
-                    </ToggleGroup.Item>
-                  </div>
-                </ToggleGroup.Root>
-              </div>
-              <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-              <div className="flex h-[84px] w-full flex-row items-center justify-start px-[65px]">
-                <span className="font-poppins text-pupcle-24px font-semibold">
-                  히스토리
-                </span>
-                <img
-                  src="/pup_notes_caret_icon.png"
-                  className="ml-3 h-[13px] w-5"
-                />
-              </div>
-              <div className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10">
-                <div className="flex w-[70%] items-center justify-between">
-                  <div className="flex flex-row items-center">
-                    <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-                    <div className="mx-9 flex flex-col">
-                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
-                        <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                          기본혈액검사
-                        </span>
-                      </div>
-                      <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                        서울동물병원
-                      </span>
-                      <span className="font-poppins text-[15px]">
-                        추가 메모{") "}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="font-poppins text-[15px]">
-                    {/* {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")} */}
-            {/* 2023.09.14
-                  </span>
-                </div>
-                <div className="w-[30%] px-5">
-                  <Button className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]">
-                    <span className="font-poppins text-[20px] font-semibold text-white">
-                      보기
-                    </span>
-                  </Button>
-                </div>
-              </div>
-            </div>  */}
+            <PupNotesPageChartsInner
+              currentUser={currentUser}
+              currentPet={currentPet}
+            />
           </Tabs.Content>
         </div>
       </Tabs.Root>
@@ -2215,10 +2058,17 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
   );
 };
 
-const ExamDataChart: FC<{}> = () => {
+const ExamDataChart: FC<{
+  chartData: { x: Date; y: number }[];
+  title: string;
+}> = ({ chartData, title }) => {
   return (
     <div className="relative h-[600px] w-[500px]">
-      <VictoryChart title="MCV" theme={pupcle} domainPadding={{ x: 50, y: 10 }}>
+      <VictoryChart
+        title={title}
+        theme={pupcle}
+        domainPadding={{ x: 50, y: 10 }}
+      >
         <VictoryAxis
           style={{
             tickLabels: {
@@ -2226,7 +2076,7 @@ const ExamDataChart: FC<{}> = () => {
               fontWeight: 500,
             },
           }}
-          tickValues={chartdata.map((e) => e.x)}
+          tickValues={chartData.map((e) => e.x)}
           tickFormat={(tick) => {
             return `${format(tick, "yyyy")}\n${format(tick, "MM.dd")}`;
           }}
@@ -2245,7 +2095,7 @@ const ExamDataChart: FC<{}> = () => {
             data: { stroke: "#d9d9d9" },
             parent: { border: "1px solid #ccc" },
           }}
-          data={chartdata}
+          data={chartData}
           labels={({ datum }) => datum.y}
           labelComponent={
             <VictoryLabel
@@ -2275,10 +2125,173 @@ const ExamDataChart: FC<{}> = () => {
       </VictoryChart>
       <div className="bg-pupcleLightLightGray absolute left-0 top-0 flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
         <span className="font-poppins text-pupcleGray text-[16px] font-medium">
-          MCV
+          {title}
         </span>
       </div>
     </div>
+  );
+};
+
+type PupNotesPageChartsInnerProps = {
+  currentUser: SharedLayout_UserFragment & PupNotesPage_UserFragment;
+  currentPet: SharedLayout_PetFragment & PupNotesPage_PetFragment;
+};
+
+const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
+  currentUser,
+  currentPet,
+}) => {
+  const categories = useMemo(
+    () =>
+      [...currentUser.examCategories.nodes]
+        .sort((a, b) => {
+          return localeCompare(a.name, b.name);
+        })
+        .filter((c) => c.hasData),
+    [currentUser.examCategories.nodes]
+  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    categories[0].id
+  );
+
+  const [selectedBucket, setSelectedBucket] = useState<string>("");
+
+  const examResults = currentPet.examResults.nodes;
+  const filteredExamResults = useMemo(() => {
+    return examResults.filter(
+      (ber) => ber.examCategory?.id === selectedCategoryId
+    );
+  }, [examResults, selectedCategoryId]);
+
+  const buckets = useMemo(() => {
+    if (!filteredExamResults.length) {
+      return [];
+    }
+
+    const examResults = sortBy(
+      filteredExamResults.filter((er) => er.takenAt),
+      "takenAt"
+    );
+
+    const buckets = new Set<string>();
+
+    examResults.forEach((er) => {
+      const points = er.examData?.["points"] as (any | undefined)[];
+      if (points) {
+        points.forEach((p) => {
+          const bucket = p.bucket;
+          if (bucket) {
+            buckets.add(bucket as string);
+          }
+        });
+      }
+    });
+
+    return Array.from(buckets).sort();
+  }, [filteredExamResults]);
+
+  const bucketData = useMemo(() => {
+    if (!selectedBucket || !filteredExamResults.length) {
+      return [];
+    }
+
+    const examResults = sortBy(
+      filteredExamResults.filter((er) => er.takenAt),
+      "takenAt"
+    );
+    return examResults
+      .map((er) => {
+        const y = (er.examData?.["points"] as any[])?.find(
+          (p) => p.bucket === selectedBucket
+        )?.value as number | undefined;
+        return {
+          x: new Date(er.takenAt!),
+          y: y != null ? Number(y) : undefined,
+        };
+      })
+      .filter(({ y }) => y !== undefined);
+  }, [filteredExamResults, selectedBucket]);
+
+  console.log({ bucketData });
+
+  if (!categories.length) {
+    return <FourOhFour />;
+  }
+
+  return (
+    <>
+      <div
+        className={clsx("flex w-full flex-col items-center", {
+          hidden: selectedBucket,
+        })}
+      >
+        <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
+          <ToggleGroup.Root
+            className="ToggleGroup"
+            type="single"
+            value={selectedCategoryId}
+            onValueChange={(value) => setSelectedCategoryId(value)}
+            aria-label="Text alignment"
+          >
+            <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+              {categories.map(({ id, name }) => (
+                <ToggleGroup.Item
+                  key={id}
+                  value={id}
+                  className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+                >
+                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                    {name}
+                  </span>
+                </ToggleGroup.Item>
+              ))}
+            </div>
+          </ToggleGroup.Root>
+        </div>
+        <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
+        <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+          {buckets?.map((bucket) => (
+            <Button
+              key={bucket}
+              className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
+              onClick={() => setSelectedBucket(bucket)}
+            >
+              <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                {bucket}
+              </span>
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div
+        className={clsx({
+          hidden: !selectedBucket,
+        })}
+      >
+        <div
+          className={clsx(
+            "border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]"
+          )}
+        >
+          <Button
+            className="mr-3 h-[13px] w-5 border-none p-0"
+            onClick={() => setSelectedBucket("")}
+          >
+            <img
+              src="/pup_notes_caret_icon.png"
+              className="h-[13px] w-5 rotate-90"
+            />
+          </Button>
+          <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+            {selectedBucket}
+          </span>
+        </div>
+        <div className="my-[72px] grid h-[calc(100vh-6rem-125px-91px-20px-144px)] w-full grid-cols-2 justify-items-center overflow-scroll px-16">
+          {/* @ts-ignore */}
+          <ExamDataChart title={selectedBucket} chartData={bucketData} />
+        </div>
+      </div>
+    </>
   );
 };
 
