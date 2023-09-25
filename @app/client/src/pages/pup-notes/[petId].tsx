@@ -1056,10 +1056,22 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
     (ber) => ber.id === selectedExamResultsId
   );
   const filteredExamResults = useMemo(() => {
-    return selectedCategoryId
-      ? examResults.filter((ber) => ber.examCategory?.id === selectedCategoryId)
-      : examResults;
-  }, [examResults, selectedCategoryId]);
+    return examResults
+      .filter(
+        (ber) =>
+          !selectedCategoryId || ber.examCategory?.id === selectedCategoryId
+      )
+      .filter(
+        (ber) =>
+          selectedExamCategoriesType &&
+          categoryHasData === ber.examCategory?.hasData
+      );
+  }, [
+    categoryHasData,
+    examResults,
+    selectedCategoryId,
+    selectedExamCategoriesType,
+  ]);
 
   const onExamCategoryFormComplete = useCallback(
     (result: FetchResult<UpsertExamCategoryMutation>) => {
