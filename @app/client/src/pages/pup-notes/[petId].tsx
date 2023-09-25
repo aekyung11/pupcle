@@ -1612,8 +1612,9 @@ const useUppy = ({ initialFiles, onFilesChange }: UseUppyProps) => {
 
 const ExamResultsFormInner: FC<{
   error: Error | ApolloError | null;
+  examCategoryHasData: boolean;
   submitLabel: string;
-}> = ({ error, submitLabel }) => {
+}> = ({ error, examCategoryHasData, submitLabel }) => {
   const [uppyDialogOpen, setUppyDialogOpen] = useState(false);
   const [uppyFilesInvalidAlertOpen, setUppyFilesInvalidAlertOpen] =
     useState(false);
@@ -1934,103 +1935,110 @@ const ExamResultsFormInner: FC<{
             </Form.Item>
           </div>
         </div>
-
-        <div className="mb-12 flex">
-          <div className="flex w-20 items-start justify-end">
-            <span className="font-poppins text-pupcle-20px text-pupcleBlue mt-[5px] font-medium">
-              검사목록
-            </span>
-          </div>
-          <div className="flex w-[calc(100%-80px)] pl-9">
-            <Form.Item name="memo" className="mb-0 w-full">
-              <div className="bg-pupcleLightLightGray relative h-fit w-full rounded-[30px] border-none p-6">
-                <div className="flex w-full">
-                  <div className="w-1/2 pl-6">
-                    <span className="font-poppins text-pupcleGray text-[15px] font-bold uppercase">
-                      Name
-                    </span>
+        {examCategoryHasData && (
+          <div className="mb-12 flex">
+            <div className="flex w-20 items-start justify-end">
+              <span className="font-poppins text-pupcle-20px text-pupcleBlue mt-[5px] font-medium">
+                검사목록
+              </span>
+            </div>
+            <div className="flex w-[calc(100%-80px)] pl-9">
+              <Form.Item name="memo" className="mb-0 w-full">
+                <div className="bg-pupcleLightLightGray relative h-fit w-full rounded-[30px] border-none p-6">
+                  <div className="flex w-full">
+                    <div className="w-1/2 pl-6">
+                      <span className="font-poppins text-pupcleGray text-[15px] font-bold uppercase">
+                        Name
+                      </span>
+                    </div>
+                    <div className="w-1/2 pl-6">
+                      <span className="font-poppins text-pupcleGray text-[15px] font-bold uppercase">
+                        Result
+                      </span>
+                    </div>
                   </div>
-                  <div className="w-1/2 pl-6">
-                    <span className="font-poppins text-pupcleGray text-[15px] font-bold uppercase">
-                      Result
-                    </span>
-                  </div>
-                </div>
-                <div className="bg-pupcleGray my-[16px] h-[3px] w-full rounded-full border-none"></div>
-                <FieldArray
-                  name="examData.points"
-                  render={(arrayHelpers) => (
-                    <div className="flex w-full flex-col">
-                      {values.examData?.points?.map((point, index) => (
-                        <div key={index} className="flex flex-row items-center">
-                          <Form.Item
-                            name={`examData.points.[${index}].bucket`}
-                            className="mb-0 w-1/2"
+                  <div className="bg-pupcleGray my-[16px] h-[3px] w-full rounded-full border-none"></div>
+                  <FieldArray
+                    name="examData.points"
+                    render={(arrayHelpers) => (
+                      <div className="flex w-full flex-col">
+                        {values.examData?.points?.map((point, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-row items-center"
                           >
-                            <Input
-                              className="font-poppins text-pupcleGray placeholder:text-pupcleGray relative h-10 w-fit border-none bg-transparent px-6 text-[15px] font-medium"
+                            <Form.Item
                               name={`examData.points.[${index}].bucket`}
-                              placeholder="이름을 입력해주세요."
-                            />
-                            {point.tooltip && (
-                              <Tooltip
-                                title={point.tooltip}
-                                className="absolute top-[13px] left-0"
-                              >
-                                <img
-                                  src="/tooltip.png"
-                                  className="h-[14px] w-[14px]"
-                                />
-                              </Tooltip>
-                            )}
-                          </Form.Item>
-                          <Form.Item
-                            name={`examData.points.[${index}].value`}
-                            className="mb-0 w-1/2"
-                          >
-                            <Input
-                              className="font-poppins text-pupcleGray placeholder:text-pupcleGray h-10 w-full border-none bg-transparent px-6 text-[15px] font-light"
+                              className="mb-0 w-1/2"
+                            >
+                              <Input
+                                className="font-poppins text-pupcleGray placeholder:text-pupcleGray relative h-10 w-fit border-none bg-transparent px-6 text-[15px] font-medium"
+                                name={`examData.points.[${index}].bucket`}
+                                placeholder="이름을 입력해주세요."
+                              />
+                              {point.tooltip && (
+                                <Tooltip
+                                  title={point.tooltip}
+                                  className="absolute top-[13px] left-0"
+                                >
+                                  <img
+                                    src="/tooltip.png"
+                                    className="h-[14px] w-[14px]"
+                                  />
+                                </Tooltip>
+                              )}
+                            </Form.Item>
+                            <Form.Item
                               name={`examData.points.[${index}].value`}
-                              placeholder="수치를 입력해주세요."
-                            />
-                          </Form.Item>
+                              className="mb-0 w-1/2"
+                            >
+                              <Input
+                                className="font-poppins text-pupcleGray placeholder:text-pupcleGray h-10 w-full border-none bg-transparent px-6 text-[15px] font-light"
+                                name={`examData.points.[${index}].value`}
+                                placeholder="수치를 입력해주세요."
+                              />
+                            </Form.Item>
 
+                            <Button
+                              className="h-[20px] w-[20px] rounded-full border-none p-0"
+                              onClick={() => arrayHelpers.remove(index)}
+                            >
+                              <img
+                                src="/minus.png"
+                                className="h-[20px] w-[20px]"
+                              />
+                            </Button>
+                          </div>
+                        ))}
+                        <div className="relative flex h-10 w-full items-center px-6">
+                          <a
+                            onClick={() =>
+                              arrayHelpers.push({ bucket: "", value: null })
+                            }
+                            className="font-poppins text-pupcleGray mr-1 text-[15px] font-medium"
+                          >
+                            추가하기
+                          </a>
                           <Button
                             className="h-[20px] w-[20px] rounded-full border-none p-0"
-                            onClick={() => arrayHelpers.remove(index)}
+                            onClick={() =>
+                              arrayHelpers.push({ bucket: "", value: null })
+                            }
                           >
                             <img
-                              src="/minus.png"
+                              src="/plus.png"
                               className="h-[20px] w-[20px]"
                             />
                           </Button>
                         </div>
-                      ))}
-                      <div className="relative flex h-10 w-full items-center px-6">
-                        <a
-                          onClick={() =>
-                            arrayHelpers.push({ bucket: "", value: null })
-                          }
-                          className="font-poppins text-pupcleGray mr-1 text-[15px] font-medium"
-                        >
-                          추가하기
-                        </a>
-                        <Button
-                          className="h-[20px] w-[20px] rounded-full border-none p-0"
-                          onClick={() =>
-                            arrayHelpers.push({ bucket: "", value: null })
-                          }
-                        >
-                          <img src="/plus.png" className="h-[20px] w-[20px]" />
-                        </Button>
                       </div>
-                    </div>
-                  )}
-                />
-              </div>
-            </Form.Item>
+                    )}
+                  />
+                </div>
+              </Form.Item>
+            </div>
           </div>
-        </div>
+        )}
 
         {error ? (
           <Form.Item name="_error">
@@ -2104,7 +2112,11 @@ const ExamResultsForm: FC<ExamResultsFormProps> = ({
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          <ExamResultsFormInner error={error} submitLabel={submitLabel} />
+          <ExamResultsFormInner
+            examCategoryHasData={examCategory.hasData}
+            error={error}
+            submitLabel={submitLabel}
+          />
         </Formik>
       </div>
     </>
