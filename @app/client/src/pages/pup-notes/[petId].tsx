@@ -1166,14 +1166,17 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
             {/* map() */}
             {filteredExamResults.map(({ id, memo, takenAt, examCategory }) => (
               <div
-                className="border-pupcleLightGray flex w-full items-center border-t-[1px] px-[65px] py-10"
+                className="border-pupcleLightGray flex w-full items-center justify-center border-t-[1px] px-[65px] py-10"
                 key={id}
               >
-                <div className="flex w-[70%] items-center justify-between">
+                <div className="flex w-full max-w-[1095px] items-center justify-between">
                   <div className="flex flex-row items-center">
-                    <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div>
-                    <div className="mx-9 flex flex-col">
-                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[114px] items-center justify-center rounded-full">
+                    <span className="font-poppins text-[15px]">
+                      {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
+                    </span>
+                    {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
+                    <div className="mx-12 flex flex-col">
+                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[fit] items-center justify-center rounded-full px-6">
                         <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
                           {examCategory?.name}
                         </span>
@@ -1187,12 +1190,6 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
                       </span>
                     </div>
                   </div>
-                  <span className="font-poppins text-[15px]">
-                    {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
-                  </span>
-                </div>
-
-                <div className="w-[30%] px-5">
                   <Button
                     onClick={() => setSelectedExamResultsId(id)}
                     className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
