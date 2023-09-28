@@ -5,28 +5,6 @@
 module.exports = {
   safelist: ["invisible", "hidden"],
   theme: {
-    fontSize: {
-      "pupcle-20px": "min(20px, 14px + 0.2vw)",
-      "pupcle-24px": "min(24px, 2vw)",
-      "pupcle-30px": "min(30px, 2.4vw)",
-      "pupcle-48px": [
-        "min(calc(16px + 2vw), 48px)",
-        {
-          letterSpacing: "1.5%",
-          lineHeight: "0.96",
-        },
-      ],
-    },
-    fontFamily: {
-      sans: '"DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      poppins: '"Poppins"',
-    },
-    fontWeight: {
-      bold: 700,
-      semibold: 600,
-      medium: 500,
-      light: 100,
-    },
     extend: {
       colors: {
         "home-comment": "#615518",
