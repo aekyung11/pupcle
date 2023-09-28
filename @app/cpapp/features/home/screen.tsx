@@ -66,7 +66,7 @@ export function HomeScreen() {
           </Text>
         </MotiLink>
       </Row>
-      <Row className="space-x-8">
+      <Row className="bg-pupcleBlue mt-10 space-x-8">
         <Button theme="light" size="$8">
           Hello world
         </Button>
