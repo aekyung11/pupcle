@@ -97,3 +97,23 @@ if you don't have cocoapods, install it first.
 ```
 ~> brew install cocoapods
 ```
+
+When you
+
+- upgrade dependencies
+- add CocoaPods
+- delete the iOS folder
+
+run
+
+```fish
+set ROOT_URL http://(ifconfig -l | xargs -n1 ipconfig getifaddr | head -n 1):5678; yarn mobile expo-run-ios
+```
+
+to refresh everything.
+
+But when you're just making JS changes
+
+```
+set ROOT_URL http://(ifconfig -l | xargs -n1 ipconfig getifaddr | head -n 1):5678; yarn mobile expo-start
+```
