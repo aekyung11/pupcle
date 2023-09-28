@@ -7,6 +7,7 @@ import {
 import { InMemoryCache } from "@apollo/client/cache";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import Constants from "expo-constants";
 import * as React from "react";
 
 import { useAuth } from "./auth";
@@ -38,7 +39,7 @@ function makeClientSideLink(
 }
 
 function getApolloClient(status: string, userToken: string): ApolloClient<any> {
-  const ROOT_URL = process.env.ROOT_URL;
+  const ROOT_URL = Constants.expoConfig?.extra?.["ROOT_URL"];
   if (!ROOT_URL) {
     throw new Error("ROOT_URL envvar is not set");
   }

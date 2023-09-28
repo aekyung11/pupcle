@@ -6,5 +6,7 @@ export default ({ config }) => {
     config.ios.bundleIdentifier = "com.pupcle.mobile.dev";
     config.name = "PupCle Dev";
   }
+  config.extra = config.extra || {};
+  config.extra.ROOT_URL = process.env.ROOT_URL;
   return config;
 };
