@@ -14,6 +14,15 @@ module.exports = function (api) {
           path: path.resolve(__dirname, "../../.env"),
         },
       ],
+      "transform-inline-environment-variables",
+      [
+        "@tamagui/babel-plugin",
+        {
+          components: ["tamagui"],
+          config: "./tamagui.config.ts",
+          logTimings: true,
+        },
+      ],
       "react-native-reanimated/plugin",
       "nativewind/babel",
       "expo-router/babel",

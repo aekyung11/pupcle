@@ -1,5 +1,6 @@
 .env
 .next
+.tamagui
 node_modules
 dist
 /heroku-setup

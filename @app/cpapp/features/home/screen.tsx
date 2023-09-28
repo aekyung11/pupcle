@@ -3,8 +3,10 @@ import { A, H1, P, Text, TextLink } from "@app/cpapp/design/typography";
 import { View } from "@app/cpapp/design/view";
 import React from "react";
 import { MotiLink } from "solito/moti";
+import { Button, useTheme } from "tamagui";
 
 export function HomeScreen() {
+  const theme = useTheme();
   return (
     <View className="flex-1 items-center justify-center p-3">
       <H1>Welcome to Solito.</H1>
@@ -63,6 +65,11 @@ export function HomeScreen() {
             Moti Link
           </Text>
         </MotiLink>
+      </Row>
+      <Row className="space-x-8">
+        <Button theme="light" size="$8">
+          Hello world
+        </Button>
       </Row>
     </View>
   );

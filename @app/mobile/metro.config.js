@@ -8,7 +8,10 @@ const path = require("path");
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, "../..");
 
-const config = getDefaultConfig(projectRoot);
+const config = getDefaultConfig(projectRoot, {
+  // [Web-only]: Enables CSS support in Metro.
+  isCSSEnabled: true,
+});
 
 // #1 - Watch all files in the monorepo
 config.watchFolders = [workspaceRoot];
@@ -26,5 +29,9 @@ config.cacheStores = [
     root: path.join(projectRoot, "node_modules", ".cache", "metro"),
   }),
 ];
+
+// Expo 49 issue: default metro config needs to include "mjs"
+// https://github.com/expo/expo/issues/23180
+config.resolver.sourceExts.push("mjs");
 
 module.exports = config;
