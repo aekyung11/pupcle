@@ -1,5 +1,6 @@
 import { s3Host, uploadBucket } from "@app/config";
 import { Express } from "express";
+// @ts-ignore
 import type { HelmetOptions } from "helmet" assert { "resolution-mode": "import" };
 
 const tmpRootUrl = process.env.ROOT_URL;

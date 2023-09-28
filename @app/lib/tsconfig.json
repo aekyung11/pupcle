@@ -8,7 +8,7 @@
     "declarationDir": "dist",
     "lib": ["dom", "dom.iterable", "esnext"],
     "target": "es5",
-    "module": "commonjs",
+    "module": "NodeNext",
     "jsx": "react"
   },
   "exclude": [

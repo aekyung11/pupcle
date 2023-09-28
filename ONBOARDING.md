@@ -98,6 +98,9 @@ if you don't have cocoapods, install it first.
 ~> brew install cocoapods
 ```
 
+Xcode config for running any iOS apps: Open Xcode and go to settings, accounts,
+sign-in with your apple ID. Make sure you have an iOS platform downloaded.
+
 When you
 
 - upgrade dependencies
