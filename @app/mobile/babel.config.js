@@ -3,7 +3,10 @@ const path = require("path");
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["babel-preset-expo", "@babel/preset-typescript"],
+    presets: [
+      ["babel-preset-expo", { jsxRuntime: "automatic" }],
+      "@babel/preset-typescript",
+    ],
     plugins: [
       [
         "inline-dotenv",
@@ -11,6 +14,9 @@ module.exports = function (api) {
           path: path.resolve(__dirname, "../../.env"),
         },
       ],
+      "react-native-reanimated/plugin",
+      "nativewind/babel",
+      "expo-router/babel",
     ],
   };
 };

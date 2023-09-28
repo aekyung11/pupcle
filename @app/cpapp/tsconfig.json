@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "typeRoots": ["types"]
+  },
+  "exclude": ["node_modules", "./node_modules", "./node_modules/*"],
+  "references": [
+    {
+      "path": "../componentlib"
+    },
+    {
+      "path": "../lib"
+    }
+  ]
+}

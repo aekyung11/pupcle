@@ -47,6 +47,7 @@ COPY --from=builder /app/@app/config/ /app/@app/config/
 COPY --from=builder /app/@app/db/ /app/@app/db/
 COPY --from=builder /app/@app/graphql/ /app/@app/graphql/
 COPY --from=builder /app/@app/lib/ /app/@app/lib/
+COPY --from=builder /app/@app/cpapp/ /app/@app/cpapp/
 COPY --from=builder /app/@app/componentlib/package.json /app/@app/componentlib/
 COPY --from=builder /app/@app/componentlib/dist/ /app/@app/componentlib/dist/
 COPY --from=builder /app/@app/components/package.json /app/@app/components/

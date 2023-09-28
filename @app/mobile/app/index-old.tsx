@@ -7,9 +7,9 @@ import { Field, Formik } from "formik";
 import React, { useCallback } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
-import CustomInput from "./components/CustomInput";
-import { AuthProvider, useAuth } from "./utils/auth";
-import { FederationProvider } from "./utils/FederationProvider";
+import CustomInput from "../components/CustomInput";
+import { AuthProvider, useAuth } from "../utils/auth";
+import { FederationProvider } from "../utils/FederationProvider";
 
 function LoginTest() {
   const { signIn, userToken } = useAuth();
