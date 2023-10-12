@@ -9,7 +9,7 @@ export default function Root() {
   return (
     <TamaguiProvider config={config}>
       <Provider>
-        <Stack />
+        <Stack screenOptions={{ headerShown: false }} />
       </Provider>
     </TamaguiProvider>
   );

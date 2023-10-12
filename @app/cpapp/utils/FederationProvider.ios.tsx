@@ -10,7 +10,7 @@ import { onError } from "@apollo/client/link/error";
 import Constants from "expo-constants";
 import * as React from "react";
 
-import { useAuth } from "./auth";
+import { useAuth } from "./auth.ios";
 
 function makeClientSideLink(
   ROOT_URL: string,

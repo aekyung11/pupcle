@@ -1,75 +1,64 @@
 import { Row } from "@app/cpapp/design/layout";
-import { A, H1, P, Text, TextLink } from "@app/cpapp/design/typography";
+import { Text } from "@app/cpapp/design/typography";
 import { View } from "@app/cpapp/design/view";
+import mobilePupcleDog from "@app/server/public/mobile_pupcle_dog.png";
+import { useFonts } from "expo-font";
 import React from "react";
-import { MotiLink } from "solito/moti";
-import { Button, useTheme } from "tamagui";
+import { SolitoImage } from "solito/image";
+import { Link } from "solito/link";
+// import { MotiLink } from "solito/moti";
+import { Button, Image, useTheme } from "tamagui";
 
 export function HomeScreen() {
   const theme = useTheme();
   return (
-    <View className="flex-1 items-center justify-center p-3">
-      <H1>Welcome to Solito.</H1>
-      <View className="max-w-xl">
-        <P className="text-center">
-          Here is a basic starter to show you how you can navigate from one
-          screen to another. This screen uses the same code on Next.js and React
-          Native.
-        </P>
-        <P className="text-center">
-          Solito is made by{" "}
-          <A
-            href="https://twitter.com/fernandotherojo"
-            hrefAttrs={{
-              target: "_blank",
-              rel: "noreferrer",
-            }}
-          >
-            Fernando Rojo
-          </A>
-          .
-        </P>
-        <P className="text-center">
-          NativeWind is made by{" "}
-          <A
-            href="https://twitter.com/mark__lawlor"
-            hrefAttrs={{
-              target: "_blank",
-              rel: "noreferrer",
-            }}
-          >
-            Mark Lawlor
-          </A>
-          .
-        </P>
-      </View>
-      <View className="h-[32px]" />
-      <Row className="space-x-8">
-        <TextLink href="/user/fernando">Regular Link</TextLink>
-        <MotiLink
-          href="/user/fernando"
-          animate={({ hovered, pressed }) => {
-            "worklet";
+    <View className="flex h-full items-center justify-between bg-white">
+      <Row className="mt-[207px] flex flex-col">
+        <View className="flex h-[235px] w-[131.63px] items-center justify-center">
+          <SolitoImage
+            src={mobilePupcleDog}
+            width={131.63} // AC
+            height={235} // AC
+            alt=""
+            contentFit="contain"
+          />
+        </View>
+        {/* <Image
+          className="h-[235px]"
+          source={{
+            uri: "/@app/server/public/mobile_pupcle_dog.png",
+            width: "fit-content",
+            height: 235,
+          }}
+        /> */}
 
-            return {
-              scale: pressed ? 0.95 : hovered ? 1.1 : 1,
-              rotateZ: pressed ? "0deg" : hovered ? "-3deg" : "0deg",
-            };
-          }}
-          transition={{
-            type: "timing",
-            duration: 150,
-          }}
-        >
-          <Text selectable={false} className="text-base font-bold">
-            Moti Link
-          </Text>
-        </MotiLink>
+        <Text className="text-14px text-pupcleBlue tracking-widest">
+          www.pupcle.com
+        </Text>
       </Row>
-      <Row className="bg-pupcleBlue mt-10 space-x-8">
-        <Button theme="light" size="$8">
-          Hello world
-        </Button>
+
+      <Row className="mb-[87px] flex flex-col">
+        <Row className="space-x-8">
+          <Link href="/login">
+            <View
+              className="border-pupcleBlue font-poppins h-12 w-[310px] items-center justify-center rounded-full border-[1px] bg-transparent"
+              // theme="light"
+            >
+              <Text className="text-14px text-pupcleBlue font-{poppins} font-bold">
+                Sign in with E-mail
+              </Text>
+            </View>
+          </Link>
+        </Row>
+        <Row className="mt-[14px] space-x-8">
+          <Link href="/register">
+            <View className="font-poppins bg-pupcleBlue h-12 w-[310px] items-center justify-center rounded-full border-none">
+              <Text className="text-14px font-{poppins} font-bold text-white">
+                Create an account
+              </Text>
+            </View>
+          </Link>
+        </Row>
       </Row>
     </View>
   );
