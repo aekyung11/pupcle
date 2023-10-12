@@ -3,12 +3,17 @@ import { useLoginForm } from "@app/componentlib";
 import { View } from "@app/cpapp/design/view";
 import { useSharedLazyQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import checkboxChecked from "@app/server/public/checkbox.png";
+import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
+import paw from "@app/server/public/paw.png";
 import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
+import { StyledComponent } from "nativewind";
 import React, { useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
+import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
-import { Button, useTheme } from "tamagui";
+import { Button, Tooltip, useTheme } from "tamagui";
 
 import CustomInput from "../../components/CustomInput";
 import { useAuth } from "../../utils/auth";
@@ -39,76 +44,124 @@ function RegisterTest() {
   const theme = useTheme();
 
   return (
-    <>
-      <View>
-        <View>
-          <Text style={styles.pageTitle}>register</Text>
+    <View>
+      <View className="flex flex-row">
+        <Text style={styles.pageTitle}>회원가입</Text>
+        <View className="ml-1">
+          <StyledComponent
+            component={SolitoImage}
+            className="h-[28px] w-[43px]"
+            src={paw}
+            alt=""
+            fill
+          />
         </View>
-        <Formik
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-        >
-          {({ handleSubmit, isValid, values }) => (
-            <>
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>Email</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="username"
-                placeholder={usernameFieldPlaceholder}
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>Password</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="password"
-                placeholder={passwordFieldPlaceholder}
-                secureTextEntry
-              />
-              {error ? (
-                <Text>
-                  {extractError(error)?.["message"]}
-                  {code ? (
-                    <Text>
-                      {" "}
-                      (Error code: <code>ERR_{code}</code>)
-                    </Text>
-                  ) : null}
-                </Text>
-              ) : null}
-              <View style={styles.viewMarginTop12}>
-                <Text style={styles.text}>Forgot Password ?</Text>
-                <Link href="/">
-                  <Text style={styles.boldBlueText}> click</Text>
-                </Link>
-              </View>
-
-              <Button
-                unstyled
-                style={styles.submitButton}
-                title={submitLabel}
-                // @ts-ignore
-                onPress={handleSubmit}
-                disabled={!isValid || values.username === ""}
-              >
-                <Text style={styles.buttonText}>Sign in</Text>
-              </Button>
-              <View style={styles.viewMarginTop20}>
-                <Text style={styles.text}>계정이 없으십니까?</Text>
-                <Link href="/">
-                  <Text style={styles.semiBoldBlueText}> Sign up</Text>
-                </Link>
-              </View>
-            </>
-          )}
-        </Formik>
       </View>
-    </>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ handleSubmit, isValid, values }) => (
+          <>
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>Name</Text>
+              <Tooltip>
+                {/* <Button icon={<HelpCircle size={14} />}></Button> */}
+              </Tooltip>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="name"
+              placeholder="ex) 홍길동"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>Username</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="username"
+              placeholder="ex) gildong_2"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>Email</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="email"
+              placeholder="ex) honggildong@pupcle.com"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>Cell number (optional)</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="cell number"
+              // placeholder={}
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>Password</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="password"
+              placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
+              secureTextEntry
+            />
+            {error ? (
+              <Text>
+                {extractError(error)?.["message"]}
+                {code ? (
+                  <Text>
+                    {" "}
+                    (Error code: <code>ERR_{code}</code>)
+                  </Text>
+                ) : null}
+              </Text>
+            ) : null}
+
+            <Button
+              unstyled
+              style={styles.submitButton}
+              title={submitLabel}
+              // @ts-ignore
+              onPress={handleSubmit}
+              disabled={!isValid || values.username === ""}
+            >
+              <Text style={styles.buttonText}>Sign up</Text>
+            </Button>
+            <View style={styles.viewMarginTop20}>
+              <Button unstyled className="ml-1 h-[19px]">
+                {/* if checked, use the component below */}
+                {/* <StyledComponent
+                    component={SolitoImage}
+                    className="h-[19px] w-[19px]"
+                    src={checkboxChecked}
+                    alt=""
+                    // fill
+                  /> */}
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[19px] w-[19px]"
+                  src={checkboxUnchecked}
+                  alt=""
+                  // fill
+                />
+              </Button>
+              <Link href="/">
+                <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
+              </Link>
+              <Text style={styles.text}>에 동의합니다.</Text>
+            </View>
+          </>
+        )}
+      </Formik>
+    </View>
   );
 }
 
@@ -126,7 +179,8 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: "45%",
+    // justifyContent: "center",
   },
   rowPadding: {
     paddingLeft: 20,
@@ -163,7 +217,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
   },
   text: {
     fontFamily: "'Poppins'",
@@ -183,7 +236,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   submitButton: {
-    marginTop: 96,
+    marginTop: 40,
     width: 310,
     height: 48,
     backgroundColor: "#7FB3E8",
@@ -202,6 +255,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "600",
     fontSize: 28,
-    marginBottom: 72,
+    marginBottom: 10,
   },
 });
