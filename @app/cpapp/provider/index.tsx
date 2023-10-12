@@ -1,7 +1,7 @@
 import React from "react";
 
-import { AuthProvider } from "../utils/auth.ios";
-import { FederationProvider } from "../utils/FederationProvider.ios";
+import { AuthProvider } from "../utils/auth";
+import { FederationProvider } from "../utils/FederationProvider";
 import { SafeArea } from "./safe-area";
 
 export function Provider({ children }: { children: React.ReactNode }) {

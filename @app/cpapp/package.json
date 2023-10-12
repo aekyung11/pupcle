@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@app/componentlib": "0.0.0",
     "moti": "latest",
     "nativewind": "2.0.11",
     "solito": "4.0.1"

@@ -11,8 +11,7 @@ import { Link, TextLink } from "solito/link";
 import { Button, useTheme } from "tamagui";
 
 import CustomInput from "../../components/CustomInput";
-import { AuthProvider, useAuth } from "../../utils/auth";
-import { FederationProvider } from "../../utils/FederationProvider";
+import { useAuth } from "../../utils/auth";
 
 function RegisterTest() {
   const { signIn, userToken } = useAuth();
@@ -20,7 +19,7 @@ function RegisterTest() {
   const client = useApolloClient();
 
   const postResult = useCallback(
-    async (result) => {
+    async (result: any) => {
       signIn(result.data?.login?.access_token);
       // Success: refetch
       await client.clearStore();
@@ -73,7 +72,7 @@ function RegisterTest() {
               />
               {error ? (
                 <Text>
-                  {extractError(error).message}
+                  {extractError(error)?.["message"]}
                   {code ? (
                     <Text>
                       {" "}

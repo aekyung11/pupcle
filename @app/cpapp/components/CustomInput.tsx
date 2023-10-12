@@ -1,7 +1,7 @@
 import React from "react";
 import { TextInput } from "react-native";
 
-const CustomInput = (props) => {
+const CustomInput = (props: any) => {
   const {
     field: { name, onBlur, onChange, value },
     form: { errors, touched, setFieldTouched },

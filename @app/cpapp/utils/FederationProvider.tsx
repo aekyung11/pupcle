@@ -10,13 +10,13 @@ import { onError } from "@apollo/client/link/error";
 import Constants from "expo-constants";
 import * as React from "react";
 
-import { useAuth } from "./auth.ios";
+import { useAuth } from "./auth";
 
 function makeClientSideLink(
   ROOT_URL: string,
   credentials: string,
-  _status,
-  userToken
+  _status: any,
+  userToken: any
 ) {
   const httpLink = new HttpLink({
     uri: `${ROOT_URL}/graphql`,
