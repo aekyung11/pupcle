@@ -15,13 +15,7 @@ export function HomeScreen() {
     <View className="flex h-full items-center justify-between bg-white">
       <Row className="mt-[207px] flex flex-col">
         <View className="flex h-[235px] w-[131.63px] items-center justify-center">
-          <SolitoImage
-            src={mobilePupcleDog}
-            width={131.63} // AC
-            height={235} // AC
-            alt=""
-            contentFit="contain"
-          />
+          <SolitoImage src={mobilePupcleDog} alt="" fill />
         </View>
         {/* <Image
           className="h-[235px]"
