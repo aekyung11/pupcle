@@ -598,8 +598,8 @@ export function SharedLayout({
   return (
     <View
       className={clsx({
-        "bg-pupcleLightBlue": useLightBlueFrame,
-        "md:min-w-[768px]": !isMapsPage,
+        // "bg-pupcleLightBlue": useLightBlueFrame,
+        // "md:min-w-[768px]": !isMapsPage,
       })}
     >
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
@@ -624,11 +624,11 @@ export function SharedLayout({
             //   overflowX: "scroll",
             // }}
             >
-              {headerContent}
+              {/* {headerContent} */}
+              {null}
             </View>
-          ) : (
-            headerContent
-          )}
+          ) : // headerContent
+          null}
         </View>
       )}
 

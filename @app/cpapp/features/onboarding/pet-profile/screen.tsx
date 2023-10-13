@@ -2,8 +2,15 @@ import { useApolloClient } from "@apollo/client";
 import { usePetInfoForm } from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
 import { View } from "@app/cpapp/design/view";
+import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { useAuth } from "@app/cpapp/utils/auth";
-import { useSharedLazyQuery } from "@app/graphql";
+import { isSafe } from "@app/cpapp/utils/utils";
+import {
+  PetGender,
+  SharedLayout_UserFragment,
+  useSharedLazyQuery,
+  useSharedQuery,
+} from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import checkboxChecked from "@app/server/public/checkbox.png";
 import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
@@ -20,39 +27,55 @@ import pupcleIcon from "@app/server/public/pupcle_count.png";
 import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
-import React, { useCallback } from "react";
+import React, { FC, useCallback, useEffect, useRef } from "react";
 import { StyleSheet, Text } from "react-native";
+import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
+import { useRouter } from "solito/navigation";
 import { Button, Circle, RadioGroup, Tooltip, useTheme } from "tamagui";
 
-function PetProfileTest() {
-  const { signIn, userToken } = useAuth();
-  const [shared, { data: sharedData }] = useSharedLazyQuery();
-  const client = useApolloClient();
+interface PetProfileScreenInnerProps {
+  next: string;
+  currentUser: SharedLayout_UserFragment;
+  refetch: () => Promise<any>;
+}
 
-  const postResult = useCallback(
-    async (result: any) => {
-      signIn(result.data?.login?.access_token);
-      // Success: refetch
-      await client.clearStore();
-    },
-    [signIn, client]
-  );
-  const {
-    usernameFieldPlaceholder,
-    passwordFieldPlaceholder,
-    submitLabel,
-    validationSchema,
-    initialValues,
-    handleSubmit,
-    error,
-  } = usePetInfoForm(true, postResult);
+const PetProfileScreenInner: FC<PetProfileScreenInnerProps> = ({
+  currentUser,
+  next,
+  refetch,
+}) => {
+  const router = useRouter();
+  const postResult = useCallback(async () => {
+    await refetch();
+    router.push(next);
+  }, [next, refetch, router]);
+
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    usePetInfoForm(currentUser.id, undefined, postResult);
+
   const code = getCodeFromError(error);
-  const theme = useTheme();
+  // const { signIn, userToken } = useAuth();
+  // const client = useApolloClient();
+
+  // const postResult = useCallback(
+  //   async (result: any) => {
+  //     signIn(result.data?.login?.access_token);
+  //     // Success: refetch
+  //     await client.clearStore();
+  //   },
+  //   [signIn, client]
+  // );
+
+  // const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+  //   usePetInfoForm(currentUser.id, undefined, postResult);
+
+  // const code = getCodeFromError(error);
+  // const theme = useTheme();
 
   return (
-    <View className="h-full">
+    <View className="h-full" style={styles.container}>
       <View className="flex h-[20%] flex-col items-center justify-end pb-3">
         <Link href="/">
           <StyledComponent
@@ -81,7 +104,7 @@ function PetProfileTest() {
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          {({ handleSubmit, isValid, values }) => (
+          {({ handleSubmit, isValid, values, setFieldValue }) => (
             <>
               <View
                 style={styles.inputRow}
@@ -124,7 +147,6 @@ function PetProfileTest() {
                   component={CustomInput}
                   name="weight"
                   data-cy="petprofilepage-input-weight"
-                  suffix="kg"
                 />
               </View>
               <View
@@ -135,9 +157,10 @@ function PetProfileTest() {
                 <View>
                   <RadioGroup
                     style={styles.radioGroupContainer}
-                    value={undefined}
+                    value={values.sex}
+                    onValueChange={(sex) => setFieldValue("sex", sex)}
                   >
-                    <RadioGroup.Item value="M" unstyled>
+                    <RadioGroup.Item value={PetGender.M} unstyled>
                       <StyledComponent
                         component={SolitoImage}
                         className="h-[48px] w-[48px]"
@@ -145,8 +168,17 @@ function PetProfileTest() {
                         alt=""
                         // fill
                       />
+                      <RadioGroup.Indicator className="absolute" unstyled>
+                        <StyledComponent
+                          component={SolitoImage}
+                          className="h-[48px] w-[48px]"
+                          src={maleClicked}
+                          alt=""
+                          // fill
+                        />
+                      </RadioGroup.Indicator>
                     </RadioGroup.Item>
-                    <RadioGroup.Item value="W" unstyled>
+                    <RadioGroup.Item value={PetGender.F} unstyled>
                       <StyledComponent
                         component={SolitoImage}
                         className="h-[48px] w-[48px]"
@@ -154,6 +186,15 @@ function PetProfileTest() {
                         alt=""
                         // fill
                       />
+                      <RadioGroup.Indicator className="absolute" unstyled>
+                        <StyledComponent
+                          component={SolitoImage}
+                          className="h-[48px] w-[48px]"
+                          src={femaleClicked}
+                          alt=""
+                          // fill
+                        />
+                      </RadioGroup.Indicator>
                     </RadioGroup.Item>
                   </RadioGroup>
                 </View>
@@ -182,9 +223,16 @@ function PetProfileTest() {
                 <View>
                   <RadioGroup
                     style={styles.radioGroupContainer}
-                    value={undefined}
-                    // onValueChange={(n) => values.neutered}
-                    // className="flex w-[220px] flex-row justify-between px-9"
+                    value={
+                      values.neutered === true
+                        ? "true"
+                        : values.neutered === false
+                        ? "false"
+                        : undefined
+                    }
+                    onValueChange={(n) =>
+                      setFieldValue("neutered", n === "true")
+                    }
                   >
                     <RadioGroup.Item value="true" unstyled>
                       <StyledComponent
@@ -194,6 +242,15 @@ function PetProfileTest() {
                         alt=""
                         // fill
                       />
+                      <RadioGroup.Indicator className="absolute" unstyled>
+                        <StyledComponent
+                          component={SolitoImage}
+                          className="h-[48px] w-[48px]"
+                          src={neuteredClicked}
+                          alt=""
+                          // fill
+                        />
+                      </RadioGroup.Indicator>
                     </RadioGroup.Item>
                     <RadioGroup.Item value="false" unstyled>
                       <StyledComponent
@@ -203,6 +260,15 @@ function PetProfileTest() {
                         alt=""
                         // fill
                       />
+                      <RadioGroup.Indicator className="absolute" unstyled>
+                        <StyledComponent
+                          component={SolitoImage}
+                          className="h-[48px] w-[48px]"
+                          src={notNeuteredClicked}
+                          alt=""
+                          // fill
+                        />
+                      </RadioGroup.Indicator>
                     </RadioGroup.Item>
                   </RadioGroup>
 
@@ -241,7 +307,6 @@ function PetProfileTest() {
                 title={submitLabel}
                 // @ts-ignore
                 onPress={handleSubmit}
-                disabled={!isValid || values.username === ""}
               >
                 <Text style={styles.buttonText}>다음</Text>
               </Button>
@@ -251,14 +316,40 @@ function PetProfileTest() {
       </View>
     </View>
   );
-}
+};
+
+type PetProfileScreenParams = {
+  next?: string;
+};
 
 export function PetProfileScreen() {
+  const { useParam } = createParam<PetProfileScreenParams>();
+  const [rawNext] = useParam("next");
+  const query = useSharedQuery();
+  const refetch = async () => query.refetch();
+  const next: string = isSafe(rawNext) ? rawNext! : "/";
+
   return (
-    <View style={styles.container}>
-      <PetProfileTest />
-    </View>
+    <SharedLayout
+      title="pet-profile"
+      query={query}
+      forbidWhen={AuthRestrict.LOGGED_OUT}
+    >
+      {query.data?.currentUser && (
+        <PetProfileScreenInner
+          refetch={refetch}
+          next={next}
+          currentUser={query.data?.currentUser}
+        />
+      )}
+    </SharedLayout>
   );
+
+  // return (
+  //   <View style={styles.container}>
+  //     <PetProfileScreenInner />
+  //   </View>
+  // );
 }
 
 const styles = StyleSheet.create({
