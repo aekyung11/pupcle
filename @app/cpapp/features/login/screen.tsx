@@ -4,6 +4,7 @@ import { View } from "@app/cpapp/design/view";
 import { useSharedLazyQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import paw from "@app/server/public/paw.png";
+import pupcleIcon from "@app/server/public/pupcle_count.png";
 import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
@@ -42,82 +43,95 @@ function LoginTest() {
   const theme = useTheme();
 
   return (
-    <View>
-      <View className="flex flex-row">
-        <Text style={styles.pageTitle}>로그인</Text>
-        <View className="ml-1">
+    <View className="h-full">
+      <View className="flex h-[15%] justify-end bg-white">
+        <Link href="/">
           <StyledComponent
             component={SolitoImage}
-            className="h-[28px] w-[43px]"
-            src={paw}
+            className="h-[46px] w-[44px]"
+            src={pupcleIcon}
             alt=""
-            fill
+            // fill
           />
-        </View>
+        </Link>
       </View>
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-      >
-        {({ handleSubmit, isValid, values }) => (
-          <>
-            <View className="w-[310px] px-10" style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Email</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="username"
-              placeholder={usernameFieldPlaceholder}
+      <View className="flex h-[85%] flex-col justify-center pb-10">
+        <View className="flex flex-row">
+          <Text style={styles.pageTitle}>로그인</Text>
+          <View className="ml-1">
+            <StyledComponent
+              component={SolitoImage}
+              className="h-[28px] w-[43px]"
+              src={paw}
+              alt=""
+              fill
             />
-            <View className="w-[310px] px-10" style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Password</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="password"
-              placeholder={passwordFieldPlaceholder}
-              secureTextEntry
-            />
-            {error ? (
-              <Text>
-                {extractError(error)?.["message"]}
-                {code ? (
-                  <Text>
-                    {" "}
-                    (Error code: <code>ERR_{code}</code>)
-                  </Text>
-                ) : null}
-              </Text>
-            ) : null}
-            <View style={styles.viewMarginTop12}>
-              <Text style={styles.text}>Forgot Password ?</Text>
-              <Link href="/">
-                <Text style={styles.boldBlueText}> click</Text>
-              </Link>
-            </View>
+          </View>
+        </View>
+        <Formik
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+        >
+          {({ handleSubmit, isValid, values }) => (
+            <>
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Email</Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="username"
+                placeholder={usernameFieldPlaceholder}
+              />
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Password</Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="password"
+                placeholder={passwordFieldPlaceholder}
+                secureTextEntry
+              />
+              {error ? (
+                <Text>
+                  {extractError(error)?.["message"]}
+                  {code ? (
+                    <Text>
+                      {" "}
+                      (Error code: <code>ERR_{code}</code>)
+                    </Text>
+                  ) : null}
+                </Text>
+              ) : null}
+              <View style={styles.viewMarginTop12}>
+                <Text style={styles.text}>Forgot Password ?</Text>
+                <Link href="/">
+                  <Text style={styles.boldBlueText}> click</Text>
+                </Link>
+              </View>
 
-            <Button
-              unstyled
-              style={styles.submitButton}
-              title={submitLabel}
-              // @ts-ignore
-              onPress={handleSubmit}
-              disabled={!isValid || values.username === ""}
-            >
-              <Text style={styles.buttonText}>Sign in</Text>
-            </Button>
-            <View style={styles.viewMarginTop20}>
-              <Text style={styles.text}>계정이 없으십니까?</Text>
-              <Link href="/register">
-                <Text style={styles.semiBoldBlueText}> Sign up</Text>
-              </Link>
-            </View>
-          </>
-        )}
-      </Formik>
+              <Button
+                unstyled
+                style={styles.submitButton}
+                title={submitLabel}
+                // @ts-ignore
+                onPress={handleSubmit}
+                disabled={!isValid || values.username === ""}
+              >
+                <Text style={styles.buttonText}>Sign in</Text>
+              </Button>
+              <View style={styles.viewMarginTop20}>
+                <Text style={styles.text}>계정이 없으십니까?</Text>
+                <Link href="/register">
+                  <Text style={styles.semiBoldBlueText}> Sign up</Text>
+                </Link>
+              </View>
+            </>
+          )}
+        </Formik>
+      </View>
     </View>
   );
 }
@@ -134,11 +148,11 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    height: "100%",
+    // height: "100%",
     backgroundColor: "white",
     alignItems: "center",
-    paddingTop: "45%",
-    position: "relative",
+    // paddingTop: "45%",
+    // position: "relative",
     // justifyContent: "center",
   },
   rowPadding: {
@@ -155,10 +169,11 @@ const styles = StyleSheet.create({
     width: 310,
     fontFamily: "'Poppins'",
     fontSize: 14,
+    marginTop: 2,
   },
   textAboveInput: {
     fontFamily: "'Poppins'",
-    color: "#8F9092",
+    color: "black",
     fontSize: 14,
     marginTop: 20,
   },

@@ -6,6 +6,7 @@ import { extractError, getCodeFromError } from "@app/lib";
 import checkboxChecked from "@app/server/public/checkbox.png";
 import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
 import paw from "@app/server/public/paw.png";
+import pupcleIcon from "@app/server/public/pupcle_count.png";
 import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
@@ -44,123 +45,138 @@ function RegisterTest() {
   const theme = useTheme();
 
   return (
-    <View>
-      <View className="flex flex-row">
-        <Text style={styles.pageTitle}>회원가입</Text>
-        <View className="ml-1">
+    <View className="h-full">
+      <View className="flex h-[15%] justify-end bg-white">
+        <Link href="/">
           <StyledComponent
             component={SolitoImage}
-            className="h-[28px] w-[43px]"
-            src={paw}
+            className="h-[46px] w-[44px]"
+            src={pupcleIcon}
             alt=""
-            fill
+            // fill
           />
-        </View>
+        </Link>
       </View>
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-      >
-        {({ handleSubmit, isValid, values }) => (
-          <>
-            <View style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Name</Text>
-              <Tooltip>
-                {/* <Button icon={<HelpCircle size={14} />}></Button> */}
-              </Tooltip>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="name"
-              placeholder="ex) 홍길동"
+      <View className="flex h-[85%] flex-col justify-center pb-10">
+        <View className="flex flex-row">
+          <Text style={styles.pageTitle}>회원가입</Text>
+          <View className="ml-1">
+            <StyledComponent
+              component={SolitoImage}
+              className="h-[28px] w-[43px]"
+              src={paw}
+              alt=""
+              fill
             />
-            <View style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Username</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="username"
-              placeholder="ex) gildong_2"
-            />
-            <View style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Email</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="email"
-              placeholder="ex) honggildong@pupcle.com"
-            />
-            <View style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Cell number (optional)</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="cell number"
-              // placeholder={}
-            />
-            <View style={styles.rowPadding}>
-              <Text style={styles.textAboveInput}>Password</Text>
-            </View>
-            <Field
-              style={styles.input}
-              component={CustomInput}
-              name="password"
-              placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
-              secureTextEntry
-            />
-            {error ? (
-              <Text>
-                {extractError(error)?.["message"]}
-                {code ? (
-                  <Text>
-                    {" "}
-                    (Error code: <code>ERR_{code}</code>)
-                  </Text>
-                ) : null}
-              </Text>
-            ) : null}
+          </View>
+        </View>
+        <Formik
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+        >
+          {({ handleSubmit, isValid, values }) => (
+            <>
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Name</Text>
+                <Tooltip>
+                  {/* <Button icon={<HelpCircle size={14} />}></Button> */}
+                </Tooltip>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="name"
+                placeholder="ex) 홍길동"
+              />
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Username</Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="username"
+                placeholder="ex) gildong_2"
+              />
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Email</Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="email"
+                placeholder="ex) honggildong@pupcle.com"
+              />
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>
+                  Cell number (optional)
+                </Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="cell number"
+                // placeholder={}
+              />
+              <View style={styles.rowPadding}>
+                <Text style={styles.textAboveInput}>Password</Text>
+              </View>
+              <Field
+                style={styles.input}
+                component={CustomInput}
+                name="password"
+                placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
+                secureTextEntry
+              />
+              {error ? (
+                <Text>
+                  {extractError(error)?.["message"]}
+                  {code ? (
+                    <Text>
+                      {" "}
+                      (Error code: <code>ERR_{code}</code>)
+                    </Text>
+                  ) : null}
+                </Text>
+              ) : null}
 
-            <Button
-              unstyled
-              style={styles.submitButton}
-              title={submitLabel}
-              // @ts-ignore
-              onPress={handleSubmit}
-              disabled={!isValid || values.username === ""}
-            >
-              <Text style={styles.buttonText}>Sign up</Text>
-            </Button>
-            <View style={styles.viewMarginTop20}>
-              <Button unstyled className="ml-1 h-[19px]">
-                {/* if checked, use the component below */}
-                {/* <StyledComponent
+              <Button
+                unstyled
+                style={styles.submitButton}
+                title={submitLabel}
+                // @ts-ignore
+                onPress={handleSubmit}
+                disabled={!isValid || values.username === ""}
+              >
+                <Text style={styles.buttonText}>Sign up</Text>
+              </Button>
+              <View style={styles.viewMarginTop20}>
+                <Button unstyled className="ml-1 h-[19px]">
+                  {/* if checked, use the component below */}
+                  {/* <StyledComponent
                     component={SolitoImage}
                     className="h-[19px] w-[19px]"
                     src={checkboxChecked}
                     alt=""
                     // fill
                   /> */}
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[19px] w-[19px]"
-                  src={checkboxUnchecked}
-                  alt=""
-                  // fill
-                />
-              </Button>
-              <Link href="/">
-                <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
-              </Link>
-              <Text style={styles.text}>에 동의합니다.</Text>
-            </View>
-          </>
-        )}
-      </Formik>
+                  <StyledComponent
+                    component={SolitoImage}
+                    className="h-[19px] w-[19px]"
+                    src={checkboxUnchecked}
+                    alt=""
+                    // fill
+                  />
+                </Button>
+                <Link href="/">
+                  <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
+                </Link>
+                <Text style={styles.text}>에 동의합니다.</Text>
+              </View>
+            </>
+          )}
+        </Formik>
+      </View>
     </View>
   );
 }
@@ -176,10 +192,10 @@ export function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    height: "100%",
+    // height: "100%",
     backgroundColor: "white",
     alignItems: "center",
-    paddingTop: "45%",
+    // paddingTop: "45%",
     // justifyContent: "center",
   },
   rowPadding: {
@@ -196,10 +212,11 @@ const styles = StyleSheet.create({
     width: 310,
     fontFamily: "'Poppins'",
     fontSize: 14,
+    marginTop: 2,
   },
   textAboveInput: {
     fontFamily: "'Poppins'",
-    color: "#8F9092",
+    color: "black",
     fontSize: 14,
     marginTop: 20,
   },
