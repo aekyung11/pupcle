@@ -176,6 +176,7 @@ export function SharedLayout({
         />
       );
     }
+
     if (
       data &&
       data.currentUser === null &&

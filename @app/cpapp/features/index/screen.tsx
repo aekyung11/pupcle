@@ -15,9 +15,9 @@ export function IndexScreen() {
   const theme = useTheme();
   const query = useSharedQuery();
   return (
-    <SharedLayout title="" query={query}>
+    <SharedLayout title="index" query={query}>
       {/* <View className="flex h-full items-center justify-between bg-white"> */}
-      <View className="flex items-center justify-between bg-white">
+      <View className="flex h-full items-center justify-between bg-white">
         <Row className="mt-[207px] flex flex-col">
           <View className="flex h-[235px] w-[131.63px] items-center justify-center">
             <SolitoImage src={mobilePupcleDog} alt="" fill />

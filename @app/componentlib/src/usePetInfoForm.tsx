@@ -44,7 +44,7 @@ export function usePetInfoForm(
   const [updatePet] = useUpdatePetMutation();
   const initialValues: PetInfoFormInput = {
     name: pet?.name ?? "",
-    dob: pet?.dob ? parseISO(pet?.dob) : undefined,
+    dob: pet?.dob ? parseISO(pet?.dob) : new Date(),
     weight: pet?.weight?.value,
     sex: pet?.gender,
     neutered: pet?.neutered,

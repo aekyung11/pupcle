@@ -175,6 +175,11 @@ export function SharedLayout({
         />
       );
     }
+
+    if (data && data.currentUser && title === "index") {
+      return <Redirect href={`/home`} />;
+    }
+
     if (
       data &&
       data.currentUser === null &&
