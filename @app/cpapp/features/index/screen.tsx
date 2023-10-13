@@ -11,7 +11,7 @@ import { Link } from "solito/link";
 // import { MotiLink } from "solito/moti";
 import { Button, Image, useTheme } from "tamagui";
 
-export function HomeScreen() {
+export function IndexScreen() {
   const theme = useTheme();
   const query = useSharedQuery();
   return (

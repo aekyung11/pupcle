@@ -46,7 +46,7 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
 
   return (
     <View className="h-full">
-      <View className="flex h-[17%] flex-col items-center justify-end">
+      <View className="flex h-[20%] flex-col items-center justify-end pb-3">
         <Link href="/">
           <StyledComponent
             component={SolitoImage}
@@ -59,7 +59,7 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
         <Text style={styles.titleText}>회원 정보</Text>
         <Text style={styles.normalText}>회원님의 정보를 입력해주세요.</Text>
       </View>
-      <View className="flex h-[83%] flex-col justify-center pb-10">
+      <View className="flex h-[80%] flex-col justify-center pb-10">
         <View className="flex flex-col items-center">
           <Circle size="$10">
             <SolitoImage src={defaultAvatar} alt="" fill />

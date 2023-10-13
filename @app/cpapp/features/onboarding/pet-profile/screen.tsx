@@ -24,7 +24,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
 import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
-import { Button, Circle, Tooltip, useTheme } from "tamagui";
+import { Button, Circle, RadioGroup, Tooltip, useTheme } from "tamagui";
 
 function PetProfileTest() {
   const { signIn, userToken } = useAuth();
@@ -53,7 +53,7 @@ function PetProfileTest() {
 
   return (
     <View className="h-full">
-      <View className="flex h-[17%] flex-col items-center justify-end">
+      <View className="flex h-[20%] flex-col items-center justify-end pb-3">
         <Link href="/">
           <StyledComponent
             component={SolitoImage}
@@ -66,7 +66,7 @@ function PetProfileTest() {
         <Text style={styles.titleText}>반려견 정보</Text>
         <Text style={styles.normalText}>반려견의 정보를 입력해주세요.</Text>
       </View>
-      <View className="flex h-[83%] flex-col justify-center pb-10">
+      <View className="flex h-[80%] flex-col justify-center pb-10">
         <View className="flex flex-col items-center">
           <Circle size="$10">
             <SolitoImage src={defaultAvatar} alt="" fill />
@@ -132,22 +132,33 @@ function PetProfileTest() {
                 className="flex flex-row justify-between"
               >
                 <Text style={styles.normalText}>성별</Text>
-                <View className="flex w-[220px] flex-row justify-between px-9">
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[48px] w-[48px]"
-                    src={male}
-                    alt=""
-                    // fill
-                  />
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[48px] w-[48px]"
-                    src={female}
-                    alt=""
-                    // fill
-                  />
-                  {/* if clicked,
+                <View>
+                  <RadioGroup
+                    style={styles.radioGroupContainer}
+                    value={undefined}
+                  >
+                    <RadioGroup.Item value="M" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[48px] w-[48px]"
+                        src={male}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Item>
+                    <RadioGroup.Item value="W" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[48px] w-[48px]"
+                        src={female}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Item>
+                  </RadioGroup>
+                </View>
+
+                {/* if clicked,
                   <StyledComponent
                     component={SolitoImage}
                     className="h-[48px] w-[48px]"
@@ -162,28 +173,39 @@ function PetProfileTest() {
                     alt=""
                     // fill
                   /> */}
-                </View>
               </View>
               <View
                 style={styles.inputRow}
                 className="flex flex-row justify-between"
               >
                 <Text style={styles.normalText}>중성화 여부</Text>
-                <View className="flex w-[220px] flex-row justify-between px-9">
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[48px] w-[48px]"
-                    src={neutered}
-                    alt=""
-                    // fill
-                  />
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[48px] w-[48px]"
-                    src={notNeutered}
-                    alt=""
-                    // fill
-                  />
+                <View>
+                  <RadioGroup
+                    style={styles.radioGroupContainer}
+                    value={undefined}
+                    // onValueChange={(n) => values.neutered}
+                    // className="flex w-[220px] flex-row justify-between px-9"
+                  >
+                    <RadioGroup.Item value="true" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[48px] w-[48px]"
+                        src={neutered}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Item>
+                    <RadioGroup.Item value="false" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[48px] w-[48px]"
+                        src={notNeutered}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Item>
+                  </RadioGroup>
+
                   {/* if clicked,
                   <StyledComponent
                     component={SolitoImage}
@@ -278,6 +300,15 @@ const styles = StyleSheet.create({
     fontFamily: "'Poppins'",
     fontSize: 14,
     marginTop: 2,
+  },
+  radioGroupContainer: {
+    width: 220,
+    height: 48,
+    marginTop: 20,
+    paddingHorizontal: 36,
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   viewMarginTop12: {
     width: 310,
