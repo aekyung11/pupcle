@@ -1,11 +1,14 @@
 import { useApolloClient } from "@apollo/client";
-import { useLoginForm } from "@app/componentlib";
+import { useSocialInfoForm } from "@app/componentlib";
+import CustomInput from "@app/cpapp/components/CustomInput";
 import { View } from "@app/cpapp/design/view";
+import { useAuth } from "@app/cpapp/utils/auth";
 import { useSharedLazyQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import checkboxChecked from "@app/server/public/checkbox.png";
 import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
 import paw from "@app/server/public/paw.png";
+import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
 import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
@@ -14,12 +17,9 @@ import React, { useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
 import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
-import { Button, Tooltip, useTheme } from "tamagui";
+import { Button, Circle, Tooltip, useTheme } from "tamagui";
 
-import CustomInput from "../../components/CustomInput";
-import { useAuth } from "../../utils/auth";
-
-function RegisterTest() {
+function SocialInfoTest() {
   const { signIn, userToken } = useAuth();
   const [shared, { data: sharedData }] = useSharedLazyQuery();
   const client = useApolloClient();
@@ -40,13 +40,13 @@ function RegisterTest() {
     initialValues,
     handleSubmit,
     error,
-  } = useLoginForm(true, postResult);
+  } = useSocialInfoForm(true, postResult);
   const code = getCodeFromError(error);
   const theme = useTheme();
 
   return (
     <View className="h-full">
-      <View className="flex h-[15%] justify-end bg-white">
+      <View className="flex h-[17%] flex-col items-center justify-end">
         <Link href="/">
           <StyledComponent
             component={SolitoImage}
@@ -56,19 +56,18 @@ function RegisterTest() {
             // fill
           />
         </Link>
+        <Text style={styles.titleText}>회원 정보</Text>
+        <Text style={styles.normalText}>회원님의 정보를 입력해주세요.</Text>
       </View>
-      <View className="flex h-[85%] flex-col justify-center pb-10">
-        <View className="flex flex-row">
-          <Text style={styles.pageTitle}>회원가입</Text>
-          <View className="-top-[2px] ml-1">
-            <StyledComponent
-              component={SolitoImage}
-              className="h-[28px] w-[43px]"
-              src={paw}
-              alt=""
-              fill
-            />
-          </View>
+      <View className="flex h-[83%] flex-col justify-center pb-10">
+        <View className="flex flex-col items-center">
+          <Circle size="$10">
+            <SolitoImage src={defaultAvatar} alt="" fill />
+            {/* <Avatar.Image src={defaultAvatar} resizeMode="contain" /> */}
+          </Circle>
+          <Button unstyled className="mt-2 mb-[16px]">
+            <Text style={styles.normalBlueText}>사진 수정</Text>
+          </Button>
         </View>
         <Formik
           validationSchema={validationSchema}
@@ -86,8 +85,8 @@ function RegisterTest() {
               <Field
                 style={styles.input}
                 component={CustomInput}
-                name="name"
-                placeholder="ex) 홍길동"
+                name="nickname"
+                placeholder="ex) 뽀삐언니"
               />
               <View style={styles.rowPadding}>
                 <Text style={styles.textAboveInput}>사용자 이름</Text>
@@ -97,34 +96,6 @@ function RegisterTest() {
                 component={CustomInput}
                 name="username"
                 placeholder="ex) gildong_2"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>이메일</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="email"
-                placeholder="ex) honggildong@pupcle.com"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>휴대폰 번호 (선택)</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="cell number"
-                // placeholder={}
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>비밀번호</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="password"
-                placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
-                secureTextEntry
               />
               {error ? (
                 <Text>
@@ -146,31 +117,8 @@ function RegisterTest() {
                 onPress={handleSubmit}
                 disabled={!isValid || values.username === ""}
               >
-                <Text style={styles.buttonText}>회원가입</Text>
+                <Text style={styles.buttonText}>다음</Text>
               </Button>
-              <View style={styles.viewMarginTop20}>
-                <Button unstyled className="ml-1 h-[19px]">
-                  {/* if checked, use the component below */}
-                  {/* <StyledComponent
-                    component={SolitoImage}
-                    className="h-[19px] w-[19px]"
-                    src={checkboxChecked}
-                    alt=""
-                    // fill
-                  /> */}
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[19px] w-[19px]"
-                    src={checkboxUnchecked}
-                    alt=""
-                    // fill
-                  />
-                </Button>
-                <Link href="/">
-                  <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
-                </Link>
-                <Text style={styles.text}>에 동의합니다.</Text>
-              </View>
             </>
           )}
         </Formik>
@@ -179,10 +127,10 @@ function RegisterTest() {
   );
 }
 
-export function RegisterScreen() {
+export function SocialInfoScreen() {
   return (
     <View style={styles.container}>
-      <RegisterTest />
+      <SocialInfoTest />
     </View>
   );
 }
@@ -195,6 +143,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // paddingTop: "45%",
     // justifyContent: "center",
+  },
+  titleText: {
+    fontFamily: "Poppins",
+    fontWeight: "600",
+    fontSize: 24,
+  },
+  normalText: {
+    fontFamily: "Poppins",
+    fontSize: 14,
+  },
+  normalBlueText: {
+    fontFamily: "Poppins",
+    fontSize: 14,
+    color: "#7FB3E8",
   },
   rowPadding: {
     paddingLeft: 20,
@@ -251,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   submitButton: {
-    marginTop: 40,
+    marginTop: 60,
     width: 310,
     height: 48,
     backgroundColor: "#7FB3E8",

@@ -58,7 +58,7 @@ function LoginTest() {
       <View className="flex h-[85%] flex-col justify-center pb-10">
         <View className="flex flex-row">
           <Text style={styles.pageTitle}>로그인</Text>
-          <View className="ml-1">
+          <View className="-top-[2px] ml-1">
             <StyledComponent
               component={SolitoImage}
               className="h-[28px] w-[43px]"
@@ -76,7 +76,7 @@ function LoginTest() {
           {({ handleSubmit, isValid, values }) => (
             <>
               <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>Email</Text>
+                <Text style={styles.textAboveInput}>이메일</Text>
               </View>
               <Field
                 style={styles.input}
@@ -85,7 +85,7 @@ function LoginTest() {
                 placeholder={usernameFieldPlaceholder}
               />
               <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>Password</Text>
+                <Text style={styles.textAboveInput}>비밀번호</Text>
               </View>
               <Field
                 style={styles.input}
@@ -106,7 +106,7 @@ function LoginTest() {
                 </Text>
               ) : null}
               <View style={styles.viewMarginTop12}>
-                <Text style={styles.text}>Forgot Password ?</Text>
+                <Text style={styles.text}>비밀번호를 잊으셨나요 ?</Text>
                 <Link href="/">
                   <Text style={styles.boldBlueText}> click</Text>
                 </Link>
@@ -120,12 +120,12 @@ function LoginTest() {
                 onPress={handleSubmit}
                 disabled={!isValid || values.username === ""}
               >
-                <Text style={styles.buttonText}>Sign in</Text>
+                <Text style={styles.buttonText}>로그인</Text>
               </Button>
               <View style={styles.viewMarginTop20}>
                 <Text style={styles.text}>계정이 없으십니까?</Text>
                 <Link href="/register">
-                  <Text style={styles.semiBoldBlueText}> Sign up</Text>
+                  <Text style={styles.semiBoldBlueText}> 회원가입</Text>
                 </Link>
               </View>
             </>
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontFamily: "Poppins",
     fontWeight: "600",
-    fontSize: 28,
+    fontSize: 24,
     marginBottom: 72,
   },
 });

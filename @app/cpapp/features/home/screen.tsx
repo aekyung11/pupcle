@@ -32,6 +32,29 @@ export function HomeScreen() {
       </Row>
 
       <Row className="mb-[87px] flex flex-col">
+        <Row className="mb-2 space-x-8">
+          <Link href="/onboarding/pet-profile">
+            <View
+              className="border-pupcleBlue font-poppins h-12 items-center justify-center rounded-full border-[1px] bg-transparent"
+              // theme="light"
+            >
+              <Text className="text-14px text-pupcleBlue font-{poppins} font-bold">
+                pet-profile
+              </Text>
+            </View>
+          </Link>
+          <Link href="/onboarding/social-info">
+            <View
+              className="border-pupcleBlue font-poppins h-12 items-center justify-center rounded-full border-[1px] bg-transparent"
+              // theme="light"
+            >
+              <Text className="text-14px text-pupcleBlue font-{poppins} font-bold">
+                social-info
+              </Text>
+            </View>
+          </Link>
+        </Row>
+
         <Row className="space-x-8">
           <Link href="/login">
             <View
@@ -39,7 +62,7 @@ export function HomeScreen() {
               // theme="light"
             >
               <Text className="text-14px text-pupcleBlue font-{poppins} font-bold">
-                Sign in with E-mail
+                이메일로 로그인하기
               </Text>
             </View>
           </Link>
@@ -48,7 +71,7 @@ export function HomeScreen() {
           <Link href="/register">
             <View className="font-poppins bg-pupcleBlue h-12 w-[310px] items-center justify-center rounded-full border-none">
               <Text className="text-14px font-{poppins} font-bold text-white">
-                Create an account
+                계정 만들기
               </Text>
             </View>
           </Link>
