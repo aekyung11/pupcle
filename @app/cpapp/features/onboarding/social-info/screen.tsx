@@ -1,48 +1,48 @@
-import { useApolloClient } from "@apollo/client";
 import { useSocialInfoForm } from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
 import { View } from "@app/cpapp/design/view";
-import { useAuth } from "@app/cpapp/utils/auth";
-import { useSharedLazyQuery } from "@app/graphql";
+import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
+import { isSafe } from "@app/cpapp/utils/utils";
+import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import checkboxChecked from "@app/server/public/checkbox.png";
-import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
-import paw from "@app/server/public/paw.png";
 import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
-import { StatusBar } from "expo-status-bar";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
-import React, { useCallback } from "react";
+import React, { FC, useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
+import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
-import { Link, TextLink } from "solito/link";
+import { Link } from "solito/link";
+import { useRouter } from "solito/navigation";
 import { Button, Circle, Tooltip, useTheme } from "tamagui";
 
-function SocialInfoTest() {
-  const { signIn, userToken } = useAuth();
-  const [shared, { data: sharedData }] = useSharedLazyQuery();
-  const client = useApolloClient();
+interface SocialInfoScreenInnerProps {
+  next: string;
+  currentUser: SharedLayout_UserFragment;
+}
 
-  const postResult = useCallback(
-    async (result: any) => {
-      signIn(result.data?.login?.access_token);
-      // Success: refetch
-      await client.clearStore();
-    },
-    [signIn, client]
-  );
-  const {
-    usernameFieldPlaceholder,
-    passwordFieldPlaceholder,
-    submitLabel,
-    validationSchema,
-    initialValues,
-    handleSubmit,
-    error,
-  } = useSocialInfoForm(true, postResult);
+const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
+  currentUser,
+  next,
+}) => {
+  const router = useRouter();
+
+  const postResult = useCallback(async () => {
+    router.push(next);
+  }, [next, router]);
+
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useSocialInfoForm(
+      currentUser.id,
+      postResult,
+      currentUser.nickname,
+      currentUser.username,
+      currentUser.avatarUrl
+    );
+
   const code = getCodeFromError(error);
-  const theme = useTheme();
+  const _theme = useTheme();
 
   return (
     <View className="h-full">
@@ -125,13 +125,34 @@ function SocialInfoTest() {
       </View>
     </View>
   );
-}
+};
+
+type SocialInfoScreenParams = {
+  next?: string;
+};
 
 export function SocialInfoScreen() {
+  const { useParam } = createParam<SocialInfoScreenParams>();
+  const [rawNext] = useParam("next");
+  const query = useSharedQuery();
+  const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
+
   return (
-    <View style={styles.container}>
-      <SocialInfoTest />
-    </View>
+    // <View style={styles.container}>
+    //   <SocialInfoScreenInner />
+    // </View>
+    <SharedLayout
+      title="Social Info"
+      query={query}
+      forbidWhen={AuthRestrict.LOGGED_OUT}
+    >
+      {query.data?.currentUser && (
+        <SocialInfoScreenInner
+          next={next}
+          currentUser={query.data?.currentUser}
+        />
+      )}
+    </SharedLayout>
   );
 }
 

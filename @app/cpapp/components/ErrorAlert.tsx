@@ -42,7 +42,10 @@ export function ErrorAlert({ error }: ErrorAlertProps) {
       <Text>
         We&apos;re really sorry, but an unexpected error occurred. Please{" "}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-        <Link href="/">return to the homepage</Link> and try again.
+        <Link href="/">
+          <Text>return to the homepage</Text>
+        </Link>
+        and try again.
       </Text>
       <Text>
         type="error"
