@@ -5,7 +5,15 @@
     "typeRoots": ["types"]
   },
   "exclude": ["node_modules", "./node_modules", "./node_modules/*"],
-  "include": ["components", "design", "features", "provider", "types", "utils"],
+  "include": [
+    "components",
+    "design",
+    "features",
+    "layouts",
+    "provider",
+    "types",
+    "utils"
+  ],
   "references": [
     {
       "path": "../componentlib"

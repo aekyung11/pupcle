@@ -612,6 +612,7 @@ export function SharedLayout({
       className={clsx({
         "bg-pupcleLightBlue": useLightBlueFrame,
         "min-w-[768px]": !isMapsPage,
+        // "md:min-w-[768px]": !isMapsPage, TODO: fix
       })}
     >
       {data && data.currentUser ? <CurrentUserUpdatedSubscription /> : null}
