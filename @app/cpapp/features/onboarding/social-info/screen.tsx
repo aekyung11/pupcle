@@ -45,7 +45,7 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
   const _theme = useTheme();
 
   return (
-    <View className="h-full">
+    <View className="h-full" style={styles.container}>
       <View className="flex h-[20%] flex-col items-center justify-end pb-3">
         <Link href="/">
           <StyledComponent
@@ -138,9 +138,6 @@ export function SocialInfoScreen() {
   const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
 
   return (
-    // <View style={styles.container}>
-    //   <SocialInfoScreenInner />
-    // </View>
     <SharedLayout
       title="Social Info"
       query={query}
