@@ -403,17 +403,17 @@ const Friends: NextPage = () => {
                             className={clsx(
                               "fixed z-20",
                               "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[40%]",
-                              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[50%] lg:top-[60%] xl:left-[55%] 2xl:left-[57%]"
+                              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[50%] xl:left-[55%] 2xl:left-[57%]"
                             )}
                           >
                             <Dialog.Title className="flex w-full flex-row items-center justify-center">
                               <span className="font-poppins text-[18px] font-semibold">
                                 {friend.toUser?.nickname} 님에게 초대를 보낼
-                                미션을 아래에서 골라주세요.
+                                미션을 아래에서 선택해주세요.
                               </span>
                             </Dialog.Title>
                             <div className="bg-pupcleLightLightGray my-8 h-[9px] w-full"></div>
-                            <div className="p-10">
+                            <div className="flex justify-center p-10">
                               <Select.Root defaultValue="">
                                 <Select.Trigger
                                   asChild
@@ -422,7 +422,7 @@ const Friends: NextPage = () => {
                                 >
                                   <Button
                                     className={clsx(
-                                      "font-poppins text-pupcleGray border-pupcleLightGray relative flex h-12 w-full items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[24px] font-semibold"
+                                      "font-poppins text-pupcleGray border-pupcleLightGray relative flex h-12 w-full max-w-[400px] items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[24px] font-semibold"
                                     )}
                                   >
                                     <Select.Value placeholder="미션을 선택해주세요." />
@@ -436,25 +436,14 @@ const Friends: NextPage = () => {
                                 </Select.Trigger>
                               </Select.Root>
                             </div>
-                            <div className="flex w-full flex-col items-center">
-                              <Button
-                                className="bg-pupcleOrange flex h-[46px] w-full max-w-[400px] items-center justify-center rounded-full border-none"
-                                onClick={async () => {
-                                  await unfriend({
-                                    variables: {
-                                      fromUserId: currentUserId,
-                                      toUserId: friend.toUser?.id,
-                                    },
-                                  });
-                                  await friendsRefetch();
-                                }}
-                              >
+                            <div className="mt-10 flex w-full items-center justify-evenly">
+                              <Button className="bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none">
                                 <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
                                   초대 보내기
                                 </span>
                               </Button>
                               <Dialog.Close asChild>
-                                <Button className="border-pupcleGray mt-[10px] flex h-[46px] w-full max-w-[400px] items-center justify-center rounded-full border-[1px] bg-transparent">
+                                <Button className="border-pupcleGray flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-[1px] bg-transparent">
                                   <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
                                     취소
                                   </span>
@@ -483,8 +472,8 @@ const Friends: NextPage = () => {
                           <Dialog.Content
                             className={clsx(
                               "fixed z-20",
-                              "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[243px]",
-                              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[62%] lg:top-[60%] xl:left-[60%] 2xl:left-[57%]"
+                              "w-[90vw] rounded-[15px] bg-white px-8 py-10 lg:w-[40%]",
+                              "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 lg:left-[50%] xl:left-[55%] 2xl:left-[57%]"
                             )}
                           >
                             <Dialog.Title className="flex w-full flex-row items-center justify-center">
@@ -493,36 +482,43 @@ const Friends: NextPage = () => {
                                 삭제할까요?
                               </span>
                             </Dialog.Title>
-                            <div className="mt-4 mb-9">
-                              <span className="font-poppins text-pupcleGray text-[15px]">
+                            <div className="bg-pupcleLightLightGray my-8 h-[9px] w-full"></div>
+
+                            <div className="flex flex-col justify-center">
+                              <span className="font-poppins text-pupcleGray text-center text-[15px]">
                                 {friend.toUser?.nickname} 님이 친구 목록에서
-                                제외됩니다. 아이디 검색을 통해 다시 친구 신청을
-                                할 수 있습니다.
+                                제외됩니다.
+                                <br />
+                                아이디 검색을 통해 다시 친구 신청을 할 수
+                                있습니다.
                               </span>
+
+                              <div className="mt-10 flex w-full items-center justify-evenly">
+                                <Button
+                                  className="bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none"
+                                  onClick={async () => {
+                                    await unfriend({
+                                      variables: {
+                                        fromUserId: currentUserId,
+                                        toUserId: friend.toUser?.id,
+                                      },
+                                    });
+                                    await friendsRefetch();
+                                  }}
+                                >
+                                  <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
+                                    삭제
+                                  </span>
+                                </Button>
+                                <Dialog.Close asChild>
+                                  <Button className="border-pupcleGray flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-[1px] bg-transparent">
+                                    <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
+                                      취소
+                                    </span>
+                                  </Button>
+                                </Dialog.Close>
+                              </div>
                             </div>
-                            <Button
-                              className="bg-pupcleOrange flex h-[46px] w-full items-center justify-center rounded-full border-none"
-                              onClick={async () => {
-                                await unfriend({
-                                  variables: {
-                                    fromUserId: currentUserId,
-                                    toUserId: friend.toUser?.id,
-                                  },
-                                });
-                                await friendsRefetch();
-                              }}
-                            >
-                              <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
-                                삭제
-                              </span>
-                            </Button>
-                            <Dialog.Close asChild>
-                              <Button className="border-pupcleGray mt-[10px] flex h-[46px] w-full items-center justify-center rounded-full border-[1px] bg-transparent">
-                                <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
-                                  취소
-                                </span>
-                              </Button>
-                            </Dialog.Close>
                           </Dialog.Content>
                         </Dialog.Portal>
                       </Dialog.Root>

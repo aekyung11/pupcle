@@ -248,7 +248,7 @@ const MissionsPageInner: FC<MissionsPageInnerProps> = ({
                       </span>
                       <div className="flex h-[calc(100%-282px)] flex-col overflow-y-scroll">
                         <div className="border-pupcleBlue mb-[30px] h-fit w-full rounded-[30px] border-[3px] p-5">
-                          <span className="font-poppins text-[20px]">
+                          <span className="font-poppins whitespace-pre-line text-[20px]">
                             {mission.description}
                           </span>
                         </div>
