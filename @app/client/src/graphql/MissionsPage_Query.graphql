@@ -1,0 +1,22 @@
+fragment MissionsPage_Mission on Mission {
+  id
+  createdAt
+  day
+  description
+  keywords
+  name
+  participantCount
+  period
+  reward
+  updatedAt
+}
+
+fragment MissionsPage_Query on Query {
+  ...SharedLayout_Query
+  missions(condition: { day: $day, period: DAILY }) {
+    nodes {
+      id
+      ...MissionsPage_Mission
+    }
+  }
+}

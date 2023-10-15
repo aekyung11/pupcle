@@ -1,0 +1,3 @@
+query MissionsPage($day: Date!) {
+  ...MissionsPage_Query
+}

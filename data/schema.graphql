@@ -2141,6 +2141,7 @@ type Mission {
   name: String!
   participantCount: Int!
   period: MissionPeriodKind!
+  requiredObjects: [String]
   reward: Int!
   updatedAt: Datetime!
 }
@@ -2196,6 +2197,7 @@ input MissionInput {
   keywords: [String]
   name: String!
   period: MissionPeriodKind!
+  requiredObjects: [String]
   reward: Int
 }
 
@@ -2557,6 +2559,7 @@ input MissionPatch {
   keywords: [String]
   name: String
   period: MissionPeriodKind
+  requiredObjects: [String]
   reward: Int
 }
 

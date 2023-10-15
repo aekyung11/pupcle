@@ -19,6 +19,7 @@ create table app_public.missions (
   participant_count   int not null default 0,
   period              text not null references app_public.mission_period_kind,
   day                 date, -- for daily missions. could be null
+  required_objects    text[],
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now(),
   unique (name, period, day)
@@ -42,7 +43,8 @@ grant insert (
   keywords,
   reward,
   period,
-  day
+  day,
+  required_objects
 ) on app_public.missions to :DATABASE_VISITOR;
 grant update (
   id,
@@ -51,7 +53,8 @@ grant update (
   keywords,
   reward,
   period,
-  day
+  day,
+  required_objects
 ) on app_public.missions to :DATABASE_VISITOR;
 
 create trigger _100_timestamps
