@@ -1,4 +1,4 @@
-import { AuthRestrict, SharedLayout } from "@app/components";
+import { AuthRestrict, FourOhFour, Link, SharedLayout } from "@app/components";
 import {
   FriendsPage_MissionFragment,
   Friends_UserEdgeFragment,
@@ -245,7 +245,6 @@ const MissionInviteForm: FC<MissionInviteFormProps> = ({
 
   const code = getCodeFromError(error);
 
-  // TODO: exclude already invited from missions list
   const alreadyInvitedMissionIds = new Set(
     sentInvites
       .filter((mi) => mi.toUserId === toUserId)
@@ -382,6 +381,113 @@ const MissionInviteForm: FC<MissionInviteFormProps> = ({
         </Form>
       )}
     </Formik>
+  );
+};
+
+interface FriendsPageMissionsInner {
+  receivedInvites: Received_MissionInviteFragment[];
+}
+
+const FriendsPageMissionsInner: React.FC<FriendsPageMissionsInner> = ({
+  receivedInvites,
+}) => {
+  const [selectedInviteId, setSelectedInviteId] = useState<string | null>(null);
+
+  const selectedInvite = receivedInvites.find(
+    (invite) =>
+      invite.fromUser?.id + ":" + invite.mission?.id === selectedInviteId
+  );
+
+  return (
+    <>
+      {selectedInviteId && (
+        <div className={clsx("flex w-full flex-col items-center")}>
+          <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+            <Button
+              className="mr-3 h-[13px] w-5 border-none p-0"
+              onClick={() => setSelectedInviteId(null)}
+            >
+              <img
+                src="/pup_notes_caret_icon.png"
+                className="h-[13px] w-5 rotate-90"
+              />
+            </Button>
+            <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+              {selectedInvite?.fromUser?.nickname}
+            </span>
+          </div>
+
+          <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
+            <div className="h-full w-1/2 overflow-scroll">
+              <div className="w-full">
+                {selectedInvite ? (
+                  <div className="flex h-full w-full flex-row">
+                    <span>TODO EXPIRED? {"???"}</span>
+                    <span>
+                      {format(new Date(selectedInvite.createdAt), "MM.dd")}
+                    </span>
+                    <span>
+                      {format(new Date(selectedInvite.createdAt), "hh:mm:ss a")}
+                    </span>
+                    <span>{selectedInvite.fromUser?.nickname} 님이</span>
+                    <span>
+                      Mission date: {selectedInvite.mission?.day} (no time)
+                    </span>
+                    {selectedInvite.mission?.id && (
+                      <Link
+                        href={`/mission?mission=${selectedInvite.mission.id}`}
+                      >
+                        {selectedInvite.mission?.name} 미션하러가기
+                      </Link>
+                    )}
+                    <span>보상 팝클: {selectedInvite.mission?.reward}</span>
+                  </div>
+                ) : (
+                  <FourOhFour />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <div
+        className={clsx("flex w-full flex-col items-center", {
+          hidden: selectedInviteId,
+        })}
+      >
+        {receivedInvites.map((invite) => {
+          const inviteId = invite.fromUser?.id + ":" + invite.mission?.id;
+          return (
+            <div
+              className="border-pupcleLightGray flex w-full items-center justify-center border-t-[1px] px-[65px] py-10"
+              key={inviteId}
+            >
+              <div className="flex w-full max-w-[1095px] items-center justify-between">
+                <div className="flex flex-row items-center">
+                  <span className="font-poppins text-[15px]">
+                    {format(new Date(invite.createdAt), "MM.dd")}
+                  </span>
+                  {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
+                  <div className="mx-12 flex flex-col">
+                    <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                      {invite.fromUser?.nickname}
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setSelectedInviteId(inviteId)}
+                  className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                >
+                  <span className="font-poppins text-[20px] font-semibold text-white">
+                    보기
+                  </span>
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 
@@ -857,7 +963,7 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
           </div>
         </Tabs.Content>
         <Tabs.Content key={Tab.MISSIONS} value={Tab.MISSIONS}>
-          {receivedInvites.length}
+          <FriendsPageMissionsInner receivedInvites={receivedInvites} />
         </Tabs.Content>
       </div>
     </Tabs.Root>
