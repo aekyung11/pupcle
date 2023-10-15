@@ -1,0 +1,48 @@
+fragment FriendsPage_Mission on Mission {
+  id
+  createdAt
+  day
+  description
+  keywords
+  name
+  participantCount
+  period
+  reward
+  updatedAt
+}
+
+fragment FriendsPage_CurrentUserQuery on Query {
+  currentUser {
+    id
+    missionInvitesByToUserId(orderBy: CREATED_AT_DESC) {
+      nodes {
+        createdAt
+        fromUser {
+          avatarUrl
+          id
+          nickname
+          username
+        }
+      }
+    }
+    # TODO: should filter by created at relative to the day
+    missionInvitesByFromUserId {
+      nodes {
+        createdAt
+        missionId
+        toUserId
+      }
+    }
+  }
+}
+
+fragment FriendsPage_Query on Query {
+  ...SharedLayout_Query
+  ...FriendsPage_CurrentUserQuery
+  missions(condition: { day: $day, period: DAILY }) {
+    nodes {
+      id
+      ...FriendsPage_Mission
+    }
+  }
+}

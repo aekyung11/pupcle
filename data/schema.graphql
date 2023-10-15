@@ -2133,6 +2133,9 @@ A condition to be used against `MissionInvite` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
 input MissionInviteCondition {
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
   """Checks for equality with the object’s `fromUserId` field."""
   fromUserId: UUID
 
@@ -2146,6 +2149,9 @@ A filter to be used against `MissionInvite` object types. All fields are combine
 input MissionInviteFilter {
   """Checks for all expressions in this list."""
   and: [MissionInviteFilter!]
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
 
   """Filter by the object’s `fromUserId` field."""
   fromUserId: UUIDFilter
@@ -2202,6 +2208,8 @@ type MissionInvitesEdge {
 
 """Methods to use when ordering `MissionInvite`."""
 enum MissionInvitesOrderBy {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
   FROM_USER_ID_ASC
   FROM_USER_ID_DESC
   NATURAL
