@@ -264,7 +264,7 @@ const MissionInviteForm: FC<MissionInviteFormProps> = ({
       {({ values, setFieldValue }) => (
         <Form>
           <div className="flex justify-center p-10">
-            <Form.Item name="missionId" className="mb-0 w-full pt-[96px]">
+            <Form.Item name="missionId" className="mb-0 w-full">
               <Select.Root
                 defaultValue={values.missionId}
                 onValueChange={(value) => {
@@ -364,7 +364,7 @@ const MissionInviteForm: FC<MissionInviteFormProps> = ({
           </div>
           <div className="mt-10 flex w-full items-center justify-evenly">
             <SubmitButton
-              className="bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none"
+              className="bg-pupcleOrange hover:!bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none hover:opacity-70"
               htmlType="submit"
             >
               <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
