@@ -385,10 +385,12 @@ const MissionInviteForm: FC<MissionInviteFormProps> = ({
 };
 
 interface FriendsPageMissionsInner {
+  today: string;
   receivedInvites: Received_MissionInviteFragment[];
 }
 
 const FriendsPageMissionsInner: React.FC<FriendsPageMissionsInner> = ({
+  today,
   receivedInvites,
 }) => {
   const [selectedInviteId, setSelectedInviteId] = useState<string | null>(null);
@@ -422,7 +424,13 @@ const FriendsPageMissionsInner: React.FC<FriendsPageMissionsInner> = ({
               <div className="w-full">
                 {selectedInvite ? (
                   <div className="flex h-full w-full flex-row">
-                    <span>TODO EXPIRED? {"???"}</span>
+                    <span>
+                      EXPIRED?{" "}
+                      {selectedInvite.mission?.day &&
+                      today > selectedInvite.mission?.day
+                        ? "expired"
+                        : "not expired"}
+                    </span>
                     <span>
                       {format(new Date(selectedInvite.createdAt), "MM.dd")}
                     </span>
@@ -500,6 +508,7 @@ interface FriendsPageInner {
 }
 
 const FriendsPageInner: React.FC<FriendsPageInner> = ({
+  day,
   currentUser,
   missions,
   sentInvites,
@@ -963,7 +972,10 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
           </div>
         </Tabs.Content>
         <Tabs.Content key={Tab.MISSIONS} value={Tab.MISSIONS}>
-          <FriendsPageMissionsInner receivedInvites={receivedInvites} />
+          <FriendsPageMissionsInner
+            today={day}
+            receivedInvites={receivedInvites}
+          />
         </Tabs.Content>
       </div>
     </Tabs.Root>
