@@ -9,6 +9,21 @@ fragment MissionsPage_Mission on Mission {
   period
   reward
   updatedAt
+  missionParticipants {
+    nodes {
+      createdAt
+      id
+      missionId
+      proofImageUrl
+      updatedAt
+      user {
+        id
+        avatarUrl
+        username
+        nickname
+      }
+    }
+  }
 }
 
 fragment MissionsPage_Query on Query {

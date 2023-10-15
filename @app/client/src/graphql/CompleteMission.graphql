@@ -1,0 +1,13 @@
+mutation CompleteMission($missionId: UUID!, $proofImageUrl: String!) {
+  completeMission(
+    input: { missionId: $missionId, proofImageUrl: $proofImageUrl }
+  ) {
+    missionParticipant {
+      id
+      mission {
+        id
+        ...MissionsPage_Mission
+      }
+    }
+  }
+}

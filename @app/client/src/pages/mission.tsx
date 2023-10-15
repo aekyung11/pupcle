@@ -1,4 +1,8 @@
-import { AuthRestrict, SharedLayout } from "@app/components";
+import {
+  AuthRestrict,
+  FramedAvatarUpload,
+  SharedLayout,
+} from "@app/components";
 import {
   MissionsPage_MissionFragment,
   SharedLayout_UserFragment,
@@ -13,12 +17,125 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
+import { Formik } from "formik";
+import { Form, Input, SubmitButton } from "formik-antd";
+import { useCompleteMissionForm } from "@app/componentlib";
+import clsx from "clsx";
 
 // export function usePetId() {
 //   const router = useRouter();
 //   const { petId } = router.query;
 //   return String(petId);
 // }
+
+type CompleteMissionDialogProps = {
+  currentUserId: string;
+  missionId: string;
+};
+
+const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
+  currentUserId,
+  missionId,
+}) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const {
+    submitLabel,
+    validationSchema,
+    initialValues,
+    handleSubmit,
+    error: _error,
+  } = useCompleteMissionForm(
+    currentUserId,
+    missionId,
+    () => setDialogOpen(false),
+    undefined
+  );
+
+  return (
+    <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog.Trigger asChild>
+        <Button className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+          <img src="/paw_white.png" className="h-fit w-[58px]" alt="" />
+          <span className="font-poppins text-[40px] font-semibold text-white">
+            &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
+          </span>
+          <img src="/paw_white.png" className="h-fit w-[58px]" alt="" />
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="bg-pupcleLightBlue fixed inset-0 z-[-1]" />
+        <Dialog.Content asChild>
+          <div className="bg-pupcleMiddleBlue fixed top-[calc(6rem+60px)] left-[50%] z-0 ml-10 h-[calc(100vh-6rem-120px)] w-[calc(50vw-80px)] w-1/2 max-w-[640px] rounded-[30px] px-[60px] pt-[60px] pb-[30px]">
+            <Formik
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+            >
+              {({ values, setFieldValue }) => (
+                <Form className="flex h-full w-full flex-col">
+                  {/* <div className="flex h-[50%] w-full items-end justify-center">
+                    <Button className="flex h-[166px] w-[166px] items-center justify-center rounded-[30px] border-none bg-white">
+                      <img src="/camera_icon.png" className="h-[76px] w-fit" />
+                    </Button>
+                  </div> */}
+
+                  <div className="flex h-[50%] w-full items-end justify-center">
+                    <Form.Item
+                      name="proofImageUrl"
+                      valuePropName="proofImageUrl"
+                      trigger="onUpload"
+                      className="mb-0"
+                    >
+                      <FramedAvatarUpload
+                        size={"small"}
+                        avatarUrl={values.proofImageUrl}
+                        disabled={false}
+                        onUpload={async (proofImageUrl) =>
+                          setFieldValue("proofImageUrl", proofImageUrl)
+                        }
+                      />
+                    </Form.Item>
+                  </div>
+
+                  <div className="flex h-[50%] w-full flex-col justify-between">
+                    <div className="flex flex-col items-center">
+                      {/* <Button className="bg-pupcleBlue mt-6 h-11 w-[166px] rounded-full border-none">
+                        <span className="font-poppins text-[20px] font-semibold text-white">
+                          재촬영하기
+                        </span>
+                      </Button> */}
+                      <span className="font-poppins text-pupcleOrange mt-4 font-[15px]">
+                        *제출한 사진은 수정이 불가능합니다.
+                      </span>
+                    </div>
+                    <Form.Item name="_submit">
+                      <SubmitButton className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+                        <img
+                          src="/paw_white.png"
+                          className="h-fit w-[58px]"
+                          alt=""
+                        />
+                        <span className="font-poppins text-[40px] font-semibold text-white">
+                          &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
+                        </span>
+                        <img
+                          src="/paw_white.png"
+                          className="h-fit w-[58px]"
+                          alt=""
+                        />
+                      </SubmitButton>
+                    </Form.Item>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
 
 interface MissionsPageInnerProps {
   currentUser: SharedLayout_UserFragment;
@@ -47,8 +164,6 @@ const MissionsPageInner: FC<MissionsPageInnerProps> = ({
       router.query.mission === undefined ? undefined : "" + router.query.mission
     );
   }, [router.query.mission]);
-
-  console.log({ selectedMissionId });
 
   return (
     <div className="flex h-[calc(100vh-6rem)] w-full py-[60px]">
@@ -87,14 +202,49 @@ const MissionsPageInner: FC<MissionsPageInnerProps> = ({
                       <span className="font-poppins text-pupcleGray text-[20px]">
                         {mission.participantCount}명이 참여중
                       </span>
-                      <span className="font-poppins text-pupcleGray mb-[40px] flex items-center text-[20px]">
+                      <span>
+                        TODO UI <br /> COMPLETED:{" "}
+                        {mission.missionParticipants.nodes.find(
+                          (mp) => mp.user?.id === currentUser.id
+                        )
+                          ? "yes"
+                          : "no"}
+                      </span>
+                      <span
+                        className={clsx(
+                          "font-poppins text-pupcleGray mb-[40px] flex items-center text-[20px]",
+                          {
+                            invisible:
+                              mission.missionParticipants.nodes.filter(
+                                (mp) => mp.user?.id !== currentUser.id
+                              ).length === 0,
+                          }
+                        )}
+                      >
                         참여중인 펍친:&nbsp;
                         <div className="flex w-[80px] flex-row justify-between">
-                          <img src="/default_avatar.png" className="h-6 w-6" />
-                          <img src="/default_avatar.png" className="h-6 w-6" />
-                          <img src="/default_avatar.png" className="h-6 w-6" />
+                          {mission.missionParticipants.nodes
+                            .filter((mp) => mp.user?.id !== currentUser.id)
+                            .slice(0, 3)
+                            .map((mp) => (
+                              <img
+                                src={
+                                  mp.user?.avatarUrl ?? "/default_avatar.png"
+                                }
+                                className="h-6 w-6"
+                              />
+                            ))}
                         </div>
-                        &nbsp;외 12명
+                        {mission.missionParticipants.nodes.filter(
+                          (mp) => mp.user?.id !== currentUser.id
+                        ).length -
+                          3 >
+                          0 &&
+                          `&nbsp;외 ${
+                            mission.missionParticipants.nodes.filter(
+                              (mp) => mp.user?.id !== currentUser.id
+                            ).length - 3
+                          }명`}
                       </span>
                       <div className="flex h-[calc(100%-282px)] flex-col overflow-y-scroll">
                         <div className="border-pupcleBlue mb-[30px] h-fit w-full rounded-[30px] border-[3px] p-5">
@@ -134,69 +284,10 @@ const MissionsPageInner: FC<MissionsPageInnerProps> = ({
                         </span>
                       </div>
                       <div className="mt-[30px] w-full">
-                        <Dialog.Root>
-                          <Dialog.Trigger asChild>
-                            <Button className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
-                              <img
-                                src="/paw_white.png"
-                                className="h-fit w-[58px]"
-                                alt=""
-                              />
-                              <span className="font-poppins text-[40px] font-semibold text-white">
-                                &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
-                              </span>
-                              <img
-                                src="/paw_white.png"
-                                className="h-fit w-[58px]"
-                                alt=""
-                              />
-                            </Button>
-                          </Dialog.Trigger>
-                          <Dialog.Portal>
-                            <Dialog.Overlay className="bg-pupcleLightBlue fixed inset-0 z-[-1]" />
-                            <Dialog.Content asChild>
-                              <div className="bg-pupcleMiddleBlue fixed top-[calc(6rem+60px)] left-[50%] z-0 ml-10 h-[calc(100vh-6rem-120px)] w-[calc(50vw-80px)] w-1/2 max-w-[640px] rounded-[30px] px-[60px] pt-[60px] pb-[30px]">
-                                <div className="flex h-full w-full flex-col">
-                                  <div className="flex h-[50%] w-full items-end justify-center">
-                                    <Button className="flex h-[166px] w-[166px] items-center justify-center rounded-[30px] border-none bg-white">
-                                      <img
-                                        src="/camera_icon.png"
-                                        className="h-[76px] w-fit"
-                                      />
-                                    </Button>
-                                  </div>
-                                  <div className="flex h-[50%] w-full flex-col justify-between">
-                                    <div className="flex flex-col items-center">
-                                      <Button className="bg-pupcleBlue mt-6 h-11 w-[166px] rounded-full border-none">
-                                        <span className="font-poppins text-[20px] font-semibold text-white">
-                                          재촬영하기
-                                        </span>
-                                      </Button>
-                                      <span className="font-poppins text-pupcleOrange mt-4 font-[15px]">
-                                        *제출한 사진은 수정이 불가능합니다.
-                                      </span>
-                                    </div>
-                                    <Button className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
-                                      <img
-                                        src="/paw_white.png"
-                                        className="h-fit w-[58px]"
-                                        alt=""
-                                      />
-                                      <span className="font-poppins text-[40px] font-semibold text-white">
-                                        &nbsp;&nbsp;제 출 하 기&nbsp;&nbsp;
-                                      </span>
-                                      <img
-                                        src="/paw_white.png"
-                                        className="h-fit w-[58px]"
-                                        alt=""
-                                      />
-                                    </Button>
-                                  </div>
-                                </div>
-                              </div>
-                            </Dialog.Content>
-                          </Dialog.Portal>
-                        </Dialog.Root>
+                        <CompleteMissionDialog
+                          currentUserId={currentUser.id}
+                          missionId={mission.id}
+                        />
                       </div>
                     </div>
                   </Tabs.Content>
