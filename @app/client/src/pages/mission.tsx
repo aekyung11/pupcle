@@ -89,6 +89,7 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                     >
                       <FramedAvatarUpload
                         size={"small"}
+                        mode={"gallery"}
                         avatarUrl={values.proofImageUrl}
                         disabled={false}
                         onUpload={async (proofImageUrl) =>

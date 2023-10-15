@@ -38,21 +38,31 @@ const cvaFramedAvatarUpload = cva("framed-avatar-upload", {
       small: [],
       medium: [],
     },
+    mode: {
+      avatar: [],
+      gallery: [],
+    },
   },
   defaultVariants: {
     size: "small",
+    mode: "avatar",
   },
 });
 
-const cvaAvatarImage = cva("avatar-image rounded-full", {
+const cvaAvatarImage = cva("avatar-image", {
   variants: {
     size: {
       small: ["w-[140px] h-[140px]"],
       medium: ["w-[200px] h-[200px]"],
     },
+    mode: {
+      avatar: ["rounded-full object-cover object-top border-none"],
+      gallery: ["rounded-[30px] bg-white p-[30px] object-contain"],
+    },
   },
   defaultVariants: {
     size: "small",
+    mode: "avatar",
   },
 });
 
@@ -62,9 +72,14 @@ const cvaPlusIcon = cva(["absolute", "z-10", "w-[60px]"], {
       small: ["right-10 bottom-10"],
       medium: ["right-[70px] bottom-[70px]"],
     },
+    mode: {
+      avatar: [],
+      gallery: [],
+    },
   },
   defaultVariants: {
     size: "small",
+    mode: "avatar",
   },
 });
 
@@ -82,6 +97,7 @@ export function FramedAvatarUpload({
   onUpload,
   className,
   size,
+  mode,
   ...props
 }: FramedAvatarUploadProps) {
   const beforeUpload = (file: any) => {
@@ -179,7 +195,10 @@ export function FramedAvatarUpload({
   };
 
   return (
-    <div className={cvaFramedAvatarUpload({ size, className })} {...props}>
+    <div
+      className={cvaFramedAvatarUpload({ size, mode, className })}
+      {...props}
+    >
       <Upload
         accept={ALLOWED_UPLOAD_CONTENT_TYPES_STRING}
         name="avatar"
@@ -197,13 +216,7 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
-                  className={cvaAvatarImage({ size })}
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderStyle: "none",
-                    // marginTop: "60px",
-                  }}
+                  className={cvaAvatarImage({ size, mode })}
                   src={avatarUrl}
                   alt={"avatar"}
                 />
@@ -213,24 +226,22 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
-                  className={cvaAvatarImage({ size })}
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderStyle: "none",
-                    // marginTop: "60px",
-                  }}
-                  src="/profile_default_avatar.png"
-                  alt={"avatar"}
+                  className={cvaAvatarImage({ size, mode })}
+                  src={
+                    mode === "gallery"
+                      ? "/gallery_icon.png"
+                      : "/profile_default_avatar.png"
+                  }
+                  alt={"image"}
                 />
               </Col>
             </Row>
           )}
-          {!disabled && (
+          {!disabled && mode !== "gallery" && (
             <Row>
               <Col span={24}>
                 <img
-                  className={cvaPlusIcon({ size })}
+                  className={cvaPlusIcon({ size, mode })}
                   src="/plus_icon.png"
                   alt="plus"
                 />
