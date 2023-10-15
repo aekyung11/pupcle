@@ -49,15 +49,15 @@ const cvaFramedAvatarUpload = cva("framed-avatar-upload", {
   },
 });
 
-const cvaAvatarImage = cva("avatar-image", {
+const cvaAvatarImage = cva("avatar-image object-cover object-top border-none", {
   variants: {
     size: {
       small: ["w-[140px] h-[140px]"],
       medium: ["w-[200px] h-[200px]"],
     },
     mode: {
-      avatar: ["rounded-full object-cover object-top border-none"],
-      gallery: ["rounded-[30px] bg-white p-[30px] object-contain"],
+      avatar: ["rounded-full"],
+      gallery: ["rounded-[30px]"],
     },
   },
   defaultVariants: {
@@ -229,7 +229,7 @@ export function FramedAvatarUpload({
                   className={cvaAvatarImage({ size, mode })}
                   src={
                     mode === "gallery"
-                      ? "/gallery_icon.png"
+                      ? "/gallery_button.png"
                       : "/profile_default_avatar.png"
                   }
                   alt={"image"}
