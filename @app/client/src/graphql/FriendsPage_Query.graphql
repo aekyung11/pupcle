@@ -11,7 +11,25 @@ fragment FriendsPage_Mission on Mission {
   updatedAt
 }
 
-fragment FriendsPage_CurrentUserQuery on Query {
+fragment Sent_MissionInvite on MissionInvite {
+  createdAt
+  missionId
+  toUserId
+}
+
+fragment SentInvites_CurrentUserQuery on Query {
+  currentUser {
+    id
+    # TODO: should filter by created at relative to the day
+    missionInvitesByFromUserId {
+      nodes {
+        ...Sent_MissionInvite
+      }
+    }
+  }
+}
+
+fragment ReceivedInvites_CurrentUserQuery on Query {
   currentUser {
     id
     missionInvitesByToUserId(orderBy: CREATED_AT_DESC) {
@@ -25,20 +43,13 @@ fragment FriendsPage_CurrentUserQuery on Query {
         }
       }
     }
-    # TODO: should filter by created at relative to the day
-    missionInvitesByFromUserId {
-      nodes {
-        createdAt
-        missionId
-        toUserId
-      }
-    }
   }
 }
 
 fragment FriendsPage_Query on Query {
   ...SharedLayout_Query
-  ...FriendsPage_CurrentUserQuery
+  ...SentInvites_CurrentUserQuery
+  ...ReceivedInvites_CurrentUserQuery
   missions(condition: { day: $day, period: DAILY }) {
     nodes {
       id

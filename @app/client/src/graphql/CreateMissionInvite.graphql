@@ -1,0 +1,8 @@
+mutation CreateMissionInvite($input: CreateMissionInviteInput!) {
+  createMissionInvite(input: $input) {
+    clientMutationId
+    query {
+      ...SentInvites_CurrentUserQuery
+    }
+  }
+}

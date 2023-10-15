@@ -1,6 +1,8 @@
 import { AuthRestrict, SharedLayout } from "@app/components";
 import {
+  FriendsPage_MissionFragment,
   Friends_UserEdgeFragment,
+  Sent_MissionInviteFragment,
   SharedLayout_UserFragment,
   useAcceptFriendRequestMutation,
   useCreateFriendRequestMutation,
@@ -9,21 +11,24 @@ import {
   useFriendsQuery,
   useReceivedFriendRequestsQuery,
   useSentFriendRequestsQuery,
-  useSharedQuery,
   useUnfriendMutation,
   useUserSearchQuery,
 } from "@app/graphql";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import * as Dialog from "@radix-ui/react-dialog";
-import * as Tabs from "@radix-ui/react-tabs";
 import * as Select from "@radix-ui/react-select";
-import { Button, Input, Spin } from "antd";
+import * as Tabs from "@radix-ui/react-tabs";
+import { Alert, Button, Input, Spin } from "antd";
 import clsx from "clsx";
+import { format } from "date-fns";
 import { keyBy } from "lodash";
 import { NextPage } from "next";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import { FC, useEffect, useState } from "react";
+import { FieldArray, Formik, useFormikContext } from "formik";
+import { Form, Input as FormikInput, SubmitButton } from "formik-antd";
+import { extractError, getCodeFromError } from "@app/lib";
+import { useMissionInviteForm } from "@app/componentlib";
 
 enum Tab {
   FRIENDS = "friends",
@@ -219,12 +224,178 @@ function UserSearchBox({
   );
 }
 
+type MissionInviteFormProps = {
+  currentUserId: string;
+  toUserId: string;
+  missions: FriendsPage_MissionFragment[];
+  sentInvites: Sent_MissionInviteFragment[];
+  onComplete: () => Promise<void> | void;
+};
+
+const MissionInviteForm: FC<MissionInviteFormProps> = ({
+  currentUserId,
+  toUserId,
+  missions,
+  sentInvites,
+  onComplete,
+}) => {
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useMissionInviteForm(currentUserId, toUserId, undefined, onComplete);
+
+  const code = getCodeFromError(error);
+
+  // TODO: exclude already invited from missions list
+  const alreadyInvitedMissionIds = new Set(
+    sentInvites
+      .filter((mi) => mi.toUserId === toUserId)
+      .map((mi) => mi.missionId as string)
+  );
+  const availableMissions = missions.filter(
+    (m) => !alreadyInvitedMissionIds.has(m.id)
+  );
+
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      {({ values, setFieldValue }) => (
+        <Form>
+          <div className="flex justify-center p-10">
+            <Form.Item name="missionId" className="mb-0 w-full pt-[96px]">
+              <Select.Root
+                defaultValue={values.missionId}
+                onValueChange={(value) => {
+                  setFieldValue("missionId", value);
+                }}
+              >
+                <Select.Trigger
+                  asChild
+                  aria-label="Category"
+                  className="w-full"
+                >
+                  <Button
+                    className={clsx(
+                      "font-poppins text-pupcleGray border-pupcleLightGray relative flex h-12 w-full max-w-[400px] items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[24px] font-semibold"
+                    )}
+                  >
+                    <Select.Value placeholder="미션을 선택해주세요." />
+                    <Select.Icon className="absolute right-8">
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.Icon>
+                  </Button>
+                </Select.Trigger>
+                <Select.Portal className="relative flex w-full">
+                  <Select.Content
+                    position="popper"
+                    sideOffset={2}
+                    className="z-20 w-[400px]"
+                  >
+                    <Select.ScrollUpButton className="flex items-center justify-center text-gray-700 dark:text-gray-300">
+                      {/* should be chevron up? <ChevronUpIcon /> */}
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.ScrollUpButton>
+                    <Select.Viewport className="flex justify-center rounded-b-[15px] bg-white shadow-lg">
+                      <Select.Group>
+                        {availableMissions.map(({ id, name }) => (
+                          <Select.Item
+                            key={id}
+                            value={id}
+                            className={clsx(
+                              "relative flex h-[50px] w-[400px] items-center justify-center rounded-[5px] px-[75px] py-[10px] text-center text-[20px]",
+                              "radix-disabled:opacity-50",
+                              "hover:bg-pupcleLightLightGray select-none focus:outline-none"
+                            )}
+                          >
+                            <Select.ItemIndicator className="absolute left-[25px] inline-flex items-center">
+                              {/* <CheckIcon /> */}
+                              <img
+                                src="/checkbox.png"
+                                className="h-[25px] w-[25px]"
+                              />
+                            </Select.ItemIndicator>
+                            <Select.ItemText className="">
+                              <span className="font-poppins font-medium">
+                                {name}
+                              </span>
+                            </Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select.Group>
+                    </Select.Viewport>
+                    <Select.ScrollDownButton className="flex items-center justify-center text-gray-700 dark:text-gray-300">
+                      <img
+                        src="/pup_notes_caret_icon.png"
+                        className="h-[13px] w-5"
+                      />
+                    </Select.ScrollDownButton>
+                  </Select.Content>
+                </Select.Portal>
+              </Select.Root>
+            </Form.Item>
+
+            {error ? (
+              <Form.Item name="_error">
+                <Alert
+                  type="error"
+                  message={`**Sending mission invite failed**`}
+                  description={
+                    <span>
+                      {extractError(error).message}
+                      {code ? (
+                        <span>
+                          {" "}
+                          (Error code: <code>ERR_{code}</code>)
+                        </span>
+                      ) : null}
+                    </span>
+                  }
+                />
+              </Form.Item>
+            ) : null}
+          </div>
+          <div className="mt-10 flex w-full items-center justify-evenly">
+            <SubmitButton
+              className="bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none"
+              htmlType="submit"
+            >
+              <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
+                {submitLabel}
+              </span>
+            </SubmitButton>
+            <Dialog.Close asChild>
+              <Button className="border-pupcleGray flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-[1px] bg-transparent">
+                <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
+                  취소
+                </span>
+              </Button>
+            </Dialog.Close>
+          </div>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
 interface FriendsPageInner {
   currentUser: SharedLayout_UserFragment;
+  missions: FriendsPage_MissionFragment[];
+  sentInvites: Sent_MissionInviteFragment[];
   day: string;
 }
 
-const FriendsPageInner: React.FC<FriendsPageInner> = ({ currentUser }) => {
+const FriendsPageInner: React.FC<FriendsPageInner> = ({
+  currentUser,
+  missions,
+  sentInvites,
+}) => {
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.FRIENDS);
   const { data: friendsData, refetch: friendsRefetch } = useFriendsQuery();
   const [requestsPanelOpen, setRequestsPanelOpen] = useState(false);
@@ -243,6 +414,8 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({ currentUser }) => {
     friendsData?.currentUser?.userEdgesByFromUserId.nodes;
   const receivedFriendRequestsList =
     receivedFriendRequestsData?.currentUser?.friendRequestsByToUserId.nodes;
+
+  const [missionInviteDialogOpen, setMissionInviteDialogOpen] = useState(false);
 
   return (
     <Tabs.Root
@@ -364,7 +537,10 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({ currentUser }) => {
                     </span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <Dialog.Root>
+                    <Dialog.Root
+                      open={missionInviteDialogOpen}
+                      onOpenChange={setMissionInviteDialogOpen}
+                    >
                       <Dialog.Trigger asChild>
                         <Button
                           className="friend-button"
@@ -394,43 +570,17 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({ currentUser }) => {
                             </span>
                           </Dialog.Title>
                           <div className="bg-pupcleLightLightGray my-8 h-[9px] w-full"></div>
-                          <div className="flex justify-center p-10">
-                            <Select.Root defaultValue="">
-                              <Select.Trigger
-                                asChild
-                                aria-label="Category"
-                                className="w-full"
-                              >
-                                <Button
-                                  className={clsx(
-                                    "font-poppins text-pupcleGray border-pupcleLightGray relative flex h-12 w-full max-w-[400px] items-center justify-center rounded-none border-x-0 border-t-0 border-b-[3px] text-[24px] font-semibold"
-                                  )}
-                                >
-                                  <Select.Value placeholder="미션을 선택해주세요." />
-                                  <Select.Icon className="absolute right-8">
-                                    <img
-                                      src="/pup_notes_caret_icon.png"
-                                      className="h-[13px] w-5"
-                                    />
-                                  </Select.Icon>
-                                </Button>
-                              </Select.Trigger>
-                            </Select.Root>
-                          </div>
-                          <div className="mt-10 flex w-full items-center justify-evenly">
-                            <Button className="bg-pupcleOrange flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-none">
-                              <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
-                                초대 보내기
-                              </span>
-                            </Button>
-                            <Dialog.Close asChild>
-                              <Button className="border-pupcleGray flex h-[46px] w-full max-w-[200px] items-center justify-center rounded-full border-[1px] bg-transparent">
-                                <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
-                                  취소
-                                </span>
-                              </Button>
-                            </Dialog.Close>
-                          </div>
+                          {friend.toUser && currentUserId && (
+                            <MissionInviteForm
+                              currentUserId={currentUserId}
+                              toUserId={friend.toUser?.id}
+                              missions={missions}
+                              sentInvites={sentInvites}
+                              onComplete={() => {
+                                setMissionInviteDialogOpen(false);
+                              }}
+                            />
+                          )}
                         </Dialog.Content>
                       </Dialog.Portal>
                     </Dialog.Root>
@@ -720,6 +870,8 @@ const Friends: NextPage = () => {
   const query = useFriendsPageQuery({ variables: { day: today } });
 
   const currentUser = query.data?.currentUser;
+  const missions = query.data?.missions?.nodes;
+  const sentInvites = query.data?.currentUser?.missionInvitesByFromUserId.nodes;
 
   return (
     <SharedLayout
@@ -748,8 +900,13 @@ const Friends: NextPage = () => {
           Friends
         </span>
       </div>
-      {currentUser && today ? (
-        <FriendsPageInner currentUser={currentUser} day={today} />
+      {currentUser && today && missions && sentInvites ? (
+        <FriendsPageInner
+          currentUser={currentUser}
+          day={today}
+          missions={missions}
+          sentInvites={sentInvites}
+        />
       ) : (
         <p>loading...</p>
       )}
