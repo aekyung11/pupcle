@@ -522,6 +522,7 @@ __metadata:
     "@types/nodemailer": ^6.4.7
     aws-sdk: ^2.1325.0
     cross-env: ^7.0.3
+    date-fns: ^2.30.0
     graphile-worker: ^0.13.0
     html-to-text: ^9.0.4
     jest: ^29.4.3

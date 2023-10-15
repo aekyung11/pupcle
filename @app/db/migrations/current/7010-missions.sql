@@ -1,235 +1,223 @@
--- -- create type app_public.money as (
--- --   currency text,
--- --   amount text
--- -- );
+create table app_public.mission_period_kind (
+  period      text primary key,
+  description text
+);
 
--- create table app_public.missions (
---   id                  uuid primary key default gen_random_uuid(),
---   name                text not null,
---   description         text not null,
---   keywords            text[],
---   reward              int not null default 1,
---   is_default_category boolean not null default false,
---   has_data            boolean not null default false,
---   -- ex. [{bucket: "WBC", type: "number", safeRangeStart: 10, safeRangeEnd: 20, tooltip: "White blood cell count"}]
---   -- this field is only used when has_data is true
---   default_point_buckets jsonb,
---   created_at          timestamptz not null default now(),
---   updated_at          timestamptz not null default now(),
---   unique (user_id, name)
--- );
--- alter table app_public.missions enable row level security;
+comment on table app_public.mission_period_kind is E'@enum';
 
--- create index on app_public.missions (name);
+insert into app_public.mission_period_kind (period, description) values
+  ('DAILY', 'Daily');
 
--- create policy select_own on app_public.missions for select using (user_id = app_public.current_user_id());
--- create policy insert_own on app_public.missions for insert with check (user_id = app_public.current_user_id() and is_default_category is not true);
--- create policy update_own on app_public.missions for update using (user_id = app_public.current_user_id() and is_default_category is not true);
--- create policy delete_own on app_public.missions for delete using (user_id = app_public.current_user_id() and is_default_category is not true);
+grant select on table app_public.mission_period_kind to :DATABASE_AUTHENTICATOR;
 
--- grant select, delete on app_public.missions to :DATABASE_VISITOR;
--- grant insert (
---   id,
---   user_id,
---   name,
---   has_data,
---   default_point_buckets
--- ) on app_public.missions to :DATABASE_VISITOR;
--- grant update (
---   id,
---   user_id,
---   name,
---   has_data,
---   default_point_buckets
--- ) on app_public.missions to :DATABASE_VISITOR;
+create table app_public.missions (
+  id                  uuid primary key default gen_random_uuid(),
+  name                text not null,
+  description         text not null,
+  keywords            text[],
+  reward              int not null default 1,
+  participant_count   int not null default 0,
+  period              text not null references app_public.mission_period_kind,
+  day                 date, -- for daily missions. could be null
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now(),
+  unique (name, period, day)
+);
+alter table app_public.missions enable row level security;
 
--- create trigger _100_timestamps
---   before insert or update on app_public.missions
---   for each row
---   execute procedure app_private.tg__timestamps();
+create index on app_public.missions (name, period, day);
+create index on app_public.missions (period, day);
+create index on app_public.missions (day);
 
--- -- create table app_public.exam_categories (
--- --   id                  uuid primary key default gen_random_uuid(),
--- --   user_id             uuid not null references app_public.users on delete cascade,
--- --   name                text not null,
--- --   is_default_category boolean not null default false,
--- --   has_data            boolean not null default false,
--- --   -- ex. [{bucket: "WBC", type: "number", safeRangeStart: 10, safeRangeEnd: 20, tooltip: "White blood cell count"}]
--- --   -- this field is only used when has_data is true
--- --   default_point_buckets jsonb,
--- --   created_at          timestamptz not null default now(),
--- --   updated_at          timestamptz not null default now(),
--- --   unique (user_id, name)
--- -- );
--- -- alter table app_public.exam_categories enable row level security;
+create policy select_all on app_public.missions for select using (true);
+create policy insert_admin on app_public.missions for insert with check (exists (select 1 from app_public.users where is_admin is true and id = app_public.current_user_id()));
+create policy update_admin on app_public.missions for update using (exists (select 1 from app_public.users where is_admin is true and id = app_public.current_user_id()));
+create policy delete_admin on app_public.missions for delete using (exists (select 1 from app_public.users where is_admin is true and id = app_public.current_user_id()));
 
--- -- create index on app_public.exam_categories (name);
+grant select, delete on app_public.missions to :DATABASE_VISITOR;
+grant insert (
+  id,
+  name,
+  description,
+  keywords,
+  reward,
+  period,
+  day
+) on app_public.missions to :DATABASE_VISITOR;
+grant update (
+  id,
+  name,
+  description,
+  keywords,
+  reward,
+  period,
+  day
+) on app_public.missions to :DATABASE_VISITOR;
 
--- -- create policy select_own on app_public.exam_categories for select using (user_id = app_public.current_user_id());
--- -- create policy insert_own on app_public.exam_categories for insert with check (user_id = app_public.current_user_id() and is_default_category is not true);
--- -- create policy update_own on app_public.exam_categories for update using (user_id = app_public.current_user_id() and is_default_category is not true);
--- -- create policy delete_own on app_public.exam_categories for delete using (user_id = app_public.current_user_id() and is_default_category is not true);
+create trigger _100_timestamps
+  before insert or update on app_public.missions
+  for each row
+  execute procedure app_private.tg__timestamps();
 
--- -- grant select, delete on app_public.exam_categories to :DATABASE_VISITOR;
--- -- grant insert (
--- --   id,
--- --   user_id,
--- --   name,
--- --   has_data,
--- --   default_point_buckets
--- -- ) on app_public.exam_categories to :DATABASE_VISITOR;
--- -- grant update (
--- --   id,
--- --   user_id,
--- --   name,
--- --   has_data,
--- --   default_point_buckets
--- -- ) on app_public.exam_categories to :DATABASE_VISITOR;
+create table mission_participants (
+  id              uuid primary key default gen_random_uuid(),
+  mission_id      uuid not null references app_public.missions on delete cascade,
+  user_id         uuid not null references app_public.users on delete cascade,
+  -- participate means completed
+  -- is_complete     boolean not null default false,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  unique (user_id, mission_id)
+);
+alter table app_public.mission_participants enable row level security;
 
--- -- create trigger _100_timestamps
--- --   before insert or update on app_public.exam_categories
--- --   for each row
--- --   execute procedure app_private.tg__timestamps();
+create index on app_public.mission_participants (mission_id);
 
--- -- create function app_public.tg_exam_categories__insert_with_user() returns trigger as $$
--- -- begin
--- --   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '치과 검진', true) on conflict do nothing;
--- --   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '슬개골 검사', true) on conflict do nothing;
--- --   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '피부 검사', true) on conflict do nothing;
--- --   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '심장 청진', true) on conflict do nothing;
--- --   insert into app_public.exam_categories(user_id, name, is_default_category) values(NEW.id, '신체 검사', true) on conflict do nothing;
--- --   insert into app_public.exam_categories(user_id, name, is_default_category, has_data, default_point_buckets) values(NEW.id, '기본혈액검사(CBC)', true, true, '[{"bucket":"WBC","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"White Blood Cell Count"},{"bucket":"WBC-Lymph","type":"number","safeRangeStart":1,"safeRangeEnd":10,"tooltip":"Wite Blood Cell Lymph"},{"bucket":"WBC-Gran","type":"number","safeRangeStart":5,"safeRangeEnd":15,"tooltip":"WBC-Gran"},{"bucket":"RBC","type":"number","safeRangeStart":5,"safeRangeEnd":10,"tooltip":"Red Blood Cell Count"},{"bucket":"HGB","type":"number","safeRangeStart":10,"tooltip":"HGB"},{"bucket":"HCT","type":"number","safeRangeStart":10,"safeRangeEnd":100,"tooltip":"HCT"},{"bucket":"MCV","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"MCV"},{"bucket":"MCH","type":"number","safeRangeStart":300,"safeRangeEnd":500,"tooltip":"MCH"},{"bucket":"MCHC","type":"number","safeRangeStart":10,"safeRangeEnd":100,"tooltip":"MCHC"},{"bucket":"RDW-CV","type":"number","safeRangeStart":10,"safeRangeEnd":20,"tooltip":"RDW-CV"}]'::jsonb) on conflict do nothing;
--- --   return NEW;
--- -- end;
--- -- $$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
--- -- create trigger _570_insert_exam_categories
--- --   after insert on app_public.users
--- --   for each row
--- --   execute procedure app_public.tg_exam_categories__insert_with_user();
--- -- comment on function app_public.tg_exam_categories__insert_with_user() is
--- --   E'Ensures that every user has their own set of basic exam categories.';
+-- create index on app_public.mission_participants (user_id, mission_id, is_complete);
+-- create index on app_public.mission_participants (mission_id, is_complete);
+-- create index on app_public.mission_participants (is_complete);
 
--- -- create table app_public.exam_results (
--- --   id                      uuid primary key default gen_random_uuid(),
--- --   user_id                 uuid not null references app_public.users on delete cascade,
--- --   pet_id                  uuid not null references app_public.pets on delete cascade,
--- --   exam_category_id  uuid not null references app_public.exam_categories on delete restrict,
--- --   taken_at                timestamptz,
--- --   cost                    app_public.money,
--- --   -- always set by trigger
--- --   poi_id                  uuid references app_public.poi on delete restrict,
--- --   kakao_id                varchar(255),
--- --   next_reservation        timestamptz,
--- --   memo                    text,
--- --   -- only numeric values are currently supported
--- --   -- ex. {points: [{bucket: "WBC", type: "number", value: 11.8}]}
--- --   -- this field is only used when the exam_category specifies has_data
--- --   exam_data               jsonb,
--- --   created_at              timestamptz not null default now(),
--- --   updated_at              timestamptz not null default now(),
--- --   sort_datetime           timestamptz generated always as (coalesce(taken_at, created_at)) stored
--- -- );
--- -- alter table app_public.exam_results enable row level security;
+create policy select_own on app_public.mission_participants for select using (user_id = app_public.current_user_id());
+create policy select_friends on app_public.mission_participants for select using (user_id in (select app_public.current_user_shared_friend_ids()));
+-- user must use a different API to participate/complete a mission (which will check date)
 
--- -- create index on app_public.exam_results (user_id, pet_id, sort_datetime, exam_category_id);
--- -- create index on app_public.exam_results (pet_id, sort_datetime, exam_category_id);
--- -- create index on app_public.exam_results (sort_datetime, exam_category_id);
--- -- create index on app_public.exam_results (exam_category_id);
+grant select on app_public.mission_participants to :DATABASE_VISITOR;
 
--- -- create policy select_own on app_public.exam_results for select using (user_id = app_public.current_user_id());
--- -- create policy insert_own on app_public.exam_results for insert with check (user_id = app_public.current_user_id());
--- -- create policy update_own on app_public.exam_results for update using (user_id = app_public.current_user_id());
--- -- create policy delete_own on app_public.exam_results for delete using (user_id = app_public.current_user_id());
+create trigger _100_timestamps
+  before insert or update on app_public.mission_participants
+  for each row
+  execute procedure app_private.tg__timestamps();
 
--- -- grant select, delete on app_public.exam_results to :DATABASE_VISITOR;
--- -- grant insert (
--- --   id,
--- --   user_id,
--- --   pet_id,
--- --   exam_category_id,
--- --   taken_at,
--- --   cost,
--- --   poi_id,
--- --   kakao_id,
--- --   next_reservation,
--- --   memo,
--- --   exam_data
--- -- ) on app_public.exam_results to :DATABASE_VISITOR;
--- -- grant update (
--- --   user_id,
--- --   pet_id,
--- --   exam_category_id,
--- --   taken_at,
--- --   cost,
--- --   poi_id,
--- --   kakao_id,
--- --   next_reservation,
--- --   memo,
--- --   exam_data
--- -- ) on app_public.exam_results to :DATABASE_VISITOR;
+create function app_public.tg_update_count_on_participant_mission() returns trigger as $$
+declare
+  v_newly_participated boolean;
+begin
+  if tg_when = 'AFTER' then
+    v_newly_participated := false;
+    if (TG_OP = 'INSERT') then
+      v_newly_participated := true;
+    end if;
 
--- -- create trigger _100_timestamps
--- --   before insert or update on app_public.exam_results
--- --   for each row
--- --   execute procedure app_private.tg__timestamps();
+    if v_newly_participated = true then
+      update app_public.missions
+      set participant_count = participant_count + 1
+      where id = NEW.mission_id;
+    end if;
+  end if;
+  return null;
+end;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
 
--- -- create trigger _200_poi_exam_results_create_or_update_poi
--- --   before insert or update on app_public.exam_results
--- --   for each row
--- --   execute procedure app_public.tg__poi_related__create_or_replace_poi();
--- -- comment on function app_public.tg__poi_related__create_or_replace_poi() is
--- --   E'Sets a poi for this poi related object';
+create trigger _200_update_count_on_participate_mission
+  after insert or update
+  on app_public.mission_participants
+  for each row
+  execute procedure app_public.tg_update_count_on_participant_mission();
+comment on function app_public.tg_update_count_on_participant_mission() is
+  E'Update participant count when a user participates in a mission';
 
--- -- create table app_public.user_asset_kind (
--- --   kind        text primary key,
--- --   description text
--- -- );
+create function app_public.tg_pupcles_on_complete_mission() returns trigger as $$
+declare
+  v_newly_completed boolean;
+  v_mission app_public.missions;
+begin
+  if tg_when = 'AFTER' then
+    v_newly_completed := false;
+    if (TG_OP = 'INSERT') then
+      v_newly_completed := true;
+    end if;
 
--- -- comment on table app_public.user_asset_kind is E'@enum';
+    if v_newly_completed = true then
+      select * into v_mission
+      from app_public.missions
+      where id = NEW.mission_id;
 
--- -- insert into app_public.user_asset_kind (kind, description) values
--- --   ('IMAGE', 'Image');
+      update app_public.user_entries
+      set pupcle_balance = pupcle_balance + v_mission.reward, total_pupcles_earned = total_pupcles_earned + v_mission.reward
+      where user_id = NEW.user_id;
+    end if;
+  end if;
+  return null;
+end;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
 
--- -- grant select on table app_public.user_asset_kind to :DATABASE_AUTHENTICATOR;
+create trigger _300_pupcles_on_complete_mission
+  after insert or update
+  on app_public.mission_participants
+  for each row
+  execute procedure app_public.tg_pupcles_on_complete_mission();
+comment on function app_public.tg_pupcles_on_complete_mission() is
+  E'Gives reward pupcles to the user when the user completes a mission';
 
--- -- create table app_public.exam_result_assets (
--- --   id                      uuid primary key default gen_random_uuid(),
--- --   user_id                 uuid not null references app_public.users on delete cascade,
--- --   exam_result_id    uuid not null references app_public.exam_results on delete cascade,
--- --   kind                    text not null references app_public.user_asset_kind,
--- --   asset_url               text check(asset_url ~ '^https?://[^/]+'),
--- --   metadata                jsonb not null default '{}'::jsonb,
--- --   created_at timestamptz not null default now(),
--- --   updated_at timestamptz not null default now()
--- -- );
--- -- alter table app_public.exam_result_assets enable row level security;
+create table app_public.mission_participant_assets (
+  id                      uuid primary key default gen_random_uuid(),
+  user_id                 uuid not null references app_public.users on delete cascade,
+  mission_participant_id  uuid not null references app_public.mission_participants on delete cascade,
+  kind                    text not null references app_public.user_asset_kind, -- only image is supported right now
+  asset_url               text check(asset_url ~ '^https?://[^/]+'),
+  metadata                jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table app_public.mission_participant_assets enable row level security;
 
--- -- create index on app_public.exam_result_assets (user_id, exam_result_id);
--- -- create index on app_public.exam_result_assets (exam_result_id);
+create index on app_public.mission_participant_assets (user_id, mission_participant_id);
+create index on app_public.mission_participant_assets (mission_participant_id);
 
--- -- create policy select_own on app_public.exam_result_assets for select using (user_id = app_public.current_user_id());
--- -- create policy insert_own on app_public.exam_result_assets for insert with check (user_id = app_public.current_user_id());
--- -- create policy update_own on app_public.exam_result_assets for update using (user_id = app_public.current_user_id());
--- -- create policy delete_own on app_public.exam_result_assets for delete using (user_id = app_public.current_user_id());
+-- maybe disallow modification because it's proof the mission is done
+create policy select_own on app_public.mission_participant_assets for select using (user_id = app_public.current_user_id());
+create policy insert_own on app_public.mission_participant_assets for insert with check (user_id = app_public.current_user_id());
+create policy update_own on app_public.mission_participant_assets for update using (user_id = app_public.current_user_id());
+create policy delete_own on app_public.mission_participant_assets for delete using (user_id = app_public.current_user_id());
 
--- -- grant select, delete on app_public.exam_result_assets to :DATABASE_VISITOR;
--- -- grant insert (
--- --   id,
--- --   user_id,
--- --   exam_result_id,
--- --   kind,
--- --   asset_url,
--- --   metadata
--- -- ) on app_public.exam_result_assets to :DATABASE_VISITOR;
--- -- grant update (
--- --   user_id,
--- --   exam_result_id,
--- --   kind,
--- --   asset_url,
--- --   metadata
--- -- ) on app_public.exam_result_assets to :DATABASE_VISITOR;
+grant select, delete on app_public.mission_participant_assets to :DATABASE_VISITOR;
+grant insert (
+  id,
+  user_id,
+  mission_participant_id,
+  kind,
+  asset_url,
+  metadata
+) on app_public.mission_participant_assets to :DATABASE_VISITOR;
+grant update (
+  user_id,
+  mission_participant_id,
+  kind,
+  asset_url,
+  metadata
+) on app_public.mission_participant_assets to :DATABASE_VISITOR;
 
--- -- create trigger _100_timestamps
--- --   before insert or update on app_public.exam_result_assets
--- --   for each row
--- --   execute procedure app_private.tg__timestamps();
+create trigger _100_timestamps
+  before insert or update on app_public.mission_participant_assets
+  for each row
+  execute procedure app_private.tg__timestamps();
+
+create table app_public.mission_invites (
+  from_user_id          uuid not null references app_public.users on delete cascade,
+  to_user_id            uuid not null references app_public.users on delete cascade,
+  mission_id            uuid not null references app_public.missions on delete cascade,
+  primary key (from_user_id, to_user_id, mission_id),
+  read                  boolean not null default false,
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz not null default now()
+);
+alter table app_public.mission_invites enable row level security;
+
+create index on app_public.mission_invites (to_user_id);
+
+create policy select_from_me on app_public.mission_invites for select using (from_user_id = app_public.current_user_id());
+create policy select_to_me on app_public.mission_invites for select using (to_user_id = app_public.current_user_id());
+create policy insert_from_me_to_friend on app_public.mission_invites for insert with check (from_user_id = app_public.current_user_id() and to_user_id in (select app_public.current_user_shared_friend_ids()));
+create policy update_to_me on app_public.mission_invites for update using (to_user_id = app_public.current_user_id());
+create policy delete_from_me on app_public.mission_invites for delete using (from_user_id = app_public.current_user_id());
+create policy delete_to_me on app_public.mission_invites for delete using (to_user_id = app_public.current_user_id());
+
+grant select on app_public.mission_invites to :DATABASE_VISITOR;
+grant insert(from_user_id, to_user_id, mission_id) on app_public.mission_invites to :DATABASE_VISITOR;
+grant update(read) on app_public.mission_invites to :DATABASE_VISITOR;
+grant delete on app_public.mission_invites to :DATABASE_VISITOR;
+
+create trigger _100_timestamps
+  before insert or update on app_public.mission_invites
+  for each row
+  execute procedure app_private.tg__timestamps();

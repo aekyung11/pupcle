@@ -147,6 +147,26 @@ type ChangePasswordPayload {
   success: Boolean
 }
 
+"""All input for the `completeMission` mutation."""
+input CompleteMissionInput {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  missionId: UUID!
+}
+
+"""The output of our `completeMission` mutation."""
+type CompleteMissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  missionParticipant: MissionParticipant!
+}
+
 """All input for the `confirmAccountDeletion` mutation."""
 input ConfirmAccountDeletionInput {
   """
@@ -334,6 +354,127 @@ type CreateFriendRequestPayload {
 
   """Reads a single `User` that is related to this `FriendRequest`."""
   toUser: User
+}
+
+"""All input for the create `Mission` mutation."""
+input CreateMissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Mission` to be created by this mutation."""
+  mission: MissionInput!
+}
+
+"""All input for the create `MissionInvite` mutation."""
+input CreateMissionInviteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `MissionInvite` to be created by this mutation."""
+  missionInvite: MissionInviteInput!
+}
+
+"""The output of our create `MissionInvite` mutation."""
+type CreateMissionInvitePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+
+  """The `MissionInvite` that was created by this mutation."""
+  missionInvite: MissionInvite
+
+  """An edge for our `MissionInvite`. May be used by Relay 1."""
+  missionInviteEdge(
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+}
+
+"""All input for the create `MissionParticipantAsset` mutation."""
+input CreateMissionParticipantAssetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `MissionParticipantAsset` to be created by this mutation."""
+  missionParticipantAsset: MissionParticipantAssetInput!
+}
+
+"""The output of our create `MissionParticipantAsset` mutation."""
+type CreateMissionParticipantAssetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+
+  """The `MissionParticipantAsset` that was created by this mutation."""
+  missionParticipantAsset: MissionParticipantAsset
+
+  """An edge for our `MissionParticipantAsset`. May be used by Relay 1."""
+  missionParticipantAssetEdge(
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+}
+
+"""The output of our create `Mission` mutation."""
+type CreateMissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Mission` that was created by this mutation."""
+  mission: Mission
+
+  """An edge for our `Mission`. May be used by Relay 1."""
+  missionEdge(
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
 }
 
 """All input for the `createOrganization` mutation."""
@@ -944,6 +1085,126 @@ type DeleteFriendRequestPayload {
 
   """Reads a single `User` that is related to this `FriendRequest`."""
   toUser: User
+}
+
+"""All input for the `deleteMission` mutation."""
+input DeleteMissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""All input for the `deleteMissionInvite` mutation."""
+input DeleteMissionInviteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  fromUserId: UUID!
+  missionId: UUID!
+  toUserId: UUID!
+}
+
+"""The output of our delete `MissionInvite` mutation."""
+type DeleteMissionInvitePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedMissionInviteNodeId: ID
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+
+  """The `MissionInvite` that was deleted by this mutation."""
+  missionInvite: MissionInvite
+
+  """An edge for our `MissionInvite`. May be used by Relay 1."""
+  missionInviteEdge(
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+}
+
+"""All input for the `deleteMissionParticipantAsset` mutation."""
+input DeleteMissionParticipantAssetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""The output of our delete `MissionParticipantAsset` mutation."""
+type DeleteMissionParticipantAssetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedMissionParticipantAssetNodeId: ID
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+
+  """The `MissionParticipantAsset` that was deleted by this mutation."""
+  missionParticipantAsset: MissionParticipantAsset
+
+  """An edge for our `MissionParticipantAsset`. May be used by Relay 1."""
+  missionParticipantAssetEdge(
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+}
+
+"""The output of our delete `Mission` mutation."""
+type DeleteMissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedMissionNodeId: ID
+
+  """The `Mission` that was deleted by this mutation."""
+  mission: Mission
+
+  """An edge for our `Mission`. May be used by Relay 1."""
+  missionEdge(
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
 }
 
 """All input for the `deleteOrganization` mutation."""
@@ -1837,6 +2098,556 @@ type MakeEmailPrimaryPayload {
   ): UserEmailsEdge
 }
 
+type Mission {
+  createdAt: Datetime!
+  day: Date
+  description: String!
+  id: UUID!
+  keywords: [String]
+
+  """Reads and enables pagination through a set of `MissionParticipant`."""
+  missionParticipants(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipant`."""
+    orderBy: [MissionParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantsConnection!
+  name: String!
+  participantCount: Int!
+  period: MissionPeriodKind!
+  reward: Int!
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `Mission` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input MissionCondition {
+  """Checks for equality with the object’s `day` field."""
+  day: Date
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `period` field."""
+  period: MissionPeriodKind
+}
+
+"""
+A filter to be used against `Mission` object types. All fields are combined with a logical ‘and.’
+"""
+input MissionFilter {
+  """Checks for all expressions in this list."""
+  and: [MissionFilter!]
+
+  """Filter by the object’s `day` field."""
+  day: DateFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Negates the expression."""
+  not: MissionFilter
+
+  """Checks for any expressions in this list."""
+  or: [MissionFilter!]
+
+  """Filter by the object’s `period` field."""
+  period: MissionPeriodKindFilter
+}
+
+"""An input for mutations affecting `Mission`"""
+input MissionInput {
+  day: Date
+  description: String!
+  id: UUID
+  keywords: [String]
+  name: String!
+  period: MissionPeriodKind!
+  reward: Int
+}
+
+type MissionInvite {
+  createdAt: Datetime!
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+  fromUserId: UUID!
+  missionId: UUID!
+  read: Boolean!
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+  toUserId: UUID!
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `MissionInvite` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input MissionInviteCondition {
+  """Checks for equality with the object’s `fromUserId` field."""
+  fromUserId: UUID
+
+  """Checks for equality with the object’s `toUserId` field."""
+  toUserId: UUID
+}
+
+"""
+A filter to be used against `MissionInvite` object types. All fields are combined with a logical ‘and.’
+"""
+input MissionInviteFilter {
+  """Checks for all expressions in this list."""
+  and: [MissionInviteFilter!]
+
+  """Filter by the object’s `fromUserId` field."""
+  fromUserId: UUIDFilter
+
+  """Negates the expression."""
+  not: MissionInviteFilter
+
+  """Checks for any expressions in this list."""
+  or: [MissionInviteFilter!]
+
+  """Filter by the object’s `toUserId` field."""
+  toUserId: UUIDFilter
+}
+
+"""An input for mutations affecting `MissionInvite`"""
+input MissionInviteInput {
+  fromUserId: UUID!
+  missionId: UUID!
+  toUserId: UUID!
+}
+
+"""
+Represents an update to a `MissionInvite`. Fields that are set will be updated.
+"""
+input MissionInvitePatch {
+  read: Boolean
+}
+
+"""A connection to a list of `MissionInvite` values."""
+type MissionInvitesConnection {
+  """
+  A list of edges which contains the `MissionInvite` and cursor to aid in pagination.
+  """
+  edges: [MissionInvitesEdge!]!
+
+  """A list of `MissionInvite` objects."""
+  nodes: [MissionInvite!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `MissionInvite` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `MissionInvite` edge in the connection."""
+type MissionInvitesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MissionInvite` at the end of the edge."""
+  node: MissionInvite!
+}
+
+"""Methods to use when ordering `MissionInvite`."""
+enum MissionInvitesOrderBy {
+  FROM_USER_ID_ASC
+  FROM_USER_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  TO_USER_ID_ASC
+  TO_USER_ID_DESC
+}
+
+type MissionParticipant {
+  createdAt: Datetime!
+  id: UUID!
+
+  """Reads a single `Mission` that is related to this `MissionParticipant`."""
+  mission: Mission
+  missionId: UUID!
+
+  """
+  Reads and enables pagination through a set of `MissionParticipantAsset`.
+  """
+  missionParticipantAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsConnection!
+  updatedAt: Datetime!
+
+  """Reads a single `User` that is related to this `MissionParticipant`."""
+  user: User
+  userId: UUID!
+}
+
+type MissionParticipantAsset {
+  assetUrl: String
+  createdAt: Datetime!
+  id: UUID!
+  kind: UserAssetKind!
+  metadata: JSON!
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+  missionParticipantId: UUID!
+  updatedAt: Datetime!
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+  userId: UUID!
+}
+
+"""
+A condition to be used against `MissionParticipantAsset` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input MissionParticipantAssetCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `missionParticipantId` field."""
+  missionParticipantId: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `MissionParticipantAsset` object types. All fields are combined with a logical ‘and.’
+"""
+input MissionParticipantAssetFilter {
+  """Checks for all expressions in this list."""
+  and: [MissionParticipantAssetFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `missionParticipantId` field."""
+  missionParticipantId: UUIDFilter
+
+  """Negates the expression."""
+  not: MissionParticipantAssetFilter
+
+  """Checks for any expressions in this list."""
+  or: [MissionParticipantAssetFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""An input for mutations affecting `MissionParticipantAsset`"""
+input MissionParticipantAssetInput {
+  assetUrl: String
+  id: UUID
+  kind: UserAssetKind!
+  metadata: JSON
+  missionParticipantId: UUID!
+  userId: UUID!
+}
+
+"""
+Represents an update to a `MissionParticipantAsset`. Fields that are set will be updated.
+"""
+input MissionParticipantAssetPatch {
+  assetUrl: String
+  kind: UserAssetKind
+  metadata: JSON
+  missionParticipantId: UUID
+  userId: UUID
+}
+
+"""A connection to a list of `MissionParticipantAsset` values."""
+type MissionParticipantAssetsConnection {
+  """
+  A list of edges which contains the `MissionParticipantAsset` and cursor to aid in pagination.
+  """
+  edges: [MissionParticipantAssetsEdge!]!
+
+  """A list of `MissionParticipantAsset` objects."""
+  nodes: [MissionParticipantAsset!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MissionParticipantAsset` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `MissionParticipantAsset` edge in the connection."""
+type MissionParticipantAssetsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MissionParticipantAsset` at the end of the edge."""
+  node: MissionParticipantAsset!
+}
+
+"""Methods to use when ordering `MissionParticipantAsset`."""
+enum MissionParticipantAssetsOrderBy {
+  ID_ASC
+  ID_DESC
+  MISSION_PARTICIPANT_ID_ASC
+  MISSION_PARTICIPANT_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+"""
+A condition to be used against `MissionParticipant` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input MissionParticipantCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `missionId` field."""
+  missionId: UUID
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: UUID
+}
+
+"""
+A filter to be used against `MissionParticipant` object types. All fields are combined with a logical ‘and.’
+"""
+input MissionParticipantFilter {
+  """Checks for all expressions in this list."""
+  and: [MissionParticipantFilter!]
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `missionId` field."""
+  missionId: UUIDFilter
+
+  """Negates the expression."""
+  not: MissionParticipantFilter
+
+  """Checks for any expressions in this list."""
+  or: [MissionParticipantFilter!]
+
+  """Filter by the object’s `userId` field."""
+  userId: UUIDFilter
+}
+
+"""A connection to a list of `MissionParticipant` values."""
+type MissionParticipantsConnection {
+  """
+  A list of edges which contains the `MissionParticipant` and cursor to aid in pagination.
+  """
+  edges: [MissionParticipantsEdge!]!
+
+  """A list of `MissionParticipant` objects."""
+  nodes: [MissionParticipant!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MissionParticipant` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `MissionParticipant` edge in the connection."""
+type MissionParticipantsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MissionParticipant` at the end of the edge."""
+  node: MissionParticipant!
+}
+
+"""Methods to use when ordering `MissionParticipant`."""
+enum MissionParticipantsOrderBy {
+  ID_ASC
+  ID_DESC
+  MISSION_ID_ASC
+  MISSION_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+}
+
+"""
+Represents an update to a `Mission`. Fields that are set will be updated.
+"""
+input MissionPatch {
+  day: Date
+  description: String
+  id: UUID
+  keywords: [String]
+  name: String
+  period: MissionPeriodKind
+  reward: Int
+}
+
+enum MissionPeriodKind {
+  """Daily"""
+  DAILY
+}
+
+"""
+A filter to be used against MissionPeriodKind fields. All fields are combined with a logical ‘and.’
+"""
+input MissionPeriodKindFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: MissionPeriodKind
+
+  """Equal to the specified value."""
+  equalTo: MissionPeriodKind
+
+  """Greater than the specified value."""
+  greaterThan: MissionPeriodKind
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: MissionPeriodKind
+
+  """Included in the specified list."""
+  in: [MissionPeriodKind!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: MissionPeriodKind
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: MissionPeriodKind
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: MissionPeriodKind
+
+  """Not equal to the specified value."""
+  notEqualTo: MissionPeriodKind
+
+  """Not included in the specified list."""
+  notIn: [MissionPeriodKind!]
+}
+
+"""A connection to a list of `Mission` values."""
+type MissionsConnection {
+  """
+  A list of edges which contains the `Mission` and cursor to aid in pagination.
+  """
+  edges: [MissionsEdge!]!
+
+  """A list of `Mission` objects."""
+  nodes: [Mission!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Mission` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Mission` edge in the connection."""
+type MissionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Mission` at the end of the edge."""
+  node: Mission!
+}
+
+"""Methods to use when ordering `Mission`."""
+enum MissionsOrderBy {
+  DAY_ASC
+  DAY_DESC
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  NATURAL
+  PERIOD_ASC
+  PERIOD_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
 type Money {
   amount: String
   currency: String
@@ -1877,6 +2688,14 @@ type Mutation {
     """
     input: ChangePasswordInput!
   ): ChangePasswordPayload
+
+  """Use this mutation to complete a mission."""
+  completeMission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CompleteMissionInput!
+  ): CompleteMissionPayload
 
   """
   If you're certain you want to delete your account, use `requestAccountDeletion` to request an account deletion token, and then supply the token through this mutation to complete account deletion.
@@ -1919,6 +2738,30 @@ type Mutation {
     """
     input: CreateFriendRequestInput!
   ): CreateFriendRequestPayload
+
+  """Creates a single `Mission`."""
+  createMission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateMissionInput!
+  ): CreateMissionPayload
+
+  """Creates a single `MissionInvite`."""
+  createMissionInvite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateMissionInviteInput!
+  ): CreateMissionInvitePayload
+
+  """Creates a single `MissionParticipantAsset`."""
+  createMissionParticipantAsset(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateMissionParticipantAssetInput!
+  ): CreateMissionParticipantAssetPayload
 
   """
   An `Organization` is a great way of sharing access to resources between multiple users without compromising security. When you create an organization you will have the 'owner' and 'billing contact' roles. You may invite other users and redistribute these roles.
@@ -2017,6 +2860,30 @@ type Mutation {
     """
     input: DeleteFriendRequestInput!
   ): DeleteFriendRequestPayload
+
+  """Deletes a single `Mission` using a unique key."""
+  deleteMission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteMissionInput!
+  ): DeleteMissionPayload
+
+  """Deletes a single `MissionInvite` using a unique key."""
+  deleteMissionInvite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteMissionInviteInput!
+  ): DeleteMissionInvitePayload
+
+  """Deletes a single `MissionParticipantAsset` using a unique key."""
+  deleteMissionParticipantAsset(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteMissionParticipantAssetInput!
+  ): DeleteMissionParticipantAssetPayload
 
   """
   Only the 'owner' may delete an organization. This operation cannot be undone, so be sure that it is what you intend.
@@ -2213,6 +3080,32 @@ type Mutation {
     input: UpdateExamResultAssetInput!
   ): UpdateExamResultAssetPayload
 
+  """Updates a single `Mission` using a unique key and a patch."""
+  updateMission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateMissionInput!
+  ): UpdateMissionPayload
+
+  """Updates a single `MissionInvite` using a unique key and a patch."""
+  updateMissionInvite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateMissionInviteInput!
+  ): UpdateMissionInvitePayload
+
+  """
+  Updates a single `MissionParticipantAsset` using a unique key and a patch.
+  """
+  updateMissionParticipantAsset(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateMissionParticipantAssetInput!
+  ): UpdateMissionParticipantAssetPayload
+
   """Updates a single `Organization` using a unique key and a patch."""
   updateOrganization(
     """
@@ -2340,6 +3233,54 @@ type Mutation {
     """
     input: UpsertFriendRequestBatchInput!
   ): UpsertFriendRequestBatchPayload
+
+  """Upserts a single `Mission`."""
+  upsertMission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionInput!
+  ): UpsertMissionPayload
+
+  """Upserts a batch of `Missions`."""
+  upsertMissionBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionBatchInput!
+  ): UpsertMissionBatchPayload
+
+  """Upserts a single `MissionInvite`."""
+  upsertMissionInvite(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionInviteInput!
+  ): UpsertMissionInvitePayload
+
+  """Upserts a batch of `MissionInvites`."""
+  upsertMissionInviteBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionInviteBatchInput!
+  ): UpsertMissionInviteBatchPayload
+
+  """Upserts a single `MissionParticipantAsset`."""
+  upsertMissionParticipantAsset(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionParticipantAssetInput!
+  ): UpsertMissionParticipantAssetPayload
+
+  """Upserts a batch of `MissionParticipantAssets`."""
+  upsertMissionParticipantAssetBatch(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertMissionParticipantAssetBatchInput!
+  ): UpsertMissionParticipantAssetBatchPayload
 
   """Upserts a single `Pet`."""
   upsertPet(
@@ -3647,6 +4588,150 @@ type Query {
     """The method to use when ordering `FriendRequest`."""
     orderBy: [FriendRequestsOrderBy!] = [PRIMARY_KEY_ASC]
   ): FriendRequestsConnection
+  mission(id: UUID!): Mission
+  missionByNameAndPeriodAndDay(day: Date!, name: String!, period: MissionPeriodKind!): Mission
+  missionInvite(fromUserId: UUID!, missionId: UUID!, toUserId: UUID!): MissionInvite
+
+  """Reads and enables pagination through a set of `MissionInvite`."""
+  missionInvites(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionInviteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionInviteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesConnection
+  missionParticipant(id: UUID!): MissionParticipant
+  missionParticipantAsset(id: UUID!): MissionParticipantAsset
+
+  """
+  Reads and enables pagination through a set of `MissionParticipantAsset`.
+  """
+  missionParticipantAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsConnection
+  missionParticipantByUserIdAndMissionId(missionId: UUID!, userId: UUID!): MissionParticipant
+
+  """Reads and enables pagination through a set of `MissionParticipant`."""
+  missionParticipants(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipant`."""
+    orderBy: [MissionParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantsConnection
+
+  """Reads and enables pagination through a set of `Mission`."""
+  missions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsConnection
   organization(id: UUID!): Organization
   organizationBySlug(slug: String!): Organization
 
@@ -4626,6 +5711,138 @@ type UpdateExamResultPayload {
   user: User
 }
 
+"""All input for the `updateMission` mutation."""
+input UpdateMissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+
+  """
+  An object where the defined keys will be set on the `Mission` being updated.
+  """
+  patch: MissionPatch!
+}
+
+"""All input for the `updateMissionInvite` mutation."""
+input UpdateMissionInviteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  fromUserId: UUID!
+  missionId: UUID!
+
+  """
+  An object where the defined keys will be set on the `MissionInvite` being updated.
+  """
+  patch: MissionInvitePatch!
+  toUserId: UUID!
+}
+
+"""The output of our update `MissionInvite` mutation."""
+type UpdateMissionInvitePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+
+  """The `MissionInvite` that was updated by this mutation."""
+  missionInvite: MissionInvite
+
+  """An edge for our `MissionInvite`. May be used by Relay 1."""
+  missionInviteEdge(
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+}
+
+"""All input for the `updateMissionParticipantAsset` mutation."""
+input UpdateMissionParticipantAssetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+
+  """
+  An object where the defined keys will be set on the `MissionParticipantAsset` being updated.
+  """
+  patch: MissionParticipantAssetPatch!
+}
+
+"""The output of our update `MissionParticipantAsset` mutation."""
+type UpdateMissionParticipantAssetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+
+  """The `MissionParticipantAsset` that was updated by this mutation."""
+  missionParticipantAsset: MissionParticipantAsset
+
+  """An edge for our `MissionParticipantAsset`. May be used by Relay 1."""
+  missionParticipantAssetEdge(
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+}
+
+"""The output of our update `Mission` mutation."""
+type UpdateMissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Mission` that was updated by this mutation."""
+  mission: Mission
+
+  """An edge for our `Mission`. May be used by Relay 1."""
+  missionEdge(
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
 """All input for the `updateOrganization` mutation."""
 input UpdateOrganizationInput {
   """
@@ -5287,6 +6504,242 @@ type UpsertFriendRequestPayload {
   toUser: User
 }
 
+"""All input for the upsert `Mission` batch mutation."""
+input UpsertMissionBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `Missions` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  missions: [MissionInput]!
+}
+
+"""The output of our upsert `Mission` batch mutation."""
+type UpsertMissionBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """An edge for our `Mission`. May be used by Relay 1."""
+  missionEdge(
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsEdge
+
+  """The `Missions` that was upserted by this mutation."""
+  missions: [Mission]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the upsert `Mission` mutation."""
+input UpsertMissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Mission` to be upserted by this mutation."""
+  mission: MissionInput!
+}
+
+"""All input for the upsert `MissionInvite` batch mutation."""
+input UpsertMissionInviteBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `MissionInvites` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  missionInvites: [MissionInviteInput]!
+}
+
+"""The output of our upsert `MissionInvite` batch mutation."""
+type UpsertMissionInviteBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+
+  """An edge for our `MissionInvite`. May be used by Relay 1."""
+  missionInviteEdge(
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesEdge
+
+  """The `MissionInvites` that was upserted by this mutation."""
+  missionInvites: [MissionInvite]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+}
+
+"""All input for the upsert `MissionInvite` mutation."""
+input UpsertMissionInviteInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `MissionInvite` to be upserted by this mutation."""
+  missionInvite: MissionInviteInput!
+}
+
+"""The output of our upsert `MissionInvite` mutation."""
+type UpsertMissionInvitePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  fromUser: User
+
+  """The `MissionInvite` that were upserted by this mutation."""
+  missionInvite: MissionInvite
+
+  """An edge for our `MissionInvite`. May be used by Relay 1."""
+  missionInviteEdge(
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `User` that is related to this `MissionInvite`."""
+  toUser: User
+}
+
+"""All input for the upsert `MissionParticipantAsset` batch mutation."""
+input UpsertMissionParticipantAssetBatchInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The `MissionParticipantAssets` to be upserted by this mutation. Expects all records to conform to the structure of the first.
+  """
+  missionParticipantAssets: [MissionParticipantAssetInput]!
+}
+
+"""The output of our upsert `MissionParticipantAsset` batch mutation."""
+type UpsertMissionParticipantAssetBatchPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+
+  """An edge for our `MissionParticipantAsset`. May be used by Relay 1."""
+  missionParticipantAssetEdge(
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsEdge
+
+  """The `MissionParticipantAssets` that was upserted by this mutation."""
+  missionParticipantAssets: [MissionParticipantAsset]
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+}
+
+"""All input for the upsert `MissionParticipantAsset` mutation."""
+input UpsertMissionParticipantAssetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `MissionParticipantAsset` to be upserted by this mutation."""
+  missionParticipantAsset: MissionParticipantAssetInput!
+}
+
+"""The output of our upsert `MissionParticipantAsset` mutation."""
+type UpsertMissionParticipantAssetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """
+  Reads a single `MissionParticipant` that is related to this `MissionParticipantAsset`.
+  """
+  missionParticipant: MissionParticipant
+
+  """The `MissionParticipantAsset` that were upserted by this mutation."""
+  missionParticipantAsset: MissionParticipantAsset
+
+  """An edge for our `MissionParticipantAsset`. May be used by Relay 1."""
+  missionParticipantAssetEdge(
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `User` that is related to this `MissionParticipantAsset`.
+  """
+  user: User
+}
+
+"""The output of our upsert `Mission` mutation."""
+type UpsertMissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input, unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Mission` that were upserted by this mutation."""
+  mission: Mission
+
+  """An edge for our `Mission`. May be used by Relay 1."""
+  missionEdge(
+    """The method to use when ordering `Mission`."""
+    orderBy: [MissionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionsEdge
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
 """All input for the upsert `Pet` batch mutation."""
 input UpsertPetBatchInput {
   """
@@ -5938,6 +7391,144 @@ type User {
   """If true, the user has elevated privileges."""
   isAdmin: Boolean!
   isVerified: Boolean!
+
+  """Reads and enables pagination through a set of `MissionInvite`."""
+  missionInvitesByFromUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionInviteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionInviteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesConnection!
+
+  """Reads and enables pagination through a set of `MissionInvite`."""
+  missionInvitesByToUserId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionInviteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionInviteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesConnection!
+
+  """
+  Reads and enables pagination through a set of `MissionParticipantAsset`.
+  """
+  missionParticipantAssets(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantAssetFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipantAsset`."""
+    orderBy: [MissionParticipantAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantAssetsConnection!
+
+  """Reads and enables pagination through a set of `MissionParticipant`."""
+  missionParticipants(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionParticipantCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionParticipantFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionParticipant`."""
+    orderBy: [MissionParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionParticipantsConnection!
 
   """Public-facing nickname (or pseudonym) of the user."""
   nickname: String

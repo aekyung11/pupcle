@@ -13,6 +13,7 @@ import ConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 
 import CreateUploadUrlPlugin from "./plugins/CreateUploadUrlPlugin";
 import FriendsPlugin from "./plugins/FriendsPlugin";
+import MissionsPlugin from "./plugins/MissionsPlugin";
 import OrdersPlugin from "./plugins/Orders";
 import PassportLoginPlugin from "./plugins/PassportLoginPlugin";
 import PrimaryKeyMutationsOnlyPlugin from "./plugins/PrimaryKeyMutationsOnlyPlugin";
@@ -191,6 +192,9 @@ export function getPostGraphileOptions({
 
       // Adds friend-related mutations
       FriendsPlugin,
+
+      // Adds mission-related mutations
+      MissionsPlugin,
 
       CreateUploadUrlPlugin,
 
