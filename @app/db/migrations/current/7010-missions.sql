@@ -62,10 +62,48 @@ create trigger _100_timestamps
   for each row
   execute procedure app_private.tg__timestamps();
 
+-- create table app_public.mission_participant_assets (
+--   id                      uuid primary key default gen_random_uuid(),
+--   user_id                 uuid not null references app_public.users on delete cascade,
+--   kind                    text not null references app_public.user_asset_kind, -- only image is supported right now
+--   asset_url               text check(asset_url ~ '^https?://[^/]+'),
+--   metadata                jsonb not null default '{}'::jsonb,
+--   created_at timestamptz not null default now(),
+--   updated_at timestamptz not null default now()
+-- );
+-- alter table app_public.mission_participant_assets enable row level security;
+
+-- -- maybe disallow modification because it's proof the mission is done
+-- create policy select_own on app_public.mission_participant_assets for select using (user_id = app_public.current_user_id());
+-- create policy insert_own on app_public.mission_participant_assets for insert with check (user_id = app_public.current_user_id());
+-- create policy update_own on app_public.mission_participant_assets for update using (user_id = app_public.current_user_id());
+-- create policy delete_own on app_public.mission_participant_assets for delete using (user_id = app_public.current_user_id());
+
+-- grant select, delete on app_public.mission_participant_assets to :DATABASE_VISITOR;
+-- grant insert (
+--   id,
+--   user_id,
+--   kind,
+--   asset_url,
+--   metadata
+-- ) on app_public.mission_participant_assets to :DATABASE_VISITOR;
+-- grant update (
+--   user_id,
+--   kind,
+--   asset_url,
+--   metadata
+-- ) on app_public.mission_participant_assets to :DATABASE_VISITOR;
+
+-- create trigger _100_timestamps
+--   before insert or update on app_public.mission_participant_assets
+--   for each row
+--   execute procedure app_private.tg__timestamps();
+
 create table mission_participants (
   id              uuid primary key default gen_random_uuid(),
   mission_id      uuid not null references app_public.missions on delete cascade,
   user_id         uuid not null references app_public.users on delete cascade,
+  proof_image_url text check(proof_image_url ~ '^https?://[^/]+'),
   -- participate means completed
   -- is_complete     boolean not null default false,
   created_at      timestamptz not null default now(),
@@ -151,49 +189,6 @@ create trigger _300_pupcles_on_complete_mission
   execute procedure app_public.tg_pupcles_on_complete_mission();
 comment on function app_public.tg_pupcles_on_complete_mission() is
   E'Gives reward pupcles to the user when the user completes a mission';
-
-create table app_public.mission_participant_assets (
-  id                      uuid primary key default gen_random_uuid(),
-  user_id                 uuid not null references app_public.users on delete cascade,
-  mission_participant_id  uuid not null references app_public.mission_participants on delete cascade,
-  kind                    text not null references app_public.user_asset_kind, -- only image is supported right now
-  asset_url               text check(asset_url ~ '^https?://[^/]+'),
-  metadata                jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-alter table app_public.mission_participant_assets enable row level security;
-
-create index on app_public.mission_participant_assets (user_id, mission_participant_id);
-create index on app_public.mission_participant_assets (mission_participant_id);
-
--- maybe disallow modification because it's proof the mission is done
-create policy select_own on app_public.mission_participant_assets for select using (user_id = app_public.current_user_id());
-create policy insert_own on app_public.mission_participant_assets for insert with check (user_id = app_public.current_user_id());
-create policy update_own on app_public.mission_participant_assets for update using (user_id = app_public.current_user_id());
-create policy delete_own on app_public.mission_participant_assets for delete using (user_id = app_public.current_user_id());
-
-grant select, delete on app_public.mission_participant_assets to :DATABASE_VISITOR;
-grant insert (
-  id,
-  user_id,
-  mission_participant_id,
-  kind,
-  asset_url,
-  metadata
-) on app_public.mission_participant_assets to :DATABASE_VISITOR;
-grant update (
-  user_id,
-  mission_participant_id,
-  kind,
-  asset_url,
-  metadata
-) on app_public.mission_participant_assets to :DATABASE_VISITOR;
-
-create trigger _100_timestamps
-  before insert or update on app_public.mission_participant_assets
-  for each row
-  execute procedure app_private.tg__timestamps();
 
 create table app_public.mission_invites (
   from_user_id          uuid not null references app_public.users on delete cascade,

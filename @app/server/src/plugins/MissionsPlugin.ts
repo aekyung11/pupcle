@@ -1,3 +1,4 @@
+import { addDays, subDays } from "date-fns";
 import { gql, makeExtendSchemaPlugin, Resolvers } from "graphile-utils";
 
 import { OurGraphQLContext } from "../graphile.config";
@@ -16,6 +17,8 @@ const MissionsPlugin = makeExtendSchemaPlugin((build) => {
       clientMutationId: String
 
       missionId: UUID!
+
+      proofImageUrl: String!
     }
 
     """
@@ -47,12 +50,14 @@ const MissionsPlugin = makeExtendSchemaPlugin((build) => {
         resolveInfo
       ) {
         const { selectGraphQLResultFromTable } = resolveInfo.graphile;
-        const { missionId } = args.input;
+        const { missionId, proofImageUrl } = args.input;
         const { rootPgPool, pgClient } = context;
 
         // Start a sub-transaction
         await pgClient.query("SAVEPOINT completeMission");
         try {
+          const now = new Date();
+
           const {
             rows: [currentUser],
           } = await pgClient.query(
@@ -66,18 +71,43 @@ const MissionsPlugin = makeExtendSchemaPlugin((build) => {
           }
 
           const {
+            rows: [mission],
+          } = await rootPgPool.query(
+            `select * from app_public.missions where id = $1`,
+            [missionId]
+          );
+
+          if (!mission || mission.period !== "DAILY") {
+            throw Object.assign(new Error("No such daily mission."), {
+              code: "INVALIDREQUEST",
+            });
+          }
+
+          const missionDate = new Date(mission.day);
+          if (now < subDays(missionDate, 1) || now > addDays(missionDate, 1)) {
+            throw Object.assign(
+              new Error("Can't complete this mission right now."),
+              {
+                code: "INVALIDREQUEST",
+              }
+            );
+          }
+
+          const {
             rows: [missionParticipant],
           } = await rootPgPool.query(
             `
               insert into app_public.mission_participants (
                 mission_id,
-                user_id
+                user_id,
+                proof_image_url
               ) values (
                 $1::uuid,
-                $2::uuid
+                $2::uuid,
+                $3
               ) returning *
             `,
-            [missionId, currentUser.id]
+            [missionId, currentUser.id, proofImageUrl]
           );
 
           const sql = build.pgSql;
