@@ -25,7 +25,7 @@ const validationSchema = yup.object({
       /^[a-zA-Z0-9_]*$/,
       "Must contain only alphanumeric characters and underscores."
     ),
-  avatarUrl: yup.string(),
+  avatarUrl: yup.string().nullable(),
 });
 
 type SocialInfoFormInput = InferType<typeof validationSchema>;
@@ -42,7 +42,7 @@ export function useSocialInfoForm(
   const initialValues: SocialInfoFormInput = {
     nickname: initialNickname || "",
     username: initialUsername || "",
-    avatarUrl: initialAvatarUrl || "",
+    avatarUrl: initialAvatarUrl || null,
   };
   const handleSubmit: FormikConfig<SocialInfoFormInput>["onSubmit"] =
     useCallback(

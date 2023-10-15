@@ -27,7 +27,7 @@ const validationSchema = yup.object({
     .oneOf(Object.values(PetGender))
     .required("Please provide your pet's sex"),
   neutered: yup.boolean().required("Please provide your pet's neutered status"),
-  avatarUrl: yup.string(),
+  avatarUrl: yup.string().nullable(),
 });
 
 type PetInfoFormInput = InferType<typeof validationSchema>;
