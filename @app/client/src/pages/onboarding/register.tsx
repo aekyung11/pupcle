@@ -21,7 +21,7 @@ import Link from "next/link";
 import Router from "next/router";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { isSafe } from "./login";
+import { isSafe } from "../login";
 
 interface RegisterProps {
   next: string | null;
