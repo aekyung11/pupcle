@@ -29,18 +29,35 @@ fragment SentInvites_CurrentUserQuery on Query {
   }
 }
 
+fragment Received_MissionInvite on MissionInvite {
+  createdAt
+  fromUser {
+    avatarUrl
+    id
+    nickname
+    username
+  }
+  mission {
+    createdAt
+    day
+    description
+    id
+    keywords
+    name
+    participantCount
+    period
+    requiredObjects
+    reward
+    updatedAt
+  }
+}
+
 fragment ReceivedInvites_CurrentUserQuery on Query {
   currentUser {
     id
     missionInvitesByToUserId(orderBy: CREATED_AT_DESC) {
       nodes {
-        createdAt
-        fromUser {
-          avatarUrl
-          id
-          nickname
-          username
-        }
+        ...Received_MissionInvite
       }
     }
   }

@@ -2,6 +2,7 @@ import { AuthRestrict, SharedLayout } from "@app/components";
 import {
   FriendsPage_MissionFragment,
   Friends_UserEdgeFragment,
+  Received_MissionInviteFragment,
   Sent_MissionInviteFragment,
   SharedLayout_UserFragment,
   useAcceptFriendRequestMutation,
@@ -25,8 +26,8 @@ import { keyBy } from "lodash";
 import { NextPage } from "next";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
-import { FieldArray, Formik, useFormikContext } from "formik";
-import { Form, Input as FormikInput, SubmitButton } from "formik-antd";
+import { Formik } from "formik";
+import { Form, SubmitButton } from "formik-antd";
 import { extractError, getCodeFromError } from "@app/lib";
 import { useMissionInviteForm } from "@app/componentlib";
 
@@ -388,6 +389,7 @@ interface FriendsPageInner {
   currentUser: SharedLayout_UserFragment;
   missions: FriendsPage_MissionFragment[];
   sentInvites: Sent_MissionInviteFragment[];
+  receivedInvites: Received_MissionInviteFragment[];
   day: string;
 }
 
@@ -395,6 +397,7 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
   currentUser,
   missions,
   sentInvites,
+  receivedInvites,
 }) => {
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.FRIENDS);
   const { data: friendsData, refetch: friendsRefetch } = useFriendsQuery();
@@ -853,7 +856,9 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
             </Collapsible.Root>
           </div>
         </Tabs.Content>
-        <Tabs.Content key={Tab.MISSIONS} value={Tab.MISSIONS}></Tabs.Content>
+        <Tabs.Content key={Tab.MISSIONS} value={Tab.MISSIONS}>
+          {receivedInvites.length}
+        </Tabs.Content>
       </div>
     </Tabs.Root>
   );
@@ -872,6 +877,8 @@ const Friends: NextPage = () => {
   const currentUser = query.data?.currentUser;
   const missions = query.data?.missions?.nodes;
   const sentInvites = query.data?.currentUser?.missionInvitesByFromUserId.nodes;
+  const receivedInvites =
+    query.data?.currentUser?.missionInvitesByToUserId.nodes;
 
   return (
     <SharedLayout
@@ -900,12 +907,13 @@ const Friends: NextPage = () => {
           Friends
         </span>
       </div>
-      {currentUser && today && missions && sentInvites ? (
+      {currentUser && today && missions && sentInvites && receivedInvites ? (
         <FriendsPageInner
           currentUser={currentUser}
           day={today}
           missions={missions}
           sentInvites={sentInvites}
+          receivedInvites={receivedInvites}
         />
       ) : (
         <p>loading...</p>

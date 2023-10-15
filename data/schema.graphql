@@ -392,6 +392,9 @@ type CreateMissionInvitePayload {
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
 
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
+
   """The `MissionInvite` that was created by this mutation."""
   missionInvite: MissionInvite
 
@@ -1076,6 +1079,9 @@ type DeleteMissionInvitePayload {
 
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
+
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
 
   """The `MissionInvite` that was deleted by this mutation."""
   missionInvite: MissionInvite
@@ -2017,6 +2023,40 @@ type Mission {
   id: UUID!
   keywords: [String]
 
+  """Reads and enables pagination through a set of `MissionInvite`."""
+  missionInvites(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MissionInviteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MissionInviteFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MissionInvite`."""
+    orderBy: [MissionInvitesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MissionInvitesConnection!
+
   """Reads and enables pagination through a set of `MissionParticipant`."""
   missionParticipants(
     """Read all values in the set after (below) this cursor."""
@@ -2119,6 +2159,9 @@ type MissionInvite {
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
   fromUserId: UUID!
+
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
   missionId: UUID!
   read: Boolean!
 
@@ -2139,6 +2182,9 @@ input MissionInviteCondition {
   """Checks for equality with the object’s `fromUserId` field."""
   fromUserId: UUID
 
+  """Checks for equality with the object’s `missionId` field."""
+  missionId: UUID
+
   """Checks for equality with the object’s `toUserId` field."""
   toUserId: UUID
 }
@@ -2155,6 +2201,9 @@ input MissionInviteFilter {
 
   """Filter by the object’s `fromUserId` field."""
   fromUserId: UUIDFilter
+
+  """Filter by the object’s `missionId` field."""
+  missionId: UUIDFilter
 
   """Negates the expression."""
   not: MissionInviteFilter
@@ -2212,6 +2261,8 @@ enum MissionInvitesOrderBy {
   CREATED_AT_DESC
   FROM_USER_ID_ASC
   FROM_USER_ID_DESC
+  MISSION_ID_ASC
+  MISSION_ID_DESC
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
@@ -5442,6 +5493,9 @@ type UpdateMissionInvitePayload {
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
 
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
+
   """The `MissionInvite` that was updated by this mutation."""
   missionInvite: MissionInvite
 
@@ -6213,6 +6267,9 @@ type UpsertMissionInviteBatchPayload {
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
 
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
+
   """An edge for our `MissionInvite`. May be used by Relay 1."""
   missionInviteEdge(
     """The method to use when ordering `MissionInvite`."""
@@ -6251,6 +6308,9 @@ type UpsertMissionInvitePayload {
 
   """Reads a single `User` that is related to this `MissionInvite`."""
   fromUser: User
+
+  """Reads a single `Mission` that is related to this `MissionInvite`."""
+  mission: Mission
 
   """The `MissionInvite` that were upserted by this mutation."""
   missionInvite: MissionInvite

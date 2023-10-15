@@ -202,6 +202,7 @@ create table app_public.mission_invites (
 alter table app_public.mission_invites enable row level security;
 
 create index on app_public.mission_invites (to_user_id);
+create index on app_public.mission_invites (mission_id);
 create index on app_public.mission_invites (created_at);
 
 create policy select_from_me on app_public.mission_invites for select using (from_user_id = app_public.current_user_id());
