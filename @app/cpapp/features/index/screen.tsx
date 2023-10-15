@@ -73,7 +73,7 @@ export function IndexScreen() {
             </Link>
           </Row>
           <Row className="mt-[14px] space-x-8">
-            <Link href="/register">
+            <Link href="/onboarding/register">
               <View className="font-poppins bg-pupcleBlue h-12 w-[310px] items-center justify-center rounded-full border-none">
                 <Text className="text-14px font-{poppins} font-bold text-white">
                   계정 만들기

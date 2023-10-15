@@ -124,7 +124,7 @@ function LoginTest() {
               </Button>
               <View style={styles.viewMarginTop20}>
                 <Text style={styles.text}>계정이 없으십니까?</Text>
-                <Link href="/register">
+                <Link href="/onboarding/register">
                   <Text style={styles.semiBoldBlueText}> 회원가입</Text>
                 </Link>
               </View>

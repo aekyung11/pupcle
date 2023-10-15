@@ -49,7 +49,7 @@ context("Subscriptions", () => {
 
   it("can register; current user subscription works", () => {
     // Setup
-    cy.visit(Cypress.env("ROOT_URL") + "/register");
+    cy.visit(Cypress.env("ROOT_URL") + "/onboarding/register");
     cy.getCy("header-login-button").should("not.exist"); // No login button on register page
 
     // Action

@@ -144,7 +144,7 @@ const StartPage: NextPage = () => {
                     }}
                   >
                     <Button
-                      href="/register"
+                      href="/onboarding/register"
                       style={{
                         display: "flex",
                         justifyContent: "center",

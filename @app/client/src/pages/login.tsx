@@ -414,7 +414,9 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                             계정이 없으십니까?
                           </span>
                           <Link
-                            href={`/register?next=${encodeURIComponent(next)}`}
+                            href={`/onboarding/register?next=${encodeURIComponent(
+                              next
+                            )}`}
                             type="default"
                             data-cy="loginpage-button-register"
                             style={{
@@ -472,7 +474,7 @@ const Login: NextPage<LoginProps> = ({ next: rawNext }) => {
                     block
                     type="default"
                     data-cy="loginpage-button-register"
-                    href={`/register?next=${encodeURIComponent(next)}`}
+                    href={`/onboarding/register?next=${encodeURIComponent(next)}`}
                   >
                     Create an account
                   </ButtonLink> */}

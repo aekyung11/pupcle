@@ -12,13 +12,16 @@ context("RegisterAccount", () => {
     cy.getCy("loginpage-button-register").click();
 
     // Assertions
-    cy.url().should("equal", Cypress.env("ROOT_URL") + "/register?next=%2F");
+    cy.url().should(
+      "equal",
+      Cypress.env("ROOT_URL") + "/onboarding/register?next=%2F"
+    );
     cy.getCy("registerpage-name-label").should("exist");
   });
 
   it("requires the form be filled", () => {
     // Setup
-    cy.visit(Cypress.env("ROOT_URL") + "/register");
+    cy.visit(Cypress.env("ROOT_URL") + "/onboarding/register");
 
     // Action
     cy.getCy("registerpage-submit-button").click();
@@ -34,7 +37,7 @@ context("RegisterAccount", () => {
 
     it("enables account creation", () => {
       // Setup
-      cy.visit(Cypress.env("ROOT_URL") + "/register");
+      cy.visit(Cypress.env("ROOT_URL") + "/onboarding/register");
       cy.getCy("header-login-button").should("not.exist"); // No login button on register page
 
       // Action
@@ -54,7 +57,7 @@ context("RegisterAccount", () => {
     it("prevents creation if username is in use", () => {
       // Setup
       cy.serverCommand("createUser", { username: "testuser" });
-      cy.visit(Cypress.env("ROOT_URL") + "/register");
+      cy.visit(Cypress.env("ROOT_URL") + "/onboarding/register");
 
       // Action
       cy.getCy("registerpage-input-name").type("Test User");
