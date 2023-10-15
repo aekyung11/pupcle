@@ -400,98 +400,167 @@ const FriendsPageMissionsInner: React.FC<FriendsPageMissionsInner> = ({
       invite.fromUser?.id + ":" + invite.mission?.id === selectedInviteId
   );
 
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+  const timeRemaining = midnight.getTime() - now.getTime();
+  const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+  const minutesRemaining = Math.floor(
+    (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+  );
+  const secondsRemaining = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
   return (
     <>
       {selectedInviteId && (
-        <div className={clsx("flex w-full flex-col items-center")}>
-          <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
+        <div className={clsx("flex h-full w-full flex-col items-center")}>
+          <div className="border-pupcleLightGray flex h-[85px] w-full flex-row items-center justify-start border-b-[1px] px-11">
             <Button
-              className="mr-3 h-[13px] w-5 border-none p-0"
+              className="mr-[30px] h-5 w-[13px] border-none p-0"
               onClick={() => setSelectedInviteId(null)}
             >
-              <img
-                src="/pup_notes_caret_icon.png"
-                className="h-[13px] w-5 rotate-90"
-              />
+              <img src="/caret_icon_gray.png" className="h-fit w-[13px]" />
             </Button>
-            <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
+            <img
+              className="mr-4 h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+              src={selectedInvite?.fromUser?.avatarUrl || "/default_avatar.png"}
+            />
+            <span className="font-poppins mt-[2px] text-[20px] font-semibold">
               {selectedInvite?.fromUser?.nickname}
             </span>
           </div>
-
-          <div className="flex h-[calc(100vh-6rem-125px-91px-20px)] w-full justify-center py-16">
-            <div className="h-full w-1/2 overflow-scroll">
-              <div className="w-full">
-                {selectedInvite ? (
-                  <div className="flex h-full w-full flex-row">
-                    <span>
-                      EXPIRED?{" "}
-                      {selectedInvite.mission?.day &&
-                      today > selectedInvite.mission?.day
-                        ? "expired"
-                        : "not expired"}
-                    </span>
-                    <span>
-                      {format(new Date(selectedInvite.createdAt), "MM.dd")}
-                    </span>
-                    <span>
-                      {format(new Date(selectedInvite.createdAt), "hh:mm:ss a")}
-                    </span>
-                    <span>{selectedInvite.fromUser?.nickname} 님이</span>
-                    <span>
-                      Mission date: {selectedInvite.mission?.day} (no time)
-                    </span>
-                    {selectedInvite.mission?.id && (
-                      <Link
-                        href={`/mission?mission=${selectedInvite.mission.id}`}
-                      >
-                        {selectedInvite.mission?.name} 미션하러가기
-                      </Link>
-                    )}
-                    <span>보상 팝클: {selectedInvite.mission?.reward}</span>
-                  </div>
-                ) : (
-                  <FourOhFour />
-                )}
+          {selectedInvite ? (
+            <div className="relative flex h-[calc(100%-85px)] w-full flex-col p-[85px]">
+              <div className="absolute top-6 right-11">
+                <span className="font-poppins text-pupcleGray text-[16px] font-medium">
+                  {format(new Date(selectedInvite.createdAt), "MM.dd")}
+                </span>
+                <span className="font-poppins text-pupcleGray ml-3 text-[16px] font-medium">
+                  {format(new Date(selectedInvite.createdAt), "hh:mm:ss")}
+                </span>
               </div>
+              <p className="font-poppins flex flex-col">
+                <span className="text-[16px] font-bold text-black">
+                  [미션 신청]
+                </span>
+                <br />
+                <span className="text-[16px] font-medium text-black">
+                  {selectedInvite?.fromUser?.nickname} 님이 보내신 미션 참여
+                  알림입니다. 클릭해서 {selectedInvite?.fromUser?.nickname} 님과
+                  함께 참여해보세요!
+                </span>
+              </p>
+              <br />
+              {selectedInvite.mission?.day &&
+              today > selectedInvite.mission?.day ? (
+                <span className="font-poppins text-pupcleGray text-[15px] font-medium">
+                  기간이 만료되었습니다.
+                </span>
+              ) : (
+                <span className="font-poppins text-pupcleGray text-[15px] font-medium">
+                  완료까지 0일 {hoursRemaining}시간 {minutesRemaining}분{" "}
+                  {secondsRemaining}초
+                </span>
+              )}
+              {selectedInvite.mission?.day &&
+              today > selectedInvite.mission?.day ? (
+                <span className="font-poppins text-pupcleGray text-[20px] font-semibold">
+                  {selectedInvite.mission?.name} 미션하러가기
+                </span>
+              ) : (
+                <span className="font-poppins text-pupcleBlue text-[20px] font-semibold">
+                  {selectedInvite.mission?.id && (
+                    <Link
+                      href={`/mission?mission=${selectedInvite.mission.id}`}
+                    >
+                      {selectedInvite.mission?.name} 미션하러가기
+                    </Link>
+                  )}
+                </span>
+              )}
+              <br />
+              <div className="flex items-center">
+                <span className="font-poppins text-pupcleGray text-[15px] font-medium">
+                  보상 펍클: {selectedInvite.mission?.reward}
+                </span>
+                <img
+                  src="/pupcle_count.png"
+                  className="ml-1 mb-[1px] h-[13px] w-3"
+                />
+              </div>
+              {selectedInvite.mission?.day &&
+              today > selectedInvite.mission?.day ? (
+                <Button
+                  disabled
+                  className="bg-pupcleLightGray hover:!bg-pupcleLightGray mt-[100px] flex h-[50px] w-[285px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                >
+                  <span className="font-poppins text-pupcleGray text-[20px] font-bold tracking-widest">
+                    기간이 만료되었습니다
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  href={`/mission?mission=${selectedInvite.mission?.id}`}
+                  className="bg-pupcleBlue hover:!bg-pupcleBlue mt-[100px] flex h-[50px] w-[285px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                >
+                  <span className="font-poppins text-[20px] font-bold tracking-widest text-white">
+                    미션으로 이동하기
+                  </span>
+                </Button>
+              )}
             </div>
-          </div>
+          ) : (
+            <FourOhFour />
+          )}
         </div>
       )}
+
       <div
         className={clsx("flex w-full flex-col items-center", {
           hidden: selectedInviteId,
         })}
       >
+        <div className="flex h-[85px] w-full items-center justify-end border-none px-14">
+          <Button className="h-6 w-4 border-none p-0">
+            <img src="/pagination_left.png" className="h-6 w-4" />
+          </Button>
+          <span className="font-poppins text-pupcleGray mx-8 text-[20px] font-semibold">
+            1/1
+          </span>
+          <Button className="h-6 w-4 border-none p-0">
+            <img src="/pagination_right.png" className="h-6 w-4" />
+          </Button>
+        </div>
         {receivedInvites.map((invite) => {
           const inviteId = invite.fromUser?.id + ":" + invite.mission?.id;
           return (
-            <div
-              className="border-pupcleLightGray flex w-full items-center justify-center border-t-[1px] px-[65px] py-10"
+            <Button
+              onClick={() => setSelectedInviteId(inviteId)}
+              className={clsx(
+                "border-pupcleLightGray hover:bg-pupcleLightLightGray hover:!border-pupcleLightGray flex h-16 w-full items-center rounded-none border-x-0 border-b-[1px] border-t-0 px-11"
+              )}
               key={inviteId}
             >
-              <div className="flex w-full max-w-[1095px] items-center justify-between">
-                <div className="flex flex-row items-center">
-                  <span className="font-poppins text-[15px]">
-                    {format(new Date(invite.createdAt), "MM.dd")}
-                  </span>
-                  {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
-                  <div className="mx-12 flex flex-col">
-                    <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                      {invite.fromUser?.nickname}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => setSelectedInviteId(inviteId)}
-                  className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
-                >
-                  <span className="font-poppins text-[20px] font-semibold text-white">
-                    보기
-                  </span>
-                </Button>
+              <div className="flex w-full items-center">
+                <img
+                  className="mr-[30px] h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+                  src={invite.fromUser?.avatarUrl || "/default_avatar.png"}
+                />
+                <span className="font-poppins w-[80px] overflow-hidden text-ellipsis text-start text-[16px] font-semibold text-black">
+                  {invite.fromUser?.nickname}
+                </span>
+                <span className="font-poppin text-pupcleGray w-[calc(100%-68px-80px-70px)] overflow-hidden text-ellipsis pl-4 text-start text-[16px] font-medium">
+                  [미션 신청] {invite.fromUser?.nickname} 님이 보내신 미션 참여
+                  알림입니다. 클릭해서 {invite.fromUser?.nickname} 님과 함께
+                  참여해보세요!
+                </span>
+                <span className="font-poppins text-pupcleGray ml-[30px] w-[40px] text-[16px] font-medium">
+                  {format(new Date(invite.createdAt), "MM.dd")}
+                </span>
               </div>
-            </div>
+
+              {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
+            </Button>
           );
         })}
       </div>
@@ -971,7 +1040,11 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
             </Collapsible.Root>
           </div>
         </Tabs.Content>
-        <Tabs.Content key={Tab.MISSIONS} value={Tab.MISSIONS}>
+        <Tabs.Content
+          key={Tab.MISSIONS}
+          value={Tab.MISSIONS}
+          className="w-full"
+        >
           <FriendsPageMissionsInner
             today={day}
             receivedInvites={receivedInvites}
