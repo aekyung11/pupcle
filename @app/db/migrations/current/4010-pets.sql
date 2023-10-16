@@ -308,6 +308,7 @@ comment on function app_public.tg_update_shared_daily_records() is
 create function app_public.tg_pupcle_on_complete_daily_record() returns trigger as $$
 declare
   v_newly_completed boolean;
+  v_pupcle_balance integer;
 begin
   if tg_when = 'AFTER' then
     v_newly_completed := false;
@@ -324,7 +325,18 @@ begin
     if v_newly_completed = true then
       update app_public.user_entries
       set pupcle_balance = pupcle_balance + 1, total_pupcles_earned = total_pupcles_earned + 1
-      where user_id = NEW.user_id;
+      where user_id = NEW.user_id returning pupcle_balance into v_pupcle_balance;
+
+      perform graphile_worker.add_job(
+        'create_notification',
+        json_build_object(
+          'type', 'pupcle_reward_daily_status',
+          'for_user_id', NEW.user_id,
+          'reward', 1,
+          'balance', v_pupcle_balance,
+          'pet_id', NEW.pet_id,
+          'day', NEW.day
+        ));
     end if;
   end if;
   return null;

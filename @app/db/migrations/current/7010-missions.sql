@@ -161,6 +161,7 @@ create function app_public.tg_pupcles_on_complete_mission() returns trigger as $
 declare
   v_newly_completed boolean;
   v_mission app_public.missions;
+  v_pupcle_balance integer;
 begin
   if tg_when = 'AFTER' then
     v_newly_completed := false;
@@ -175,7 +176,17 @@ begin
 
       update app_public.user_entries
       set pupcle_balance = pupcle_balance + v_mission.reward, total_pupcles_earned = total_pupcles_earned + v_mission.reward
-      where user_id = NEW.user_id;
+      where user_id = NEW.user_id returning pupcle_balance into v_pupcle_balance;
+
+      perform graphile_worker.add_job(
+        'create_notification',
+        json_build_object(
+          'type', 'pupcle_reward_mission',
+          'for_user_id', NEW.user_id,
+          'reward', v_mission.reward,
+          'balance', v_pupcle_balance,
+          'mission_id', NEW.mission_id
+        ));
     end if;
   end if;
   return null;
@@ -221,3 +232,36 @@ create trigger _100_timestamps
   before insert or update on app_public.mission_invites
   for each row
   execute procedure app_private.tg__timestamps();
+
+create function app_public.tg_notification_on_mission_invite() returns trigger as $$
+declare
+  v_new boolean;
+begin
+  if tg_when = 'AFTER' then
+    v_new := false;
+    if (TG_OP = 'INSERT') then
+      v_new := true;
+    end if;
+
+    if v_new = true then
+      perform graphile_worker.add_job(
+        'create_notification',
+        json_build_object(
+          'type', 'received_mission_invite',
+          'for_user_id', NEW.to_user_id,
+          'from_user_id', NEW.from_user_id,
+          'mission_id', NEW.mission_id
+        ));
+    end if;
+  end if;
+  return null;
+end;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
+
+create trigger _200_notification_on_mission_invite
+  after insert or update
+  on app_public.mission_invites
+  for each row
+  execute procedure app_public.tg_notification_on_mission_invite();
+comment on function app_public.tg_notification_on_mission_invite() is
+  E'Send notification on mission invite';

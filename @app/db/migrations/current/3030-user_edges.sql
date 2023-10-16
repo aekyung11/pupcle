@@ -90,3 +90,35 @@ create trigger _100_timestamps
   before insert or update on app_public.friend_requests
   for each row
   execute procedure app_private.tg__timestamps();
+
+create function app_public.tg_notification_on_friend_request() returns trigger as $$
+declare
+  v_new boolean;
+begin
+  if tg_when = 'AFTER' then
+    v_new := false;
+    if (TG_OP = 'INSERT') then
+      v_new := true;
+    end if;
+
+    if v_new = true then
+      perform graphile_worker.add_job(
+        'create_notification',
+        json_build_object(
+          'type', 'received_friend_request',
+          'for_user_id', NEW.to_user_id,
+          'from_user_id', NEW.from_user_id
+        ));
+    end if;
+  end if;
+  return null;
+end;
+$$ language plpgsql volatile security definer set search_path to pg_catalog, public, pg_temp;
+
+create trigger _200_notification_on_friend_request
+  after insert or update
+  on app_public.friend_requests
+  for each row
+  execute procedure app_public.tg_notification_on_friend_request();
+comment on function app_public.tg_notification_on_friend_request() is
+  E'Send notification on new friend request';
