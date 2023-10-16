@@ -3,7 +3,10 @@ import "@tensorflow/tfjs-backend-webgl";
 import "@tensorflow/tfjs-converter";
 import "@tensorflow/tfjs-core";
 
-import { useCompleteMissionForm } from "@app/componentlib";
+import {
+  CompleteMissionFormInput,
+  useCompleteMissionForm,
+} from "@app/componentlib";
 import {
   AuthRestrict,
   FramedAvatarUpload,
@@ -20,7 +23,7 @@ import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import { Button } from "antd";
 import clsx from "clsx";
 import { format } from "date-fns";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import { Form, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -32,6 +35,49 @@ import { FC, useEffect, useState } from "react";
 //   const { petId } = router.query;
 //   return String(petId);
 // }
+
+const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
+  requiredObjects,
+}) => {
+  const { values, setFieldValue, initialValues } =
+    useFormikContext<CompleteMissionFormInput>();
+
+  useEffect(() => {
+    const getPredictions = async (proofImageUrl: string) => {
+      if (proofImageUrl) {
+        let unverifiedObjects = new Set<string>(requiredObjects);
+
+        const img = document.getElementsByClassName("framed-uploaded-image")[0];
+        if (img) {
+          // Load the model.
+          const model = await cocoSsd.load();
+
+          // Classify the image.
+          // @ts-ignore
+          const predictions = await model.detect(img);
+
+          predictions.forEach((prediction) => {
+            if (prediction.score > 0.5) {
+              unverifiedObjects.delete(prediction.class);
+            }
+          });
+        }
+
+        // TODO: do with promise or hook
+        if (proofImageUrl === values.proofImageUrl) {
+          setFieldValue("verifiedImage", unverifiedObjects.size === 0);
+        }
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      setFieldValue("verifiedImage", null);
+      getPredictions(values.proofImageUrl);
+    }
+  }, [requiredObjects, values.proofImageUrl]);
+
+  return <></>;
+};
 
 type CompleteMissionDialogProps = {
   currentUserId: string;
@@ -60,44 +106,6 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
     () => setDialogOpen(false),
     undefined
   );
-  const [currentProofImageUrl, setCurrentProofImageUrl] = useState<string>(
-    initialValues.proofImageUrl
-  );
-  const [verifiedImage, setVerifiedImage] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const getPredictions = async (proofImageUrl: string) => {
-      if (proofImageUrl) {
-        let unverifiedObjects = new Set<string>(requiredObjects);
-
-        const img = document.getElementsByClassName("framed-uploaded-image")[0];
-        if (img) {
-          // Load the model.
-          const model = await cocoSsd.load();
-
-          // Classify the image.
-          // @ts-ignore
-          const predictions = await model.detect(img);
-
-          predictions.forEach((prediction) => {
-            if (prediction.score > 0.5) {
-              unverifiedObjects.delete(prediction.class);
-            }
-          });
-        }
-
-        // TODO: do with promise or hook
-        if (proofImageUrl === currentProofImageUrl) {
-          setVerifiedImage(unverifiedObjects.size === 0);
-        }
-      }
-    };
-
-    if (typeof window !== "undefined") {
-      setVerifiedImage(null);
-      getPredictions(currentProofImageUrl);
-    }
-  }, [currentProofImageUrl, requiredObjects]);
 
   return (
     <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -132,7 +140,7 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
               initialValues={initialValues}
               onSubmit={handleSubmit}
             >
-              {({ values, setFieldValue }) => (
+              {({ values, setFieldValue, errors }) => (
                 <Form className="flex h-full w-full flex-col">
                   {/* <div className="flex h-[50%] w-full items-end justify-center">
                     <Button className="flex h-[166px] w-[166px] items-center justify-center rounded-[30px] border-none bg-white">
@@ -154,18 +162,19 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                         disabled={false}
                         onUpload={async (proofImageUrl) => {
                           setFieldValue("proofImageUrl", proofImageUrl);
-                          setCurrentProofImageUrl(proofImageUrl);
                         }}
                       />
                     </Form.Item>
                   </div>
-                  {verifiedImage === null ? (
-                    <span>please wait for image verification</span>
-                  ) : verifiedImage === false ? (
-                    <span>please take a more clear image</span>
-                  ) : (
-                    <span>your image has been verified</span>
-                  )}
+
+                  {errors.proofImageUrl && <span>{errors.proofImageUrl}</span>}
+
+                  <VerifiedImageFormInner
+                    currentUserId={currentUserId}
+                    missionComplete={missionComplete}
+                    missionId={missionId}
+                    requiredObjects={requiredObjects}
+                  />
 
                   <div className="flex h-[50%] w-full flex-col justify-between">
                     <div className="flex flex-col items-center">
@@ -179,23 +188,21 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                       </span>
                     </div>
                     <Form.Item name="_submit" className="mb-0">
-                      {verifiedImage && (
-                        <SubmitButton className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
-                          <img
-                            src="/paw_white.png"
-                            className="h-fit w-[58px]"
-                            alt=""
-                          />
-                          <span className="font-poppins text-[40px] font-semibold text-white">
-                            &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
-                          </span>
-                          <img
-                            src="/paw_white.png"
-                            className="h-fit w-[58px]"
-                            alt=""
-                          />
-                        </SubmitButton>
-                      )}
+                      <SubmitButton className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+                        <img
+                          src="/paw_white.png"
+                          className="h-fit w-[58px]"
+                          alt=""
+                        />
+                        <span className="font-poppins text-[40px] font-semibold text-white">
+                          &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
+                        </span>
+                        <img
+                          src="/paw_white.png"
+                          className="h-fit w-[58px]"
+                          alt=""
+                        />
+                      </SubmitButton>
                     </Form.Item>
                   </div>
                 </Form>

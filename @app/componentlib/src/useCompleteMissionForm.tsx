@@ -11,10 +11,31 @@ import { InferType } from "yup";
 const submitLabel = "제 출 하 기";
 
 const validationSchema = yup.object({
-  proofImageUrl: yup.string().required(),
+  proofImageUrl: yup
+    .string()
+    .required()
+    .test({
+      name: "is-valid",
+      test(value, ctx) {
+        const { verifiedImage } = ctx.parent;
+        if (verifiedImage === null) {
+          return ctx.createError({
+            message: "Please wait for image verification",
+          });
+        }
+        if (verifiedImage === false) {
+          return ctx.createError({ message: "Please take a more clear image" });
+        }
+        return true;
+      },
+    }),
+  verifiedImage: yup
+    .bool()
+    .nullable()
+    .oneOf([true], "Please take a clearer picture"),
 });
 
-type CompleteMissionFormInput = InferType<typeof validationSchema>;
+export type CompleteMissionFormInput = InferType<typeof validationSchema>;
 
 export function useCompleteMissionForm(
   userId: string,
@@ -28,6 +49,7 @@ export function useCompleteMissionForm(
   const [completeMission] = useCompleteMissionMutation();
   const initialValues: CompleteMissionFormInput = {
     proofImageUrl: initialProofImageUrl || "",
+    verifiedImage: null,
   };
   const handleSubmit: FormikConfig<CompleteMissionFormInput>["onSubmit"] =
     useCallback(
