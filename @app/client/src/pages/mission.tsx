@@ -55,7 +55,7 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
           // Classify the image.
           // @ts-ignore
           const predictions = await model.detect(img);
-
+          console.log(predictions);
           predictions.forEach((prediction) => {
             if (prediction.score > 0.5) {
               unverifiedObjects.delete(prediction.class);
@@ -148,7 +148,7 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                     </Button>
                   </div> */}
 
-                  <div className="flex h-[50%] w-full items-end justify-center">
+                  <div className="relative flex h-[50%] w-full flex-col items-center justify-end">
                     <Form.Item
                       name="proofImageUrl"
                       valuePropName="proofImageUrl"
@@ -165,18 +165,19 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                         }}
                       />
                     </Form.Item>
+                    {dirty && errors.proofImageUrl && (
+                      <span className="font-poppins absolute text-[16px]">
+                        {errors.proofImageUrl}
+                      </span>
+                    )}
+
+                    <VerifiedImageFormInner
+                      currentUserId={currentUserId}
+                      missionComplete={missionComplete}
+                      missionId={missionId}
+                      requiredObjects={requiredObjects}
+                    />
                   </div>
-
-                  {dirty && errors.proofImageUrl && (
-                    <span>{errors.proofImageUrl}</span>
-                  )}
-
-                  <VerifiedImageFormInner
-                    currentUserId={currentUserId}
-                    missionComplete={missionComplete}
-                    missionId={missionId}
-                    requiredObjects={requiredObjects}
-                  />
 
                   <div className="flex h-[50%] w-full flex-col justify-between">
                     <div className="flex flex-col items-center">
@@ -253,7 +254,7 @@ const MissionTabContent: FC<MissionTabContentProps> = ({
         </>
       )}
 
-      <div className="z-10 flex h-full w-full flex-col">
+      <div className="z-10 flex h-full w-full flex-col justify-between">
         <div className="flex w-full items-center justify-between">
           <span
             className={clsx(
@@ -298,7 +299,7 @@ const MissionTabContent: FC<MissionTabContentProps> = ({
                 <img
                   key={mp.id}
                   src={mp.user?.avatarUrl ?? "/default_avatar.png"}
-                  className="h-6 w-6"
+                  className="h-6 w-6 rounded-full border-none"
                 />
               ))}
             </div>

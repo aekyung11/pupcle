@@ -20,11 +20,13 @@ const validationSchema = yup.object({
         const { verifiedImage } = ctx.parent;
         if (verifiedImage === null) {
           return ctx.createError({
-            message: "Please wait for image verification",
+            message: "이미지가 식별되는 동안 잠시 기다려주세요 . . .",
           });
         }
         if (verifiedImage === false) {
-          return ctx.createError({ message: "Please take a more clear image" });
+          return ctx.createError({
+            message: "키워드가 분명하게 드러난 이미지를 제출해주세요",
+          });
         }
         return true;
       },
@@ -32,7 +34,7 @@ const validationSchema = yup.object({
   verifiedImage: yup
     .bool()
     .nullable()
-    .oneOf([true], "Please take a clearer picture"),
+    .oneOf([true], "더 선명한 이미지를 제출해주세요"),
 });
 
 export type CompleteMissionFormInput = InferType<typeof validationSchema>;
