@@ -79,30 +79,7 @@ const PlaceItem = ({
       }}
     >
       <Col
-        span={7}
-        style={{
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          padding: "8px 0px",
-        }}
-      >
-        <div
-          style={{
-            backgroundImage: "url(/default_map_thumbnail.png)",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            width: "min(106px, 7.5vw)",
-            minWidth: "60px",
-            height: "min(106px, 7.5vw)",
-            minHeight: "60px",
-            borderRadius: "20%",
-          }}
-        ></div>
-      </Col>
-      <Col
-        span={13}
+        span={18}
         // span={20}
         style={{
           height: "100%",
@@ -182,7 +159,7 @@ const PlaceItem = ({
         </div>
       </Col>
       <Col
-        span={4}
+        span={6}
         style={{
           height: "100%",
           display: "flex",
@@ -191,11 +168,9 @@ const PlaceItem = ({
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img
-            style={{ width: "55%", height: "55%", paddingRight: "5px" }}
-            src="/pupcle_count.png"
-          />
+          <img className="mr-1 h-fit w-[33px]" src="/pupcle_count.png" />
           <Button
+            className="h-7 w-7 rounded-full border-none bg-transparent p-0 !drop-shadow-none"
             onClick={async () => {
               if (poiFavorite) {
                 await deletePoiFavorite({
@@ -222,12 +197,12 @@ const PlaceItem = ({
 
               await handleFavoriteChange();
             }}
-            style={{
-              border: "none",
-              borderRadius: "50%",
-              padding: 0,
-              width: "45%",
-            }}
+            // style={{
+            //   border: "none",
+            //   borderRadius: "50%",
+            //   padding: 0,
+            //   width: "45%",
+            // }}
           >
             {poiFavorite ? (
               <img src="/map_minus.png" />
