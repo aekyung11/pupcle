@@ -159,7 +159,21 @@ const Notification: NextPage = () => {
             key={Tab.ALL}
             value={Tab.ALL}
             className="relative flex h-full w-full"
-          ></Tabs.Content>
+          >
+            <div className={clsx("flex h-full w-full flex-col items-center")}>
+              <div className="border-pupcleLightGray flex h-[85px] w-full flex-row items-center justify-start border-b-[1px] px-11">
+                <Button
+                  className="mr-[30px] h-5 w-[13px] border-none p-0"
+                  // onClick={() => setSelectedInviteId(null)}
+                >
+                  <img src="/caret_icon_gray.png" className="h-fit w-[13px]" />
+                </Button>
+                <span className="font-poppins mt-[2px] text-[20px] font-semibold">
+                  [{/* notification.category */}notification.category]
+                </span>
+              </div>
+            </div>
+          </Tabs.Content>
           <Tabs.Content
             key={Tab.CIRCLE}
             value={Tab.CIRCLE}

@@ -210,10 +210,15 @@ const CalendarPetDay: NextPage = () => {
             <span className="font-poppins flex items-center text-[30px] font-semibold">
               {formattedDay}
               &nbsp;
-              <img
-                src="/calendar_blk.png"
-                className="mb-[1px] h-[30px] w-[30px]"
-              />
+              <Button
+                className="mb-[1px] h-[30px] w-[30px] border-none bg-transparent p-0"
+                href="/calendar"
+              >
+                <img
+                  src="/calendar_blk.png"
+                  className="mb-[1px] h-[30px] w-[30px]"
+                />
+              </Button>
             </span>
           </div>
           <div className="flex w-full justify-center">

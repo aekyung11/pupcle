@@ -100,7 +100,7 @@ const task: Task = async (
       category = "펍클 적립 안내";
       // payload.day is like 2023-10-16
       message = `소중한 반려견 ${pet.name}의 ${payload.day} 일일기록 완료로 ${payload.reward}펍클이 적립되었습니다. 현재 펍클: ${payload.balance}`;
-      action_url = `${rootUrl}/calendar`;
+      action_url = `${rootUrl}/calendar/pet/${payload.pet_id}/day/${payload.day}`;
       break;
     }
     case "received_friend_request": {
