@@ -1,3 +1,9 @@
+import "@tensorflow/tfjs-backend-cpu";
+import "@tensorflow/tfjs-backend-webgl";
+import "@tensorflow/tfjs-converter";
+import "@tensorflow/tfjs-core";
+
+import { useCompleteMissionForm } from "@app/componentlib";
 import {
   AuthRestrict,
   FramedAvatarUpload,
@@ -7,20 +13,19 @@ import {
   MissionsPage_MissionFragment,
   SharedLayout_UserFragment,
   useMissionsPageQuery,
-  useSharedQuery,
 } from "@app/graphql";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
+import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import { Button } from "antd";
+import clsx from "clsx";
 import { format } from "date-fns";
+import { Formik } from "formik";
+import { Form, SubmitButton } from "formik-antd";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
-import { Formik } from "formik";
-import { Form, Input, SubmitButton } from "formik-antd";
-import { useCompleteMissionForm } from "@app/componentlib";
-import clsx from "clsx";
 
 // export function usePetId() {
 //   const router = useRouter();
@@ -32,12 +37,14 @@ type CompleteMissionDialogProps = {
   currentUserId: string;
   missionId: string;
   missionComplete: boolean;
+  requiredObjects: string[];
 };
 
 const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
   currentUserId,
   missionId,
   missionComplete,
+  requiredObjects,
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -53,6 +60,44 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
     () => setDialogOpen(false),
     undefined
   );
+  const [currentProofImageUrl, setCurrentProofImageUrl] = useState<string>(
+    initialValues.proofImageUrl
+  );
+  const [verifiedImage, setVerifiedImage] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const getPredictions = async (proofImageUrl: string) => {
+      if (proofImageUrl) {
+        let unverifiedObjects = new Set<string>(requiredObjects);
+
+        const img = document.getElementsByClassName("framed-uploaded-image")[0];
+        if (img) {
+          // Load the model.
+          const model = await cocoSsd.load();
+
+          // Classify the image.
+          // @ts-ignore
+          const predictions = await model.detect(img);
+
+          predictions.forEach((prediction) => {
+            if (prediction.score > 0.5) {
+              unverifiedObjects.delete(prediction.class);
+            }
+          });
+        }
+
+        // TODO: do with promise or hook
+        if (proofImageUrl === currentProofImageUrl) {
+          setVerifiedImage(unverifiedObjects.size === 0);
+        }
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      setVerifiedImage(null);
+      getPredictions(currentProofImageUrl);
+    }
+  }, [currentProofImageUrl, requiredObjects]);
 
   return (
     <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -107,12 +152,20 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                         mode={"gallery"}
                         avatarUrl={values.proofImageUrl}
                         disabled={false}
-                        onUpload={async (proofImageUrl) =>
-                          setFieldValue("proofImageUrl", proofImageUrl)
-                        }
+                        onUpload={async (proofImageUrl) => {
+                          setFieldValue("proofImageUrl", proofImageUrl);
+                          setCurrentProofImageUrl(proofImageUrl);
+                        }}
                       />
                     </Form.Item>
                   </div>
+                  {verifiedImage === null ? (
+                    <span>please wait for image verification</span>
+                  ) : verifiedImage === false ? (
+                    <span>please take a more clear image</span>
+                  ) : (
+                    <span>your image has been verified</span>
+                  )}
 
                   <div className="flex h-[50%] w-full flex-col justify-between">
                     <div className="flex flex-col items-center">
@@ -126,21 +179,23 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                       </span>
                     </div>
                     <Form.Item name="_submit" className="mb-0">
-                      <SubmitButton className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
-                        <img
-                          src="/paw_white.png"
-                          className="h-fit w-[58px]"
-                          alt=""
-                        />
-                        <span className="font-poppins text-[40px] font-semibold text-white">
-                          &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
-                        </span>
-                        <img
-                          src="/paw_white.png"
-                          className="h-fit w-[58px]"
-                          alt=""
-                        />
-                      </SubmitButton>
+                      {verifiedImage && (
+                        <SubmitButton className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none">
+                          <img
+                            src="/paw_white.png"
+                            className="h-fit w-[58px]"
+                            alt=""
+                          />
+                          <span className="font-poppins text-[40px] font-semibold text-white">
+                            &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
+                          </span>
+                          <img
+                            src="/paw_white.png"
+                            className="h-fit w-[58px]"
+                            alt=""
+                          />
+                        </SubmitButton>
+                      )}
                     </Form.Item>
                   </div>
                 </Form>
@@ -232,6 +287,7 @@ const MissionTabContent: FC<MissionTabContentProps> = ({
             <div className="flex w-[80px] flex-row justify-between">
               {otherParticipants.slice(0, 3).map((mp) => (
                 <img
+                  key={mp.id}
                   src={mp.user?.avatarUrl ?? "/default_avatar.png"}
                   className="h-6 w-6"
                 />
@@ -344,6 +400,7 @@ const MissionTabContent: FC<MissionTabContentProps> = ({
             currentUserId={currentUser.id}
             missionId={mission.id}
             missionComplete={missionComplete}
+            requiredObjects={mission.requiredObjects as unknown as any}
           />
         </div>
       </div>
@@ -394,6 +451,7 @@ const MissionsPageInner: FC<MissionsPageInnerProps> = ({
               <>
                 {missions.map((mission) => (
                   <MissionTabContent
+                    key={mission.id}
                     mission={mission}
                     currentUser={currentUser}
                   />

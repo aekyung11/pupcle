@@ -216,9 +216,12 @@ export function FramedAvatarUpload({
             <Row>
               <Col span={24}>
                 <img
-                  className={cvaAvatarImage({ size, mode })}
+                  className={
+                    "framed-uploaded-image " + cvaAvatarImage({ size, mode })
+                  }
                   src={avatarUrl}
                   alt={"avatar"}
+                  crossOrigin="anonymous"
                 />
               </Col>
             </Row>
