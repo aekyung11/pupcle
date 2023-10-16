@@ -2158,7 +2158,7 @@ const ExamDataChart: FC<{
             parent: { border: "1px solid #ccc" },
           }}
           data={chartData}
-          labels={({ datum }) => datum.y}
+          labels={({ datum }: { datum: any }) => datum.y}
           labelComponent={
             <VictoryLabel
               lineHeight={1}
