@@ -30,6 +30,7 @@ import { Formik } from "formik";
 import { Form, SubmitButton } from "formik-antd";
 import { extractError, getCodeFromError } from "@app/lib";
 import { useMissionInviteForm } from "@app/componentlib";
+import { useRouter } from "next/router";
 
 enum Tab {
   FRIENDS = "friends",
@@ -583,7 +584,22 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
   sentInvites,
   receivedInvites,
 }) => {
+  const router = useRouter();
+
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.FRIENDS);
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value as unknown as Tab);
+    router.push({ query: { tab: value } });
+  };
+
+  useEffect(() => {
+    setSelectedTab(
+      router.query.tab === undefined
+        ? Tab.FRIENDS
+        : (router.query.tab as unknown as Tab)
+    );
+  }, [router.query.tab]);
+
   const { data: friendsData, refetch: friendsRefetch } = useFriendsQuery();
   const [requestsPanelOpen, setRequestsPanelOpen] = useState(false);
   const [userSearchResultsOpen, setUserSearchResultsOpen] = useState(false);
@@ -608,7 +624,7 @@ const FriendsPageInner: React.FC<FriendsPageInner> = ({
     <Tabs.Root
       value={selectedTab}
       onValueChange={(newValue) => {
-        setSelectedTab(newValue as Tab);
+        handleTabChange(newValue);
       }}
       style={{ display: "flex", height: "85%" }}
     >
