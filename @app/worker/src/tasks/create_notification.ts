@@ -134,7 +134,7 @@ const task: Task = async (
         ])
       );
 
-      category = "mission invite";
+      category = "미션 초대 안내";
       message = `${fromUser.nickname} 님이 ${mission.name} 미션에 초대했습니다.`;
       action_url = `${rootUrl}/friends?tab=missions`;
       break;
