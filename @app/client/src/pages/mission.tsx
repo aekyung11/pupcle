@@ -140,7 +140,7 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
               initialValues={initialValues}
               onSubmit={handleSubmit}
             >
-              {({ values, setFieldValue, errors }) => (
+              {({ values, setFieldValue, errors, dirty }) => (
                 <Form className="flex h-full w-full flex-col">
                   {/* <div className="flex h-[50%] w-full items-end justify-center">
                     <Button className="flex h-[166px] w-[166px] items-center justify-center rounded-[30px] border-none bg-white">
@@ -167,7 +167,9 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                     </Form.Item>
                   </div>
 
-                  {errors.proofImageUrl && <span>{errors.proofImageUrl}</span>}
+                  {dirty && errors.proofImageUrl && (
+                    <span>{errors.proofImageUrl}</span>
+                  )}
 
                   <VerifiedImageFormInner
                     currentUserId={currentUserId}
