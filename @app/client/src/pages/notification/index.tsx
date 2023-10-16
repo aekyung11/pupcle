@@ -1,5 +1,9 @@
 import { AuthRestrict, FourOhFour, SharedLayout } from "@app/components";
-import { useSharedQuery } from "@app/graphql";
+import {
+  NotificationsPage_NotificationFragment,
+  useNotificationsPageQuery,
+  useSharedQuery,
+} from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Input, Spin } from "antd";
 import clsx from "clsx";
@@ -14,8 +18,69 @@ enum Tab {
   CIRCLE = "notifications about circle",
 }
 
+type NotificationsPageUserInnerProps = {
+  notifications: NotificationsPage_NotificationFragment[];
+};
+
+const NotificationsPageUserInner: React.FC<NotificationsPageUserInnerProps> = ({
+  notifications,
+}) => {
+  const [selectedNotificationId, setSelectedNotificationId] = useState<
+    string | null
+  >(null);
+
+  const selectedNotification = notifications.find(
+    (n) => n.id === selectedNotificationId
+  );
+
+  return (
+    <>
+      {selectedNotificationId && <span>{selectedNotification?.category}</span>}
+      <div className={clsx({ hidden: selectedNotificationId })}>
+        <div className="flex h-[85px] w-full items-center justify-end border-none px-14">
+          <Button className="h-6 w-4 border-none p-0">
+            <img src="/pagination_left.png" className="h-6 w-4" />
+          </Button>
+          <span className="font-poppins text-pupcleGray mx-8 text-[20px] font-semibold">
+            1/1
+          </span>
+          <Button className="h-6 w-4 border-none p-0">
+            <img src="/pagination_right.png" className="h-6 w-4" />
+          </Button>
+        </div>
+        {notifications.map((notification) => (
+          <Button
+            className="border-pupcleLightGray hover:bg-pupcleLightLightGray hover:!border-pupcleLightGray flex h-16 w-full items-center rounded-none border-x-0 border-b-[1px] border-t-0 px-11"
+            key={notification.id}
+            onClick={() => setSelectedNotificationId(notification.id)}
+          >
+            <div className="flex w-full items-center">
+              <img
+                className="mr-[30px] h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+                // src={invite.fromUser?.avatarUrl || "/default_avatar.png"}
+                src="/default_avatar.png"
+              />
+              <div className="flex w-[calc(100%-68px-70px)] items-center overflow-hidden text-ellipsis">
+                <span className="font-poppins text-start text-[16px] font-semibold text-black">
+                  [{notification.category}]&nbsp;
+                </span>
+                <span className="font-poppin text-pupcleGray text-start text-[16px] font-medium">
+                  {notification.message}
+                </span>
+              </div>
+              <span className="font-poppins text-pupcleGray ml-[30px] w-[40px] text-[16px] font-medium">
+                {format(new Date(notification.createdAt), "MM.dd")}
+              </span>
+            </div>
+          </Button>
+        ))}
+      </div>
+    </>
+  );
+};
+
 const Notification: NextPage = () => {
-  const query = useSharedQuery();
+  const query = useNotificationsPageQuery();
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.USER);
   const currentUser = query.data?.currentUser;
   const currentUserId = query.data?.currentUser?.id as string | undefined;
@@ -35,6 +100,8 @@ const Notification: NextPage = () => {
       </SharedLayout>
     );
   }
+
+  const notifications = query.data?.currentUser?.notifications.nodes;
 
   return (
     <SharedLayout
@@ -122,38 +189,9 @@ const Notification: NextPage = () => {
             value={Tab.USER}
             className="relative flex h-full w-full flex-col"
           >
-            <div className="flex h-[85px] w-full items-center justify-end border-none px-14">
-              <Button className="h-6 w-4 border-none p-0">
-                <img src="/pagination_left.png" className="h-6 w-4" />
-              </Button>
-              <span className="font-poppins text-pupcleGray mx-8 text-[20px] font-semibold">
-                1/1
-              </span>
-              <Button className="h-6 w-4 border-none p-0">
-                <img src="/pagination_right.png" className="h-6 w-4" />
-              </Button>
-            </div>
-            <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray hover:!border-pupcleLightGray flex h-16 w-full items-center rounded-none border-x-0 border-b-[1px] border-t-0 px-11">
-              <div className="flex w-full items-center">
-                <img
-                  className="mr-[30px] h-[38px] w-[38px] rounded-full border-none object-cover object-top"
-                  // src={invite.fromUser?.avatarUrl || "/default_avatar.png"}
-                  src="/default_avatar.png"
-                />
-                <div className="flex w-[calc(100%-68px-70px)] items-center overflow-hidden text-ellipsis">
-                  <span className="font-poppins text-start text-[16px] font-semibold text-black">
-                    [{/* notification.category */}notification.category]&nbsp;
-                  </span>
-                  <span className="font-poppin text-pupcleGray text-start text-[16px] font-medium">
-                    notification.message{/* notification.message */}
-                  </span>
-                </div>
-                <span className="font-poppins text-pupcleGray ml-[30px] w-[40px] text-[16px] font-medium">
-                  {/* {format(new Date(notification.createdAt), "MM.dd")} */}
-                  10.16
-                </span>
-              </div>
-            </Button>
+            {notifications && (
+              <NotificationsPageUserInner notifications={notifications} />
+            )}
           </Tabs.Content>
           <Tabs.Content
             key={Tab.ALL}

@@ -14,6 +14,7 @@ alter table app_public.notifications enable row level security;
 
 -- cleanup trigger? on creation of notification in the database table, also create a new job scheduled for 2 weeks from now to delete the notification
 
+create index on app_public.notifications (created_at, user_id, read);
 create index on app_public.notifications (user_id, read);
 
 create policy select_own on app_public.notifications for select using (user_id = app_public.current_user_id());

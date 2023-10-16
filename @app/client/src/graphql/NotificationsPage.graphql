@@ -1,0 +1,3 @@
+query NotificationsPage {
+  ...NotificationsPage_Query
+}

@@ -3185,6 +3185,9 @@ A condition to be used against `Notification` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
 input NotificationCondition {
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
   """Checks for equality with the object’s `id` field."""
   id: UUID
 
@@ -3198,6 +3201,9 @@ A filter to be used against `Notification` object types. All fields are combined
 input NotificationFilter {
   """Checks for all expressions in this list."""
   and: [NotificationFilter!]
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
 
   """Filter by the object’s `id` field."""
   id: UUIDFilter
@@ -3240,6 +3246,8 @@ type NotificationsEdge {
 
 """Methods to use when ordering `Notification`."""
 enum NotificationsOrderBy {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
   ID_ASC
   ID_DESC
   NATURAL

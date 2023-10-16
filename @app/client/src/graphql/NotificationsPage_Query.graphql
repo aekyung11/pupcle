@@ -1,0 +1,28 @@
+fragment NotificationsPage_Notification on Notification {
+  id
+  actionUrl
+  category
+  createdAt
+  expiresAt
+  id
+  message
+  read
+  updatedAt
+}
+
+fragment NotificationsPage_CurrentUserQuery on Query {
+  currentUser {
+    id
+    notifications(orderBy: CREATED_AT_DESC) {
+      nodes {
+        id
+        ...NotificationsPage_Notification
+      }
+    }
+  }
+}
+
+fragment NotificationsPage_Query on Query {
+  ...SharedLayout_Query
+  ...NotificationsPage_CurrentUserQuery
+}
