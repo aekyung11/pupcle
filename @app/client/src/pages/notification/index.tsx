@@ -3,6 +3,7 @@ import { useSharedQuery } from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Input, Spin } from "antd";
 import clsx from "clsx";
+import { format } from "date-fns";
 import { NextPage } from "next";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -132,7 +133,27 @@ const Notification: NextPage = () => {
                 <img src="/pagination_right.png" className="h-6 w-4" />
               </Button>
             </div>
-            <div className="border-pupcleLightGray flex h-16 w-full items-center border-b-[1px] px-11"></div>
+            <Button className="border-pupcleLightGray hover:bg-pupcleLightLightGray hover:!border-pupcleLightGray flex h-16 w-full items-center rounded-none border-x-0 border-b-[1px] border-t-0 px-11">
+              <div className="flex w-full items-center">
+                <img
+                  className="mr-[30px] h-[38px] w-[38px] rounded-full border-none object-cover object-top"
+                  // src={invite.fromUser?.avatarUrl || "/default_avatar.png"}
+                  src="/default_avatar.png"
+                />
+                <div className="flex w-[calc(100%-68px-70px)] items-center overflow-hidden text-ellipsis">
+                  <span className="font-poppins text-start text-[16px] font-semibold text-black">
+                    [{/* notification.category */}notification.category]&nbsp;
+                  </span>
+                  <span className="font-poppin text-pupcleGray text-start text-[16px] font-medium">
+                    notification.message{/* notification.message */}
+                  </span>
+                </div>
+                <span className="font-poppins text-pupcleGray ml-[30px] w-[40px] text-[16px] font-medium">
+                  {/* {format(new Date(notification.createdAt), "MM.dd")} */}
+                  10.16
+                </span>
+              </div>
+            </Button>
           </Tabs.Content>
           <Tabs.Content
             key={Tab.ALL}

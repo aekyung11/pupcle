@@ -83,7 +83,7 @@ const task: Task = async (
       );
 
       category = "펍클 적립 안내";
-      message = `${mission.name} ${payload.reward} ${payload.balance}`;
+      message = `${mission.name} 미션으로 ${payload.reward}펍클이 적립되었습니다. 현재 펍클: ${payload.balance}`;
       action_url = null; // can't link to old mission right now
 
       break;
@@ -99,8 +99,8 @@ const task: Task = async (
 
       category = "펍클 적립 안내";
       // payload.day is like 2023-10-16
-      message = `for completing your daily status on ${payload.day} for ${pet.name}, you received ${payload.reward} and your current balance is ${payload.balance}`;
-      action_url = null; // maybe calendar?
+      message = `소중한 반려견 ${pet.name}의 ${payload.day} 일일기록 완료로 ${payload.reward}펍클이 적립되었습니다. 현재 펍클: ${payload.balance}`;
+      action_url = `${rootUrl}/calendar`;
       break;
     }
     case "received_friend_request": {
@@ -113,7 +113,7 @@ const task: Task = async (
       );
 
       category = "친구 신청 안내";
-      message = `${fromUser.nickname}`;
+      message = `${fromUser.nickname} 님이 친구신청을 보냈습니다.`;
       action_url = `${rootUrl}/friends?tab=friends`;
       break;
     }
@@ -135,7 +135,7 @@ const task: Task = async (
       );
 
       category = "mission invite";
-      message = `${fromUser.nickname} ${mission.name} ${mission.reward}`;
+      message = `${fromUser.nickname} 님이 ${mission.name} 미션에 초대했습니다.`;
       action_url = `${rootUrl}/friends?tab=missions`;
       break;
     }
