@@ -61,12 +61,20 @@ const NotificationsPageUserInner: React.FC<NotificationsPageUserInnerProps> = ({
               <p className="font-poppins flex flex-col">
                 <span className="text-[20px] font-bold text-black">
                   {selectedNotification.message.split(". ")[0]}
+                  {selectedNotification.category === "펍클 적립 안내" && "."}
                 </span>
                 <br />
                 <span className="text-[16px] font-medium text-black">
                   {selectedNotification.category === "펍클 적립 안내" ? (
                     <>
-                      {selectedNotification.message.split(". ")[1]} <br />
+                      <div className="flex items-center">
+                        {selectedNotification.message.split(". ")[1]}{" "}
+                        <img
+                          src="/pupcle_count.png"
+                          className="mb-[1px] ml-1 h-fit w-3"
+                        />
+                      </div>
+                      <br />
                     </>
                   ) : null}
                   {selectedNotification.category === "펍클 적립 안내" ? (

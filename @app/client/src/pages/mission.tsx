@@ -55,7 +55,6 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
           // Classify the image.
           // @ts-ignore
           const predictions = await model.detect(img);
-          console.log(predictions);
           predictions.forEach((prediction) => {
             if (prediction.score > 0.5) {
               unverifiedObjects.delete(prediction.class);
