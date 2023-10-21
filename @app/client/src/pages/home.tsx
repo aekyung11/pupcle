@@ -478,7 +478,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
   setSelectedTab,
 }) => {
   const completeStatusCount = sharedRecord?.completeStatusCount || 0;
-  console.log({ completeStatusCount });
+  // console.log({ completeStatusCount });
   return (
     <Tabs.Root
       value={selectedTab}
