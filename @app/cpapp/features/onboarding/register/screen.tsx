@@ -209,13 +209,13 @@ const styles = StyleSheet.create({
     height: 48,
     width: 310,
     fontFamily: "'Poppins'",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 2,
   },
   textAboveInput: {
     fontFamily: "'Poppins'",
     color: "black",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 20,
   },
   viewMarginTop12: {
@@ -236,19 +236,19 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "'Poppins'",
     color: "#8F9092",
-    fontSize: 14,
+    fontSize: 16,
   },
   boldBlueText: {
     fontFamily: "'Poppins'",
     color: "#7FB3E8",
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: 16,
   },
   semiBoldBlueText: {
     fontFamily: "'Poppins'",
     color: "#7FB3E8",
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: 16,
   },
   submitButton: {
     marginTop: 40,
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "white",
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: 16,
   },
   pageTitle: {
     fontFamily: "Poppins",
