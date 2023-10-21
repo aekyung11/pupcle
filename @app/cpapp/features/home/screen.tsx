@@ -339,7 +339,8 @@ const HomePageInner: FC<HomePageInnerProps> = ({
             }}
             component={SolitoImage}
             className="absolute bottom-[50%] left-[168px] h-[90px] w-[90px]"
-            src={sleep}
+            // src={sleep}
+            src={petDefault}
             alt=""
             // fill
           />
