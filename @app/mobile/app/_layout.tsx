@@ -41,6 +41,7 @@ export default function Root() {
           <Tabs.Screen
             name="index"
             options={{
+              headerShown: false,
               href: "/",
               title: "",
               tabBarIcon: ({ color }) => (

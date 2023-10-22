@@ -9,6 +9,12 @@ export default function Layout() {
         }}
         name="index"
       />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="pet/[petId]/day/[day]"
+      />
     </Stack>
   );
 }
