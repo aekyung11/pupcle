@@ -12,13 +12,16 @@ import config from "../tamagui.config";
 
 export default function Root() {
   return (
-    <TamaguiProvider config={config}>
+    <TamaguiProvider className="bg-transparent" config={config}>
       <Provider>
         <Tabs
           initialRouteName="index"
           screenOptions={{
             tabBarStyle: Platform.OS === "ios" && {
-              backgroundColor: "transparent",
+              backgroundColor: "white",
+              height: 120,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
             },
             headerShown: false,
           }}
@@ -26,7 +29,7 @@ export default function Root() {
             Platform.OS === "ios" ? (
               <BlurView
                 style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-                intensity={95}
+                intensity={0}
               >
                 <BottomTabBar {...props} />
               </BlurView>
