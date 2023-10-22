@@ -77,15 +77,6 @@ const PetProfileScreenInner: FC<PetProfileScreenInnerProps> = ({
   return (
     <View className="h-full" style={styles.container}>
       <View className="flex h-[20%] flex-col items-center justify-end pb-3">
-        <Link href="/">
-          <StyledComponent
-            component={SolitoImage}
-            className="h-[46px] w-[44px]"
-            src={pupcleIcon}
-            alt=""
-            // fill
-          />
-        </Link>
         <Text style={styles.titleText}>반려견 정보</Text>
         <Text style={styles.normalText}>반려견의 정보를 입력해주세요.</Text>
       </View>
