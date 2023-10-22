@@ -1,0 +1,14 @@
+drop trigger if exists _200_notification_on_mission_invite on app_public.mission_invites;
+drop function if exists app_private.tg_notification_on_mission_invite();
+drop trigger if exists _100_timestamps on app_public.mission_invites;
+drop table if exists app_public.mission_invites;
+drop trigger if exists _300_pupcles_on_complete_mission on app_public.mission_participants;
+drop function if exists app_public.tg_pupcles_on_complete_mission();
+drop trigger if exists _200_update_count_on_participate_mission on app_public.mission_participants;
+drop function if exists app_public.tg_update_count_on_participant_mission();
+drop trigger if exists _100_timestamps on app_public.mission_participants;
+drop table if exists app_public.mission_participants;
+-- drop table if exists app_public.mission_participant_assets;
+drop trigger if exists _100_timestamps on app_public.missions;
+drop table if exists app_public.missions;
+drop table if exists app_public.mission_period_kind;
