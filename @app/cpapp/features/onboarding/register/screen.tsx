@@ -21,7 +21,7 @@ import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
 import { useRouter } from "solito/navigation";
-import { Button, Tooltip, useTheme } from "tamagui";
+import { Button, Checkbox, Tooltip, useTheme } from "tamagui";
 
 import CustomInput from "../../../components/CustomInput";
 import { useAuth } from "../../../utils/auth";
@@ -80,7 +80,7 @@ function RegisterScreenInner() {
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          {({ handleSubmit, isValid, values }) => (
+          {({ handleSubmit, isValid, values, setFieldValue }) => (
             <>
               <View style={styles.rowPadding}>
                 <Text style={styles.textAboveInput}>이름</Text>
@@ -118,7 +118,7 @@ function RegisterScreenInner() {
               <Field
                 style={styles.input}
                 component={CustomInput}
-                name="cell number"
+                name="cellnumber"
                 // placeholder={}
               />
               <View style={styles.rowPadding}>
@@ -154,15 +154,14 @@ function RegisterScreenInner() {
                 <Text style={styles.buttonText}>회원가입</Text>
               </Button>
               <View style={styles.viewMarginTop20}>
-                <Button unstyled className="ml-1 h-[19px]">
-                  {/* if checked, use the component below */}
-                  {/* <StyledComponent
-                    component={SolitoImage}
-                    className="h-[19px] w-[19px]"
-                    src={checkboxChecked}
-                    alt=""
-                    // fill
-                  /> */}
+                <Checkbox
+                  className="ml-1 h-[19px]"
+                  checked={values.agreedToTerms}
+                  onCheckedChange={(checked) =>
+                    setFieldValue("agreedToTerms", checked)
+                  }
+                  unstyled
+                >
                   <StyledComponent
                     component={SolitoImage}
                     className="h-[19px] w-[19px]"
@@ -170,7 +169,17 @@ function RegisterScreenInner() {
                     alt=""
                     // fill
                   />
-                </Button>
+                  <Checkbox.Indicator className="absolute">
+                    <StyledComponent
+                      component={SolitoImage}
+                      className="h-[19px] w-[19px]"
+                      src={checkboxChecked}
+                      alt=""
+                      // fill
+                    />
+                  </Checkbox.Indicator>
+                </Checkbox>
+                {/* </Field> */}
                 <Link href="/">
                   <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
                 </Link>
