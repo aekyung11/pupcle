@@ -333,7 +333,12 @@ __metadata:
     "@app/componentlib": 0.0.0
     "@app/config": 0.0.0
     "@tamagui/lucide-icons": ^1.74.15
+    "@uppy/aws-s3": ^3.3.0
+    "@uppy/core": ^3.5.0
+    "@uppy/react": ^3.1.3
+    axios: ^1.4.0
     date-fns: ^2.30.0
+    fastestsmallesttextencoderdecoder: 1.0.22
     moti: latest
     nativewind: 2.0.11
     react-native-svg: ^13.14.0
@@ -427,7 +432,9 @@ __metadata:
     expo-blur: ~12.4.1
     expo-constants: ~14.4.2
     expo-dev-client: ~2.4.11
+    expo-file-system: ~15.4.4
     expo-image: ~1.3.4
+    expo-image-picker: ~14.3.2
     expo-linking: ~5.0.2
     expo-router: ^2.0.0
     expo-secure-store: ~12.3.1
@@ -442,6 +449,7 @@ __metadata:
     react-native-reanimated: ~3.3.0
     react-native-safe-area-context: 4.6.3
     react-native-screens: ~3.22.0
+    react-native-svg: 13.9.0
     react-native-web: ~0.19.6
     tailwindcss: ^3.0.24
     tamagui: ^1.72.3
@@ -14946,6 +14954,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image-loader@npm:~4.3.0":
+  version: 4.3.0
+  resolution: "expo-image-loader@npm:4.3.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 0440ac80a7b2331cdfd0db88aac0ba2fe61689e6347e2c6bedba6bf3220b95410c724ac9004252486870b582fc36d47d4bff008bba7052dcee2830256950974f
+  languageName: node
+  linkType: hard
+
+"expo-image-picker@npm:~14.3.2":
+  version: 14.3.2
+  resolution: "expo-image-picker@npm:14.3.2"
+  dependencies:
+    expo-image-loader: ~4.3.0
+  peerDependencies:
+    expo: "*"
+  checksum: 301a5e11cdd436717051fdd8b0f943210d281ca94d1417bb2e1b29a8fa02d3bc6f9321c4cac49376b6f3b76e78cecb23e42bc32131fce3d78006a44d64bfba56
+  languageName: node
+  linkType: hard
+
 "expo-image@npm:~1.3.4":
   version: 1.3.4
   resolution: "expo-image@npm:1.3.4"
@@ -15370,6 +15398,13 @@ __metadata:
   bin:
     fxparser: src/cli/cli.js
   checksum: 6123d374ee10a92850422acfc49ff1cb7c993ede160a4b753498ccdd22c6f4876ef52065a256bd03991432ca43b3bd9ddc06d825b1d77850e4fa26652fb9d26c
+  languageName: node
+  linkType: hard
+
+"fastestsmallesttextencoderdecoder@npm:1.0.22":
+  version: 1.0.22
+  resolution: "fastestsmallesttextencoderdecoder@npm:1.0.22"
+  checksum: cc5e6c3b4c13de41a24e1311af4d0726e85d9edd75af8a13282f9e5f2751805d869455352a0bf065ab59c9c240d078b7abd98d676da9257666402e56ce9395d0
   languageName: node
   linkType: hard
 
@@ -23858,6 +23893,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 3b592ff31d9dfde5e2ce967f85f3ad17a94f4f3bee2248a3dad9ec791e7cda72a431f86b468b3b2a70ebeffb49b462f8162668a58fb9ddabb10b5a369816850d
+  languageName: node
+  linkType: hard
+
+"react-native-svg@npm:13.9.0":
+  version: 13.9.0
+  resolution: "react-native-svg@npm:13.9.0"
+  dependencies:
+    css-select: ^5.1.0
+    css-tree: ^1.1.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: f4fe1c9e802d7ea86b9efef74313a80fb75d486f40ca79aaa04d42ffd3f6e462a3f37ee54018fae9fd1efdc2d8b005d1e71b02bb266c0ab8baec70d9a5730892
   languageName: node
   linkType: hard
 

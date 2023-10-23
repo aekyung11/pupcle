@@ -28,7 +28,7 @@ const validationSchema = yup.object({
   avatarUrl: yup.string().nullable(),
 });
 
-type SocialInfoFormInput = InferType<typeof validationSchema>;
+export type SocialInfoFormInput = InferType<typeof validationSchema>;
 
 export function useSocialInfoForm(
   userId: string,

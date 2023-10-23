@@ -1,13 +1,14 @@
-import { useSocialInfoForm } from "@app/componentlib";
+import { ApolloError } from "@apollo/client";
+import { SocialInfoFormInput, useSocialInfoForm } from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
+import { FramedAvatarUpload } from "@app/cpapp/components/FramedAvatarUpload";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { isSafe } from "@app/cpapp/utils/utils";
 import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
-import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
-import { Field, Formik } from "formik";
+import { Field, Formik, useFormikContext } from "formik";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
@@ -16,6 +17,79 @@ import { SolitoImage } from "solito/image";
 import { Link } from "solito/link";
 import { useRouter } from "solito/navigation";
 import { Button, Circle, Tooltip, useTheme } from "tamagui";
+
+type SocialInfoScreenFormInnerProps = {
+  error: Error | ApolloError | null;
+  submitLabel: string;
+};
+
+const SocialInfoScreenFormInner: FC<SocialInfoScreenFormInnerProps> = ({
+  error,
+  submitLabel,
+}) => {
+  const { handleSubmit, isValid, values, setFieldValue } =
+    useFormikContext<SocialInfoFormInput>();
+
+  const onUpload = useCallback(
+    async (avatarUrl: string | null | undefined) =>
+      setFieldValue("avatarUrl", avatarUrl),
+    [setFieldValue]
+  );
+
+  const code = getCodeFromError(error);
+
+  return (
+    <>
+      <View className="flex flex-col items-center">
+        <FramedAvatarUpload
+          avatarUrl={values.avatarUrl}
+          disabled={false}
+          onUpload={onUpload}
+        />
+      </View>
+      <View style={styles.rowPadding}>
+        <Text style={styles.textAboveInput}>이름</Text>
+      </View>
+      <Field
+        style={styles.input}
+        component={CustomInput}
+        name="nickname"
+        placeholder="ex) 뽀삐언니"
+      />
+      <View style={styles.rowPadding}>
+        <Text style={styles.textAboveInput}>사용자 이름</Text>
+      </View>
+      <Field
+        style={styles.input}
+        component={CustomInput}
+        name="username"
+        placeholder="ex) gildong_2"
+      />
+      {error ? (
+        <Text>
+          {extractError(error)?.["message"]}
+          {code ? (
+            <Text>
+              {" "}
+              (Error code: <code>ERR_{code}</code>)
+            </Text>
+          ) : null}
+        </Text>
+      ) : null}
+
+      <Button
+        unstyled
+        style={styles.submitButton}
+        title={submitLabel}
+        // @ts-ignore
+        onPress={handleSubmit}
+        disabled={!isValid || values.username === ""}
+      >
+        <Text style={styles.buttonText}>다음</Text>
+      </Button>
+    </>
+  );
+};
 
 interface SocialInfoScreenInnerProps {
   next: string;
@@ -41,7 +115,6 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
       currentUser.avatarUrl
     );
 
-  const code = getCodeFromError(error);
   const _theme = useTheme();
 
   return (
@@ -51,64 +124,12 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
         <Text style={styles.normalText}>회원님의 정보를 입력해주세요.</Text>
       </View>
       <View className="flex h-[80%] flex-col justify-center pb-10">
-        <View className="flex flex-col items-center">
-          <Circle size="$10">
-            <SolitoImage src={defaultAvatar} alt="" fill />
-            {/* <Avatar.Image src={defaultAvatar} resizeMode="contain" /> */}
-          </Circle>
-          <Button unstyled className="mt-2 mb-[16px]">
-            <Text style={styles.normalBlueText}>사진 수정</Text>
-          </Button>
-        </View>
         <Formik
           validationSchema={validationSchema}
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-          {({ handleSubmit, isValid, values }) => (
-            <>
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>이름</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="nickname"
-                placeholder="ex) 뽀삐언니"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>사용자 이름</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="username"
-                placeholder="ex) gildong_2"
-              />
-              {error ? (
-                <Text>
-                  {extractError(error)?.["message"]}
-                  {code ? (
-                    <Text>
-                      {" "}
-                      (Error code: <code>ERR_{code}</code>)
-                    </Text>
-                  ) : null}
-                </Text>
-              ) : null}
-
-              <Button
-                unstyled
-                style={styles.submitButton}
-                title={submitLabel}
-                // @ts-ignore
-                onPress={handleSubmit}
-                disabled={!isValid || values.username === ""}
-              >
-                <Text style={styles.buttonText}>다음</Text>
-              </Button>
-            </>
-          )}
+          <SocialInfoScreenFormInner error={error} submitLabel={submitLabel} />
         </Formik>
       </View>
     </View>
