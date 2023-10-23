@@ -1,8 +1,13 @@
 import { useApolloClient } from "@apollo/client";
-import { useLoginForm } from "@app/componentlib";
+import { useRegisterForm } from "@app/componentlib";
+import { ScreenScrollView } from "@app/cpapp/components/ScreenScrollView";
 import { View } from "@app/cpapp/design/view";
-import { useSharedLazyQuery } from "@app/graphql";
-import { extractError, getCodeFromError } from "@app/lib";
+import { isSafe } from "@app/cpapp/utils/utils";
+import {
+  extractError,
+  getCodeFromError,
+  resetWebsocketConnection,
+} from "@app/lib";
 import checkboxChecked from "@app/server/public/checkbox.png";
 import checkboxUnchecked from "@app/server/public/checkbox_unchecked.png";
 import paw from "@app/server/public/paw.png";
@@ -12,35 +17,35 @@ import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
 import React, { useCallback } from "react";
 import { StyleSheet, Text } from "react-native";
+import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link, TextLink } from "solito/link";
+import { useRouter } from "solito/navigation";
 import { Button, Tooltip, useTheme } from "tamagui";
 
 import CustomInput from "../../../components/CustomInput";
 import { useAuth } from "../../../utils/auth";
 
-function RegisterTest() {
-  const { signIn, userToken } = useAuth();
-  const [shared, { data: sharedData }] = useSharedLazyQuery();
+type RegisterScreenParams = {
+  next?: string;
+};
+
+function RegisterScreenInner() {
+  const { useParam } = createParam<RegisterScreenParams>();
+  const [rawNext] = useParam("next");
+  const router = useRouter();
+  const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
+
   const client = useApolloClient();
 
-  const postResult = useCallback(
-    async (result: any) => {
-      signIn(result.data?.login?.access_token);
-      // Success: refetch
-      await client.clearStore();
-    },
-    [signIn, client]
-  );
-  const {
-    usernameFieldPlaceholder,
-    passwordFieldPlaceholder,
-    submitLabel,
-    validationSchema,
-    initialValues,
-    handleSubmit,
-    error,
-  } = useLoginForm(true, postResult);
+  const postResult = useCallback(async () => {
+    resetWebsocketConnection();
+    // Success: refetch
+    await client.resetStore();
+    router.push(next);
+  }, [client, router, next]);
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    useRegisterForm(postResult);
   const code = getCodeFromError(error);
   const theme = useTheme();
 
@@ -181,9 +186,11 @@ function RegisterTest() {
 
 export function RegisterScreen() {
   return (
-    <View style={styles.container}>
-      <RegisterTest />
-    </View>
+    <ScreenScrollView>
+      <View style={styles.container}>
+        <RegisterScreenInner />
+      </View>
+    </ScreenScrollView>
   );
 }
 
