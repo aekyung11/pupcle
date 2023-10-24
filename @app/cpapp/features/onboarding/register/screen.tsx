@@ -50,163 +50,165 @@ function RegisterScreenInner() {
   const theme = useTheme();
 
   return (
-    <View className="h-full">
-      <View className="flex h-[15%] justify-end bg-white">
-        <Link href="/">
+    <View className="my-10 flex flex-col justify-center pb-20">
+      <View className="flex flex-row">
+        <Text style={styles.pageTitle}>회원가입</Text>
+        <View className="-top-[2px] ml-1">
           <StyledComponent
             component={SolitoImage}
-            className="h-[46px] w-[44px]"
-            src={pupcleIcon}
+            className="h-[28px] w-[43px]"
+            src={paw}
             alt=""
-            // fill
+            fill
           />
-        </Link>
-      </View>
-      <View className="flex h-[85%] flex-col justify-center pb-10">
-        <View className="flex flex-row">
-          <Text style={styles.pageTitle}>회원가입</Text>
-          <View className="-top-[2px] ml-1">
-            <StyledComponent
-              component={SolitoImage}
-              className="h-[28px] w-[43px]"
-              src={paw}
-              alt=""
-              fill
-            />
-          </View>
         </View>
-        <Formik
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-        >
-          {({ handleSubmit, isValid, values, setFieldValue }) => (
-            <>
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>이름</Text>
-                <Tooltip>
-                  {/* <Button icon={<HelpCircle size={14} />}></Button> */}
-                </Tooltip>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="name"
-                placeholder="ex) 홍길동"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>사용자 이름</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="username"
-                placeholder="ex) gildong_2"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>이메일</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="email"
-                placeholder="ex) honggildong@pupcle.com"
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>휴대폰 번호 (선택)</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="cellnumber"
-                // placeholder={}
-              />
-              <View style={styles.rowPadding}>
-                <Text style={styles.textAboveInput}>비밀번호</Text>
-              </View>
-              <Field
-                style={styles.input}
-                component={CustomInput}
-                name="password"
-                placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
-                secureTextEntry
-              />
-              {error ? (
-                <Text>
-                  {extractError(error)?.["message"]}
-                  {code ? (
-                    <Text>
-                      {" "}
-                      (Error code: <code>ERR_{code}</code>)
-                    </Text>
-                  ) : null}
-                </Text>
-              ) : null}
+      </View>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ handleSubmit, isValid, values, setFieldValue }) => (
+          <>
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>이름</Text>
+              <Tooltip>
+                {/* <Button icon={<HelpCircle size={14} />}></Button> */}
+              </Tooltip>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="name"
+              placeholder="ex) 홍길동"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>사용자 이름</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="username"
+              placeholder="ex) gildong_2"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>이메일</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="email"
+              placeholder="ex) honggildong@pupcle.com"
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>휴대폰 번호 (선택)</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="cellnumber"
+              // placeholder={}
+            />
+            <View style={styles.rowPadding}>
+              <Text style={styles.textAboveInput}>비밀번호</Text>
+            </View>
+            <Field
+              style={styles.input}
+              component={CustomInput}
+              name="password"
+              placeholder="8자 이상, 대, 소문자, 특수문자, 숫자 포함"
+              secureTextEntry
+            />
+            {error ? (
+              <Text>
+                {extractError(error)?.["message"]}
+                {code ? (
+                  <Text>
+                    {" "}
+                    (Error code: <code>ERR_{code}</code>)
+                  </Text>
+                ) : null}
+              </Text>
+            ) : null}
 
-              <Button
+            <Button
+              unstyled
+              style={styles.submitButton}
+              title={submitLabel}
+              // @ts-ignore
+              onPress={handleSubmit}
+              disabled={!isValid || values.username === ""}
+            >
+              <Text style={styles.buttonText}>회원가입</Text>
+            </Button>
+            <View style={styles.viewMarginTop20}>
+              <Checkbox
+                className="ml-1 h-[19px]"
+                checked={values.agreedToTerms}
+                onCheckedChange={(checked) =>
+                  setFieldValue("agreedToTerms", checked)
+                }
                 unstyled
-                style={styles.submitButton}
-                title={submitLabel}
-                // @ts-ignore
-                onPress={handleSubmit}
-                disabled={!isValid || values.username === ""}
               >
-                <Text style={styles.buttonText}>회원가입</Text>
-              </Button>
-              <View style={styles.viewMarginTop20}>
-                <Checkbox
-                  className="ml-1 h-[19px]"
-                  checked={values.agreedToTerms}
-                  onCheckedChange={(checked) =>
-                    setFieldValue("agreedToTerms", checked)
-                  }
-                  unstyled
-                >
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[19px] w-[19px]"
+                  src={checkboxUnchecked}
+                  alt=""
+                  // fill
+                />
+                <Checkbox.Indicator className="absolute">
                   <StyledComponent
                     component={SolitoImage}
                     className="h-[19px] w-[19px]"
-                    src={checkboxUnchecked}
+                    src={checkboxChecked}
                     alt=""
                     // fill
                   />
-                  <Checkbox.Indicator className="absolute">
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-[19px] w-[19px]"
-                      src={checkboxChecked}
-                      alt=""
-                      // fill
-                    />
-                  </Checkbox.Indicator>
-                </Checkbox>
-                {/* </Field> */}
-                <Link href="/">
-                  <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
-                </Link>
-                <Text style={styles.text}>에 동의합니다.</Text>
-              </View>
-            </>
-          )}
-        </Formik>
-      </View>
+                </Checkbox.Indicator>
+              </Checkbox>
+              {/* </Field> */}
+              <Link href="/">
+                <Text style={styles.semiBoldBlueText}> 서비스 이용약관</Text>
+              </Link>
+              <Text style={styles.text}>에 동의합니다.</Text>
+            </View>
+          </>
+        )}
+      </Formik>
     </View>
   );
 }
 
 export function RegisterScreen() {
   return (
-    <ScreenScrollView>
-      <View style={styles.container}>
-        <RegisterScreenInner />
+    <View style={styles.container} className="h-full w-full">
+      <View className="flex h-[15%] w-[310px] justify-end bg-white">
+        <View className="h-[46px] w-[44px]">
+          <Link href="/">
+            <StyledComponent
+              component={SolitoImage}
+              className="h-[46px] w-[44px]"
+              src={pupcleIcon}
+              alt=""
+              // fill
+            />
+          </Link>
+        </View>
       </View>
-    </ScreenScrollView>
+      <View className="flex h-[85%]">
+        <ScreenScrollView showsVerticalScrollIndicator={false}>
+          <RegisterScreenInner />
+        </ScreenScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    // height: "100%",
+    height: "100%",
     backgroundColor: "white",
     alignItems: "center",
     // paddingTop: "45%",
