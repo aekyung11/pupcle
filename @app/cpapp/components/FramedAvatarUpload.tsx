@@ -87,7 +87,7 @@ const cvaAvatarImage = cva("avatar-image object-cover object-top border-none", {
 const cvaPlusIcon = cva(["absolute", "z-10", "w-[60px]"], {
   variants: {
     size: {
-      xsmall: ["left-[30px] bottom-0 w-[40px]"],
+      xsmall: ["left-[32px] bottom-0 w-[40px]"],
       small: ["right-10 bottom-10"],
       medium: ["right-[70px] bottom-[70px]"],
     },
@@ -204,11 +204,13 @@ export function FramedAvatarUpload({
       }
       {...props}
     >
-      <View
+      <Button
+        unstyled
         className={clsx({
           "h-[103px] w-[103px]": size === "xsmall",
         })}
         style={{ position: "relative" }}
+        onPress={onSelectImage}
       >
         {uppyIsLoading || isUploading ? (
           <Loader2 />
@@ -245,7 +247,7 @@ export function FramedAvatarUpload({
             fill
           />
         )}
-      </View>
+      </Button>
       {!disabled && uppy && (
         <Button unstyled className="" onPress={onSelectImage}>
           <Text className="font-poppins text-pupcleBlue text-[14px]">
