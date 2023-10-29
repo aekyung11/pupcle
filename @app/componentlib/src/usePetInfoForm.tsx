@@ -30,7 +30,7 @@ const validationSchema = yup.object({
   avatarUrl: yup.string().nullable(),
 });
 
-type PetInfoFormInput = InferType<typeof validationSchema>;
+export type PetInfoFormInput = InferType<typeof validationSchema>;
 
 export function usePetInfoForm(
   userId: string,

@@ -421,6 +421,7 @@ __metadata:
     "@app/cpapp": 0.0.0
     "@babel/core": ^7.21.3
     "@babel/preset-typescript": ^7.21.0
+    "@react-native-community/datetimepicker": 7.2.0
     "@react-native-menu/menu": ^0.9.1
     "@tamagui/babel-plugin": ^1.72.3
     "@tamagui/config": ^1.72.3
@@ -446,6 +447,7 @@ __metadata:
     react-native: 0.72.5
     react-native-gesture-handler: ~2.12.0
     react-native-ios-context-menu: ^1.15.3
+    react-native-modal-datetime-picker: ^17.1.0
     react-native-reanimated: ~3.3.0
     react-native-safe-area-context: 4.6.3
     react-native-screens: ~3.22.0
@@ -6763,6 +6765,15 @@ __metadata:
   bin:
     react-native: build/bin.js
   checksum: 704e3d5e252a42a45697384b55f140b4961cbc213a90701ef163d1d0bab4fa8481ae4bf9ffe9c965114817087068186422d96d60aed479466bab036049a32866
+  languageName: node
+  linkType: hard
+
+"@react-native-community/datetimepicker@npm:7.2.0":
+  version: 7.2.0
+  resolution: "@react-native-community/datetimepicker@npm:7.2.0"
+  dependencies:
+    invariant: ^2.2.4
+  checksum: 4ec9de24573d654a2632818de15a1b7c6f41febbaa52aa543e7ef133f507b8b4fe8c0a08a0af34907c283b7be3cb9d5a52db216a2925c8eb96f52bf49a9f2b33
   languageName: node
   linkType: hard
 
@@ -23849,6 +23860,18 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 5c587fe95296b8ae5d93caa98a9816c56425755ba3a113230a8eba70b1eb1e117aa793a1b043e7970eca8d51a32a52695947ffca7555349688bd8723a72df4c6
+  languageName: node
+  linkType: hard
+
+"react-native-modal-datetime-picker@npm:^17.1.0":
+  version: 17.1.0
+  resolution: "react-native-modal-datetime-picker@npm:17.1.0"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    "@react-native-community/datetimepicker": ">=6.7.0"
+    react-native: ">=0.65.0"
+  checksum: 8a5bb21167799cc5410c0fb6c39bb3495fbaa463ef57d8f90c65429697c2b02b2e4e046e3e91c6246e1f4bd187c5fbcd30f61a6449b8d68808e68715b1332779
   languageName: node
   linkType: hard
 
