@@ -9,7 +9,7 @@ import { Platform } from "react-native";
 export default function TabsLayout() {
   return (
     <Tabs
-      initialRouteName="index"
+      initialRouteName="/home"
       screenOptions={{
         tabBarStyle: Platform.OS === "ios" && {
           backgroundColor: "white",
@@ -33,10 +33,10 @@ export default function TabsLayout() {
       }
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           headerShown: false,
-          href: "/",
+          href: "/home",
           title: "",
           tabBarIcon: ({ color }) => (
             <View
@@ -55,7 +55,52 @@ export default function TabsLayout() {
           ),
         }}
       />
-      {/* <Stack screenOptions={{ headerShown: false }} /> */}
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          headerShown: false,
+          href: "/calendar",
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: 17,
+                backgroundColor: "transparent",
+              }}
+            >
+              {/* <TabBarIcon name="home" color={color} size={24} /> */}
+              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.5 }}>
+                Calendar
+              </Text>
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="account"
+        options={{
+          headerShown: false,
+          href: "/account",
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: 17,
+                backgroundColor: "transparent",
+              }}
+            >
+              {/* <TabBarIcon name="home" color={color} size={24} /> */}
+              <Text style={{ marginTop: 5, fontSize: 10, opacity: 0.5 }}>
+                Account
+              </Text>
+            </View>
+          ),
+        }}
+      />
     </Tabs>
   );
 }

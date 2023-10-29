@@ -15,12 +15,12 @@ export default function Root() {
     <TamaguiProvider className="bg-transparent" config={config}>
       <Provider>
         <Stack
-          initialRouteName="(tabs)"
+          initialRouteName="/home"
           screenOptions={{
             headerShown: false,
           }}
         >
-          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(auth)/index" />
           <Stack.Screen name="(tabs)" />
         </Stack>
       </Provider>
