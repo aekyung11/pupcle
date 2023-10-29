@@ -92,6 +92,7 @@ const PlaceItem = ({
             width: "80%",
             display: "flex",
             flexDirection: "column",
+            alignItems: "start",
           }}
         >
           <span className="map-list-title">{place.place_name}</span>
@@ -635,15 +636,17 @@ const Maps: NextPage = () => {
                     }}
                   >
                     {listResults?.map((place) => (
-                      <PlaceItem
-                        key={place.id}
-                        place={place}
-                        rating={poiSummariesByKakaoId[place.id]?.rating}
-                        poiFavorite={poiFavoritesByKakaoId[place.id]}
-                        onRatingChange={handleRatingChange}
-                        onFavoriteChange={handleFavoriteChange}
-                        currentUserId={currentUserId}
-                      />
+                      <Button className="h-fit w-full border-none bg-transparent p-0 !shadow-none">
+                        <PlaceItem
+                          key={place.id}
+                          place={place}
+                          rating={poiSummariesByKakaoId[place.id]?.rating}
+                          poiFavorite={poiFavoritesByKakaoId[place.id]}
+                          onRatingChange={handleRatingChange}
+                          onFavoriteChange={handleFavoriteChange}
+                          currentUserId={currentUserId}
+                        />
+                      </Button>
                     ))}
                   </Tabs.Content>
                   <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>

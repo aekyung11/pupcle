@@ -11,6 +11,8 @@ import {
   useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import fourOhFour from "@app/server/public/404_page.png";
+import logo from "@app/server/public/logo.png";
 import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
 import { format } from "date-fns";

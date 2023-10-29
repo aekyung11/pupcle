@@ -64,7 +64,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              className="font-poppins w-[120px] text-[24px] font-semibold text-black"
+              className="font-poppins w-[120px] text-center text-[24px] font-semibold text-black"
             >
               {currentUserFirstPet.name}
             </Text>
