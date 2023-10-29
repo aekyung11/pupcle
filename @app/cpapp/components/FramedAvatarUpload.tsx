@@ -140,7 +140,7 @@ export function FramedAvatarUpload({
               type: "", // unknown
               size: 0, // unknown
             },
-            // assetId
+            assetId: "avatar",
           },
         ]
       : [],
@@ -413,7 +413,7 @@ const useUppy = ({
               .then((response) => {
                 const uppyFileId = uppy.addFile({
                   name: f.metadata.name,
-                  type: f.metadata.type, // blob type
+                  type: response.data.type, // blob type
                   data: response.data,
                   // NOTE: it doesn't look like uppy saves this, so stick it in the meta
                   response: {
