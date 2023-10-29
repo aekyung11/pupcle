@@ -36,7 +36,6 @@ export default function TabsLayout() {
         name="home"
         options={{
           headerShown: false,
-          href: "/home",
           title: "",
           tabBarIcon: ({ color }) => (
             <View
@@ -59,7 +58,6 @@ export default function TabsLayout() {
         name="calendar"
         options={{
           headerShown: false,
-          href: "/calendar",
           title: "",
           tabBarIcon: ({ color }) => (
             <View
@@ -82,7 +80,6 @@ export default function TabsLayout() {
         name="account"
         options={{
           headerShown: false,
-          href: "/account",
           title: "",
           tabBarIcon: ({ color }) => (
             <View
