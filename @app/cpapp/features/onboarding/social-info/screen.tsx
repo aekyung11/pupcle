@@ -69,9 +69,6 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
             <>
               <View style={styles.rowPadding}>
                 <Text style={styles.textAboveInput}>이름</Text>
-                <Tooltip>
-                  {/* <Button icon={<HelpCircle size={14} />}></Button> */}
-                </Tooltip>
               </View>
               <Field
                 style={styles.input}
