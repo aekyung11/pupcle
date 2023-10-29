@@ -116,7 +116,7 @@ const PetProfileScreenInner: FC<PetProfileScreenInnerProps> = ({
               >
                 <Text style={styles.normalText}>생년월일</Text>
                 <Tooltip>
-                  {/* <Button icon={<HelpCircle size={14} />}></Button> */}
+                  {/* <Button icon={<HelpCircle size={16} />}></Button> */}
                 </Tooltip>
                 <Field
                   style={styles.input}
@@ -131,7 +131,7 @@ const PetProfileScreenInner: FC<PetProfileScreenInnerProps> = ({
               >
                 <Text style={styles.normalText}>몸무게</Text>
                 <Tooltip>
-                  {/* <Button icon={<HelpCircle size={14} />}></Button> */}
+                  {/* <Button icon={<HelpCircle size={16} />}></Button> */}
                 </Tooltip>
                 <Field
                   style={styles.input}
@@ -359,11 +359,11 @@ const styles = StyleSheet.create({
   },
   normalText: {
     fontFamily: "Poppins",
-    fontSize: 14,
+    fontSize: 16,
   },
   normalBlueText: {
     fontFamily: "Poppins",
-    fontSize: 14,
+    fontSize: 16,
     color: "#7FB3E8",
   },
   inputRow: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     height: 48,
     width: 220,
     fontFamily: "'Poppins'",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 2,
   },
   radioGroupContainer: {
@@ -410,19 +410,19 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "'Poppins'",
     color: "#8F9092",
-    fontSize: 14,
+    fontSize: 16,
   },
   boldBlueText: {
     fontFamily: "'Poppins'",
     color: "#7FB3E8",
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: 16,
   },
   semiBoldBlueText: {
     fontFamily: "'Poppins'",
     color: "#7FB3E8",
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: 16,
   },
   submitButton: {
     marginTop: 60,
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "white",
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: 16,
   },
   pageTitle: {
     fontFamily: "Poppins",
