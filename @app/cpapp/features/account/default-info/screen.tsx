@@ -1,6 +1,7 @@
-import { useSocialInfoForm } from "@app/componentlib";
+import { SocialInfoFormInput, useSocialInfoForm } from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
 import { FourOhFour } from "@app/cpapp/components/FourOhFour";
+import { FramedAvatarUpload } from "@app/cpapp/components/FramedAvatarUpload";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { isSafe } from "@app/cpapp/utils/utils";
@@ -12,7 +13,7 @@ import hamburger from "@app/server/public/hamburger_blue.png";
 import right from "@app/server/public/pagination_right.png";
 import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import c from "@app/server/public/pupcle_count.png";
-import { Field, Formik } from "formik";
+import { Field, Formik, useFormikContext } from "formik";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text } from "react-native";
@@ -21,6 +22,84 @@ import { SolitoImage } from "solito/image";
 import { Link } from "solito/link";
 import { useRouter } from "solito/navigation";
 import { Avatar, Button, Circle, useTheme } from "tamagui";
+
+type DefaultInfoScreenInnerInnerFormProps = {
+  editingBasicInfo: boolean;
+  setEditingBasicInfo: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const DefaultInfoScreenInnerInnerForm: FC<
+  DefaultInfoScreenInnerInnerFormProps
+> = ({ editingBasicInfo, setEditingBasicInfo }) => {
+  const { handleSubmit, values, setFieldValue } =
+    useFormikContext<SocialInfoFormInput>();
+
+  const onUpload = useCallback(
+    async (avatarUrl: string | null | undefined) =>
+      setFieldValue("avatarUrl", avatarUrl),
+    [setFieldValue]
+  );
+
+  return (
+    <View className="w-full flex-col items-center">
+      <FramedAvatarUpload
+        size="xsmall"
+        avatarUrl={values.avatarUrl}
+        disabled={!editingBasicInfo}
+        onUpload={onUpload}
+      />
+      <View className="mt-[72px] w-full">
+        <View>
+          <Text className="font-poppins ml-5 text-[16px]">닉네임</Text>
+          <Field
+            editable={editingBasicInfo}
+            style={editingBasicInfo ? styles.inputEdit : styles.input}
+            // className="border-pupcleBlue h-12 w-full rounded-full"
+            component={CustomInput}
+            name="nickname"
+            placeholder="ex) 뽀삐언니"
+          />
+        </View>
+        <View className="mt-5">
+          <Text className="font-poppins ml-5 text-[16px]">사용자 이름</Text>
+          <Field
+            editable={editingBasicInfo}
+            style={editingBasicInfo ? styles.inputEdit : styles.input}
+            component={CustomInput}
+            name="username"
+            placeholder="ex) gildong_2"
+          />
+        </View>
+      </View>
+      <View className="mt-10 flex w-full flex-row justify-end">
+        {editingBasicInfo ? (
+          <Button
+            // @ts-ignore
+            onPress={handleSubmit}
+            unstyled
+            // title={submitLabel}
+            className="bg-pupcleBlue flex h-12 w-[120px] items-center justify-center rounded-full border-none"
+          >
+            <Text className="font-poppins text-[16px] font-bold text-white">
+              저장하기
+            </Text>
+          </Button>
+        ) : (
+          <Button
+            onPress={() => setEditingBasicInfo(true)}
+            unstyled
+            // title={submitLabel}
+            className="flex h-12 w-[120px] items-center justify-center rounded-full border-none bg-[#D9E8F8]"
+          >
+            <Text className="font-poppins text-pupcleBlue text-[16px] font-bold">
+              수정하기
+            </Text>
+          </Button>
+        )}
+      </View>
+    </View>
+  );
+};
 
 interface DefaultInfoScreenInnerInnerProps {
   currentUser: SharedLayout_UserFragment;
@@ -41,7 +120,6 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
     validationSchema,
     initialValues,
     handleSubmit,
-    error,
   } = useSocialInfoForm(
     currentUser.id,
     postResult,
@@ -50,8 +128,6 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
     currentUser.avatarUrl
   );
 
-  const code = getCodeFromError(error);
-
   return (
     <View className="h-full w-full px-5 py-[60px]">
       <Formik
@@ -59,97 +135,24 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
         initialValues={initialValues}
         onSubmit={handleSubmit}
       >
-        {({ handleSubmit }) => (
-          <View className="w-full flex-col items-center">
-            <Circle size="$10">
-              <SolitoImage src={defaultAvatar} alt="" fill />
-              {/* <Avatar.Image src={defaultAvatar} resizeMode="contain" /> */}
-            </Circle>
-            <View className="mt-[72px] w-full">
-              <View>
-                <Text className="font-poppins ml-5 text-[16px]">닉네임</Text>
-                <Field
-                  editable={editingBasicInfo}
-                  style={editingBasicInfo ? styles.inputEdit : styles.input}
-                  // className="border-pupcleBlue h-12 w-full rounded-full"
-                  component={CustomInput}
-                  name="nickname"
-                  placeholder="ex) 뽀삐언니"
-                />
-              </View>
-              <View className="mt-5">
-                <Text className="font-poppins ml-5 text-[16px]">
-                  사용자 이름
-                </Text>
-                <Field
-                  editable={editingBasicInfo}
-                  style={editingBasicInfo ? styles.inputEdit : styles.input}
-                  component={CustomInput}
-                  name="username"
-                  placeholder="ex) gildong_2"
-                />
-              </View>
-            </View>
-            <View className="mt-10 flex w-full flex-row justify-end">
-              {editingBasicInfo ? (
-                <Button
-                  // @ts-ignore
-                  onPress={handleSubmit}
-                  unstyled
-                  // title={submitLabel}
-                  className="bg-pupcleBlue flex h-12 w-[120px] items-center justify-center rounded-full border-none"
-                >
-                  <Text className="font-poppins text-[16px] font-bold text-white">
-                    저장하기
-                  </Text>
-                </Button>
-              ) : (
-                <Button
-                  onPress={() => setEditingBasicInfo(true)}
-                  unstyled
-                  // title={submitLabel}
-                  className="flex h-12 w-[120px] items-center justify-center rounded-full border-none bg-[#D9E8F8]"
-                >
-                  <Text className="font-poppins text-pupcleBlue text-[16px] font-bold">
-                    수정하기
-                  </Text>
-                </Button>
-              )}
-            </View>
-          </View>
-        )}
+        <DefaultInfoScreenInnerInnerForm
+          editingBasicInfo={editingBasicInfo}
+          setEditingBasicInfo={setEditingBasicInfo}
+        />
       </Formik>
     </View>
   );
 };
 
 interface DefaultInfoScreenInnerProps {
-  next: string;
   currentUser: SharedLayout_UserFragment;
   refetch: () => Promise<any>;
 }
 
 const DefaultInfoScreenInner: FC<DefaultInfoScreenInnerProps> = ({
   currentUser,
-  next,
   refetch,
 }) => {
-  const router = useRouter();
-
-  const postResult = useCallback(async () => {
-    router.push(next);
-  }, [next, router]);
-
-  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useSocialInfoForm(
-      currentUser.id,
-      postResult,
-      currentUser.nickname,
-      currentUser.username,
-      currentUser.avatarUrl
-    );
-
-  const code = getCodeFromError(error);
   const _theme = useTheme();
 
   return (
@@ -186,16 +189,9 @@ const DefaultInfoScreenInner: FC<DefaultInfoScreenInnerProps> = ({
   );
 };
 
-type DefaultInfoScreenParams = {
-  next?: string;
-};
-
 export function DefaultInfoScreen() {
-  const { useParam } = createParam<DefaultInfoScreenParams>();
-  const [rawNext] = useParam("next");
   const query = useSharedQuery();
   const refetch = async () => query.refetch();
-  const next: string = isSafe(rawNext) ? rawNext! : "/onboarding/pet-profile";
 
   const currentUser = query.data?.currentUser;
   const currentUserId = currentUser?.id as string | undefined;
@@ -224,7 +220,6 @@ export function DefaultInfoScreen() {
     >
       {query.data?.currentUser && (
         <DefaultInfoScreenInner
-          next={next}
           currentUser={query.data?.currentUser}
           refetch={refetch}
         />

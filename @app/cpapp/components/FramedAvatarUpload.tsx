@@ -210,7 +210,7 @@ export function FramedAvatarUpload({
           "h-[103px] w-[103px]": size === "xsmall",
         })}
         style={{ position: "relative" }}
-        onPress={onSelectImage}
+        onPress={disabled ? null : onSelectImage}
       >
         {uppyIsLoading || isUploading ? (
           <Loader2 />
