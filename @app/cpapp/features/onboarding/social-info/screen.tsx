@@ -40,7 +40,7 @@ const SocialInfoScreenFormInner: FC<SocialInfoScreenFormInnerProps> = ({
 
   return (
     <>
-      <View className="flex flex-col items-center">
+      <View className="mb-8 flex flex-col items-center">
         <FramedAvatarUpload
           size="xsmall"
           avatarUrl={values.avatarUrl}
@@ -119,12 +119,12 @@ const SocialInfoScreenInner: FC<SocialInfoScreenInnerProps> = ({
   const _theme = useTheme();
 
   return (
-    <View className="h-full" style={styles.container}>
+    <View className="flex h-full" style={styles.container}>
       <View className="flex h-[20%] flex-col items-center justify-end pb-3">
         <Text style={styles.titleText}>회원 정보</Text>
         <Text style={styles.normalText}>회원님의 정보를 입력해주세요.</Text>
       </View>
-      <View className="flex h-[80%] flex-col justify-center pb-10">
+      <View className="flex h-[80%] flex-col justify-center pb-[100px]">
         <Formik
           validationSchema={validationSchema}
           initialValues={initialValues}

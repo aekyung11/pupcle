@@ -87,7 +87,7 @@ const cvaAvatarImage = cva("avatar-image object-cover object-top border-none", {
 const cvaPlusIcon = cva(["absolute", "z-10", "w-[60px]"], {
   variants: {
     size: {
-      xsmall: ["right-10 bottom-10"],
+      xsmall: ["left-[30px] bottom-0 w-[40px]"],
       small: ["right-10 bottom-10"],
       medium: ["right-[70px] bottom-[70px]"],
     },
@@ -199,14 +199,14 @@ export function FramedAvatarUpload({
     // @ts-ignore
     <View
       className={
-        "flex h-[130px] w-[103px] border " +
+        "flex h-[130px] w-[103px] flex-col items-center justify-between " +
         cvaFramedAvatarUpload({ size, mode, className })
       }
       {...props}
     >
       <View
         className={clsx({
-          "h-[103px]": size === "xsmall",
+          "h-[103px] w-[103px]": size === "xsmall",
         })}
         style={{ position: "relative" }}
       >
@@ -215,7 +215,10 @@ export function FramedAvatarUpload({
         ) : avatarUrl ? (
           <StyledComponent
             component={SolitoImage}
-            className={cvaAvatarImage({ size, mode })}
+            className={
+              "flex items-center justify-center" +
+              cvaAvatarImage({ size, mode })
+            }
             contentFit="cover"
             src={avatarUrl}
             alt="avatar"
@@ -244,7 +247,7 @@ export function FramedAvatarUpload({
         )}
       </View>
       {!disabled && uppy && (
-        <Button unstyled className="mt-2 mb-[16px]" onPress={onSelectImage}>
+        <Button unstyled className="" onPress={onSelectImage}>
           <Text className="font-poppins text-pupcleBlue text-[14px]">
             사진 수정
           </Text>
