@@ -16,15 +16,10 @@ import { NextPage } from "next";
 import * as React from "react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
-enum Tab {
-  BASIC = "basic info",
-  DETAILED = "detailed info",
-}
-
 const Account: NextPage = () => {
   const query = useSharedQuery();
   const refetch = async () => query.refetch();
-  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.BASIC);
+  // const [selectedTab, setSelectedTab] = useState<Tab>(Tab.BASIC);
 
   const currentUser = query.data?.currentUser;
   const currentUserId = currentUser?.id as string | undefined;
@@ -52,217 +47,73 @@ const Account: NextPage = () => {
       useLightBlueFrame
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
-      <div className="ml-[10px] flex h-[125px] w-[220px] items-center justify-center py-10">
-        <span className="font-poppins text-[30px] font-semibold">Account</span>
-      </div>
-      <Tabs.Root
-        value={selectedTab}
-        onValueChange={(newValue) => {
-          setSelectedTab(newValue as Tab);
-        }}
-        style={{ display: "flex", height: "calc(100vh - 96px - 125px)" }}
-      >
-        <Tabs.List>
-          <div className="mt-[10px] flex w-[220px] flex-col">
-            <Tabs.Trigger key={Tab.BASIC} value={Tab.BASIC} asChild>
-              <Button className="friends-tab h-[50px] w-full rounded-r-full">
-                <span className="font-poppins text-[20px] font-semibold">
-                  기본 정보
-                </span>
-              </Button>
-            </Tabs.Trigger>
-            <Tabs.Trigger key={Tab.DETAILED} value={Tab.DETAILED} asChild>
-              <Button className="friends-tab h-[50px] w-full rounded-r-full">
-                <span className="font-poppins text-[20px] font-semibold">
-                  세부 정보
-                </span>
-              </Button>
-            </Tabs.Trigger>
-          </div>
-        </Tabs.List>
-        <div className="mb-5 ml-10 w-[calc(100vw-280px)] rounded-[30px] bg-white">
-          <Tabs.Content
-            key={Tab.BASIC}
-            value={Tab.BASIC}
-            className="flex h-full w-full flex-col"
-          >
-            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-              <span className="font-poppins mt-[2px] text-[24px] font-semibold">
-                기본 정보
-              </span>
-            </div>
-            <div className="flex h-[calc(100%-91px)] w-full items-center justify-center">
-              {query.data?.currentUser && (
-                <AccountBasicPageInner
-                  refetch={refetch}
-                  currentUser={currentUser}
-                />
-              )}
-            </div>
-          </Tabs.Content>
-          <Tabs.Content
-            key={Tab.DETAILED}
-            value={Tab.DETAILED}
-            className="flex h-full w-full"
-          >
-            <div className="border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]">
-              <span className="font-poppins mt-[2px] text-[24px] font-semibold">
-                세부 정보
-              </span>
-            </div>
-          </Tabs.Content>
+      <div className="flex h-full w-full flex-col">
+        <div className="flex h-[125px] w-[220px] items-center justify-center">
+          <span className="font-poppins text-[30px] font-semibold">
+            Account
+          </span>
         </div>
-      </Tabs.Root>
-    </SharedLayout>
-  );
-};
-
-interface AccountBasicPageInnerProps {
-  currentUser: SharedLayout_UserFragment;
-  refetch: () => Promise<any>;
-}
-
-const AccountBasicPageInner: FC<AccountBasicPageInnerProps> = ({
-  currentUser,
-}) => {
-  const [editingBasicInfo, setEditingBasicInfo] = useState(false);
-
-  const postResult = useCallback(async () => {
-    setEditingBasicInfo(false);
-  }, []);
-
-  const { validationSchema, initialValues, handleSubmit, error } =
-    useSocialInfoForm(
-      currentUser.id,
-      postResult,
-      currentUser.nickname,
-      currentUser.username,
-      currentUser.avatarUrl
-    );
-
-  const focusElement = useRef<InputRef>(null);
-  useEffect(
-    () => void (focusElement.current && focusElement.current!.focus()),
-    [focusElement]
-  );
-
-  const code = getCodeFromError(error);
-
-  return (
-    <>
-      <div className="w-1/2">
-        <Formik
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-        >
-          {({ values, setFieldValue }) => (
-            <Form className="flex h-full w-full">
-              <div className="relative flex h-full w-full flex-col items-center justify-center px-10 pt-6">
-                {editingBasicInfo ? (
-                  <Form.Item
-                    name="_submit"
-                    className="absolute -top-5 -right-5 mb-0"
-                  >
-                    <SubmitButton
-                      className={clsx(
-                        "account-submit-button bg-pupcleBlue h-[63px] w-[179px] rounded-[30px] border-2 border-none"
-                      )}
-                      onClick={() => setEditingBasicInfo(true)}
-                    >
-                      <span className="font-poppins text-[20px] font-semibold text-white">
-                        저장하기
-                      </span>
-                    </SubmitButton>
-                  </Form.Item>
-                ) : (
-                  <Button
-                    className={clsx(
-                      "account-edit-button border-pupcleBlue absolute -top-5 -right-5 h-[63px] w-[179px] rounded-[30px] border-2 bg-transparent",
-                      {
-                        invisible: editingBasicInfo,
-                      }
-                    )}
-                    onClick={() => setEditingBasicInfo(true)}
-                  >
-                    <span className="text-pupcleBlue font-poppins text-[20px] font-semibold">
-                      프로필 수정
-                    </span>
-                  </Button>
-                )}
-
-                <Form.Item
-                  name="avatarUrl"
-                  valuePropName="avatarUrl"
-                  trigger="onUpload"
-                  className="mb-0"
-                >
-                  <FramedAvatarUpload
-                    size={"small"}
-                    disabled={!editingBasicInfo}
-                    avatarUrl={values.avatarUrl}
-                    onUpload={async (avatarUrl) =>
-                      setFieldValue("avatarUrl", avatarUrl)
-                    }
-                  />
-                </Form.Item>
-                <div className="mt-10 flex w-full flex-col">
-                  <span className="font-poppins mb-1 pl-6 text-[20px]">
-                    Nickname
-                  </span>
-                  <Form.Item name="nickname">
-                    <Input
-                      className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                      name="nickname"
-                      autoComplete="nickname name"
-                      ref={focusElement}
-                      data-cy="registerpage-input-name"
-                      placeholder="닉네임을 입력하세요"
-                      suffix
-                      disabled={!editingBasicInfo}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex w-full flex-col">
-                  <span className="font-poppins mb-1 pl-6 text-[20px]">ID</span>
-                  <Form.Item name="username">
-                    <Input
-                      className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                      name="username"
-                      autoComplete="username"
-                      ref={focusElement}
-                      data-cy="registerpage-input-username"
-                      placeholder="ID를 입력하세요(‘_’, ’.’ 제외한 특수문자 불가)"
-                      suffix
-                      disabled={!editingBasicInfo}
-                    />
-                  </Form.Item>
-                </div>
-                {error ? (
-                  <Form.Item name="_error">
-                    <Alert
-                      type="error"
-                      message={`Registration failed`}
-                      description={
-                        <span>
-                          {extractError(error).message}
-                          {code ? (
-                            <span>
-                              {" "}
-                              (Error code: <code>ERR_{code}</code>)
-                            </span>
-                          ) : null}
-                        </span>
-                      }
-                    />
-                  </Form.Item>
-                ) : null}
+        <div className="flex h-full w-full justify-center">
+          <div className="h-[calc(100vh-6rem-125px)] w-[calc(100vw-280px)] rounded-[30px] bg-white">
+            <div className="border-pupcleLightLightGray relative flex h-[325px] w-full flex-row items-center justify-center border-b-[9px]">
+              <div className="absolute right-[60px] top-10 flex flex-row items-center">
+                <span className="font-poppins text-[20px]">
+                  보유 펍클 : 273
+                </span>
+                <img src="/pupcle_count.png" className="ml-1 h-[25px] w-6" />
               </div>
-            </Form>
-          )}
-        </Formik>
+              <div className="flex flex-col items-center">
+                <img
+                  src={currentUser.avatarUrl || "/profile_default_avatar.png"}
+                  className="h-[138px] w-[138px]"
+                />
+                <span className="font-poppins mt-4 text-[24px] font-semibold">
+                  {currentUser.nickname}
+                </span>
+                <span className="font-poppins text-pupcleGray text-[16px]">
+                  @{currentUser.username}
+                </span>
+              </div>
+            </div>
+            <div className="flex h-[calc(100%-325px-9px)] min-h-[242px] w-full flex-col items-center justify-center pt-5 pb-10">
+              <div className="bg-pupcleLightLightGray h-[117px] w-[474px] rounded-[24px] border-none">
+                <Button
+                  href="/account/default-info"
+                  className="flex h-[58px] w-full flex-row items-center justify-between rounded-t-[24px] rounded-b-none border-none bg-transparent px-[22px]"
+                >
+                  <span className="font-poppins mt-[2px] text-[20px] text-black">
+                    기본 정보 수정하기
+                  </span>
+                  <img
+                    src="/caret_icon_light_gray.png"
+                    className="h-5 w-[13px]"
+                  />
+                </Button>
+                <div className="bg-pupcleLightGray h-[1px] w-full border-none p-0"></div>
+                <Button className="!hover:border-pupcleLightGray rounded-t-0 flex h-[58px] w-full flex-row items-center justify-between rounded-b-[24px] border-none bg-transparent px-[22px]">
+                  <span className="font-poppins mt-[2px] text-[20px] text-black">
+                    세부 정보 수정하기
+                  </span>
+                  <img
+                    src="/caret_icon_light_gray.png"
+                    className="h-5 w-[13px]"
+                  />
+                </Button>
+              </div>
+              <Button className="bg-pupcleLightLightGray mt-7 flex h-[58px] w-[474px] flex-row items-center justify-between rounded-[20px] border-none px-[22px]">
+                <span className="font-poppins mt-[2px] text-[20px] text-black">
+                  내가 쓴 리뷰 모아보기
+                </span>
+                <img
+                  src="/caret_icon_light_gray.png"
+                  className="h-5 w-[13px]"
+                />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </SharedLayout>
   );
 };
 
