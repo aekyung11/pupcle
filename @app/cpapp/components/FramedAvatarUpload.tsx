@@ -2,7 +2,7 @@ import "fastestsmallesttextencoderdecoder";
 
 import { FormFile } from "@app/componentlib";
 import { Text } from "@app/cpapp/design/typography";
-import { View } from "@app/cpapp/design/view";
+import { Button, Square, View } from "@app/cpapp/design/view";
 import {
   AllowedUploadContentType,
   useCreateUploadUrlMutation,
@@ -21,11 +21,12 @@ import Uppy from "@uppy/core";
 import type { UppyEventMap } from "@uppy/core/types";
 import axios from "axios";
 import { cva, type VariantProps } from "class-variance-authority";
+import clsx from "clsx";
 import * as ImagePicker from "expo-image-picker";
+import { StyledComponent } from "nativewind";
 import React, { useCallback, useEffect, useState } from "react";
 import slugify from "slugify";
 import { SolitoImage } from "solito/image";
-import { Button, Square } from "tamagui";
 
 export function getUid(name: string) {
   const randomHex = () => Math.floor(Math.random() * 16777215).toString(16);
@@ -50,6 +51,7 @@ const ALLOWED_UPLOAD_CONTENT_TYPES_ARRAY = Object.keys(
 const cvaFramedAvatarUpload = cva("framed-avatar-upload", {
   variants: {
     size: {
+      xsmall: [],
       small: [],
       medium: [],
     },
@@ -67,6 +69,7 @@ const cvaFramedAvatarUpload = cva("framed-avatar-upload", {
 const cvaAvatarImage = cva("avatar-image object-cover object-top border-none", {
   variants: {
     size: {
+      xsmall: ["w-[103px] h-[103px]"],
       small: ["w-[140px] h-[140px]"],
       medium: ["w-[200px] h-[200px]"],
     },
@@ -84,6 +87,7 @@ const cvaAvatarImage = cva("avatar-image object-cover object-top border-none", {
 const cvaPlusIcon = cva(["absolute", "z-10", "w-[60px]"], {
   variants: {
     size: {
+      xsmall: ["right-10 bottom-10"],
       small: ["right-10 bottom-10"],
       medium: ["right-[70px] bottom-[70px]"],
     },
@@ -194,39 +198,49 @@ export function FramedAvatarUpload({
   return (
     // @ts-ignore
     <View
-      className={cvaFramedAvatarUpload({ size, mode, className })}
+      className={
+        "flex h-[130px] w-[103px] border " +
+        cvaFramedAvatarUpload({ size, mode, className })
+      }
       {...props}
     >
-      <View style={{ position: "relative" }}>
+      <View
+        className={clsx({
+          "h-[103px]": size === "xsmall",
+        })}
+        style={{ position: "relative" }}
+      >
         {uppyIsLoading || isUploading ? (
           <Loader2 />
         ) : avatarUrl ? (
-          <Square
-            className={
-              "framed-uploaded-image " + cvaAvatarImage({ size, mode })
-            }
-            size="$10"
-          >
-            <SolitoImage
-              src={avatarUrl}
-              alt="avatar"
-              crossOrigin="anonymous"
-              fill
-            />
-          </Square>
+          <StyledComponent
+            component={SolitoImage}
+            className={cvaAvatarImage({ size, mode })}
+            contentFit="cover"
+            src={avatarUrl}
+            alt="avatar"
+            crossOrigin="anonymous"
+            fill
+          />
         ) : (
-          <Square className={cvaAvatarImage({ size, mode })} size="$10">
-            <SolitoImage
-              src={mode === "gallery" ? galleryButton : profileDefaultAvatar}
-              alt="image"
-              fill
-            />
-          </Square>
+          <StyledComponent
+            component={SolitoImage}
+            className={cvaAvatarImage({ size, mode })}
+            src={mode === "gallery" ? galleryButton : profileDefaultAvatar}
+            alt="avatar-placeholder"
+            crossOrigin="anonymous"
+            fill
+          />
         )}
         {!disabled && mode !== "gallery" && (
-          <Square className={cvaPlusIcon({ size, mode })} size="$10">
-            <SolitoImage src={plusIcon} alt="plus" fill />
-          </Square>
+          <StyledComponent
+            component={SolitoImage}
+            className={cvaPlusIcon({ size, mode })}
+            src={plusIcon}
+            alt="avatar-placeholder"
+            crossOrigin="anonymous"
+            fill
+          />
         )}
       </View>
       {!disabled && uppy && (

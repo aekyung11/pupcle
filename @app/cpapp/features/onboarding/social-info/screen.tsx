@@ -42,6 +42,7 @@ const SocialInfoScreenFormInner: FC<SocialInfoScreenFormInnerProps> = ({
     <>
       <View className="flex flex-col items-center">
         <FramedAvatarUpload
+          size="xsmall"
           avatarUrl={values.avatarUrl}
           disabled={false}
           onUpload={onUpload}
