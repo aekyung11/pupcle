@@ -123,7 +123,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
         <View className="w-full items-center justify-center">
           <Select value={val} onValueChange={setVal}>
             <View className="relative flex w-full flex-row items-center justify-center">
-              <View className="relative flex w-[117px] flex-row">
+              <View className="relative flex w-[117px] flex-row justify-center">
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"

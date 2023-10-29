@@ -77,16 +77,17 @@ const PetProfileScreenFormInner: FC<PetProfileScreenFormInnerProps> = ({
       </View>
       <View style={styles.inputRow} className="flex flex-row justify-between">
         <Text style={styles.normalText}>생년월일</Text>
-        <Tooltip>
-          {/* <Button icon={<HelpCircle size={16} />}></Button> */}
-        </Tooltip>
+        {/* <Field
+          style={styles.input}
+          component={CustomInput}
+          name="dob"
+          placeholder="ex) 2020-01-01"
+          data-cy="petprofilepage-input-dob"
+        /> */}
         <DateTimePicker type="date" date={values.dob} onChange={onDobChange} />
       </View>
       <View style={styles.inputRow} className="flex flex-row justify-between">
         <Text style={styles.normalText}>몸무게</Text>
-        <Tooltip>
-          {/* <Button icon={<HelpCircle size={16} />}></Button> */}
-        </Tooltip>
         <Field
           style={styles.input}
           component={CustomInput}
@@ -324,11 +325,15 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingHorizontal: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "transparent",
     borderRadius: 24,
+    borderColor: "#7FB3E8",
+    borderWidth: 1,
+    borderStyle: "solid",
     height: 48,
     width: 220,
     fontFamily: "'Poppins'",
+    position: "relative",
     fontSize: 16,
     marginTop: 2,
   },

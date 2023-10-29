@@ -1,4 +1,5 @@
 import { Calendar, Clock } from "@tamagui/lucide-icons";
+import { View } from "moti";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // https://github.com/mmazzarolo/react-native-modal-datetime-picker
@@ -39,36 +40,43 @@ const DateTimePicker = function DatePicker(props: datePickerProps) {
   const type = props.type || "date";
 
   return (
-    <Pressable onPress={() => setShow(true)}>
-      <XStack alignItems={"center"} justifyContent="flex-end">
-        <Input pointerEvents="none" editable={false} flexGrow={1}>
-          {type === "date" && date?.toLocaleDateString()}
+    <View className="border-pupcleBlue flex h-12 w-[220px] flex-row items-center justify-between rounded-full border-[1px]">
+      <Pressable onPress={() => setShow(true)}>
+        <View className="flex w-[220px] flex-row justify-between px-5">
+          <Input
+            unstyled
+            className="text-[#8F9092]"
+            pointerEvents="none"
+            editable={false}
+          >
+            {type === "date" && date?.toLocaleDateString()}
 
-          {type === "time" && date?.toLocaleTimeString()}
-        </Input>
+            {type === "time" && date?.toLocaleTimeString()}
+          </Input>
 
-        <XStack paddingRight={10} position="absolute">
-          {type === "date" && <Calendar />}
+          <View>
+            {type === "date" && <Calendar color="#8F9092" size={16} />}
 
-          {type === "time" && <Clock />}
-        </XStack>
-      </XStack>
+            {type === "time" && <Clock />}
+          </View>
+        </View>
 
-      <DateTimePickerModal
-        cancelTextIOS={props.cancelText}
-        confirmTextIOS={props.confirmText}
-        date={date}
-        isVisible={show}
-        mode={type}
-        // display="inline"
-        accentColor={props.accentColor}
-        textColor={props.textColor}
-        buttonTextColorIOS={props.buttonTextColorIOS}
-        onChange={props.onChange}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      />
-    </Pressable>
+        <DateTimePickerModal
+          cancelTextIOS={props.cancelText}
+          confirmTextIOS={props.confirmText}
+          date={date}
+          isVisible={show}
+          mode={type}
+          // display="inline"
+          accentColor={props.accentColor}
+          textColor={props.textColor}
+          buttonTextColorIOS={props.buttonTextColorIOS}
+          onChange={props.onChange}
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+        />
+      </Pressable>
+    </View>
   );
 };
 
