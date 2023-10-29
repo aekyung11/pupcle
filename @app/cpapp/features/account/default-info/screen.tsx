@@ -36,14 +36,19 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
     setEditingBasicInfo(false);
   }, []);
 
-  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
-    useSocialInfoForm(
-      currentUser.id,
-      postResult,
-      currentUser.nickname,
-      currentUser.username,
-      currentUser.avatarUrl
-    );
+  const {
+    submitLabel: _submitLabel,
+    validationSchema,
+    initialValues,
+    handleSubmit,
+    error,
+  } = useSocialInfoForm(
+    currentUser.id,
+    postResult,
+    currentUser.nickname,
+    currentUser.username,
+    currentUser.avatarUrl
+  );
 
   const code = getCodeFromError(error);
 
@@ -54,18 +59,17 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
         initialValues={initialValues}
         onSubmit={handleSubmit}
       >
-        {({ values, setFieldValue }) => (
+        {({ handleSubmit }) => (
           <View className="w-full flex-col items-center">
             <Circle size="$10">
               <SolitoImage src={defaultAvatar} alt="" fill />
               {/* <Avatar.Image src={defaultAvatar} resizeMode="contain" /> */}
             </Circle>
-            {/* TODO: made framedavatarupload works */}
             <View className="mt-[72px] w-full">
               <View>
                 <Text className="font-poppins ml-5 text-[16px]">닉네임</Text>
                 <Field
-                  disabled={!editingBasicInfo}
+                  editable={editingBasicInfo}
                   style={editingBasicInfo ? styles.inputEdit : styles.input}
                   // className="border-pupcleBlue h-12 w-full rounded-full"
                   component={CustomInput}
@@ -78,7 +82,7 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
                   사용자 이름
                 </Text>
                 <Field
-                  disabled={!editingBasicInfo}
+                  editable={editingBasicInfo}
                   style={editingBasicInfo ? styles.inputEdit : styles.input}
                   component={CustomInput}
                   name="username"
@@ -89,7 +93,8 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
             <View className="mt-10 flex w-full flex-row justify-end">
               {editingBasicInfo ? (
                 <Button
-                  onClick={() => setEditingBasicInfo(true)}
+                  // @ts-ignore
+                  onPress={handleSubmit}
                   unstyled
                   // title={submitLabel}
                   className="bg-pupcleBlue flex h-12 w-[120px] items-center justify-center rounded-full border-none"
@@ -100,7 +105,7 @@ const DefaultInfoScreenInnerInner: FC<DefaultInfoScreenInnerInnerProps> = ({
                 </Button>
               ) : (
                 <Button
-                  onClick={() => setEditingBasicInfo(true)}
+                  onPress={() => setEditingBasicInfo(true)}
                   unstyled
                   // title={submitLabel}
                   className="flex h-12 w-[120px] items-center justify-center rounded-full border-none bg-[#D9E8F8]"
