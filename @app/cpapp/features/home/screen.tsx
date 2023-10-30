@@ -69,7 +69,7 @@ enum Tab {
 
 type StatusTabProps = {
   tab: Tab;
-  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | "">>;
   privateRecord?: HomePage_PrivateDailyRecordFragment;
   sharedRecord?: HomePage_SharedDailyRecordFragment;
   userId: string;
@@ -89,7 +89,7 @@ function StatusTab({
 }: StatusTabProps) {
   return (
     <View className="">
-      <Button onPress={() => setSelectedTab(undefined)} unstyled>
+      <Button onPress={() => setSelectedTab("")} unstyled>
         <StyledComponent
           component={SolitoImage}
           // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
@@ -187,8 +187,8 @@ interface HomeScreenInnerProps {
   day: string;
   refetch: () => Promise<any>;
   pet: HomePage_PetFragment;
-  selectedTab: Tab | undefined;
-  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+  selectedTab: Tab | "";
+  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | "">>;
 }
 
 const HomeScreenInner: FC<HomeScreenInnerProps> = ({
@@ -352,16 +352,16 @@ export function HomeScreen() {
   const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
     (record) => record.day === today
   );
-  const [selectedTab, setSelectedTab] = useState<Tab | undefined>();
+  const [selectedTab, setSelectedTab] = useState<Tab | "">("");
 
   useEffect(() => {
-    if (selectedTab === undefined) {
+    if (selectedTab === "") {
       const completeStatusCount =
         todaySharedDailyRecord?.completeStatusCount || 0;
 
       const initialTab =
         completeStatusCount === 0
-          ? undefined
+          ? ""
           : Object.values(Tab)[completeStatusCount - 1];
 
       setSelectedTab(initialTab);
@@ -399,8 +399,8 @@ interface HomePageInnerProps {
   day: string;
   refetch: () => Promise<any>;
   pet: HomePage_PetFragment;
-  selectedTab: Tab | undefined;
-  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+  selectedTab: Tab | "";
+  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | "">>;
 }
 
 const HomePageInner: FC<HomePageInnerProps> = ({
