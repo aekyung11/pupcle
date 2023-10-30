@@ -88,8 +88,12 @@ function StatusTab({
   pet,
 }: StatusTabProps) {
   return (
-    <View className="">
-      <Button onPress={() => setSelectedTab("")} unstyled>
+    <View className="relative">
+      <Button
+        onPress={() => setSelectedTab("")}
+        unstyled
+        className="absolute -top-[20px] right-2"
+      >
         <StyledComponent
           component={SolitoImage}
           // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
@@ -166,7 +170,7 @@ function StatusTab({
         <View className="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"></View>
       </View>
 
-      <View className="flex w-full flex-row justify-end">
+      <View className="mt-4 flex w-full flex-row justify-end">
         <Button
           unstyled
           className="bg-pupcleBlue flex h-12 w-[100px] items-center justify-center rounded-full"
