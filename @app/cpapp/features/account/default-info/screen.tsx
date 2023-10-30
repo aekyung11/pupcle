@@ -48,7 +48,7 @@ const DefaultInfoScreenInnerInnerForm: FC<
         disabled={!editingBasicInfo}
         onUpload={onUpload}
       />
-      <View className="mt-[72px] w-full">
+      <View className="mt-[48px] w-full">
         <View>
           <Text className="font-poppins ml-5 text-[16px]">닉네임</Text>
           <Field
