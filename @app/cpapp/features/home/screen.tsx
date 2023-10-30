@@ -354,20 +354,6 @@ export function HomeScreen() {
   );
   const [selectedTab, setSelectedTab] = useState<Tab | "">("");
 
-  useEffect(() => {
-    if (selectedTab === "") {
-      const completeStatusCount =
-        todaySharedDailyRecord?.completeStatusCount || 0;
-
-      const initialTab =
-        completeStatusCount === 0
-          ? ""
-          : Object.values(Tab)[completeStatusCount - 1];
-
-      setSelectedTab(initialTab);
-    }
-  }, [selectedTab, todaySharedDailyRecord]);
-
   return (
     <SharedLayout
       title="home"
