@@ -67,6 +67,119 @@ enum Tab {
   HEALTH = "health",
 }
 
+type StatusTabProps = {
+  tab: Tab;
+  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+  privateRecord?: HomePage_PrivateDailyRecordFragment;
+  sharedRecord?: HomePage_SharedDailyRecordFragment;
+  userId: string;
+  day: string;
+  refetch: () => Promise<any>;
+  pet: HomePage_PetFragment;
+};
+
+function StatusTab({
+  tab,
+  setSelectedTab,
+  privateRecord,
+  userId,
+  day,
+  refetch,
+  pet,
+}: StatusTabProps) {
+  return (
+    <View className="">
+      <Button onPress={() => setSelectedTab(undefined)} unstyled>
+        <StyledComponent
+          component={SolitoImage}
+          // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
+          className="h-[14px] w-[14px]"
+          src={closeIcon}
+          alt=""
+          // fill
+        />
+      </Button>
+      <View>
+        <Text className="font-poppins text-center text-[24px] font-semibold">
+          {tab === Tab.SLEEP
+            ? "잠을 잘 잤나요?"
+            : tab === Tab.DIET
+            ? "밥을 잘 먹었나요?"
+            : tab === Tab.WALKING
+            ? "오늘 산책을 했나요?"
+            : tab === Tab.PLAY
+            ? "오늘 잘 놀았나요?"
+            : tab === Tab.BATHROOM
+            ? "화장실을 잘 갔나요?"
+            : "오늘의 건강은 어떤가요?"}
+        </Text>
+        <Text className="font-poppins mt-3 text-center text-[12px] text-black">
+          기록한 모든 내용은{"\n"}
+          캘린더에서 확인할 수 있어요.
+        </Text>
+        <Text className="font-poppins my-6 text-center text-[16px] font-bold">
+          상태를 선택해주세요.
+        </Text>
+        <View className="flex w-full flex-row justify-center">
+          <RadioGroup className="flex h-[50px] w-[220px] flex-row justify-between">
+            <RadioGroup.Item value={DailyRecordStatus.Good} unstyled>
+              <StyledComponent
+                component={SolitoImage}
+                className="h-[50px] w-[95.86px]"
+                src={good}
+                alt=""
+                // fill
+              />
+              <RadioGroup.Indicator className="absolute" unstyled>
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[50px] w-[95.86px]"
+                  src={goodChecked}
+                  alt=""
+                  // fill
+                />
+              </RadioGroup.Indicator>
+            </RadioGroup.Item>
+            <RadioGroup.Item value={DailyRecordStatus.Bad} unstyled>
+              <StyledComponent
+                component={SolitoImage}
+                className="h-[50px] w-[95.86px]"
+                src={bad}
+                alt=""
+                // fill
+              />
+              <RadioGroup.Indicator className="absolute" unstyled>
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[50px] w-[95.86px]"
+                  src={badChecked}
+                  alt=""
+                  // fill
+                />
+              </RadioGroup.Indicator>
+            </RadioGroup.Item>
+          </RadioGroup>
+        </View>
+        <Text className="font-poppins mt-10 text-center text-[16px] font-bold">
+          자세한 설명을 적어보세요.
+        </Text>
+        <View className="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"></View>
+      </View>
+
+      <View className="flex w-full flex-row justify-end">
+        <Button
+          unstyled
+          className="bg-pupcleBlue flex h-12 w-[100px] items-center justify-center rounded-full"
+        >
+          <Text className="font-poppins text-[16px] font-bold text-white">
+            저장하기
+          </Text>
+        </Button>
+      </View>
+    </View>
+  );
+}
+
 interface HomeScreenInnerProps {
   currentUser: SharedLayout_UserFragment;
   privateRecord?: HomePage_PrivateDailyRecordFragment;
@@ -122,81 +235,101 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
       <StyledComponent
         component={Tabs}
         value={selectedTab}
-        // @ts-ignore
-        onValueChange={setSelectedTab}
+        onValueChange={(value) => setSelectedTab(value as Tab)}
         className="mt-[30px] flex h-[540px] w-full flex-col items-center justify-between rounded-[30px] bg-white px-5 py-[50px]"
       >
-        <View className="w-full items-center justify-center">
-          <Select value={val} onValueChange={setVal}>
-            <View className="relative flex w-full flex-row items-center justify-center">
-              <View className="relative flex w-[117px] flex-row justify-center">
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  className="font-poppins max-w-[80px] text-[24px] font-semibold text-black"
-                >
-                  {currentUserFirstPet.name}
-                </Text>
-                <Text className="font-poppins text-[24px] font-semibold text-black">
-                  {" "}
-                  ·{" "}
-                </Text>
+        {selectedTab ? (
+          <>
+            {Object.values(Tab).map((tab) => (
+              <Tabs.Content value={tab} key={tab}>
+                <StatusTab
+                  tab={tab}
+                  setSelectedTab={setSelectedTab}
+                  privateRecord={privateRecord}
+                  sharedRecord={sharedRecord}
+                  userId={currentUser.id}
+                  day={day}
+                  refetch={refetch}
+                  pet={pet}
+                />
+              </Tabs.Content>
+            ))}
+          </>
+        ) : (
+          <>
+            <View className="w-full items-center justify-center">
+              <Select value={val} onValueChange={setVal}>
+                <View className="relative flex w-full flex-row items-center justify-center">
+                  <View className="relative flex w-[117px] flex-row justify-center">
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      className="font-poppins max-w-[80px] text-[24px] font-semibold text-black"
+                    >
+                      {currentUserFirstPet.name}
+                    </Text>
+                    <Text className="font-poppins text-[24px] font-semibold text-black">
+                      {" "}
+                      ·{" "}
+                    </Text>
+                    <StyledComponent
+                      component={SolitoImage}
+                      className="h-7 w-5"
+                      src={
+                        currentUserFirstPet.gender === PetGender.M
+                          ? maleIcon
+                          : femaleIcon
+                      }
+                      alt=""
+                      // fill
+                    />
+                  </View>
+                </View>
+                <View className="absolute right-7 top-[10px]">
+                  <Select.Trigger unstyled asChild>
+                    <StyledComponent
+                      component={SolitoImage}
+                      className="h-[9px] w-[13px]"
+                      src={caret}
+                      alt=""
+                      // fill
+                    />
+                  </Select.Trigger>
+                </View>
+                <Select.Content></Select.Content>
+              </Select>
+              <View className="mt-[6px] flex h-[21px] flex-row items-center">
                 <StyledComponent
                   component={SolitoImage}
-                  className="h-7 w-5"
-                  src={
-                    currentUserFirstPet.gender === PetGender.M
-                      ? maleIcon
-                      : femaleIcon
-                  }
+                  className="h-[21px] w-[21px]"
+                  src={cake}
                   alt=""
                   // fill
                 />
+                <Text className="font-poppins mt-[6px] ml-[7px] text-[12px] text-black">
+                  {currentUserFirstPet.dob}
+                </Text>
+              </View>
+              <View className="mt-[30px]">
+                <Text className="text-center text-[16px] leading-5">
+                  {currentUserFirstPet.name}의 오늘은 어땠나요?
+                  {"\n"}
+                  아래 버튼을 눌러 기록해 보세요.
+                </Text>
               </View>
             </View>
-            <View className="absolute right-7 top-[10px]">
-              <Select.Trigger unstyled asChild>
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[9px] w-[13px]"
-                  src={caret}
-                  alt=""
-                  // fill
-                />
-              </Select.Trigger>
-            </View>
-            <Select.Content></Select.Content>
-          </Select>
-          <View className="mt-[6px] flex h-[21px] flex-row items-center">
-            <StyledComponent
-              component={SolitoImage}
-              className="h-[21px] w-[21px]"
-              src={cake}
-              alt=""
-              // fill
+            <HomePageInner
+              currentUser={currentUser}
+              privateRecord={privateRecord}
+              sharedRecord={sharedRecord}
+              day={day}
+              refetch={refetch}
+              pet={pet}
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
             />
-            <Text className="font-poppins mt-[6px] ml-[7px] text-[12px] text-black">
-              {currentUserFirstPet.dob}
-            </Text>
-          </View>
-          <View className="mt-[30px]">
-            <Text className="text-center text-[16px] leading-5">
-              {currentUserFirstPet.name}의 오늘은 어땠나요?
-              {"\n"}
-              아래 버튼을 눌러 기록해 보세요.
-            </Text>
-          </View>
-        </View>
-        <HomePageInner
-          currentUser={currentUser}
-          privateRecord={privateRecord}
-          sharedRecord={sharedRecord}
-          day={day}
-          refetch={refetch}
-          pet={pet}
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
+          </>
+        )}
       </StyledComponent>
     </View>
   );
@@ -542,94 +675,6 @@ const HomePageInner: FC<HomePageInnerProps> = ({
         {/* </Tabs> */}
         {/* </Dialog> */}
       </View>
-
-      {/* modal */}
-      {/* <View className="absolute -bottom-[50px] z-20 mx-[40px] flex h-[540px] w-full flex-col justify-between rounded-[30px] bg-white px-5 pb-5 pt-[50px]">
-        <StyledComponent
-          component={SolitoImage}
-          className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
-          src={closeIcon}
-          alt=""
-          // fill
-        />
-        <View>
-          <Text className="font-poppins text-center text-[24px] font-semibold">
-            {selectedTab === Tab.SLEEP
-              ? "잠을 잘 잤나요?"
-              : selectedTab === Tab.DIET
-              ? "밥을 잘 먹었나요?"
-              : selectedTab === Tab.WALKING
-              ? "오늘 산책을 했나요?"
-              : selectedTab === Tab.PLAY
-              ? "오늘 잘 놀았나요?"
-              : selectedTab === Tab.BATHROOM
-              ? "화장실을 잘 갔나요?"
-              : "오늘의 건강은 어떤가요?"}
-          </Text>
-          <Text className="font-poppins mt-3 text-center text-[12px] text-black">
-            기록한 모든 내용은{"\n"}
-            캘린더에서 확인할 수 있어요.
-          </Text>
-          <Text className="font-poppins my-6 text-center text-[16px] font-bold">
-            상태를 선택해주세요.
-          </Text>
-          <View className="flex w-full flex-row justify-center">
-            <RadioGroup className="flex h-[50px] w-[220px] flex-row justify-between">
-              <RadioGroup.Item value={DailyRecordStatus.Good} unstyled>
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[50px] w-[95.86px]"
-                  src={good}
-                  alt=""
-                  // fill
-                />
-                <RadioGroup.Indicator className="absolute" unstyled>
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[50px] w-[95.86px]"
-                    src={goodChecked}
-                    alt=""
-                    // fill
-                  />
-                </RadioGroup.Indicator>
-              </RadioGroup.Item>
-              <RadioGroup.Item value={DailyRecordStatus.Bad} unstyled>
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[50px] w-[95.86px]"
-                  src={bad}
-                  alt=""
-                  // fill
-                />
-                <RadioGroup.Indicator className="absolute" unstyled>
-                  <StyledComponent
-                    component={SolitoImage}
-                    className="h-[50px] w-[95.86px]"
-                    src={badChecked}
-                    alt=""
-                    // fill
-                  />
-                </RadioGroup.Indicator>
-              </RadioGroup.Item>
-            </RadioGroup>
-          </View>
-          <Text className="font-poppins mt-10 text-center text-[16px] font-bold">
-            자세한 설명을 적어보세요.
-          </Text>
-          <View className="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"></View>
-        </View>
-
-        <View className="flex w-full flex-row justify-end">
-          <Button
-            unstyled
-            className="bg-pupcleBlue flex h-12 w-[100px] items-center justify-center rounded-full"
-          >
-            <Text className="font-poppins text-[16px] font-bold text-white">
-              저장하기
-            </Text>
-          </Button>
-        </View>
-      </View> */}
     </View>
   );
 };
