@@ -400,8 +400,6 @@ const HomePageInner: FC<HomePageInnerProps> = ({
   setSelectedTab,
 }) => {
   const completeStatusCount = sharedRecord?.completeStatusCount || 0;
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  // const [open, setOpen] = useState(false);
   return (
     <View className="flex w-full items-center justify-center">
       <View className="relative h-[270px] w-[257.86px]">
@@ -432,234 +430,183 @@ const HomePageInner: FC<HomePageInnerProps> = ({
           alt=""
           // fill
         />
-        {/* <Dialog
-        modal
-        onOpenChange={(open) => {
-          setOpen(open);
-        }}
-        > */}
-        {/* <Tabs
-            flex={1}
-            className="absolute h-[270px] w-[257.86px]"
-            value={selectedTab}
-            onValueChange={(value) => setSelectedTab(value as Tab)}
-          > */}
-        <Tabs.List
-          style={{
-            position: "absolute",
-            height: "100%",
-            width: "100%",
-          }}
-          unstyled
-        >
-          <View className="relative h-full w-full">
-            <Tabs.Tab value={Tab.SLEEP} key={Tab.SLEEP} unstyled>
-              {/* <Dialog.Trigger key={Tab.SLEEP} asChild> */}
-              {/* <Button
-                key={Tab.SLEEP}
-                className={clsx({ complete: completeStatusCount >= 1 })}
-                unstyled
-                asChild
-                onClick={() => setModalOpen(true)}
-              > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx(
-                  "absolute bottom-[50%] left-[168px] h-[90px] w-[90px]",
-                  {
-                    "filter-none": completeStatusCount >= 1,
-                  }
-                )}
-                src={sleep}
-                // src={petDefault}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-              {/* </Dialog.Trigger> */}
-              {/* <Dialog.Portal>
-            <Dialog.Overlay />
-            <Dialog.Content
-              key={Tab.SLEEP}
-              className="h-[300px] w-[200px] bg-white"
-            >
-              abc
-            </Dialog.Content>
-          </Dialog.Portal> */}
-            </Tabs.Tab>
+        <Tabs.List unstyled>
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 168,
+              height: 90,
+              width: 90,
+              top: -135 - 90,
+            }}
+            value={Tab.SLEEP}
+            key={Tab.SLEEP}
+            unstyled
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 1,
+              })}
+              src={sleep}
+              // src={petDefault}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
 
-            <Tabs.Tab
-              value={Tab.DIET}
-              key={Tab.DIET}
-              unstyled
-              disabled={completeStatusCount < 1}
-            >
-              {/* <Button
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 90,
+              width: 90,
+              height: 90,
+              top: -270,
+            }}
+            value={Tab.DIET}
             key={Tab.DIET}
-            className={clsx({ complete: completeStatusCount >= 2 })}
+            unstyled
             disabled={completeStatusCount < 1}
-            unstyled
-            asChild
-          > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx("absolute left-[90px] h-[90px] w-[90px]", {
-                  "filter-none": completeStatusCount >= 2,
-                })}
-                src={diet}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-            </Tabs.Tab>
-            <Tabs.Tab
-              value={Tab.WALKING}
-              key={Tab.WALKING}
-              unstyled
-              disabled={completeStatusCount < 2}
-            >
-              {/* <Button
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 2,
+              })}
+              src={diet}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 12,
+              height: 90,
+              width: 90,
+              top: -135 - 90,
+            }}
+            value={Tab.WALKING}
             key={Tab.WALKING}
-            className={clsx({ complete: completeStatusCount >= 3 })}
+            unstyled
             disabled={completeStatusCount < 2}
-            unstyled
-            asChild
-          > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx(
-                  "absolute bottom-[50%] left-[12px] h-[90px] w-[90px]",
-                  {
-                    "filter-none": completeStatusCount >= 3,
-                  }
-                )}
-                src={walking}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-            </Tabs.Tab>
-            <Tabs.Tab
-              value={Tab.PLAY}
-              key={Tab.PLAY}
-              unstyled
-              disabled={completeStatusCount < 3}
-            >
-              {/* <Button
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 3,
+              })}
+              src={walking}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 12,
+              height: 90,
+              width: 90,
+              top: -135,
+            }}
+            value={Tab.PLAY}
             key={Tab.PLAY}
-            className={clsx({ complete: completeStatusCount >= 4 })}
+            unstyled
             disabled={completeStatusCount < 3}
-            unstyled
-            asChild
-          > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx(
-                  "absolute top-[50%] left-[12px] h-[90px] w-[90px]",
-                  {
-                    "filter-none": completeStatusCount >= 4,
-                  }
-                )}
-                src={play}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-            </Tabs.Tab>
-            <Tabs.Tab
-              value={Tab.BATHROOM}
-              key={Tab.BATHROOM}
-              unstyled
-              disabled={completeStatusCount < 4}
-            >
-              {/* <Button
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 4,
+              })}
+              src={play}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 90,
+              height: 90,
+              width: 90,
+              top: -90,
+            }}
+            value={Tab.BATHROOM}
             key={Tab.BATHROOM}
-            className={clsx({ complete: completeStatusCount >= 5 })}
+            unstyled
             disabled={completeStatusCount < 4}
-            unstyled
-            asChild
-          > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx(
-                  "absolute bottom-0 left-[90px] h-[90px] w-[90px]",
-                  {
-                    "filter-none": completeStatusCount >= 5,
-                  }
-                )}
-                src={bathroom}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-            </Tabs.Tab>
-            <Tabs.Tab
-              value={Tab.HEALTH}
-              key={Tab.HEALTH}
-              unstyled
-              disabled={completeStatusCount < 5}
-            >
-              {/* <Button
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 5,
+              })}
+              src={bathroom}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
+          <Tabs.Tab
+            style={{
+              position: "absolute",
+              left: 168,
+              height: 90,
+              width: 90,
+              top: -135,
+            }}
+            value={Tab.HEALTH}
             key={Tab.HEALTH}
-            className={clsx({ complete: completeStatusCount >= 6 })}
-            disabled={completeStatusCount < 5}
             unstyled
-            asChild
-          > */}
-              <StyledComponent
-                style={{
-                  shadowColor: "black",
-                  shadowOpacity: 0.25,
-                  shadowOffset: { width: 2, height: 2 },
-                  shadowRadius: 1,
-                }}
-                component={SolitoImage}
-                className={clsx(
-                  "absolute top-[50%] left-[168px] h-[90px] w-[90px]",
-                  {
-                    "filter-none": completeStatusCount >= 6,
-                  }
-                )}
-                src={health}
-                alt=""
-                // fill
-              />
-              {/* </Button> */}
-            </Tabs.Tab>
-          </View>
+            disabled={completeStatusCount < 5}
+          >
+            <StyledComponent
+              style={{
+                shadowColor: "black",
+                shadowOpacity: 0.25,
+                shadowOffset: { width: 2, height: 2 },
+                shadowRadius: 1,
+              }}
+              component={SolitoImage}
+              className={clsx({
+                "filter-none": completeStatusCount >= 6,
+              })}
+              src={health}
+              alt=""
+              fill
+            />
+          </Tabs.Tab>
         </Tabs.List>
-        {/* </Tabs> */}
-        {/* </Dialog> */}
       </View>
     </View>
   );
