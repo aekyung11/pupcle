@@ -189,11 +189,12 @@ function StatusTab({
                 자세한 설명을 적어보세요.
               </Text>
               <Field
-                inputClassName="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"
+                inputClassName="mt-5 h-[140px] w-fit rounded-[20px] bg-[#F5F5F5] px-4 py-5"
                 component={CustomInput}
                 multiline={true}
                 numberOfLines={6}
                 name="comment"
+                placeholder="내용을 입력하세요.&#13;&#10;입력하지 않아도 결과는 저장됩니다."
               />
             </View>
 
@@ -488,7 +489,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 1,
+                "hidden filter-none": completeStatusCount >= 1,
               })}
               src={sleep}
               // src={petDefault}
@@ -519,7 +520,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 2,
+                "hidden filter-none": completeStatusCount >= 2,
               })}
               src={diet}
               alt=""
@@ -548,7 +549,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 3,
+                "hidden filter-none": completeStatusCount >= 3,
               })}
               src={walking}
               alt=""
@@ -577,7 +578,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 4,
+                "hidden filter-none": completeStatusCount >= 4,
               })}
               src={play}
               alt=""
@@ -606,7 +607,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 5,
+                "hidden filter-none": completeStatusCount >= 5,
               })}
               src={bathroom}
               alt=""
@@ -635,7 +636,7 @@ const HomePageInner: FC<HomePageInnerProps> = ({
               }}
               component={SolitoImage}
               className={clsx({
-                "filter-none": completeStatusCount >= 6,
+                "hidden filter-none": completeStatusCount >= 6,
               })}
               src={health}
               alt=""
