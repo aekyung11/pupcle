@@ -13,8 +13,10 @@
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "fastestsmallesttextencoderdecoder": "1.0.22",
+    "lodash": "^4.17.21",
     "moti": "latest",
     "nativewind": "2.0.11",
+    "react-native-calendars": "^1.1301.0",
     "react-native-svg": "^13.14.0",
     "solito": "4.0.1",
     "zeego": "^1.7.2"

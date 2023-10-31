@@ -1,12 +1,18 @@
 import CustomInput from "@app/cpapp/components/CustomInput";
+import { Text } from "@app/cpapp/design/typography";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { isSafe } from "@app/cpapp/utils/utils";
 import {
+  FriendsAndPets_UserEdgeFragment,
   HomePage_PetFragment,
   HomePage_PrivateDailyRecordFragment,
   HomePage_SharedDailyRecordFragment,
+  SharedLayout_PetFragment,
   SharedLayout_UserFragment,
+  useCalendarPageQuery,
+  useCalendarRecordsQuery,
+  useFriendsAndPetsQuery,
   useHomePageQuery,
   useSharedQuery,
 } from "@app/graphql";
@@ -17,35 +23,77 @@ import defaultAvatar from "@app/server/public/calendar_friends_avatar_default.pn
 import caret from "@app/server/public/caret_icon_blk.png";
 import hamburger from "@app/server/public/hamburger_blue.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
-import { format } from "date-fns";
+import { endOfMonth, format, isAfter, isBefore, startOfMonth } from "date-fns";
 import { Field, Formik } from "formik";
+import { keyBy } from "lodash";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+import { Calendar } from "react-native-calendars";
 import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link } from "solito/link";
 import { useRouter } from "solito/navigation";
 import { Button, Circle, Tabs, useTheme } from "tamagui";
 
+const pupcleBeginningStr = "2023-01-01";
+const pupcleBeginningDate = startOfMonth(new Date("2023-01-01T14:00:00"));
+
 interface CalendarScreenInnerProps {
-  currentUser: SharedLayout_UserFragment;
-  privateRecord?: HomePage_PrivateDailyRecordFragment;
-  sharedRecord?: HomePage_SharedDailyRecordFragment;
-  day: string;
-  refetch: () => Promise<any>;
-  pet: HomePage_PetFragment;
+  currentUserFirstPet: SharedLayout_PetFragment;
+  friendEdges: FriendsAndPets_UserEdgeFragment[];
 }
 
 const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
-  currentUser,
-  privateRecord,
-  sharedRecord,
-  day,
-  refetch,
-  pet,
+  currentUserFirstPet,
+  friendEdges,
 }) => {
-  const currentUserFirstPet = currentUser.pets.nodes[0];
+  const router = useRouter();
+
+  const {
+    // day: today,
+    dayDate: todayDate,
+    monthStart,
+    setMonthStart,
+    monthStartStr,
+    setMonthStartStr,
+    monthEnd,
+    setMonthEnd,
+    monthEndStr,
+    setMonthEndStr,
+  } = useToday();
+
+  const [initialMonthStartStr, setInitialMonthStartStr] =
+    useState(monthStartStr);
+  useEffect(() => {
+    if (monthStartStr !== null && initialMonthStartStr === null) {
+      setInitialMonthStartStr(monthStartStr);
+    }
+  }, [initialMonthStartStr, monthStartStr]);
+
+  const [selectedPetId, setSelectedPetId] = useState(
+    currentUserFirstPet?.id as string | undefined
+  );
+  // TODO: use inner to ensure loaded state
+  const selectedPetIdOrDefault = selectedPetId ?? currentUserFirstPet?.id;
+
+  const { data: calendarRecordsData } = useCalendarRecordsQuery({
+    fetchPolicy: "network-only",
+    variables: {
+      petId: selectedPetIdOrDefault,
+      start: monthStart ?? "2023-01-01",
+      end: monthEnd ?? "2023-01-31",
+    },
+  });
+  const selectedPet = calendarRecordsData?.pet;
+  const pupcleCount = selectedPet?.sharedDailyRecords.nodes.filter((sdr) => {
+    return sdr.isComplete;
+  }).length;
+
+  const sharedDailyRecords = keyBy(
+    selectedPet?.sharedDailyRecords.nodes,
+    "day"
+  );
 
   return (
     <View className="h-full bg-[#F2F7FD] px-5">
@@ -106,7 +154,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
           </View>
           <View className="flex flex-row items-center">
             <Text className="font-poppins mr-1 w-[fit] text-[24px] font-semibold text-black">
-              13
+              {pupcleCount}
             </Text>
             <StyledComponent
               component={SolitoImage}
@@ -118,7 +166,46 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
           </View>
         </View>
         <View className="mb-5 h-fit w-full rounded-[20px] bg-white p-5">
-          <Text>put calendar here</Text>
+          <Calendar
+            initialDate={initialMonthStartStr ?? "2023-01-01"}
+            minDate={pupcleBeginningStr}
+            firstDay={1}
+            onMonthChange={(month) => {
+              // TODO: use local date parsing
+              const startOfMonthDate = startOfMonth(
+                new Date(`${month.dateString}T14:00:00`)
+              );
+              setMonthStart(startOfMonthDate);
+              setMonthStartStr(format(startOfMonthDate, "yyyy-MM-dd"));
+              const endOfMonthDate = endOfMonth(
+                new Date(`${month.dateString}T14:00:00`)
+              );
+              setMonthEnd(endOfMonthDate);
+              setMonthEndStr(format(endOfMonthDate, "yyyy-MM-dd"));
+            }}
+            onPressArrowLeft={(subtractMonth) => {
+              if (monthStart && !isAfter(monthStart, pupcleBeginningDate)) {
+                return;
+              }
+              subtractMonth();
+            }}
+            disableArrowLeft={
+              !!(monthStart && !isAfter(monthStart, pupcleBeginningDate))
+            }
+            // TODO: max year = today's year
+            monthFormat={"MMM yyyy"}
+            onDayPress={(day) => {
+              router.push(
+                `/calendar/pet/${selectedPet?.id}/day/${day.dateString}`
+              );
+            }}
+
+            // TODO(now): day component
+
+            // dayComponent={
+
+            // }
+          />
           <Link href="/calendar/pet/1234/day/5678">
             <Text>go to a day</Text>
           </Link>
@@ -215,21 +302,44 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
 
 const useToday = () => {
   const [day, setDay] = useState<string | null>(null);
-  useEffect(() => setDay(format(new Date(), "yyyy-MM-dd")), []);
-  return day;
+  const [dayDate, setDayDate] = useState<Date | null>(null);
+  const [monthStart, setMonthStart] = useState<Date | null>(null);
+  const [monthEnd, setMonthEnd] = useState<Date | null>(null);
+
+  // computed
+  const [monthStartStr, setMonthStartStr] = useState<string | null>(null);
+  const [monthEndStr, setMonthEndStr] = useState<string | null>(null);
+  useEffect(() => {
+    const date = new Date();
+    const startOfMonthDate = startOfMonth(date);
+    const endOfMonthDate = endOfMonth(date);
+    setDay(format(date, "yyyy-MM-dd"));
+    setDayDate(date);
+    setMonthStart(startOfMonthDate);
+    setMonthStartStr(format(startOfMonthDate, "yyyy-MM-dd"));
+    setMonthEnd(endOfMonthDate);
+    setMonthEndStr(format(endOfMonthDate, "yyyy-MM-dd"));
+  }, []);
+  return {
+    day,
+    dayDate,
+    monthStart,
+    setMonthStart,
+    monthStartStr,
+    setMonthStartStr,
+    monthEnd,
+    setMonthEnd,
+    monthEndStr,
+    setMonthEndStr,
+  };
 };
 
 export function CalendarScreen() {
-  const today = useToday();
-  const query = useHomePageQuery({ variables: { day: today || "2023-01-01" } });
-  const refetch = async () => query.refetch();
-  const pet = query.data?.currentUser?.pets.nodes[0];
-  const todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
-  const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
+  const query = useCalendarPageQuery();
+  const { data: friendsAndPetsData } = useFriendsAndPetsQuery();
+  const friendEdges =
+    friendsAndPetsData?.currentUser?.userEdgesByFromUserId.nodes;
+  const currentUserFirstPet = query.data?.currentUser?.pets.nodes[0];
 
   return (
     <SharedLayout
@@ -237,14 +347,10 @@ export function CalendarScreen() {
       query={query}
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
-      {query.data?.currentUser && today && pet ? (
+      {currentUserFirstPet && friendEdges ? (
         <CalendarScreenInner
-          currentUser={query.data?.currentUser}
-          privateRecord={todayPrivateDailyRecord}
-          sharedRecord={todaySharedDailyRecord}
-          day={today}
-          refetch={refetch}
-          pet={pet}
+          currentUserFirstPet={currentUserFirstPet}
+          friendEdges={friendEdges}
         />
       ) : (
         <Text>loading...</Text>
