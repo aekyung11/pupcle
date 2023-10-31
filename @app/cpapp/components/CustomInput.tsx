@@ -1,10 +1,14 @@
+import { styled } from "nativewind";
 import React from "react";
 import { TextInput } from "react-native";
+
+const StyledTextInput = styled(TextInput);
 
 const CustomInput = (props: any) => {
   const {
     field: { name, onBlur, onChange, value },
     form: { errors, touched, setFieldTouched },
+    inputClassName,
     ...inputProps
   } = props;
 
@@ -12,7 +16,7 @@ const CustomInput = (props: any) => {
 
   return (
     <>
-      <TextInput
+      <StyledTextInput
         autoCorrect={false}
         error={hasError && errors[name]}
         value={value}
@@ -22,6 +26,7 @@ const CustomInput = (props: any) => {
           onBlur(name);
         }}
         hideUnderline={true}
+        className={inputClassName}
         {...inputProps}
       />
       {/* {hasError && <Text tyle={styles.errorText}>{errors[name]}</Text>} */}

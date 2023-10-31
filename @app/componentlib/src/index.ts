@@ -5,5 +5,6 @@ export * from "./useLoginForm";
 export * from "./useMissionInviteForm";
 export * from "./useNewExamResultsCategoryForm";
 export * from "./usePetInfoForm";
+export * from "./usePrivateDailyRecordForm";
 export * from "./useRegisterForm";
 export * from "./useSocialInfoForm";

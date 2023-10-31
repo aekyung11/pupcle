@@ -1,3 +1,7 @@
+import {
+  PrivateDailyRecordTab as Tab,
+  usePrivateDailyRecordForm,
+} from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
@@ -42,7 +46,7 @@ import clsx from "clsx";
 import { format } from "date-fns";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
@@ -57,15 +61,6 @@ import {
   Sheet,
   Tabs,
 } from "tamagui";
-
-enum Tab {
-  SLEEP = "sleep",
-  DIET = "diet",
-  WALKING = "walking",
-  PLAY = "play",
-  BATHROOM = "bathroom",
-  HEALTH = "health",
-}
 
 type StatusTabProps = {
   tab: Tab;
@@ -87,6 +82,21 @@ function StatusTab({
   refetch,
   pet,
 }: StatusTabProps) {
+  const postResult = useCallback(async () => {
+    await refetch();
+    setSelectedTab("");
+  }, [refetch, setSelectedTab]);
+
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    usePrivateDailyRecordForm(
+      userId,
+      pet.id,
+      day,
+      tab,
+      privateRecord,
+      postResult
+    );
+
   return (
     <View className="relative">
       <Button
@@ -103,83 +113,105 @@ function StatusTab({
           // fill
         />
       </Button>
-      <View>
-        <Text className="font-poppins text-center text-[24px] font-semibold">
-          {tab === Tab.SLEEP
-            ? "잠을 잘 잤나요?"
-            : tab === Tab.DIET
-            ? "밥을 잘 먹었나요?"
-            : tab === Tab.WALKING
-            ? "오늘 산책을 했나요?"
-            : tab === Tab.PLAY
-            ? "오늘 잘 놀았나요?"
-            : tab === Tab.BATHROOM
-            ? "화장실을 잘 갔나요?"
-            : "오늘의 건강은 어떤가요?"}
-        </Text>
-        <Text className="font-poppins mt-3 text-center text-[12px] text-black">
-          기록한 모든 내용은{"\n"}
-          캘린더에서 확인할 수 있어요.
-        </Text>
-        <Text className="font-poppins my-6 text-center text-[16px] font-bold">
-          상태를 선택해주세요.
-        </Text>
-        <View className="flex w-full flex-row justify-center">
-          <RadioGroup className="flex h-[50px] w-[220px] flex-row justify-between">
-            <RadioGroup.Item value={DailyRecordStatus.Good} unstyled>
-              <StyledComponent
-                component={SolitoImage}
-                className="h-[50px] w-[95.86px]"
-                src={good}
-                alt=""
-                // fill
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ handleSubmit, values, setFieldValue }) => (
+          <>
+            <View>
+              <Text className="font-poppins text-center text-[24px] font-semibold">
+                {tab === Tab.SLEEP
+                  ? "잠을 잘 잤나요?"
+                  : tab === Tab.DIET
+                  ? "밥을 잘 먹었나요?"
+                  : tab === Tab.WALKING
+                  ? "오늘 산책을 했나요?"
+                  : tab === Tab.PLAY
+                  ? "오늘 잘 놀았나요?"
+                  : tab === Tab.BATHROOM
+                  ? "화장실을 잘 갔나요?"
+                  : "오늘의 건강은 어떤가요?"}
+              </Text>
+              <Text className="font-poppins mt-3 text-center text-[12px] text-black">
+                기록한 모든 내용은{"\n"}
+                캘린더에서 확인할 수 있어요.
+              </Text>
+              <Text className="font-poppins my-6 text-center text-[16px] font-bold">
+                상태를 선택해주세요.
+              </Text>
+              <View className="flex w-full flex-row justify-center">
+                <RadioGroup
+                  className="flex h-[50px] w-[220px] flex-row justify-between"
+                  value={values.status}
+                  onValueChange={(status) => setFieldValue("status", status)}
+                >
+                  <RadioGroup.Item value={DailyRecordStatus.Good} unstyled>
+                    <StyledComponent
+                      component={SolitoImage}
+                      className="h-[50px] w-[95.86px]"
+                      src={good}
+                      alt=""
+                      // fill
+                    />
+                    <RadioGroup.Indicator className="absolute" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[50px] w-[95.86px]"
+                        src={goodChecked}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Indicator>
+                  </RadioGroup.Item>
+                  <RadioGroup.Item value={DailyRecordStatus.Bad} unstyled>
+                    <StyledComponent
+                      component={SolitoImage}
+                      className="h-[50px] w-[95.86px]"
+                      src={bad}
+                      alt=""
+                      // fill
+                    />
+                    <RadioGroup.Indicator className="absolute" unstyled>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-[50px] w-[95.86px]"
+                        src={badChecked}
+                        alt=""
+                        // fill
+                      />
+                    </RadioGroup.Indicator>
+                  </RadioGroup.Item>
+                </RadioGroup>
+              </View>
+              <Text className="font-poppins mt-10 text-center text-[16px] font-bold">
+                자세한 설명을 적어보세요.
+              </Text>
+              <Field
+                inputClassName="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"
+                component={CustomInput}
+                multiline={true}
+                numberOfLines={6}
+                name="comment"
               />
-              <RadioGroup.Indicator className="absolute" unstyled>
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[50px] w-[95.86px]"
-                  src={goodChecked}
-                  alt=""
-                  // fill
-                />
-              </RadioGroup.Indicator>
-            </RadioGroup.Item>
-            <RadioGroup.Item value={DailyRecordStatus.Bad} unstyled>
-              <StyledComponent
-                component={SolitoImage}
-                className="h-[50px] w-[95.86px]"
-                src={bad}
-                alt=""
-                // fill
-              />
-              <RadioGroup.Indicator className="absolute" unstyled>
-                <StyledComponent
-                  component={SolitoImage}
-                  className="h-[50px] w-[95.86px]"
-                  src={badChecked}
-                  alt=""
-                  // fill
-                />
-              </RadioGroup.Indicator>
-            </RadioGroup.Item>
-          </RadioGroup>
-        </View>
-        <Text className="font-poppins mt-10 text-center text-[16px] font-bold">
-          자세한 설명을 적어보세요.
-        </Text>
-        <View className="mt-5 h-[140px] w-full rounded-[20px] bg-[#F5F5F5] px-4 py-5"></View>
-      </View>
+            </View>
 
-      <View className="mt-4 flex w-full flex-row justify-end">
-        <Button
-          unstyled
-          className="bg-pupcleBlue flex h-12 w-[100px] items-center justify-center rounded-full"
-        >
-          <Text className="font-poppins text-[16px] font-bold text-white">
-            저장하기
-          </Text>
-        </Button>
-      </View>
+            <View className="mt-4 flex w-full flex-row justify-end">
+              <Button
+                unstyled
+                className="bg-pupcleBlue flex h-12 w-[100px] items-center justify-center rounded-full"
+                // @ts-ignore
+                onPress={handleSubmit}
+              >
+                <Text className="font-poppins text-[16px] font-bold text-white">
+                  저장하기
+                </Text>
+              </Button>
+            </View>
+          </>
+        )}
+      </Formik>
     </View>
   );
 }
