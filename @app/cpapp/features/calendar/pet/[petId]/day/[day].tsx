@@ -1,12 +1,17 @@
 import CustomInput from "@app/cpapp/components/CustomInput";
+import { FourOhFour } from "@app/cpapp/components/FourOhFour";
+import { Text } from "@app/cpapp/design/typography";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { isSafe } from "@app/cpapp/utils/utils";
 import {
+  CalendarRecords_PrivateDailyRecordFragment,
   HomePage_PetFragment,
   HomePage_PrivateDailyRecordFragment,
   HomePage_SharedDailyRecordFragment,
   SharedLayout_UserFragment,
+  useCalendarPageQuery,
+  useCalendarRecordsQuery,
   useHomePageQuery,
   useSharedQuery,
 } from "@app/graphql";
@@ -15,58 +20,30 @@ import fourOhFour from "@app/server/public/404_page.png";
 import logo from "@app/server/public/logo.png";
 import defaultAvatar from "@app/server/public/profile_default_avatar.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Field, Formik } from "formik";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link } from "solito/link";
 import { useRouter } from "solito/navigation";
 import { Button, Circle, Tooltip, useTheme } from "tamagui";
 
-enum Tab {
-  SLEEP = "sleep",
-  DIET = "diet",
-  WALKING = "walking",
-  PLAY = "play",
-  BATHROOM = "bathroom",
-  HEALTH = "health",
-}
-
 interface CalendarPetDayScreenInnerProps {
-  currentUser: SharedLayout_UserFragment;
-  privateRecord?: HomePage_PrivateDailyRecordFragment;
-  sharedRecord?: HomePage_SharedDailyRecordFragment;
-  day: string;
-  refetch: () => Promise<any>;
-  pet: HomePage_PetFragment;
-  selectedTab: Tab | undefined;
-  setSelectedTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+  privateDailyRecord: CalendarRecords_PrivateDailyRecordFragment;
 }
 
 const CalendarPetDayScreenInner: FC<CalendarPetDayScreenInnerProps> = ({
-  currentUser,
-  privateRecord,
-  sharedRecord,
-  day,
-  refetch,
-  pet,
-  selectedTab,
-  setSelectedTab,
+  privateDailyRecord,
 }) => {
   return (
     <View className="h-full">
-      <Text>day</Text>
+      <Text>{privateDailyRecord.sleepStatus}</Text>
+      <Text>{privateDailyRecord.sleepComment}</Text>
     </View>
   );
-};
-
-const useToday = () => {
-  const [day, setDay] = useState<string | null>(null);
-  useEffect(() => setDay(format(new Date(), "yyyy-MM-dd")), []);
-  return day;
 };
 
 type CalendarPetDayScreenParams = {
@@ -75,58 +52,39 @@ type CalendarPetDayScreenParams = {
 };
 
 export function CalendarPetDayScreen() {
+  const query = useCalendarPageQuery();
   const { useParam } = createParam<CalendarPetDayScreenParams>();
-  const [todoPetId] = useParam("petId");
-  const [todoDay] = useParam("day");
+  const [petId] = useParam("petId");
+  const [day] = useParam("day");
+  const formattedDay = format(parseISO(day ?? "2023-01-01"), "yyyy.MM.dd");
 
-  const today = useToday();
-  const query = useHomePageQuery({ variables: { day: today || "2023-01-01" } });
-  const refetch = async () => query.refetch();
-  const pet = query.data?.currentUser?.pets.nodes[0];
-  const todayPrivateDailyRecord = pet?.privateDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
-  const todaySharedDailyRecord = pet?.sharedDailyRecords.nodes.find(
-    (record) => record.day === today
-  );
-  const [selectedTab, setSelectedTab] = useState<Tab | undefined>();
-
-  useEffect(() => {
-    if (selectedTab === undefined) {
-      const completeStatusCount =
-        todaySharedDailyRecord?.completeStatusCount || 0;
-
-      const initialTab =
-        completeStatusCount === 0
-          ? undefined
-          : Object.values(Tab)[completeStatusCount - 1];
-
-      setSelectedTab(initialTab);
-    }
-  }, [selectedTab, todaySharedDailyRecord]);
+  const { data: calendarRecordsData, loading: calendarRecordsDataLoading } =
+    useCalendarRecordsQuery({
+      fetchPolicy: "network-only",
+      variables: {
+        petId: petId,
+        start: day,
+        end: day,
+      },
+    });
+  const pet = calendarRecordsData?.pet;
+  const dailyRecord = pet?.privateDailyRecords.nodes[0];
 
   return (
     <SharedLayout
-      title="calendar"
+      title="calendar-pet-day"
       query={query}
       forbidWhen={AuthRestrict.LOGGED_OUT}
     >
-      <Text>
-        TODO REMOVE {todoPetId} {todoDay}
-      </Text>
-      {query.data?.currentUser && today && pet ? (
-        <CalendarPetDayScreenInner
-          currentUser={query.data?.currentUser}
-          privateRecord={todayPrivateDailyRecord}
-          sharedRecord={todaySharedDailyRecord}
-          day={today}
-          refetch={refetch}
-          pet={pet}
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
-      ) : (
+      {query.loading || calendarRecordsDataLoading ? (
         <Text>loading...</Text>
+      ) : !dailyRecord ? (
+        <FourOhFour />
+      ) : (
+        <>
+          <Text>{formattedDay}</Text>
+          <CalendarPetDayScreenInner privateDailyRecord={dailyRecord} />
+        </>
       )}
     </SharedLayout>
   );
