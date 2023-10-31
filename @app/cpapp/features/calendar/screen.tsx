@@ -201,12 +201,18 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
             }}
             // TODO(now): day component
             dayComponent={({ date, state }) => {
+              if (!date) {
+                return null;
+              }
+              const sharedDailyRecord = sharedDailyRecords[date.dateString];
+              const completePercentage =
+                ((sharedDailyRecord?.completeStatusCount ?? 0) / 6) * 100;
               return (
-                <View>
+                <Button unstyled>
                   <Text
                     onPress={() => {
                       router.push(
-                        `/calendar/pet/${selectedPet?.id}/day/${date?.dateString}`
+                        `/calendar/pet/${selectedPet?.id}/day/${date.dateString}`
                       );
                     }}
                     style={{
@@ -216,7 +222,10 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
                   >
                     {date && date.day}
                   </Text>
-                </View>
+
+                  <Text>{sharedDailyRecord?.dayStatus || ""}</Text>
+                  <Text>{completePercentage || ""}</Text>
+                </Button>
               );
             }}
           />
