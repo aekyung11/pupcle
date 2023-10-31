@@ -4,6 +4,7 @@ import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
 import { isSafe } from "@app/cpapp/utils/utils";
 import {
+  DailyRecordDayStatus,
   FriendsAndPets_UserEdgeFragment,
   HomePage_PetFragment,
   HomePage_PrivateDailyRecordFragment,
@@ -17,12 +18,31 @@ import {
   useSharedQuery,
 } from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
+import blueFiveSixth from "@app/server/public/b_five_sixth.png";
+import blueFourSixth from "@app/server/public/b_four_sixth.png";
+import blueFull from "@app/server/public/b_full.png";
+import blueOneSixth from "@app/server/public/b_one_sixth.png";
+import blueThreeSixth from "@app/server/public/b_three_sixth.png";
+import blueTwoSixth from "@app/server/public/b_two_sixth.png";
 import home from "@app/server/public/calendar_day_home.png";
 import homeSelected from "@app/server/public/calendar_day_home_selected.png";
 import defaultAvatar from "@app/server/public/calendar_friends_avatar_default.png";
+import none from "@app/server/public/calendar_none.png";
 import caret from "@app/server/public/caret_icon_blk.png";
 import hamburger from "@app/server/public/hamburger_blue.png";
+import purpleFiveSixth from "@app/server/public/p_five_sixth.png";
+import purpleFourSixth from "@app/server/public/p_four_sixth.png";
+import purpleFull from "@app/server/public/p_full.png";
+import purpleOneSixth from "@app/server/public/p_one_sixth.png";
+import purpleThreeSixth from "@app/server/public/p_three_sixth.png";
+import purpleTwoSixth from "@app/server/public/p_two_sixth.png";
 import pupcleIcon from "@app/server/public/pupcle_count.png";
+import redFiveSixth from "@app/server/public/r_five_sixth.png";
+import redFourSixth from "@app/server/public/r_four_sixth.png";
+import redFull from "@app/server/public/r_full.png";
+import redOneSixth from "@app/server/public/r_one_sixth.png";
+import redThreeSixth from "@app/server/public/r_three_sixth.png";
+import redTwoSixth from "@app/server/public/r_two_sixth.png";
 import { endOfMonth, format, isAfter, isBefore, startOfMonth } from "date-fns";
 import { Field, Formik } from "formik";
 import { keyBy } from "lodash";
@@ -129,195 +149,226 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
         </View>
       </View>
       <View className="h-[85%] w-full px-5 pb-[120px]">
-        <View className="flex flex-row items-center justify-between">
-          <View className="flex flex-row items-center py-5">
-            <Text className="font-poppins w-[fit] text-[24px] font-semibold text-black">
-              Oct
-            </Text>
-            <StyledComponent
-              component={SolitoImage}
-              className="ml-2 mr-3 h-[9px] w-[13px]"
-              src={caret}
-              alt=""
-              // fill
-            />
-            <Text className="font-poppins w-[fit] text-[24px] font-semibold text-black">
-              2023
-            </Text>
-            <StyledComponent
-              component={SolitoImage}
-              className="ml-2 mr-3 h-[9px] w-[13px]"
-              src={caret}
-              alt=""
-              // fill
+        <ScrollView>
+          <View className="flex flex-row items-center justify-end py-5">
+            <View className="flex flex-row items-center">
+              <Text className="font-poppins mr-1 w-[fit] text-[24px] font-semibold text-black">
+                {pupcleCount}
+              </Text>
+              <StyledComponent
+                component={SolitoImage}
+                className="h-[21px] w-[22px]"
+                src={pupcleIcon}
+                alt=""
+                // fill
+              />
+            </View>
+          </View>
+          <View className="mb-5 h-fit w-full rounded-[20px] bg-white p-5">
+            <Calendar
+              initialDate={initialMonthStartStr ?? "2023-01-01"}
+              minDate={pupcleBeginningStr}
+              firstDay={1}
+              onMonthChange={(month) => {
+                // TODO: use local date parsing
+                const startOfMonthDate = startOfMonth(
+                  new Date(`${month.dateString}T14:00:00`)
+                );
+                setMonthStart(startOfMonthDate);
+                setMonthStartStr(format(startOfMonthDate, "yyyy-MM-dd"));
+                const endOfMonthDate = endOfMonth(
+                  new Date(`${month.dateString}T14:00:00`)
+                );
+                setMonthEnd(endOfMonthDate);
+                setMonthEndStr(format(endOfMonthDate, "yyyy-MM-dd"));
+              }}
+              onPressArrowLeft={(subtractMonth) => {
+                if (monthStart && !isAfter(monthStart, pupcleBeginningDate)) {
+                  return;
+                }
+                subtractMonth();
+              }}
+              disableArrowLeft={
+                !!(monthStart && !isAfter(monthStart, pupcleBeginningDate))
+              }
+              // TODO: max year = today's year
+              monthFormat={"MMM yyyy"}
+              onDayPress={(day) => {
+                router.push(
+                  `/calendar/pet/${selectedPet?.id}/day/${day.dateString}`
+                );
+              }}
+              // TODO(now): day component
+              dayComponent={({ date, state }) => {
+                if (!date) {
+                  return null;
+                }
+                const sharedDailyRecord = sharedDailyRecords[date.dateString];
+                const complete = sharedDailyRecord?.completeStatusCount;
+                const completePercentage =
+                  ((sharedDailyRecord?.completeStatusCount ?? 0) / 6) * 100;
+                return (
+                  <>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: state === "disabled" ? "gray" : "black",
+                      }}
+                    >
+                      {date && date.day}
+                    </Text>
+                    <Button
+                      unstyled
+                      onPress={() => {
+                        router.push(
+                          `/calendar/pet/${selectedPet?.id}/day/${date.dateString}`
+                        );
+                      }}
+                    >
+                      <View className="mt-1 h-[25px] w-[25px]">
+                        <StyledComponent
+                          component={SolitoImage}
+                          className="h-full w-full"
+                          src={
+                            DailyRecordDayStatus.AllGood ===
+                            sharedDailyRecord?.dayStatus
+                              ? complete === 1
+                                ? blueOneSixth
+                                : complete === 2
+                                ? blueTwoSixth
+                                : complete === 3
+                                ? blueThreeSixth
+                                : complete === 4
+                                ? blueFourSixth
+                                : complete === 5
+                                ? blueFiveSixth
+                                : blueFull
+                              : DailyRecordDayStatus.Mixed ===
+                                sharedDailyRecord?.dayStatus
+                              ? complete === 1
+                                ? purpleOneSixth
+                                : complete === 2
+                                ? purpleTwoSixth
+                                : complete === 3
+                                ? purpleThreeSixth
+                                : complete === 4
+                                ? purpleFourSixth
+                                : complete === 5
+                                ? purpleFiveSixth
+                                : purpleFull
+                              : DailyRecordDayStatus.AllBad ===
+                                sharedDailyRecord?.dayStatus
+                              ? complete === 1
+                                ? redOneSixth
+                                : complete === 2
+                                ? redTwoSixth
+                                : complete === 3
+                                ? redThreeSixth
+                                : complete === 4
+                                ? redFourSixth
+                                : complete === 5
+                                ? redFiveSixth
+                                : redFull
+                              : none
+                          }
+                          alt=""
+                          // fill
+                        />
+                      </View>
+                      {/* <Text>{sharedDailyRecord?.dayStatus || ""}</Text> */}
+                      {/* <Text>{completePercentage || ""}</Text> */}
+                    </Button>
+                  </>
+                );
+              }}
             />
           </View>
-          <View className="flex flex-row items-center">
-            <Text className="font-poppins mr-1 w-[fit] text-[24px] font-semibold text-black">
-              {pupcleCount}
-            </Text>
-            <StyledComponent
-              component={SolitoImage}
-              className="h-[21px] w-[22px]"
-              src={pupcleIcon}
-              alt=""
-              // fill
-            />
+          <View className="bg-pupcleBlue mb-5 flex h-12 w-full flex-row items-center rounded-[10px] px-[10px]">
+            <ScrollView horizontal>
+              <Tabs defaultValue={currentUserFirstPet.id}>
+                <Tabs.List>
+                  <View className="mr-[5px] flex h-12 w-[38px] justify-center">
+                    <Tabs.Tab value={currentUserFirstPet.id} unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={home}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                  <View className="flex h-12 w-12 items-center justify-center">
+                    <Tabs.Tab value="friend1" unstyled asChild>
+                      <StyledComponent
+                        component={SolitoImage}
+                        className="h-7 w-7"
+                        src={defaultAvatar}
+                        alt=""
+                        // fill
+                      />
+                    </Tabs.Tab>
+                  </View>
+                </Tabs.List>
+              </Tabs>
+            </ScrollView>
           </View>
-        </View>
-        <View className="mb-5 h-fit w-full rounded-[20px] bg-white p-5">
-          <Calendar
-            initialDate={initialMonthStartStr ?? "2023-01-01"}
-            minDate={pupcleBeginningStr}
-            firstDay={1}
-            onMonthChange={(month) => {
-              // TODO: use local date parsing
-              const startOfMonthDate = startOfMonth(
-                new Date(`${month.dateString}T14:00:00`)
-              );
-              setMonthStart(startOfMonthDate);
-              setMonthStartStr(format(startOfMonthDate, "yyyy-MM-dd"));
-              const endOfMonthDate = endOfMonth(
-                new Date(`${month.dateString}T14:00:00`)
-              );
-              setMonthEnd(endOfMonthDate);
-              setMonthEndStr(format(endOfMonthDate, "yyyy-MM-dd"));
-            }}
-            onPressArrowLeft={(subtractMonth) => {
-              if (monthStart && !isAfter(monthStart, pupcleBeginningDate)) {
-                return;
-              }
-              subtractMonth();
-            }}
-            disableArrowLeft={
-              !!(monthStart && !isAfter(monthStart, pupcleBeginningDate))
-            }
-            // TODO: max year = today's year
-            monthFormat={"MMM yyyy"}
-            onDayPress={(day) => {
-              router.push(
-                `/calendar/pet/${selectedPet?.id}/day/${day.dateString}`
-              );
-            }}
-            // TODO(now): day component
-            dayComponent={({ date, state }) => {
-              if (!date) {
-                return null;
-              }
-              const sharedDailyRecord = sharedDailyRecords[date.dateString];
-              const completePercentage =
-                ((sharedDailyRecord?.completeStatusCount ?? 0) / 6) * 100;
-              return (
-                <Button unstyled>
-                  <Text
-                    onPress={() => {
-                      router.push(
-                        `/calendar/pet/${selectedPet?.id}/day/${date.dateString}`
-                      );
-                    }}
-                    style={{
-                      textAlign: "center",
-                      color: state === "disabled" ? "gray" : "black",
-                    }}
-                  >
-                    {date && date.day}
-                  </Text>
-
-                  <Text>{sharedDailyRecord?.dayStatus || ""}</Text>
-                  <Text>{completePercentage || ""}</Text>
-                </Button>
-              );
-            }}
-          />
-          <Link href="/calendar/pet/1234/day/5678">
-            <Text>go to a day</Text>
-          </Link>
-        </View>
-        <View className="bg-pupcleBlue flex h-12 w-full flex-row items-center rounded-[10px] px-[10px]">
-          <ScrollView horizontal>
-            <Tabs defaultValue={currentUserFirstPet.id}>
-              <Tabs.List>
-                <View className="mr-[5px] flex h-12 w-[38px] justify-center">
-                  <Tabs.Tab value={currentUserFirstPet.id} unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={home}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-                <View className="flex h-12 w-12 items-center justify-center">
-                  <Tabs.Tab value="friend1" unstyled asChild>
-                    <StyledComponent
-                      component={SolitoImage}
-                      className="h-7 w-7"
-                      src={defaultAvatar}
-                      alt=""
-                      // fill
-                    />
-                  </Tabs.Tab>
-                </View>
-              </Tabs.List>
-            </Tabs>
-          </ScrollView>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
