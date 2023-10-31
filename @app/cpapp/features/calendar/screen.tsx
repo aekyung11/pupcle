@@ -199,12 +199,26 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
                 `/calendar/pet/${selectedPet?.id}/day/${day.dateString}`
               );
             }}
-
             // TODO(now): day component
-
-            // dayComponent={
-
-            // }
+            dayComponent={({ date, state }) => {
+              return (
+                <View>
+                  <Text
+                    onPress={() => {
+                      router.push(
+                        `/calendar/pet/${selectedPet?.id}/day/${date?.dateString}`
+                      );
+                    }}
+                    style={{
+                      textAlign: "center",
+                      color: state === "disabled" ? "gray" : "black",
+                    }}
+                  >
+                    {date && date.day}
+                  </Text>
+                </View>
+              );
+            }}
           />
           <Link href="/calendar/pet/1234/day/5678">
             <Text>go to a day</Text>
