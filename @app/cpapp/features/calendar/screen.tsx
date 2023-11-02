@@ -138,7 +138,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
             {selectedPet?.name}
           </Text>
           {/* )} */}
-          <View className="absolute right-[20%]">
+          {/* <View className="absolute right-[20%]">
             <StyledComponent
               component={SolitoImage}
               className="h-[9px] w-[13px]"
@@ -146,7 +146,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
               alt=""
               // fill
             />
-          </View>
+          </View> */}
         </View>
       </View>
       <View className="h-[85%] w-full px-5 pb-[120px]">
