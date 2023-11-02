@@ -129,15 +129,15 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
           />
         </View>
         <View className="relative flex h-[46px] w-full flex-row items-center justify-center">
-          {currentUserFirstPet && (
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              className="font-poppins w-[120px] text-center text-[24px] font-semibold text-black"
-            >
-              {currentUserFirstPet.name}
-            </Text>
-          )}
+          {/* {currentUserFirstPet && ( */}
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            className="font-poppins w-[120px] text-center text-[24px] font-semibold text-black"
+          >
+            {selectedPet?.name}
+          </Text>
+          {/* )} */}
           <View className="absolute right-[20%]">
             <StyledComponent
               component={SolitoImage}
@@ -220,6 +220,10 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
                     </Text>
                     <Button
                       unstyled
+                      disabled={
+                        selectedPetId !== currentUserFirstPet.id ||
+                        !sharedDailyRecord
+                      }
                       onPress={() => {
                         router.push(
                           `/calendar/pet/${selectedPet?.id}/day/${date.dateString}`
