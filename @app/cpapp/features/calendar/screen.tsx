@@ -43,6 +43,7 @@ import redFull from "@app/server/public/r_full.png";
 import redOneSixth from "@app/server/public/r_one_sixth.png";
 import redThreeSixth from "@app/server/public/r_three_sixth.png";
 import redTwoSixth from "@app/server/public/r_two_sixth.png";
+import clsx from "clsx";
 import { endOfMonth, format, isAfter, isBefore, startOfMonth } from "date-fns";
 import { Field, Formik } from "formik";
 import { keyBy } from "lodash";
@@ -54,7 +55,7 @@ import { createParam } from "solito";
 import { SolitoImage } from "solito/image";
 import { Link } from "solito/link";
 import { useRouter } from "solito/navigation";
-import { Button, Circle, Tabs, useTheme } from "tamagui";
+import { Avatar, Button, Tabs, useTheme } from "tamagui";
 
 const pupcleBeginningStr = "2023-01-01";
 const pupcleBeginningDate = startOfMonth(new Date("2023-01-01T14:00:00"));
@@ -285,87 +286,67 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
           </View>
           <View className="bg-pupcleBlue mb-5 flex h-12 w-full flex-row items-center rounded-[10px] px-[10px]">
             <ScrollView horizontal>
-              <Tabs defaultValue={currentUserFirstPet.id}>
-                <Tabs.List>
-                  <View className="mr-[5px] flex h-12 w-[38px] justify-center">
-                    <Tabs.Tab value={currentUserFirstPet.id} unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={home}
-                        alt=""
-                        // fill
+              <View className="flex h-12 w-12 items-center justify-center">
+                <Button
+                  className={clsx(
+                    "flex h-7 w-7 rounded-full border-none bg-transparent p-0",
+                    { active: selectedPetId === currentUserFirstPet?.id }
+                  )}
+                  onPress={() => {
+                    const currentUserFirstPetId = currentUserFirstPet?.id;
+                    if (currentUserFirstPetId) {
+                      setSelectedPetId(currentUserFirstPetId);
+                    }
+                  }}
+                >
+                  <StyledComponent
+                    component={SolitoImage}
+                    className="h-7 w-7"
+                    src={
+                      selectedPetId === currentUserFirstPet.id
+                        ? homeSelected
+                        : home
+                    }
+                    alt=""
+                    // fill
+                  />
+                </Button>
+              </View>
+              {friendEdges?.map((edge) => (
+                <View
+                  key={edge.toUser?.id}
+                  className="flex h-12 w-12 items-center justify-center"
+                >
+                  {/* <Tabs.Tab value="friend1" unstyled asChild> */}
+                  <Button
+                    className={clsx(
+                      "flex h-7 w-7 rounded-full border-none bg-transparent p-0",
+                      { active: selectedPetId === currentUserFirstPet?.id }
+                    )}
+                    onPress={() => {
+                      const friendFirstPetId = edge.toUser?.pets.nodes[0]?.id;
+                      if (friendFirstPetId) {
+                        setSelectedPetId(friendFirstPetId);
+                      }
+                    }}
+                  >
+                    <Avatar circular size={28}>
+                      <Avatar.Image
+                        src={edge.toUser?.avatarUrl || defaultAvatar}
                       />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                  <View className="flex h-12 w-12 items-center justify-center">
-                    <Tabs.Tab value="friend1" unstyled asChild>
-                      <StyledComponent
-                        component={SolitoImage}
-                        className="h-7 w-7"
-                        src={defaultAvatar}
-                        alt=""
-                        // fill
-                      />
-                    </Tabs.Tab>
-                  </View>
-                </Tabs.List>
-              </Tabs>
+                    </Avatar>
+                    {/* <StyledComponent
+                      component={SolitoImage}
+                      className="h-7 w-7"
+                      src={edge.toUser?.avatarUrl || defaultAvatar}
+                      alt=""
+                      // fill
+                    /> */}
+                  </Button>
+
+                  {/* </Tabs.Tab> */}
+                </View>
+              ))}
             </ScrollView>
           </View>
         </ScrollView>
