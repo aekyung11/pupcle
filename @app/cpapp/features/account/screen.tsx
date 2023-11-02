@@ -95,11 +95,19 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
                 />
               )}
             </View>
-            <View className="ml-6 flex flex-col">
-              <Text className="font-poppins text-[24px] font-semibold text-white">
+            <View className="ml-6 flex w-[140px] flex-col">
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="font-poppins text-[24px] font-semibold text-white"
+              >
                 {currentUser.nickname}
               </Text>
-              <Text className="font-poppins text-[16px] text-white">
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="font-poppins text-[16px] text-white"
+              >
                 @{currentUser.username}
               </Text>
             </View>
