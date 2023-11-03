@@ -1166,43 +1166,45 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
               />
             </div>
             {/* map() */}
-            {filteredExamResults.map(({ id, memo, takenAt, examCategory }) => (
-              <div
-                className="border-pupcleLightGray flex w-full items-center justify-center border-t-[1px] px-[65px] py-10"
-                key={id}
-              >
-                <div className="flex w-full max-w-[1095px] items-center justify-between">
-                  <div className="flex flex-row items-center">
-                    <span className="font-poppins text-[15px]">
-                      {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
-                    </span>
-                    {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
-                    <div className="mx-12 flex flex-col">
-                      <div className="bg-pupcleLightLightGray flex h-[25px] w-[fit] items-center justify-center rounded-full px-6">
-                        <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
-                          {examCategory?.name}
+            {filteredExamResults.map(
+              ({ id, memo, takenAt, examCategory, kakaoId }) => (
+                <div
+                  className="border-pupcleLightGray flex w-full items-center justify-center border-t-[1px] px-[65px] py-10"
+                  key={id}
+                >
+                  <div className="flex w-full max-w-[1095px] items-center justify-between">
+                    <div className="flex flex-row items-center">
+                      <span className="font-poppins text-[15px]">
+                        {takenAt && format(parseISO(takenAt), "yyyy.MM.dd")}
+                      </span>
+                      {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
+                      <div className="mx-12 flex flex-col">
+                        <div className="bg-pupcleLightLightGray flex h-[25px] w-[fit] items-center justify-center rounded-full px-6">
+                          <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
+                            {examCategory?.name}
+                          </span>
+                        </div>
+                        <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
+                          {kakaoId}
+                        </span>
+                        <span className="font-poppins text-[15px]">
+                          추가 메모{") "}
+                          {memo}
                         </span>
                       </div>
-                      <span className="font-poppins text-pupcleBlue mt-1 text-[20px] font-bold">
-                        서울동물병원
-                      </span>
-                      <span className="font-poppins text-[15px]">
-                        추가 메모{") "}
-                        {memo}
-                      </span>
                     </div>
+                    <Button
+                      onClick={() => setSelectedExamResultsId(id)}
+                      className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
+                    >
+                      <span className="font-poppins text-[20px] font-semibold text-white">
+                        보기
+                      </span>
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => setSelectedExamResultsId(id)}
-                    className="bg-pupcleBlue flex h-[49px] w-[95px] items-center justify-center rounded-full border-none hover:contrast-[.8]"
-                  >
-                    <span className="font-poppins text-[20px] font-semibold text-white">
-                      보기
-                    </span>
-                  </Button>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
           {newExamResults && newExamResultsCategory && (
             <div
