@@ -46,7 +46,7 @@ import Webcam from "@uppy/webcam";
 import { Alert, Button, Col, Row, Tooltip } from "antd";
 import axios from "axios";
 import clsx from "clsx";
-import { format, parseISO } from "date-fns";
+import { addMonths, format, parseISO, subMonths } from "date-fns";
 import { FieldArray, Formik, useFormikContext } from "formik";
 import { Form, Input, SubmitButton } from "formik-antd";
 import { sortBy } from "lodash";
@@ -66,6 +66,7 @@ import {
   VictoryChart,
   VictoryLabel,
   VictoryLine,
+  VictoryScatter,
   VictoryTooltip,
   VictoryVoronoiContainer,
 } from "victory";
@@ -2145,6 +2146,24 @@ const ExamDataChart: FC<{
   chartData: { x: Date; y: number }[];
   title: string;
 }> = ({ chartData, title }) => {
+  const domainProps: any = {};
+  let domain: any = undefined;
+  const xValues = new Set(chartData.map(({ x }) => x));
+  const yValues = new Set(chartData.map(({ y }) => y));
+  if (xValues.size === 1) {
+    const xValue = xValues.values().next().value;
+    domain = domain || {};
+    domain.x = [subMonths(xValue, 1), addMonths(xValue, 1)];
+  }
+  if (yValues.size === 1) {
+    const yValue = yValues.values().next().value;
+    domain = domain || {};
+    domain.y = [yValue - 5, yValue + 5];
+  }
+  if (domain) {
+    domainProps.domain = domain;
+  }
+  console.log({ domain });
   return (
     <div className="relative h-[600px] w-[500px]">
       <VictoryChart
@@ -2156,6 +2175,7 @@ const ExamDataChart: FC<{
         // domainPadding={{ x: 50, y: 10 }}
         containerComponent={
           <VictoryVoronoiContainer
+            voronoiBlacklist={chartData.length === 1 ? ["line"] : ["scatter"]}
             voronoiDimension="x"
             // labelComponent={
             //   <VictoryTooltip
@@ -2196,6 +2216,7 @@ const ExamDataChart: FC<{
             }
           />
         }
+        {...domainProps}
       >
         <VictoryAxis
           style={{
@@ -2215,6 +2236,7 @@ const ExamDataChart: FC<{
           dependentAxis
         />
         <VictoryLine
+          name="line"
           data={chartData}
           x="x"
           y="y"
@@ -2223,6 +2245,14 @@ const ExamDataChart: FC<{
             parent: { border: "1px solid #ccc" },
           }}
         />
+        {chartData.length === 1 && (
+          <VictoryScatter
+            name="scatter"
+            data={chartData}
+            size={5}
+            style={{ data: { fill: "#d9d9d9" } }}
+          />
+        )}
       </VictoryChart>
       <div className="bg-pupcleLightLightGray absolute left-0 top-0 flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
         <span className="font-poppins text-pupcleGray text-[16px] font-medium">
