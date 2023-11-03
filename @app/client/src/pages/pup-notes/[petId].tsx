@@ -66,6 +66,8 @@ import {
   VictoryChart,
   VictoryLabel,
   VictoryLine,
+  VictoryTooltip,
+  VictoryVoronoiContainer,
 } from "victory";
 
 import { pupcle } from "../../victory/pupcle-theme";
@@ -2144,9 +2146,54 @@ const ExamDataChart: FC<{
   return (
     <div className="relative h-[600px] w-[500px]">
       <VictoryChart
+        width={600}
+        height={500}
+        scale={{ x: "time" }}
         title={title}
         theme={pupcle}
-        domainPadding={{ x: 50, y: 10 }}
+        // domainPadding={{ x: 50, y: 10 }}
+        containerComponent={
+          <VictoryVoronoiContainer
+            voronoiDimension="x"
+            // labelComponent={
+            //   <VictoryTooltip
+            //     cornerRadius={0}
+            //     flyoutStyle={{ fill: "white" }}
+            //   />
+            // }
+            labels={({ datum }: { datum: any }) => {
+              const x = datum.x;
+              const y = datum.y;
+              return `${format(x, "yyyy.MM.dd")}\n${y}`;
+            }}
+            labelComponent={
+              <VictoryTooltip
+                // lineHeight={1}
+                // capHeight={0.8}
+                style={{
+                  fill: "white",
+                  fontFamily: "Poppins",
+                  fontWeight: 500,
+                  fontSize: "16px",
+                }}
+                // backgroundPadding={{
+                //   top: 6,
+                //   bottom: 6,
+                //   left: 20,
+                //   right: 20,
+                // }}
+                // backgroundComponent={<Rect rx={12} />}
+                flyoutStyle={{
+                  fill: "#D9D9D9",
+                  strokeWidth: 0,
+                }}
+                cornerRadius={12}
+                renderInPortal
+                dy={-20}
+              />
+            }
+          />
+        }
       >
         <VictoryAxis
           style={{
@@ -2154,10 +2201,6 @@ const ExamDataChart: FC<{
               fontFamily: "Poppins",
               fontWeight: 500,
             },
-          }}
-          tickValues={chartData.map((e) => e.x)}
-          tickFormat={(tick) => {
-            return `${format(tick, "yyyy")}\n${format(tick, "MM.dd")}`;
           }}
         />
         <VictoryAxis
@@ -2170,36 +2213,13 @@ const ExamDataChart: FC<{
           dependentAxis
         />
         <VictoryLine
+          data={chartData}
+          x="x"
+          y="y"
           style={{
             data: { stroke: "#d9d9d9" },
             parent: { border: "1px solid #ccc" },
           }}
-          data={chartData}
-          labels={({ datum }: { datum: any }) => datum.y}
-          labelComponent={
-            <VictoryLabel
-              lineHeight={1}
-              capHeight={0.8}
-              backgroundStyle={{
-                fill: "#D9D9D9",
-              }}
-              style={{
-                fill: "white",
-                fontFamily: "Poppins",
-                fontWeight: 500,
-                fontSize: "16px",
-              }}
-              backgroundPadding={{
-                top: 6,
-                bottom: 6,
-                left: 20,
-                right: 20,
-              }}
-              backgroundComponent={<Rect rx={12} />}
-              renderInPortal
-              dy={-20}
-            />
-          }
         />
       </VictoryChart>
       <div className="bg-pupcleLightLightGray absolute left-0 top-0 flex h-[42px] w-[176px] items-center justify-center rounded-full border-none">
