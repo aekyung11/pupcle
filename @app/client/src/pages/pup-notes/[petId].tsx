@@ -1987,12 +1987,29 @@ const ExamResultsFormInner: FC<{
                             </Form.Item>
                             <Form.Item
                               name={`examData.points.[${index}].value`}
-                              className="mb-0 w-1/2"
+                              className={clsx("mb-0 w-1/2", {
+                                "border-2 border-red-500":
+                                  point.safeRangeEnd != null &&
+                                  point.value != null &&
+                                  // @ts-ignore
+                                  point.value !== "" &&
+                                  point.value > point.safeRangeEnd,
+                                "border-2 border-blue-500":
+                                  point.safeRangeStart != null &&
+                                  point.value != null &&
+                                  // @ts-ignore
+                                  point.value !== "" &&
+                                  point.value < point.safeRangeStart,
+                              })}
                             >
                               <Input
-                                className="font-poppins text-pupcleGray placeholder:text-pupcleGray h-10 w-full border-none bg-transparent px-6 text-[15px] font-light"
+                                className={clsx(
+                                  "font-poppins text-pupcleGray placeholder:text-pupcleGray h-10 w-full border-none bg-transparent px-6 text-[15px] font-light",
+                                  {}
+                                )}
                                 name={`examData.points.[${index}].value`}
                                 placeholder="수치를 입력해주세요."
+                                suffix
                               />
                             </Form.Item>
 
