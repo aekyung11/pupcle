@@ -334,7 +334,10 @@ const PlacePanel = ({
               <img src="/maps_review_rating_dog.png" />
               <div className="absolute top-[25%] right-[10%]">
                 <div className="flex flex-row items-center justify-center">
-                  <span>별점을 남겨주라멍</span>
+                  <span className="font-poppins text-[15px] font-medium text-black">
+                    별점을 남겨주라멍
+                  </span>
+                  {/* TODO: if rating is there, 리뷰를 남겨주라멍, and if review is there, 소중한 리뷰 고맙다멍 */}
                   <img src="/paw.png" className="ml-[2px] h-[13px] w-5" />
                 </div>
                 <div className="map-rate justify-center">
@@ -363,6 +366,10 @@ const PlacePanel = ({
                     {rating != null ? rating / 2 : "N/A"}/5.0
                   </span>
                 </div>
+                {/* TODO: change the html when 리뷰를 남겨주라멍:
+                <Button>
+                <div classname="flex flex-row"><img classname="w-5 h-5" src="/write_blue.png" /><span classname="ml-1 font-poppins font-bold text-pupcleBlue text-[15px]">리뷰 쓰기</span>/div>
+                </Button> */}
               </div>
             </div>
           </div>
@@ -392,138 +399,6 @@ const PlacePanel = ({
             </div>
           </div>
           {/* TODO: map */}
-          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
-            <div className="flex flex-row items-center">
-              <img
-                className="h-[38px] w-[38px]"
-                src="/avatar_white_border.png"
-              />
-              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
-                퐁당이 누나
-              </span>
-              <div className="map-rate ml-3 justify-center">
-                {/* TODO: disable this and move this to the poi detail */}
-                <Rate
-                  allowHalf
-                  allowClear
-                  value={rating != null ? rating / 2 : undefined}
-                  onChange={async (value) => {
-                    await upsertPoiReview({
-                      variables: {
-                        input: {
-                          poiReview: {
-                            poiId: "00000000-0000-0000-0000-000000000000",
-                            kakaoId: place.id,
-                            userId: currentUserId,
-                            rating: value * 2,
-                          },
-                        },
-                      },
-                    });
-                    await handleRatingChange();
-                  }}
-                />
-              </div>
-            </div>
-            <div className="w-full pl-[50px]">
-              <span className="font-poppins text-[15px] font-medium text-black">
-                친절하시고 너무 좋아요~
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-end">
-              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
-                2023.11.06
-              </span>
-            </div>
-          </div>
-          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
-            <div className="flex flex-row items-center">
-              <img
-                className="h-[38px] w-[38px]"
-                src="/avatar_white_border.png"
-              />
-              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
-                퐁당이 누나
-              </span>
-              <div className="map-rate ml-3 justify-center">
-                {/* TODO: disable this and move this to the poi detail */}
-                <Rate
-                  allowHalf
-                  allowClear
-                  value={rating != null ? rating / 2 : undefined}
-                  onChange={async (value) => {
-                    await upsertPoiReview({
-                      variables: {
-                        input: {
-                          poiReview: {
-                            poiId: "00000000-0000-0000-0000-000000000000",
-                            kakaoId: place.id,
-                            userId: currentUserId,
-                            rating: value * 2,
-                          },
-                        },
-                      },
-                    });
-                    await handleRatingChange();
-                  }}
-                />
-              </div>
-            </div>
-            <div className="w-full pl-[50px]">
-              <span className="font-poppins text-[15px] font-medium text-black">
-                친절하시고 너무 좋아요~
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-end">
-              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
-                2023.11.06
-              </span>
-            </div>
-          </div>
-          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
-            <div className="flex flex-row items-center">
-              <img
-                className="h-[38px] w-[38px]"
-                src="/avatar_white_border.png"
-              />
-              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
-                퐁당이 누나
-              </span>
-              <div className="map-rate ml-3 justify-center">
-                {/* TODO: disable this and move this to the poi detail */}
-                <Rate
-                  allowHalf
-                  allowClear
-                  value={rating != null ? rating / 2 : undefined}
-                  onChange={async (value) => {
-                    await upsertPoiReview({
-                      variables: {
-                        input: {
-                          poiReview: {
-                            poiId: "00000000-0000-0000-0000-000000000000",
-                            kakaoId: place.id,
-                            userId: currentUserId,
-                            rating: value * 2,
-                          },
-                        },
-                      },
-                    });
-                    await handleRatingChange();
-                  }}
-                />
-              </div>
-            </div>
-            <div className="w-full pl-[50px]">
-              <span className="font-poppins text-[15px] font-medium text-black">
-                친절하시고 너무 좋아요~
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-end">
-              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
-                2023.11.06
-              </span>
-            </div>
-          </div>
           <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
             <div className="flex flex-row items-center">
               <img
