@@ -12,6 +12,7 @@ import {
 } from "@app/graphql";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Col, Input, Rate, Select, Typography } from "antd";
+import clsx from "clsx";
 import { keyBy } from "lodash";
 const { Paragraph } = Typography;
 
@@ -225,6 +226,350 @@ const PlaceItem = ({
           </span>
         </div>
       </Col>
+    </div>
+  );
+};
+
+type PlacePanelProps = {
+  place: Place;
+  rating: number | undefined;
+  poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
+  currentUserId: string | undefined;
+  onRatingChange: () => Promise<void>;
+  onFavoriteChange: () => Promise<void>;
+};
+
+const PlacePanel = ({
+  place,
+  rating,
+  currentUserId,
+  poiFavorite,
+  onRatingChange: handleRatingChange,
+  onFavoriteChange: handleFavoriteChange,
+}: PlacePanelProps) => {
+  const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+
+  const [upsertPoiReview] = useUpsertPoiReviewMutation();
+  const [upsertPoiFavorite] = useUpsertPoiFavoriteMutation();
+  const [deletePoiFavorite] = useDeletePoiFavoriteMutation();
+
+  const [panelIsOpen, setPanelIsOpen] = useState<boolean>(true);
+
+  return (
+    <div
+      key={`${place.id}:panel`}
+      className={clsx(
+        "shadow-mapInsetBoxShadow drop-shadow-mapsDropShadow fixed top-[96px] left-[calc(min(89px,2rem+1vw+36px)+calc(6rem-36px+max(200px,23vw)))] z-[1] h-[calc(100vh-6rem)] w-[calc(6rem-36px+max(200px,23vw))] rounded-r-[50px] bg-white",
+        { hidden: !panelIsOpen }
+      )}
+    >
+      <div className="shadow-mapInsetBoxShadow drop-shadow-mapsDropShadowLighter relative flex h-full w-full flex-col rounded-tr-[50px] border-none bg-white">
+        <div className="shadow-mapInsetBoxShadow drop-shadow-mapsDropShadow flex h-[calc(min(72px,2rem+1.5vw)+50px)] w-full flex-row items-center justify-center rounded-tr-[50px] bg-white px-8">
+          <span className="font-poppins w-[80%] truncate text-center text-[25px] font-bold text-black">
+            {place.place_name}
+          </span>
+          <Button
+            onClick={() => setPanelIsOpen(false)}
+            className="absolute right-[32px] h-[21px] w-[21px] border-none p-0"
+          >
+            <img src="close_button_blue.png" className="h-[21px] w-[21px]" />
+          </Button>
+        </div>
+        <div className="h-[calc(100%-calc(min(72px,2rem+1.5vw)+50px))] w-full overflow-scroll">
+          <div className="map-rate mt-10 justify-center">
+            {/* TODO: disable this and move this to the poi detail */}
+            <Rate
+              allowHalf
+              allowClear
+              value={rating != null ? rating / 2 : undefined}
+              onChange={async (value) => {
+                await upsertPoiReview({
+                  variables: {
+                    input: {
+                      poiReview: {
+                        poiId: "00000000-0000-0000-0000-000000000000",
+                        kakaoId: place.id,
+                        userId: currentUserId,
+                        rating: value * 2,
+                      },
+                    },
+                  },
+                });
+                await handleRatingChange();
+              }}
+            />
+            <span className="map-list-details">
+              ({rating != null ? rating / 2 : "N/A"})&nbsp;&nbsp;·&nbsp;&nbsp;
+            </span>
+            <span className="font-poppins text-pupcleBlue text-[15px] font-medium">
+              리뷰 28개
+            </span>
+          </div>
+          <div className="flex w-full flex-col px-8 py-10">
+            <div className="mb-5 flex flex-row">
+              <div className="flex h-6 w-6 flex-row justify-center">
+                <img className="h-6" src="map_pin.png" />
+              </div>
+              <span className="font-poppins ml-6 text-[15px] font-medium text-black">
+                {place.road_address_name}
+              </span>
+            </div>
+            <div className="mb-5 flex flex-row">
+              <img className="h-6" src="call_icon.png" />
+              <span className="font-poppins ml-6 text-[15px] font-medium text-black">
+                {place.phone}
+              </span>
+            </div>
+            <div className="flex flex-row">
+              <img className="h-6" src="clock_icon.png" />
+              <span className="font-poppins ml-6 text-[15px] font-medium text-black">
+                {/* {place.}
+              TODO: 영업시간 */}
+              </span>
+            </div>
+          </div>
+          <div className="bg-pupcleLightLightGray shadow-mapInsetBoxShadow h-2 w-full border-none"></div>
+          <div className="flex w-full flex-row justify-center py-10">
+            <div className="relative h-[88.1px] w-[335px]">
+              <img src="/maps_review_rating_dog.png" />
+              <div className="absolute top-[25%] right-[10%]">
+                <div className="flex flex-row items-center justify-center">
+                  <span>별점을 남겨주라멍</span>
+                  <img src="/paw.png" className="ml-[2px] h-[13px] w-5" />
+                </div>
+                <div className="map-rate justify-center">
+                  {/* TODO: disable this and move this to the poi detail */}
+                  <Rate
+                    allowHalf
+                    allowClear
+                    value={rating != null ? rating / 2 : undefined}
+                    onChange={async (value) => {
+                      await upsertPoiReview({
+                        variables: {
+                          input: {
+                            poiReview: {
+                              poiId: "00000000-0000-0000-0000-000000000000",
+                              kakaoId: place.id,
+                              userId: currentUserId,
+                              rating: value * 2,
+                            },
+                          },
+                        },
+                      });
+                      await handleRatingChange();
+                    }}
+                  />
+                  <span className="map-list-details">
+                    {rating != null ? rating / 2 : "N/A"}/5.0
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="border-pupcleLightGray flex h-[55px] w-full items-center justify-between border-y-[1px] px-8">
+            <div className="flex flex-row">
+              <span className="font-poppins text-[18px] font-semibold text-black">
+                리뷰&nbsp;
+              </span>
+              <span className="font-poppins text-pupcleBlue text-[18px] font-semibold">
+                18개
+              </span>
+            </div>
+            <div>
+              <Select
+                className="maps-detail-selector flex items-center border-none"
+                onChange={handleChange}
+                defaultValue="latest"
+                suffixIcon={
+                  <img src="/maps_selector_caret.png" className="h-1 w-2" />
+                }
+                options={[
+                  { value: "latest", label: "최신 순" },
+                  { value: "highRatings", label: "별점 높은 순" },
+                  { value: "lowRatings", label: "별점 낮은 순" },
+                ]}
+              />
+            </div>
+          </div>
+          {/* TODO: map */}
+          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
+            <div className="flex flex-row items-center">
+              <img
+                className="h-[38px] w-[38px]"
+                src="/avatar_white_border.png"
+              />
+              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
+                퐁당이 누나
+              </span>
+              <div className="map-rate ml-3 justify-center">
+                {/* TODO: disable this and move this to the poi detail */}
+                <Rate
+                  allowHalf
+                  allowClear
+                  value={rating != null ? rating / 2 : undefined}
+                  onChange={async (value) => {
+                    await upsertPoiReview({
+                      variables: {
+                        input: {
+                          poiReview: {
+                            poiId: "00000000-0000-0000-0000-000000000000",
+                            kakaoId: place.id,
+                            userId: currentUserId,
+                            rating: value * 2,
+                          },
+                        },
+                      },
+                    });
+                    await handleRatingChange();
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full pl-[50px]">
+              <span className="font-poppins text-[15px] font-medium text-black">
+                친절하시고 너무 좋아요~
+              </span>
+            </div>
+            <div className="flex w-full flex-row justify-end">
+              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
+                2023.11.06
+              </span>
+            </div>
+          </div>
+          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
+            <div className="flex flex-row items-center">
+              <img
+                className="h-[38px] w-[38px]"
+                src="/avatar_white_border.png"
+              />
+              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
+                퐁당이 누나
+              </span>
+              <div className="map-rate ml-3 justify-center">
+                {/* TODO: disable this and move this to the poi detail */}
+                <Rate
+                  allowHalf
+                  allowClear
+                  value={rating != null ? rating / 2 : undefined}
+                  onChange={async (value) => {
+                    await upsertPoiReview({
+                      variables: {
+                        input: {
+                          poiReview: {
+                            poiId: "00000000-0000-0000-0000-000000000000",
+                            kakaoId: place.id,
+                            userId: currentUserId,
+                            rating: value * 2,
+                          },
+                        },
+                      },
+                    });
+                    await handleRatingChange();
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full pl-[50px]">
+              <span className="font-poppins text-[15px] font-medium text-black">
+                친절하시고 너무 좋아요~
+              </span>
+            </div>
+            <div className="flex w-full flex-row justify-end">
+              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
+                2023.11.06
+              </span>
+            </div>
+          </div>
+          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
+            <div className="flex flex-row items-center">
+              <img
+                className="h-[38px] w-[38px]"
+                src="/avatar_white_border.png"
+              />
+              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
+                퐁당이 누나
+              </span>
+              <div className="map-rate ml-3 justify-center">
+                {/* TODO: disable this and move this to the poi detail */}
+                <Rate
+                  allowHalf
+                  allowClear
+                  value={rating != null ? rating / 2 : undefined}
+                  onChange={async (value) => {
+                    await upsertPoiReview({
+                      variables: {
+                        input: {
+                          poiReview: {
+                            poiId: "00000000-0000-0000-0000-000000000000",
+                            kakaoId: place.id,
+                            userId: currentUserId,
+                            rating: value * 2,
+                          },
+                        },
+                      },
+                    });
+                    await handleRatingChange();
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full pl-[50px]">
+              <span className="font-poppins text-[15px] font-medium text-black">
+                친절하시고 너무 좋아요~
+              </span>
+            </div>
+            <div className="flex w-full flex-row justify-end">
+              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
+                2023.11.06
+              </span>
+            </div>
+          </div>
+          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
+            <div className="flex flex-row items-center">
+              <img
+                className="h-[38px] w-[38px]"
+                src="/avatar_white_border.png"
+              />
+              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
+                퐁당이 누나
+              </span>
+              <div className="map-rate ml-3 justify-center">
+                {/* TODO: disable this and move this to the poi detail */}
+                <Rate
+                  allowHalf
+                  allowClear
+                  value={rating != null ? rating / 2 : undefined}
+                  onChange={async (value) => {
+                    await upsertPoiReview({
+                      variables: {
+                        input: {
+                          poiReview: {
+                            poiId: "00000000-0000-0000-0000-000000000000",
+                            kakaoId: place.id,
+                            userId: currentUserId,
+                            rating: value * 2,
+                          },
+                        },
+                      },
+                    });
+                    await handleRatingChange();
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full pl-[50px]">
+              <span className="font-poppins text-[15px] font-medium text-black">
+                친절하시고 너무 좋아요~
+              </span>
+            </div>
+            <div className="flex w-full flex-row justify-end">
+              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
+                2023.11.06
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -444,6 +789,8 @@ const Maps: NextPage = () => {
     [placesApi, newMarker, mapMarkers, map]
   );
 
+  const [selectedKakaoId, setSelectedKakaoId] = useState<string | undefined>();
+
   return (
     <SharedLayout title="maps" query={query}>
       <div style={{ minWidth: "768px" }}>
@@ -584,7 +931,7 @@ const Maps: NextPage = () => {
                     position: "fixed",
                     top: 0,
                     boxShadow: "4px 0px 4px rgb(0 0 0 / 0.10)",
-                    zIndex: 1,
+                    zIndex: 3,
                   }}
                 ></div>
                 <div
@@ -594,6 +941,7 @@ const Maps: NextPage = () => {
                     width: "calc(6rem - 36px + max(200px, 23vw))",
                     height: "100vh",
                     position: "fixed",
+                    zIndex: 2,
                     top: 0,
                     boxShadow: "4px 0px 4px rgb(0 0 0 / 0.25)",
                   }}
@@ -636,17 +984,38 @@ const Maps: NextPage = () => {
                     }}
                   >
                     {listResults?.map((place) => (
-                      <Button className="h-fit w-full border-none bg-transparent p-0 !shadow-none">
-                        <PlaceItem
-                          key={place.id}
-                          place={place}
-                          rating={poiSummariesByKakaoId[place.id]?.rating}
-                          poiFavorite={poiFavoritesByKakaoId[place.id]}
-                          onRatingChange={handleRatingChange}
-                          onFavoriteChange={handleFavoriteChange}
-                          currentUserId={currentUserId}
-                        />
-                      </Button>
+                      <>
+                        <Button
+                          onClick={() => {
+                            if (selectedKakaoId === place.id) {
+                              setSelectedKakaoId(undefined);
+                            } else {
+                              setSelectedKakaoId(place.id);
+                            }
+                          }}
+                          className="h-fit w-full border-none bg-transparent p-0 !shadow-none"
+                        >
+                          <PlaceItem
+                            key={place.id}
+                            place={place}
+                            rating={poiSummariesByKakaoId[place.id]?.rating}
+                            poiFavorite={poiFavoritesByKakaoId[place.id]}
+                            onRatingChange={handleRatingChange}
+                            onFavoriteChange={handleFavoriteChange}
+                            currentUserId={currentUserId}
+                          />
+                        </Button>
+                        {selectedKakaoId === place.id && (
+                          <PlacePanel
+                            place={place}
+                            rating={poiSummariesByKakaoId[place.id]?.rating}
+                            poiFavorite={poiFavoritesByKakaoId[place.id]}
+                            onRatingChange={handleRatingChange}
+                            onFavoriteChange={handleFavoriteChange}
+                            currentUserId={currentUserId}
+                          />
+                        )}
+                      </>
                     ))}
                   </Tabs.Content>
                   <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>
@@ -665,66 +1034,67 @@ const Maps: NextPage = () => {
               </MapSheet.SheetContent>
             </Tabs.Root>
           </MapSheet.Sheet>
-
-          <div
-            style={{
-              marginLeft: "3rem",
-              // width: "35vw",
-              // minWidth: "280px",
-              height: "min(72px, 2rem + 1.5vw)",
-              display: "flex",
-              alignItems: "center",
-              // justifyContent: "space-between",
-              overscrollBehavior: "contain",
-              overflow: "scroll",
-              maxWidth: "calc(100vw - (18px + 53px + 6rem + 200px))",
-            }}
-          >
-            <Button className="maps-category group">
-              <img
-                src="/vet_icon.png"
-                id="vet"
-                style={{ width: "min(17px, 12px + 0.1vw)" }}
-                alt="vet icon"
-              />
-              <span className="maps-category-span group-hover:text-white">
-                동물병원
-              </span>
-            </Button>
-            <Button className="maps-category group">
-              <img
-                src="/cafe_icon.png"
-                id="cafe"
-                style={{ width: "min(28px, 20px + 0.1vw)" }}
-                alt="cafe icon"
-              />
-              <span className="maps-category-span group-hover:text-white">
-                카페
-              </span>
-            </Button>
-            <Button className="maps-category group">
-              <img
-                src="/restaurant_icon.png"
-                id="restaurant"
-                style={{ width: "min(19px, 13px + 0.1vw)" }}
-                alt="restaurant icon"
-              />
-              <span className="maps-category-span group-hover:text-white">
-                식당
-              </span>
-            </Button>
-            <Button className="maps-category group">
-              <img
-                src="/park_icon.png"
-                id="park"
-                style={{ width: "min(23.5px, 16px + 0.1vw)" }}
-                alt="park icon"
-              />
-              <span className="maps-category-span group-hover:text-white">
-                공원
-              </span>
-            </Button>
-          </div>
+          {!selectedKakaoId && (
+            <div
+              style={{
+                marginLeft: "3rem",
+                // width: "35vw",
+                // minWidth: "280px",
+                height: "min(72px, 2rem + 1.5vw)",
+                display: "flex",
+                alignItems: "center",
+                // justifyContent: "space-between",
+                overscrollBehavior: "contain",
+                overflow: "scroll",
+                maxWidth: "calc(100vw - (18px + 53px + 6rem + 200px))",
+              }}
+            >
+              <Button className="maps-category group">
+                <img
+                  src="/vet_icon.png"
+                  id="vet"
+                  style={{ width: "min(17px, 12px + 0.1vw)" }}
+                  alt="vet icon"
+                />
+                <span className="maps-category-span group-hover:text-white">
+                  동물병원
+                </span>
+              </Button>
+              <Button className="maps-category group">
+                <img
+                  src="/cafe_icon.png"
+                  id="cafe"
+                  style={{ width: "min(28px, 20px + 0.1vw)" }}
+                  alt="cafe icon"
+                />
+                <span className="maps-category-span group-hover:text-white">
+                  카페
+                </span>
+              </Button>
+              <Button className="maps-category group">
+                <img
+                  src="/restaurant_icon.png"
+                  id="restaurant"
+                  style={{ width: "min(19px, 13px + 0.1vw)" }}
+                  alt="restaurant icon"
+                />
+                <span className="maps-category-span group-hover:text-white">
+                  식당
+                </span>
+              </Button>
+              <Button className="maps-category group">
+                <img
+                  src="/park_icon.png"
+                  id="park"
+                  style={{ width: "min(23.5px, 16px + 0.1vw)" }}
+                  alt="park icon"
+                />
+                <span className="maps-category-span group-hover:text-white">
+                  공원
+                </span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </SharedLayout>
