@@ -90,7 +90,10 @@ const Account: NextPage = () => {
                   />
                 </Button>
                 <div className="bg-pupcleLightGray h-[1px] w-full border-none p-0"></div>
-                <Button className="!hover:border-pupcleLightGray rounded-t-0 flex h-[58px] w-full flex-row items-center justify-between rounded-b-[24px] border-none bg-transparent px-[22px]">
+                <Button
+                  href="/account/detailed-info"
+                  className="!hover:border-pupcleLightGray rounded-t-0 flex h-[58px] w-full flex-row items-center justify-between rounded-b-[24px] border-none bg-transparent px-[22px]"
+                >
                   <span className="font-poppins mt-[2px] text-[20px] text-black">
                     세부 정보 수정하기
                   </span>
