@@ -15,10 +15,11 @@ import { Button, Col, Input, Rate, Select, Typography } from "antd";
 import clsx from "clsx";
 import { keyBy } from "lodash";
 const { Paragraph } = Typography;
-
+import * as Dialog from "@radix-ui/react-dialog";
 import { NextPage } from "next";
 import * as React from "react";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
+import { Form } from "formik-antd";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -332,44 +333,144 @@ const PlacePanel = ({
           <div className="flex w-full flex-row justify-center py-10">
             <div className="relative h-[88.1px] w-[335px]">
               <img src="/maps_review_rating_dog.png" />
-              <div className="absolute top-[25%] right-[10%]">
-                <div className="flex flex-row items-center justify-center">
-                  <span className="font-poppins text-[15px] font-medium text-black">
-                    별점을 남겨주라멍
-                  </span>
-                  {/* TODO: if rating is there, 리뷰를 남겨주라멍, and if review is there, 소중한 리뷰 고맙다멍 */}
-                  <img src="/paw.png" className="ml-[2px] h-[13px] w-5" />
-                </div>
-                <div className="map-rate justify-center">
-                  {/* TODO: disable this and move this to the poi detail */}
-                  <Rate
-                    allowHalf
-                    allowClear
-                    value={rating != null ? rating / 2 : undefined}
-                    onChange={async (value) => {
-                      await upsertPoiReview({
-                        variables: {
-                          input: {
-                            poiReview: {
-                              poiId: "00000000-0000-0000-0000-000000000000",
-                              kakaoId: place.id,
-                              userId: currentUserId,
-                              rating: value * 2,
+              <div className="absolute bottom-0 right-0">
+                <div className="flex h-[85px] w-[218px] flex-col items-center justify-center">
+                  <div className="flex items-center justify-center">
+                    <span className="font-poppins text-[15px] font-medium text-black">
+                      별점을 남겨주라멍
+                    </span>
+                    {/* TODO: if rating is there, 리뷰를 남겨주라멍, and if review is there, 소중한 리뷰 고맙다멍 */}
+                    <img src="/paw.png" className="ml-[2px] h-[13px] w-5" />
+                  </div>
+                  <div className="map-rate justify-center">
+                    <Rate
+                      allowHalf
+                      allowClear
+                      value={rating != null ? rating / 2 : undefined}
+                      onChange={async (value) => {
+                        await upsertPoiReview({
+                          variables: {
+                            input: {
+                              poiReview: {
+                                poiId: "00000000-0000-0000-0000-000000000000",
+                                kakaoId: place.id,
+                                userId: currentUserId,
+                                rating: value * 2,
+                              },
                             },
                           },
-                        },
-                      });
-                      await handleRatingChange();
-                    }}
-                  />
-                  <span className="map-list-details">
-                    {rating != null ? rating / 2 : "N/A"}/5.0
-                  </span>
+                        });
+                        await handleRatingChange();
+                      }}
+                    />
+                    <span className="map-list-details">
+                      {rating != null ? rating / 2 : "(N/A)"}/5.0
+                    </span>
+                  </div>
+                  {/* TODO: hange the html when 리뷰를 남겨주라멍: */}
+                  {/* <Dialog.Root>
+                    <Dialog.Trigger asChild>
+                      <Button className="h-5 border-none bg-transparent p-0">
+                        <div className="flex flex-row">
+                          <img className="h-5 w-5" src="/write_blue.png" />
+                          <span className="font-poppins text-pupcleBlue ml-1 text-[15px] font-bold">
+                            리뷰 쓰기
+                          </span>
+                        </div>
+                      </Button>
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                      <Dialog.Overlay className="fixed inset-0 z-10 bg-black/30" />
+                      <Dialog.Content
+                        className={clsx(
+                          "fixed z-20",
+                          "w-[90vw] rounded-[50px] bg-white lg:w-[45%]",
+                          "top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] dark:bg-gray-800 "
+                        )}
+                      >
+                        <Dialog.Title className="border-pupcleLightGray flex h-[90px] w-full flex-row items-center border-b-[1px] px-[44px]">
+                          <img
+                            src="/write_blue.png"
+                            className="h-[37px] w-[37px]"
+                            alt=""
+                          />
+                          <span className="font-poppins text-pupcleBlue ml-1 text-[20px] font-semibold">
+                            리뷰 쓰기
+                          </span>
+                        </Dialog.Title>
+                        <div className="pl-[40px] pb-[30px] pt-[40px]">
+                          <div className="mb-10 flex w-full flex-row justify-center pr-10">
+                            <span className="font-poppins text-[25px] font-bold text-black">
+                              {place.place_name}
+                            </span>
+                          </div>
+                          <div className="mb-[67px] flex h-[60px] w-full flex-row items-center">
+                            <div className="w-[40px]">
+                              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                                별점
+                              </span>
+                            </div>
+                            <div className="map-dialog-rate relative w-[calc(100%-40px)] px-[66px] pb-[10px]">
+                              <Rate
+                                allowHalf
+                                allowClear
+                                value={rating != null ? rating / 2 : undefined}
+                                onChange={async (value) => {
+                                  await upsertPoiReview({
+                                    variables: {
+                                      input: {
+                                        poiReview: {
+                                          poiId:
+                                            "00000000-0000-0000-0000-000000000000",
+                                          kakaoId: place.id,
+                                          userId: currentUserId,
+                                          rating: value * 2,
+                                        },
+                                      },
+                                    },
+                                  });
+                                  await handleRatingChange();
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="mb-9 flex w-full flex-row">
+                            <div className="w-[40px]">
+                              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                                리뷰
+                              </span>
+                            </div>
+                            <div className="w-[calc(100%-40px)] px-[66px]">
+                              <textarea
+                                name="review"
+                                className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-[226px] w-full rounded-[20px] border-none p-6 text-[15px] font-medium focus:outline-0 focus:ring-0"
+                                // size="large"
+                                autoComplete="review"
+                                data-cy="maps-review"
+                                placeholder="이 장소에 대한 경험을 공유해주세요."
+                              />
+                            </div>
+                          </div>
+                          <div className="flex w-full justify-end pr-[66px]">
+                            <Dialog.Close asChild>
+                              <Button className="border-pupcleGray mr-[15px] h-[46px] w-[134px] rounded-full border-[1px] bg-transparent">
+                                <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                                  취소
+                                </span>
+                              </Button>
+                            </Dialog.Close>
+
+                            <Button className="border-pupcleBlue h-[46px] w-[134px] rounded-full border-[1px] bg-transparent">
+                              <span className="font-poppins text-pupcleBlue text-[20px] font-bold">
+                                게시
+                              </span>
+                            </Button>
+                          </div>
+                        </div>
+                      </Dialog.Content>
+                    </Dialog.Portal>
+                  </Dialog.Root> */}
                 </div>
-                {/* TODO: change the html when 리뷰를 남겨주라멍:
-                <Button>
-                <div classname="flex flex-row"><img classname="w-5 h-5" src="/write_blue.png" /><span classname="ml-1 font-poppins font-bold text-pupcleBlue text-[15px]">리뷰 쓰기</span>/div>
-                </Button> */}
               </div>
             </div>
           </div>

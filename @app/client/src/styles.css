@@ -343,6 +343,12 @@ a.ant-btn-primary:hover {
   color: #8f9092;
 }
 
+.map-dialog-rate .ant-rate {
+  display: flex;
+  color: #ff9c06;
+  font-size: 60px;
+}
+
 .map-rate {
   display: flex;
   align-items: center;
