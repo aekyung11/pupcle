@@ -2285,7 +2285,7 @@ const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
     categories[0].id
   );
 
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
+  const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
 
   const examResults = currentPet.examResults.nodes;
   const filteredExamResults = useMemo(() => {
@@ -2321,29 +2321,57 @@ const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
     return Array.from(buckets).sort();
   }, [filteredExamResults]);
 
-  const bucketData = useMemo(() => {
-    if (!selectedBucket || !filteredExamResults.length) {
-      return [];
+  const bucketDataBySelectedBucket: Record<
+    string,
+    {
+      x: Date;
+      y: number | undefined;
+    }[]
+  > = useMemo(() => {
+    if (!selectedBuckets.length || !filteredExamResults.length) {
+      return {};
     }
 
     const examResults = sortBy(
       filteredExamResults.filter((er) => er.takenAt),
       "takenAt"
     );
-    return examResults
-      .map((er) => {
-        const y = (er.examData?.["points"] as any[])?.find(
-          (p) => p.bucket === selectedBucket
-        )?.value as number | undefined;
-        return {
-          x: new Date(er.takenAt!),
-          y: y != null ? Number(y) : undefined,
-        };
-      })
-      .filter(({ y }) => y !== undefined);
-  }, [filteredExamResults, selectedBucket]);
 
-  console.log({ bucketData });
+    let result: Record<
+      string,
+      {
+        x: Date;
+        y: number | undefined;
+      }[]
+    > = {};
+    return selectedBuckets.reduce(
+      (
+        acc: Record<
+          string,
+          {
+            x: Date;
+            y: number | undefined;
+          }[]
+        >,
+        selectedBucket
+      ) => {
+        const bucketData = examResults
+          .map((er) => {
+            const y = (er.examData?.["points"] as any[])?.find(
+              (p) => p.bucket === selectedBucket
+            )?.value as number | undefined;
+            return {
+              x: new Date(er.takenAt!),
+              y: y != null ? Number(y) : undefined,
+            };
+          })
+          .filter(({ y }) => y !== undefined);
+        acc[selectedBucket] = bucketData;
+        return acc;
+      },
+      result
+    );
+  }, [filteredExamResults, selectedBuckets]);
 
   if (!categories.length) {
     return <FourOhFour />;
@@ -2351,11 +2379,7 @@ const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
 
   return (
     <>
-      <div
-        className={clsx("flex w-full flex-col items-center", {
-          hidden: selectedBucket,
-        })}
-      >
+      <div className={clsx("flex w-full flex-col items-center")}>
         <div className="flex w-full max-w-[1095px] flex-col px-[65px] py-[34px]">
           <ToggleGroup.Root
             className="ToggleGroup"
@@ -2380,46 +2404,39 @@ const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
           </ToggleGroup.Root>
         </div>
         <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-        <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-          {buckets?.map((bucket) => (
-            <Button
-              key={bucket}
-              className="border-pupcleLightGray aria-checked:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-checked:border-none"
-              onClick={() => setSelectedBucket(bucket)}
-            >
-              <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                {bucket}
-              </span>
-            </Button>
-          ))}
-        </div>
-      </div>
-      <div
-        className={clsx({
-          hidden: !selectedBucket,
-        })}
-      >
-        <div
-          className={clsx(
-            "border-pupcleLightLightGray flex h-[91px] w-full flex-row items-center justify-start border-b-[9px] px-[65px]"
-          )}
+        <ToggleGroup.Root
+          className="ToggleGroup"
+          type="multiple"
+          value={selectedBuckets}
+          onValueChange={(value) => setSelectedBuckets(value)}
+          aria-label="Text alignment"
         >
-          <Button
-            className="mr-3 h-[13px] w-5 border-none p-0"
-            onClick={() => setSelectedBucket("")}
-          >
-            <img
-              src="/pup_notes_caret_icon.png"
-              className="h-[13px] w-5 rotate-90"
-            />
-          </Button>
-          <span className="font-poppins text-pupcle-24px mt-[2px] font-semibold">
-            {selectedBucket}
-          </span>
-        </div>
+          <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+            {buckets?.map((bucket) => (
+              <ToggleGroup.Item
+                key={bucket}
+                value={bucket}
+                className="border-pupcleLightGray aria-pressed:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-pressed:border-none"
+              >
+                <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                  {bucket}
+                </span>
+              </ToggleGroup.Item>
+            ))}
+          </div>
+        </ToggleGroup.Root>
         <div className="my-[72px] grid h-[calc(100vh-6rem-125px-91px-20px-144px)] w-full grid-cols-2 justify-items-center overflow-scroll px-16">
-          {/* @ts-ignore */}
-          <ExamDataChart title={selectedBucket} chartData={bucketData} />
+          {selectedBuckets.map((selectedBucket) => {
+            const bucketData = bucketDataBySelectedBucket[selectedBucket];
+            return (
+              <ExamDataChart
+                key={selectedBucket}
+                title={selectedBucket}
+                // @ts-ignore
+                chartData={bucketData}
+              />
+            );
+          })}
         </div>
       </div>
     </>
