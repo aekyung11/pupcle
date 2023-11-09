@@ -20,6 +20,13 @@ fragment SharedLayout_Pet on Pet {
   }
 }
 
+fragment SharedLayout_UserEntry on UserEntry {
+  userId
+  name
+  phone
+  address
+}
+
 fragment SharedLayout_User on User {
   id
   nickname
@@ -36,7 +43,7 @@ fragment SharedLayout_User on User {
   }
   userEntry {
     userId
-    name
+    ...SharedLayout_UserEntry
   }
   organizationMemberships(first: 20) {
     nodes {

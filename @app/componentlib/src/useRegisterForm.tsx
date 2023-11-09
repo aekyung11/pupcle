@@ -33,7 +33,7 @@ const validationSchema = yup.object({
       "Must contain only alphanumeric characters and underscores."
     ),
   email: yup.string().email().required("Please enter your email"),
-  phone: yup.string(),
+  phone: yup.string().optional(),
   password: yup
     .string()
     .required("Please enter your password")

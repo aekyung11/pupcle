@@ -1,11 +1,15 @@
-import { useSocialInfoForm } from "@app/componentlib";
+import { usePrivateInfoForm, useSocialInfoForm } from "@app/componentlib";
 import {
   AuthRestrict,
   FourOhFour,
   FramedAvatarUpload,
   SharedLayout,
 } from "@app/components";
-import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
+import {
+  SharedLayout_UserEntryFragment,
+  SharedLayout_UserFragment,
+  useSharedQuery,
+} from "@app/graphql";
 import { extractError, getCodeFromError } from "@app/lib";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Alert, Button, InputRef } from "antd";
@@ -71,10 +75,11 @@ const Account: NextPage = () => {
               </Button>
             </div>
             <div className="flex h-[calc(100%-91px)] w-full justify-center py-10">
-              {query.data?.currentUser && (
+              {currentUser && currentUser.userEntry && (
                 <AccountDetailedPageInner
                   refetch={refetch}
                   currentUser={currentUser}
+                  currentUserEntry={currentUser.userEntry}
                 />
               )}
             </div>
@@ -87,11 +92,12 @@ const Account: NextPage = () => {
 
 interface AccountDetailedPageInnerProps {
   currentUser: SharedLayout_UserFragment;
+  currentUserEntry: SharedLayout_UserEntryFragment;
   refetch: () => Promise<any>;
 }
 
 const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
-  currentUser,
+  currentUserEntry,
 }) => {
   const [editingDetailedInfo, setEditingDetailedInfo] = useState(false);
 
@@ -100,13 +106,7 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
   }, []);
 
   const { validationSchema, initialValues, handleSubmit, error } =
-    useSocialInfoForm(
-      currentUser.id,
-      postResult,
-      currentUser.nickname,
-      currentUser.username,
-      currentUser.avatarUrl
-    );
+    usePrivateInfoForm(currentUserEntry, postResult);
 
   const focusElement = useRef<InputRef>(null);
   useEffect(
@@ -144,7 +144,7 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                     />
                   </Form.Item>
                 </div>
-                <div className="flex w-full flex-col">
+                {/* <div className="flex w-full flex-col">
                   <span className="font-poppins mb-1 pl-6 text-[20px]">
                     이메일 주소
                   </span>
@@ -156,7 +156,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-full w-full rounded-full border-none p-0 text-[16px]"
                             name="email"
                             autoComplete="email"
-                            ref={focusElement}
                             data-cy="detailed-info-page-input-email"
                             placeholder="example@pupcle.com"
                             suffix
@@ -198,7 +197,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                               className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
                               name="email"
                               autoComplete="email"
-                              ref={focusElement}
                               data-cy="detailed-info-page-input-email"
                               placeholder="example@pupcle.com"
                               suffix
@@ -211,7 +209,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-[60%] rounded-full border-none px-6 text-[16px]"
                             name="email verificationcode"
                             autoComplete="email verificationcode"
-                            ref={focusElement}
                             data-cy="detailed-info-page-input-email-verificationcode"
                             suffix
                             disabled={!editingDetailedInfo}
@@ -220,8 +217,8 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             <Button className="bg-pupcleBlue h-[48px] w-full rounded-full border-none">
                               <span className="font-poppins text-[16px] font-semibold text-white">
                                 코드 전송
-                                {/* TODO: if nothing in input and already sent the code, 코드 재전송,
-                                if something in input then, 인증하기 */}
+                                {"TODO: if nothing in input and already sent the code, 코드 재전송,
+                                if something in input then, 인증하기"}
                               </span>
                             </Button>
                           </div>
@@ -229,7 +226,7 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                       </Dialog.Content>
                     </Dialog.Portal>
                   </Dialog.Root>
-                </div>
+                </div> */}
                 <div className="flex w-full flex-col">
                   <span className="font-poppins mb-1 pl-6 text-[20px]">
                     휴대폰 번호
@@ -237,12 +234,11 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                   <Dialog.Root>
                     <Dialog.Trigger asChild>
                       <Button className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray mb-6 h-12 w-full rounded-full border-none px-6 text-[16px]">
-                        <Form.Item name="cellnumber" className="mb-0">
+                        <Form.Item name="phone" className="mb-0">
                           <Input
                             className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-full w-full rounded-full border-none p-0 text-[16px]"
-                            name="cellnumber"
-                            autoComplete="cellnumber"
-                            ref={focusElement}
+                            name="phone"
+                            autoComplete="phone"
                             data-cy="detailed-info-page-input-cellnumber"
                             placeholder="+82 10 0000 0000"
                             suffix
@@ -279,13 +275,12 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                           <span className="font-poppins mb-1 pl-6 text-[16px]">
                             휴대폰 번호
                           </span>
-                          <Form.Item name="cellnumber">
+                          <Form.Item name="phone">
                             <Input
                               className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                              name="cellnumber"
-                              autoComplete="cellnumber"
-                              ref={focusElement}
-                              data-cy="detailed-info-page-input-cellnumber"
+                              name="phone"
+                              autoComplete="phone"
+                              data-cy="detailed-info-page-input-phone"
                               placeholder="+82 10 0000 0000"
                               suffix
                               // disabled={!editingDetailedInfo}
@@ -298,7 +293,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-[60%] rounded-full border-none px-6 text-[16px]"
                             name="verificationcode"
                             autoComplete="verificationcode"
-                            ref={focusElement}
                             data-cy="detailed-info-page-input-verificationcode"
                             suffix
                             disabled={!editingDetailedInfo}
@@ -324,12 +318,11 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                   <Dialog.Root>
                     <Dialog.Trigger asChild>
                       <Button className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray mb-6 h-12 w-full rounded-full border-none px-6 text-[16px]">
-                        <Form.Item name="address1" className="mb-0">
+                        <Form.Item name="address.address1" className="mb-0">
                           <Input
                             className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-full w-full rounded-full border-none p-0 text-[16px]"
-                            name="address1"
+                            name="address.address1"
                             autoComplete="address1"
-                            ref={focusElement}
                             data-cy="detailed-info-page-input-address1"
                             placeholder="주소 검색"
                             suffix=""
@@ -359,12 +352,11 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             </Dialog.Close>
                           </div>
                           {/* TODO: 주소 검색 api 가져오기 */}
-                          <Form.Item name="address1">
+                          <Form.Item name="address.address1">
                             <Input
                               className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                              name="address1"
+                              name="address.address1"
                               autoComplete="address1"
-                              ref={focusElement}
                               data-cy="detailed-info-page-input-address1"
                               placeholder="주소를 입력하세요"
                               suffix
@@ -380,12 +372,11 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                   <span className="font-poppins mb-1 pl-6 text-[20px]">
                     상세 주소
                   </span>
-                  <Form.Item name="address2">
+                  <Form.Item name="address.address2">
                     <Input
                       className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                      name="address2"
-                      autoComplete="address1"
-                      ref={focusElement}
+                      name="address.address2"
+                      autoComplete="address2"
                       data-cy="detailed-info-page-input-address2"
                       suffix=""
                       disabled={!editingDetailedInfo}
@@ -397,19 +388,18 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                     우편번호
                   </span>
                   {/* TODO: 주소에서 우편번호 자동으로 가져오기 */}
-                  <Form.Item name="postalcode">
+                  <Form.Item name="address.postalCode">
                     <Input
                       className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
-                      name="postalcode"
-                      autoComplete="postalcode"
-                      ref={focusElement}
+                      name="address.postalCode"
+                      autoComplete="postal-code postalCode"
                       data-cy="detailed-info-page-input-postalcode"
                       suffix=""
                       disabled={!editingDetailedInfo}
                     />
                   </Form.Item>
                 </div>
-                <div className="flex w-full flex-col">
+                {/* <div className="flex w-full flex-col">
                   <span className="font-poppins mb-1 pl-6 text-[20px]">
                     비밀번호
                   </span>
@@ -422,7 +412,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             name="password"
                             type="password"
                             autoComplete="new-password"
-                            ref={focusElement}
                             data-cy="detailed-info-page-input-password"
                             suffix=""
                             disabled={!editingDetailedInfo}
@@ -463,7 +452,6 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                               className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
                               name="password"
                               autoComplete="new-password"
-                              ref={focusElement}
                               data-cy="detailed-info-page-input-password"
                               iconRender={(visible) =>
                                 visible ? (
@@ -489,8 +477,8 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                             <Button className="bg-pupcleBlue h-[48px] w-full rounded-full border-none">
                               <span className="font-poppins text-[16px] font-semibold text-white">
                                 인증하기
-                                {/* TODO: if nothing in input and already sent the code, 코드 재전송,
-                                if something in input then, 인증하기 */}
+                                {"TODO: if nothing in input and already sent the code, 코드 재전송,
+                                if something in input then, 인증하기"}
                               </span>
                             </Button>
                           </div>
@@ -508,13 +496,12 @@ const AccountDetailedPageInner: FC<AccountDetailedPageInnerProps> = ({
                       className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-12 w-full rounded-full border-none px-6 text-[16px]"
                       name="confirmpassword"
                       autoComplete="confirmpassword"
-                      ref={focusElement}
                       data-cy="detailed-info-page-input-confirmpassword"
                       suffix=""
                       disabled={!editingDetailedInfo}
                     />
                   </Form.Item>
-                </div>
+                </div> */}
                 {error ? (
                   <Form.Item name="_error">
                     <Alert
