@@ -106,7 +106,7 @@ function RegisterScreenInner() {
             <Field
               style={styles.input}
               component={CustomInput}
-              name="cellnumber"
+              name="phone"
               // placeholder={}
             />
             <View style={styles.rowPadding}>

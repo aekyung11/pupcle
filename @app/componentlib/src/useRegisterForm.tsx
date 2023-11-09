@@ -33,6 +33,7 @@ const validationSchema = yup.object({
       "Must contain only alphanumeric characters and underscores."
     ),
   email: yup.string().email().required("Please enter your email"),
+  phone: yup.string(),
   password: yup
     .string()
     .required("Please enter your password")
@@ -59,6 +60,7 @@ export function useRegisterForm(
     name: "",
     username: "",
     email: "",
+    phone: "",
     password: "",
     agreedToTerms: false,
   };
@@ -66,7 +68,7 @@ export function useRegisterForm(
     async (values, { setErrors }) => {
       setError(null);
       try {
-        const { name, ...rest } = values;
+        const { name, phone, ...rest } = values;
         const result = await register({
           variables: rest,
         });
@@ -77,6 +79,7 @@ export function useRegisterForm(
               userId,
               patch: {
                 name,
+                phone,
               },
             },
           });

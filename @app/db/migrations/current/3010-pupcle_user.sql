@@ -2,9 +2,10 @@ grant usage on schema app_public to :DATABASE_AUTHENTICATOR;
 
 create table app_public.user_entries (
   user_id                               uuid not null primary key references app_public.users on delete cascade,
-  name                             text,
+  name                                  text,
   pupcle_balance                        int not null default 0,
   total_pupcles_earned                  int not null default 0,
+  phone                                 text,
   address                               jsonb,
   agreed_to_terms                       boolean not null default false,
   receive_general_notifications         boolean not null default true,
@@ -22,6 +23,7 @@ create policy update_own on app_public.user_entries for update using (user_id = 
 grant select on app_public.user_entries to :DATABASE_VISITOR;
 -- NOTE: `insert` is not granted, because we'll handle that separately
 grant update(
+  phone,
   address,
   agreed_to_terms,
   name,

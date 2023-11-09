@@ -4,6 +4,7 @@ mutation UpdateUserEntry($userId: UUID!, $patch: UserEntryPatch!) {
     userEntry {
       userId
       name
+      phone
       address
       agreedToTerms
       receiveFriendRequestNotifications

@@ -7958,6 +7958,7 @@ type UserEntry {
   agreedToTerms: Boolean!
   createdAt: Datetime!
   name: String
+  phone: String
   pupcleBalance: Int!
   receiveFriendRequestNotifications: Boolean!
   receiveGeneralNotifications: Boolean!
@@ -8005,6 +8006,7 @@ input UserEntryPatch {
   address: JSON
   agreedToTerms: Boolean
   name: String
+  phone: String
   receiveFriendRequestNotifications: Boolean
   receiveGeneralNotifications: Boolean
   receiveInviteNotifications: Boolean

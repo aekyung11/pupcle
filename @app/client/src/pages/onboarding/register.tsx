@@ -364,9 +364,9 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                           Cell number (Optional)
                         </span>
                       </Row>
-                      <Form.Item name="cellnumber">
+                      <Form.Item name="phone">
                         <Input
-                          name="cellnumber"
+                          name="phone"
                           // size="large"
                           style={{
                             backgroundColor: "#f5f5f5",
@@ -375,7 +375,7 @@ const Register: NextPage<RegisterProps> = ({ next: rawNext }) => {
                             borderStyle: "none",
                           }}
                           // ref={focusElement}
-                          data-cy="registerpage-input-cellnumber"
+                          data-cy="registerpage-input-phone"
                           suffix
                         />
                       </Form.Item>
