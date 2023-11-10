@@ -461,7 +461,7 @@ const PlacePanel = ({
                         <div className="flex flex-row">
                           <img className="h-5 w-5" src="/write_blue.png" />
                           <span className="font-poppins text-pupcleBlue ml-1 text-[15px] font-bold">
-                            리뷰 쓰기
+                            {isReviewedByMe ? "리뷰 수정하기" : "리뷰 쓰기"}
                           </span>
                         </div>
                       </Button>
