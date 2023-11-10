@@ -76,7 +76,7 @@ export function DayPickerInput({
         <input
           className="dob-input disabled:text-pupcleDisabled"
           type="text"
-          placeholder={format(new Date(), "y-MM-dd")}
+          // placeholder={format(new Date(), "y-MM-dd")}
           value={inputValue}
           onChange={handleInputChange}
           style={{

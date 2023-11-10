@@ -25,6 +25,7 @@ fragment SharedLayout_UserEntry on UserEntry {
   name
   phone
   address
+  pupcleBalance
 }
 
 fragment SharedLayout_User on User {

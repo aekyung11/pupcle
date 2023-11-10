@@ -58,7 +58,7 @@ const Account: NextPage = () => {
             <div className="border-pupcleLightLightGray relative flex h-[325px] w-full flex-row items-center justify-center border-b-[9px]">
               <div className="absolute right-[60px] top-10 flex flex-row items-center">
                 <span className="font-poppins text-[20px]">
-                  보유 펍클 : 273
+                  보유 펍클 : {currentUser.userEntry?.pupcleBalance}
                 </span>
                 <img src="/pupcle_count.png" className="ml-1 h-[25px] w-6" />
               </div>

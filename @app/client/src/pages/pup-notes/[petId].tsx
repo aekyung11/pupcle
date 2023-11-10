@@ -2404,39 +2404,41 @@ const PupNotesPageChartsInner: FC<PupNotesPageChartsInnerProps> = ({
           </ToggleGroup.Root>
         </div>
         <div className="bg-pupcleLightLightGray h-[9px] w-full"></div>
-        <ToggleGroup.Root
-          className="ToggleGroup"
-          type="multiple"
-          value={selectedBuckets}
-          onValueChange={(value) => setSelectedBuckets(value)}
-          aria-label="Text alignment"
-        >
-          <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
-            {buckets?.map((bucket) => (
-              <ToggleGroup.Item
-                key={bucket}
-                value={bucket}
-                className="border-pupcleLightGray aria-pressed:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-pressed:border-none"
-              >
-                <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
-                  {bucket}
-                </span>
-              </ToggleGroup.Item>
-            ))}
+        <div className="flex h-[calc(100%-140px)] w-full flex-col items-center">
+          <ToggleGroup.Root
+            className="ToggleGroup w-full max-w-[1095px] py-[34px] px-[65px]"
+            type="multiple"
+            value={selectedBuckets}
+            onValueChange={(value) => setSelectedBuckets(value)}
+            aria-label="Text alignment"
+          >
+            <div className="grid w-full grid-cols-3 justify-items-center gap-y-5">
+              {buckets?.map((bucket) => (
+                <ToggleGroup.Item
+                  key={bucket}
+                  value={bucket}
+                  className="border-pupcleLightGray aria-pressed:bg-pupcleLightLightGray hover:bg-pupcleLightLightGray flex h-[63px] w-[19vw] max-w-[287px] items-center justify-center rounded-full border-[3px] hover:border-none aria-pressed:border-none"
+                >
+                  <span className="text-pupcle-20px font-poppins text-pupcleGray font-semibold">
+                    {bucket}
+                  </span>
+                </ToggleGroup.Item>
+              ))}
+            </div>
+          </ToggleGroup.Root>
+          <div className="my-[72px] grid h-full w-full grid-cols-2 justify-items-center overflow-scroll px-16">
+            {selectedBuckets.map((selectedBucket) => {
+              const bucketData = bucketDataBySelectedBucket[selectedBucket];
+              return (
+                <ExamDataChart
+                  key={selectedBucket}
+                  title={selectedBucket}
+                  // @ts-ignore
+                  chartData={bucketData}
+                />
+              );
+            })}
           </div>
-        </ToggleGroup.Root>
-        <div className="my-[72px] grid h-[calc(100vh-6rem-125px-91px-20px-144px)] w-full grid-cols-2 justify-items-center overflow-scroll px-16">
-          {selectedBuckets.map((selectedBucket) => {
-            const bucketData = bucketDataBySelectedBucket[selectedBucket];
-            return (
-              <ExamDataChart
-                key={selectedBucket}
-                title={selectedBucket}
-                // @ts-ignore
-                chartData={bucketData}
-              />
-            );
-          })}
         </div>
       </div>
     </>
