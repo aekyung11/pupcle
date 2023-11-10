@@ -1935,6 +1935,48 @@ enum FriendRequestsOrderBy {
   TO_USER_ID_DESC
 }
 
+"""
+A filter to be used against Int fields. All fields are combined with a logical ‘and.’
+"""
+input IntFilter {
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Int
+
+  """Equal to the specified value."""
+  equalTo: Int
+
+  """Greater than the specified value."""
+  greaterThan: Int
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Int
+
+  """Included in the specified list."""
+  in: [Int!]
+
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Less than the specified value."""
+  lessThan: Int
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Int
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Int
+
+  """Not equal to the specified value."""
+  notEqualTo: Int
+
+  """Not included in the specified list."""
+  notIn: [Int!]
+}
+
 """All input for the `inviteToOrganization` mutation."""
 input InviteToOrganizationInput {
   """
@@ -4016,11 +4058,20 @@ A condition to be used against `PoiReview` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
 input PoiReviewCondition {
+  """Checks for equality with the object’s `comment` field."""
+  comment: String
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
   """Checks for equality with the object’s `kakaoId` field."""
   kakaoId: String
 
   """Checks for equality with the object’s `poiId` field."""
   poiId: UUID
+
+  """Checks for equality with the object’s `rating` field."""
+  rating: Int
 
   """Checks for equality with the object’s `userId` field."""
   userId: UUID
@@ -4033,6 +4084,12 @@ input PoiReviewFilter {
   """Checks for all expressions in this list."""
   and: [PoiReviewFilter!]
 
+  """Filter by the object’s `comment` field."""
+  comment: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
   """Filter by the object’s `kakaoId` field."""
   kakaoId: StringFilter
 
@@ -4044,6 +4101,9 @@ input PoiReviewFilter {
 
   """Filter by the object’s `poiId` field."""
   poiId: UUIDFilter
+
+  """Filter by the object’s `rating` field."""
+  rating: IntFilter
 
   """Filter by the object’s `userId` field."""
   userId: UUIDFilter
@@ -4097,6 +4157,10 @@ type PoiReviewsEdge {
 
 """Methods to use when ordering `PoiReview`."""
 enum PoiReviewsOrderBy {
+  COMMENT_ASC
+  COMMENT_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
   KAKAO_ID_ASC
   KAKAO_ID_DESC
   NATURAL
@@ -4104,6 +4168,8 @@ enum PoiReviewsOrderBy {
   POI_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  RATING_ASC
+  RATING_DESC
   USER_ID_ASC
   USER_ID_DESC
 }

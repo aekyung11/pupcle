@@ -36,6 +36,10 @@ create index on app_public.poi_reviews (kakao_id, user_id);
 create index on app_public.poi_reviews (poi_id, user_id);
 create index on app_public.poi_reviews (user_id);
 
+create index on app_public.poi_reviews (comment);
+create index on app_public.poi_reviews (rating, comment, poi_id);
+create index on app_public.poi_reviews (created_at, comment, poi_id);
+
 create policy insert_own on app_public.poi_reviews for insert with check (user_id = app_public.current_user_id());
 create policy update_own on app_public.poi_reviews for update using (user_id = app_public.current_user_id());
 create policy delete_own on app_public.poi_reviews for delete using (user_id = app_public.current_user_id());

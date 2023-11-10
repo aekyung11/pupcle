@@ -1,8 +1,9 @@
 import { DownOutlined } from "@ant-design/icons";
-import { MapSheet, SharedLayout } from "@app/components";
+import { AuthRestrict, MapSheet, SharedLayout } from "@app/components";
 import {
   PoiFavorites_PoiFavoriteFragment,
   PoiSummaries_PoiFragment,
+  PoiSummaries_PoiReviewFragment,
   useDeletePoiFavoriteMutation,
   usePoiFavoritesQuery,
   usePoiSummariesQuery,
@@ -19,11 +20,10 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { NextPage } from "next";
 import * as React from "react";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
-import { Form } from "formik-antd";
-
-const handleChange = (value: string) => {
-  console.log(`selected ${value}`);
-};
+import { Formik } from "formik";
+import { Form, SubmitButton } from "formik-antd";
+import { usePoiReviewForm } from "@app/componentlib";
+import { format, parseISO } from "date-fns";
 
 enum Tab {
   EXPLORE = "explore",
@@ -102,26 +102,11 @@ const PlaceItem = ({
             {place.distance ? `${place.distance}m` : "-"}
           </span>
           <div className="map-rate">
-            {/* TODO: disable this and move this to the poi detail */}
             <Rate
               allowHalf
               allowClear
               value={rating != null ? rating / 2 : undefined}
-              onChange={async (value) => {
-                await upsertPoiReview({
-                  variables: {
-                    input: {
-                      poiReview: {
-                        poiId: "00000000-0000-0000-0000-000000000000",
-                        kakaoId: place.id,
-                        userId: currentUserId,
-                        rating: value * 2,
-                      },
-                    },
-                  },
-                });
-                await handleRatingChange();
-              }}
+              disabled
             />
             <span className="map-list-details">
               ({rating != null ? rating / 2 : "N/A"})
@@ -231,9 +216,93 @@ const PlaceItem = ({
   );
 };
 
+type PlacePanelReviewFormProps = {
+  poiReview: PoiSummaries_PoiReviewFragment;
+  currentUserId: string;
+  onSubmit: () => Promise<void>;
+};
+
+const PlacePanelReviewForm = ({
+  poiReview,
+  currentUserId,
+  onSubmit,
+}: PlacePanelReviewFormProps) => {
+  const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
+    usePoiReviewForm(currentUserId, poiReview, onSubmit);
+
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      {({ values, setFieldValue }) => (
+        <Form>
+          <div className="mb-[67px] flex h-[60px] w-full flex-row items-center">
+            <div className="w-[40px]">
+              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                별점
+              </span>
+            </div>
+            <div className="map-dialog-rate relative w-[calc(100%-40px)] px-[66px] pb-[10px]">
+              <Rate
+                allowHalf
+                allowClear
+                value={values.rating != null ? values.rating / 2 : undefined}
+                onChange={(value) => {
+                  setFieldValue("rating", value * 2);
+                }}
+              />
+            </div>
+          </div>
+          <div className="mb-9 flex w-full flex-row">
+            <div className="w-[40px]">
+              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                리뷰
+              </span>
+            </div>
+            <div className="w-[calc(100%-40px)] px-[66px]">
+              <textarea
+                name="review"
+                className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-[226px] w-full rounded-[20px] border-none p-6 text-[15px] font-medium focus:outline-0 focus:ring-0"
+                // size="large"
+                autoComplete="review"
+                data-cy="maps-review"
+                placeholder="이 장소에 대한 경험을 공유해주세요."
+                value={values.comment}
+                onChange={(e) =>
+                  setFieldValue("comment", e.currentTarget.value)
+                }
+              />
+            </div>
+          </div>
+          <div className="flex w-full justify-end pr-[66px]">
+            <Dialog.Close asChild>
+              <Button className="border-pupcleGray mr-[15px] h-[46px] w-[134px] rounded-full border-[1px] bg-transparent">
+                <span className="font-poppins text-pupcleGray text-[20px] font-bold">
+                  취소
+                </span>
+              </Button>
+            </Dialog.Close>
+
+            <SubmitButton
+              className="border-pupcleBlue h-[46px] w-[134px] rounded-full border-[1px] bg-transparent"
+              htmlType="submit"
+            >
+              <span className="font-poppins text-pupcleBlue text-[20px] font-bold">
+                게시
+              </span>
+            </SubmitButton>
+          </div>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
 type PlacePanelProps = {
   place: Place;
-  rating: number | undefined;
+  poiSummary: PoiSummaries_PoiFragment | undefined;
   poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
   currentUserId: string | undefined;
   onRatingChange: () => Promise<void>;
@@ -242,19 +311,40 @@ type PlacePanelProps = {
 
 const PlacePanel = ({
   place,
-  rating,
+  poiSummary,
   currentUserId,
   poiFavorite,
   onRatingChange: handleRatingChange,
   onFavoriteChange: handleFavoriteChange,
 }: PlacePanelProps) => {
-  const [isAddressExpanded, setIsAddressExpanded] = useState(false);
-
   const [upsertPoiReview] = useUpsertPoiReviewMutation();
-  const [upsertPoiFavorite] = useUpsertPoiFavoriteMutation();
-  const [deletePoiFavorite] = useDeletePoiFavoriteMutation();
 
   const [panelIsOpen, setPanelIsOpen] = useState<boolean>(true);
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState<boolean>(false);
+
+  const rating = poiSummary?.rating;
+  const reviewCount = poiSummary?.reviewCount ?? 0;
+
+  const myReview = poiSummary?.ratings.nodes.find(
+    (review) => review.userId === currentUserId
+  );
+
+  console.log({ myReview });
+
+  const isRatedByMe = myReview?.rating !== undefined;
+  const isReviewedByMe = !!myReview?.comment;
+
+  const [reviewSort, setReviewSort] = useState<
+    "latest" | "highRatings" | "lowRatings"
+  >("latest");
+  const reviews =
+    reviewSort === "latest"
+      ? poiSummary?.reviewsCreatedAtDesc
+      : reviewSort === "highRatings"
+      ? poiSummary?.reviewsRatingDesc
+      : reviewSort === "lowRatings"
+      ? poiSummary?.reviewsRatingAsc
+      : undefined;
 
   return (
     <div
@@ -283,27 +373,13 @@ const PlacePanel = ({
               allowHalf
               allowClear
               value={rating != null ? rating / 2 : undefined}
-              onChange={async (value) => {
-                await upsertPoiReview({
-                  variables: {
-                    input: {
-                      poiReview: {
-                        poiId: "00000000-0000-0000-0000-000000000000",
-                        kakaoId: place.id,
-                        userId: currentUserId,
-                        rating: value * 2,
-                      },
-                    },
-                  },
-                });
-                await handleRatingChange();
-              }}
+              disabled
             />
             <span className="map-list-details">
               ({rating != null ? rating / 2 : "N/A"})&nbsp;&nbsp;·&nbsp;&nbsp;
             </span>
             <span className="font-poppins text-pupcleBlue text-[15px] font-medium">
-              리뷰 28개
+              리뷰 {reviewCount ?? 0}개
             </span>
           </div>
           <div className="flex w-full flex-col px-8 py-10">
@@ -337,40 +413,51 @@ const PlacePanel = ({
                 <div className="flex h-[85px] w-[218px] flex-col items-center justify-center">
                   <div className="flex items-center justify-center">
                     <span className="font-poppins text-[15px] font-medium text-black">
-                      별점을 남겨주라멍
+                      {isReviewedByMe
+                        ? "소중한 리뷰 고맙다멍"
+                        : isRatedByMe
+                        ? "리뷰를 남겨주라멍"
+                        : "별점을 남겨주라멍"}
                     </span>
-                    {/* TODO: if rating is there, 리뷰를 남겨주라멍, and if review is there, 소중한 리뷰 고맙다멍 */}
                     <img src="/paw.png" className="ml-[2px] h-[13px] w-5" />
                   </div>
-                  <div className="map-rate justify-center">
-                    <Rate
-                      allowHalf
-                      allowClear
-                      value={rating != null ? rating / 2 : undefined}
-                      onChange={async (value) => {
-                        await upsertPoiReview({
-                          variables: {
-                            input: {
-                              poiReview: {
-                                poiId: "00000000-0000-0000-0000-000000000000",
-                                kakaoId: place.id,
-                                userId: currentUserId,
-                                rating: value * 2,
+                  {!isRatedByMe && (
+                    <div className="map-rate justify-center">
+                      <Rate
+                        allowHalf
+                        allowClear
+                        value={rating != null ? rating / 2 : undefined}
+                        onChange={async (value) => {
+                          await upsertPoiReview({
+                            variables: {
+                              input: {
+                                poiReview: {
+                                  poiId: "00000000-0000-0000-0000-000000000000",
+                                  kakaoId: place.id,
+                                  userId: currentUserId,
+                                  rating: value * 2,
+                                },
                               },
                             },
-                          },
-                        });
-                        await handleRatingChange();
-                      }}
-                    />
-                    <span className="map-list-details">
-                      {rating != null ? rating / 2 : "(N/A)"}/5.0
-                    </span>
-                  </div>
-                  {/* TODO: hange the html when 리뷰를 남겨주라멍: */}
-                  {/* <Dialog.Root>
+                          });
+                          await handleRatingChange();
+                        }}
+                      />
+                      <span className="map-list-details">
+                        {rating != null ? rating / 2 : "(N/A)"}/5.0
+                      </span>
+                    </div>
+                  )}
+                  <Dialog.Root
+                    open={isReviewDialogOpen}
+                    onOpenChange={setIsReviewDialogOpen}
+                  >
                     <Dialog.Trigger asChild>
-                      <Button className="h-5 border-none bg-transparent p-0">
+                      <Button
+                        className={clsx("h-5 border-none bg-transparent p-0", {
+                          hidden: !isRatedByMe,
+                        })}
+                      >
                         <div className="flex flex-row">
                           <img className="h-5 w-5" src="/write_blue.png" />
                           <span className="font-poppins text-pupcleBlue ml-1 text-[15px] font-bold">
@@ -404,72 +491,19 @@ const PlacePanel = ({
                               {place.place_name}
                             </span>
                           </div>
-                          <div className="mb-[67px] flex h-[60px] w-full flex-row items-center">
-                            <div className="w-[40px]">
-                              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
-                                별점
-                              </span>
-                            </div>
-                            <div className="map-dialog-rate relative w-[calc(100%-40px)] px-[66px] pb-[10px]">
-                              <Rate
-                                allowHalf
-                                allowClear
-                                value={rating != null ? rating / 2 : undefined}
-                                onChange={async (value) => {
-                                  await upsertPoiReview({
-                                    variables: {
-                                      input: {
-                                        poiReview: {
-                                          poiId:
-                                            "00000000-0000-0000-0000-000000000000",
-                                          kakaoId: place.id,
-                                          userId: currentUserId,
-                                          rating: value * 2,
-                                        },
-                                      },
-                                    },
-                                  });
-                                  await handleRatingChange();
-                                }}
-                              />
-                            </div>
-                          </div>
-                          <div className="mb-9 flex w-full flex-row">
-                            <div className="w-[40px]">
-                              <span className="font-poppins text-pupcleGray text-[20px] font-bold">
-                                리뷰
-                              </span>
-                            </div>
-                            <div className="w-[calc(100%-40px)] px-[66px]">
-                              <textarea
-                                name="review"
-                                className="bg-pupcleLightLightGray font-poppins placeholder:text-pupcleGray h-[226px] w-full rounded-[20px] border-none p-6 text-[15px] font-medium focus:outline-0 focus:ring-0"
-                                // size="large"
-                                autoComplete="review"
-                                data-cy="maps-review"
-                                placeholder="이 장소에 대한 경험을 공유해주세요."
-                              />
-                            </div>
-                          </div>
-                          <div className="flex w-full justify-end pr-[66px]">
-                            <Dialog.Close asChild>
-                              <Button className="border-pupcleGray mr-[15px] h-[46px] w-[134px] rounded-full border-[1px] bg-transparent">
-                                <span className="font-poppins text-pupcleGray text-[20px] font-bold">
-                                  취소
-                                </span>
-                              </Button>
-                            </Dialog.Close>
-
-                            <Button className="border-pupcleBlue h-[46px] w-[134px] rounded-full border-[1px] bg-transparent">
-                              <span className="font-poppins text-pupcleBlue text-[20px] font-bold">
-                                게시
-                              </span>
-                            </Button>
-                          </div>
+                          {currentUserId && myReview && (
+                            <PlacePanelReviewForm
+                              currentUserId={currentUserId}
+                              poiReview={myReview}
+                              onSubmit={async () =>
+                                setIsReviewDialogOpen(false)
+                              }
+                            />
+                          )}
                         </div>
                       </Dialog.Content>
                     </Dialog.Portal>
-                  </Dialog.Root> */}
+                  </Dialog.Root>
                 </div>
               </div>
             </div>
@@ -480,14 +514,14 @@ const PlacePanel = ({
                 리뷰&nbsp;
               </span>
               <span className="font-poppins text-pupcleBlue text-[18px] font-semibold">
-                18개
+                {reviewCount}개
               </span>
             </div>
             <div>
               <Select
                 className="maps-detail-selector flex items-center border-none"
-                onChange={handleChange}
-                defaultValue="latest"
+                onChange={(value) => setReviewSort(value)}
+                value={reviewSort}
                 suffixIcon={
                   <img src="/maps_selector_caret.png" className="h-1 w-2" />
                 }
@@ -499,51 +533,42 @@ const PlacePanel = ({
               />
             </div>
           </div>
-          {/* TODO: map */}
-          <div className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6">
-            <div className="flex flex-row items-center">
-              <img
-                className="h-[38px] w-[38px]"
-                src="/avatar_white_border.png"
-              />
-              <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
-                퐁당이 누나
-              </span>
-              <div className="map-rate ml-3 justify-center">
-                {/* TODO: disable this and move this to the poi detail */}
-                <Rate
-                  allowHalf
-                  allowClear
-                  value={rating != null ? rating / 2 : undefined}
-                  onChange={async (value) => {
-                    await upsertPoiReview({
-                      variables: {
-                        input: {
-                          poiReview: {
-                            poiId: "00000000-0000-0000-0000-000000000000",
-                            kakaoId: place.id,
-                            userId: currentUserId,
-                            rating: value * 2,
-                          },
-                        },
-                      },
-                    });
-                    await handleRatingChange();
-                  }}
+          {reviews?.nodes.map((review) => (
+            <div
+              key={review.user?.id}
+              className="border-pupcleLightGray flex w-full flex-col border-b-[1px] px-8 py-6"
+            >
+              <div className="flex flex-row items-center">
+                <img
+                  className="h-[38px] w-[38px]"
+                  src={review.user?.avatarUrl || "/avatar_white_border.png"}
                 />
+                <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
+                  {review.user?.nickname}
+                </span>
+                <div className="map-rate ml-3 justify-center">
+                  <Rate
+                    allowHalf
+                    allowClear
+                    value={
+                      review.rating != null ? review.rating / 2 : undefined
+                    }
+                    disabled
+                  />
+                </div>
+              </div>
+              <div className="w-full pl-[50px]">
+                <span className="font-poppins text-[15px] font-medium text-black">
+                  {review.comment}
+                </span>
+              </div>
+              <div className="flex w-full flex-row justify-end">
+                <span className="font-poppins text-pupcleGray text-[13px] font-medium">
+                  {format(parseISO(review.createdAt), "yyyy.MM.dd")}
+                </span>
               </div>
             </div>
-            <div className="w-full pl-[50px]">
-              <span className="font-poppins text-[15px] font-medium text-black">
-                친절하시고 너무 좋아요~
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-end">
-              <span className="font-poppins text-pupcleGray text-[13px] font-medium">
-                2023.11.06
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -770,7 +795,11 @@ const Maps: NextPage = () => {
   const [selectedKakaoId, setSelectedKakaoId] = useState<string | undefined>();
 
   return (
-    <SharedLayout title="maps" query={query}>
+    <SharedLayout
+      title="maps"
+      query={query}
+      forbidWhen={AuthRestrict.LOGGED_OUT}
+    >
       <div style={{ minWidth: "768px" }}>
         <div
           id="map"
@@ -937,7 +966,7 @@ const Maps: NextPage = () => {
                   >
                     <Select
                       className="maps"
-                      onChange={handleChange}
+                      onChange={() => {}}
                       defaultValue="distance"
                       suffixIcon={
                         <img src="/maps-selector.png" width="12px" alt="" />
@@ -966,6 +995,7 @@ const Maps: NextPage = () => {
                     {listResults?.map((place) => (
                       <>
                         <Button
+                          key={`button-${place.id}`}
                           onClick={() => {
                             if (selectedKakaoId === place.id) {
                               setSelectedKakaoId(undefined);
@@ -987,8 +1017,9 @@ const Maps: NextPage = () => {
                         </Button>
                         {selectedKakaoId === place.id && (
                           <PlacePanel
+                            key={`panel-${place.id}`}
                             place={place}
-                            rating={poiSummariesByKakaoId[place.id]?.rating}
+                            poiSummary={poiSummariesByKakaoId[place.id]}
                             poiFavorite={poiFavoritesByKakaoId[place.id]}
                             onRatingChange={handleRatingChange}
                             onFavoriteChange={handleFavoriteChange}
@@ -1035,6 +1066,8 @@ const Maps: NextPage = () => {
                   const category = "동물병원";
                   setSearchQuery(category);
                   handleSearch(category);
+                  setSheetIsOpen(true);
+                  setLastClickedTab(Tab.EXPLORE);
                 }}
               >
                 <img
@@ -1053,6 +1086,8 @@ const Maps: NextPage = () => {
                   const category = "카페";
                   setSearchQuery(category);
                   handleSearch(category);
+                  setSheetIsOpen(true);
+                  setLastClickedTab(Tab.EXPLORE);
                 }}
               >
                 <img
@@ -1071,6 +1106,8 @@ const Maps: NextPage = () => {
                   const category = "식당";
                   setSearchQuery(category);
                   handleSearch(category);
+                  setSheetIsOpen(true);
+                  setLastClickedTab(Tab.EXPLORE);
                 }}
               >
                 <img
@@ -1089,6 +1126,8 @@ const Maps: NextPage = () => {
                   const category = "공원";
                   setSearchQuery(category);
                   handleSearch(category);
+                  setSheetIsOpen(true);
+                  setLastClickedTab(Tab.EXPLORE);
                 }}
               >
                 <img

@@ -1,8 +1,78 @@
+fragment PoiSummaries_PoiReview on PoiReview {
+  comment
+  createdAt
+  kakaoId
+  poiId
+  rating
+}
+
 fragment PoiSummaries_Poi on Poi {
   id
   kakaoId
   rating
   ratingCount
+  reviewCount
+  ratings: poiReviews(orderBy: RATING_DESC) {
+    nodes {
+      createdAt
+      kakaoId
+      poiId
+      rating
+      userId
+      comment
+    }
+  }
+  reviewsRatingAsc: poiReviews(
+    orderBy: RATING_ASC
+    filter: { comment: { isNull: false } }
+  ) {
+    nodes {
+      comment
+      createdAt
+      kakaoId
+      poiId
+      rating
+      user {
+        avatarUrl
+        id
+        nickname
+      }
+    }
+  }
+  reviewsRatingDesc: poiReviews(
+    orderBy: RATING_DESC
+    filter: { comment: { isNull: false } }
+  ) {
+    nodes {
+      comment
+      createdAt
+      kakaoId
+      poiId
+      rating
+      user {
+        avatarUrl
+        id
+        nickname
+      }
+    }
+  }
+  reviewsCreatedAtDesc: poiReviews(
+    orderBy: CREATED_AT_DESC
+    filter: { comment: { isNull: false } }
+  ) {
+    nodes {
+      comment
+      createdAt
+      kakaoId
+      poiId
+      rating
+      user {
+        avatarUrl
+        id
+        nickname
+      }
+    }
+  }
 }
 
 query PoiSummaries($kakaoIds: [String!]) {

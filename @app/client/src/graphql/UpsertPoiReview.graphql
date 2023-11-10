@@ -4,14 +4,10 @@ mutation UpsertPoiReview($input: UpsertPoiReviewInput!) {
     poi {
       id
       kakaoId
-      rating
-      ratingCount
-      reviewCount
+      ...PoiSummaries_Poi
     }
     poiReview {
-      kakaoId
-      poiId
-      rating
+      ...PoiSummaries_PoiReview
     }
   }
 }
