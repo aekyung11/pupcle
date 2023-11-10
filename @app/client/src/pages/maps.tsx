@@ -567,6 +567,8 @@ const Maps: NextPage = () => {
   const [listResults, setListResults] = useState<Place[]>([]);
   const placeKakaoIds = (listResults ?? []).map((p) => p.id);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const {
     data: poiSummaries,
     previousData: previousPoiSummaries,
@@ -852,6 +854,8 @@ const Maps: NextPage = () => {
                         alt="search icon"
                       />
                     }
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.currentTarget.value)}
                     onPressEnter={(e: KeyboardEvent<HTMLInputElement>) =>
                       handleSearch(e.currentTarget.value)
                     }
@@ -1025,7 +1029,14 @@ const Maps: NextPage = () => {
                 maxWidth: "calc(100vw - (18px + 53px + 6rem + 200px))",
               }}
             >
-              <Button className="maps-category group">
+              <Button
+                className="maps-category group"
+                onClick={() => {
+                  const category = "동물병원";
+                  setSearchQuery(category);
+                  handleSearch(category);
+                }}
+              >
                 <img
                   src="/vet_icon.png"
                   id="vet"
@@ -1036,7 +1047,14 @@ const Maps: NextPage = () => {
                   동물병원
                 </span>
               </Button>
-              <Button className="maps-category group">
+              <Button
+                className="maps-category group"
+                onClick={() => {
+                  const category = "카페";
+                  setSearchQuery(category);
+                  handleSearch(category);
+                }}
+              >
                 <img
                   src="/cafe_icon.png"
                   id="cafe"
@@ -1047,7 +1065,14 @@ const Maps: NextPage = () => {
                   카페
                 </span>
               </Button>
-              <Button className="maps-category group">
+              <Button
+                className="maps-category group"
+                onClick={() => {
+                  const category = "식당";
+                  setSearchQuery(category);
+                  handleSearch(category);
+                }}
+              >
                 <img
                   src="/restaurant_icon.png"
                   id="restaurant"
@@ -1058,7 +1083,14 @@ const Maps: NextPage = () => {
                   식당
                 </span>
               </Button>
-              <Button className="maps-category group">
+              <Button
+                className="maps-category group"
+                onClick={() => {
+                  const category = "공원";
+                  setSearchQuery(category);
+                  handleSearch(category);
+                }}
+              >
                 <img
                   src="/park_icon.png"
                   id="park"
