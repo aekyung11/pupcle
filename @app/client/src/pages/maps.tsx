@@ -1,4 +1,4 @@
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { AuthRestrict, MapSheet, SharedLayout } from "@app/components";
 import {
   PoiFavorites_PoiFavoriteFragment,
@@ -14,12 +14,18 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button, Col, Input, Rate, Select, Typography } from "antd";
 import clsx from "clsx";
-import { keyBy } from "lodash";
+import { keyBy, orderBy, sortBy } from "lodash";
 const { Paragraph } = Typography;
 import * as Dialog from "@radix-ui/react-dialog";
 import { NextPage } from "next";
 import * as React from "react";
-import { KeyboardEvent, useCallback, useEffect, useState } from "react";
+import {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Formik } from "formik";
 import { Form, SubmitButton } from "formik-antd";
 import { usePoiReviewForm } from "@app/componentlib";
@@ -50,7 +56,7 @@ type PlaceItemProps = {
   rating: number | undefined;
   poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
   currentUserId: string | undefined;
-  onRatingChange: () => Promise<void>;
+  onRatingOrReviewChange: () => Promise<void>;
   onFavoriteChange: () => Promise<void>;
 };
 
@@ -59,7 +65,6 @@ const PlaceItem = ({
   rating,
   currentUserId,
   poiFavorite,
-  onRatingChange: handleRatingChange,
   onFavoriteChange: handleFavoriteChange,
 }: PlaceItemProps) => {
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
@@ -305,7 +310,7 @@ type PlacePanelProps = {
   poiSummary: PoiSummaries_PoiFragment | undefined;
   poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
   currentUserId: string | undefined;
-  onRatingChange: () => Promise<void>;
+  onRatingOrReviewChange: () => Promise<void>;
   onFavoriteChange: () => Promise<void>;
 };
 
@@ -314,7 +319,7 @@ const PlacePanel = ({
   poiSummary,
   currentUserId,
   poiFavorite,
-  onRatingChange: handleRatingChange,
+  onRatingOrReviewChange: handleRatingOrReviewChange,
   onFavoriteChange: handleFavoriteChange,
 }: PlacePanelProps) => {
   const [upsertPoiReview] = useUpsertPoiReviewMutation();
@@ -440,7 +445,7 @@ const PlacePanel = ({
                               },
                             },
                           });
-                          await handleRatingChange();
+                          await handleRatingOrReviewChange();
                         }}
                       />
                       <span className="map-list-details">
@@ -495,9 +500,10 @@ const PlacePanel = ({
                             <PlacePanelReviewForm
                               currentUserId={currentUserId}
                               poiReview={myReview}
-                              onSubmit={async () =>
-                                setIsReviewDialogOpen(false)
-                              }
+                              onSubmit={async () => {
+                                await handleRatingOrReviewChange();
+                                setIsReviewDialogOpen(false);
+                              }}
                             />
                           )}
                         </div>
@@ -598,12 +604,13 @@ const Maps: NextPage = () => {
     data: poiSummaries,
     previousData: previousPoiSummaries,
     refetch: poiSummariesRefetch,
+    loading: poiSummariesLoading,
   } = usePoiSummariesQuery({
     variables: {
       kakaoIds: placeKakaoIds,
     },
   });
-  const handleRatingChange = async () => {
+  const handleRatingOrReviewChange = async () => {
     await poiSummariesRefetch();
   };
   const poiSummariesByKakaoId: Record<string, PoiSummaries_PoiFragment> = keyBy(
@@ -794,6 +801,46 @@ const Maps: NextPage = () => {
 
   const [selectedKakaoId, setSelectedKakaoId] = useState<string | undefined>();
 
+  const [placesSort, setPlacesSort] = useState<
+    "distance" | "reviews" | "highRatings" | "lowRatings"
+  >("distance");
+
+  const sortedListResults = useMemo(() => {
+    switch (placesSort) {
+      case "distance":
+        return listResults;
+      case "highRatings":
+        return orderBy(
+          listResults,
+          [
+            (place) => poiSummariesByKakaoId[place.id]?.rating != null,
+            (place) => poiSummariesByKakaoId[place.id]?.rating,
+          ],
+          ["desc", "desc"]
+        );
+      case "lowRatings":
+        return orderBy(
+          listResults,
+          [
+            (place) => poiSummariesByKakaoId[place.id]?.rating != null,
+            (place) => poiSummariesByKakaoId[place.id]?.rating,
+          ],
+          ["desc", "asc"]
+        );
+      case "reviews":
+        return orderBy(
+          listResults,
+          [
+            (place) => poiSummariesByKakaoId[place.id]?.reviewCount != null,
+            (place) => poiSummariesByKakaoId[place.id]?.reviewCount,
+          ],
+          ["desc", "desc"]
+        );
+    }
+  }, [placesSort, listResults, poiSummariesByKakaoId]);
+
+  console.log({ sortedListResults, poiSummariesByKakaoId });
+
   return (
     <SharedLayout
       title="maps"
@@ -966,8 +1013,8 @@ const Maps: NextPage = () => {
                   >
                     <Select
                       className="maps"
-                      onChange={() => {}}
-                      defaultValue="distance"
+                      value={placesSort}
+                      onChange={setPlacesSort}
                       suffixIcon={
                         <img src="/maps-selector.png" width="12px" alt="" />
                       }
@@ -992,42 +1039,50 @@ const Maps: NextPage = () => {
                       overscrollBehavior: "contain",
                     }}
                   >
-                    {listResults?.map((place) => (
-                      <>
-                        <Button
-                          key={`button-${place.id}`}
-                          onClick={() => {
-                            if (selectedKakaoId === place.id) {
-                              setSelectedKakaoId(undefined);
-                            } else {
-                              setSelectedKakaoId(place.id);
-                            }
-                          }}
-                          className="h-fit w-full border-none bg-transparent p-0 !shadow-none"
-                        >
-                          <PlaceItem
-                            key={place.id}
-                            place={place}
-                            rating={poiSummariesByKakaoId[place.id]?.rating}
-                            poiFavorite={poiFavoritesByKakaoId[place.id]}
-                            onRatingChange={handleRatingChange}
-                            onFavoriteChange={handleFavoriteChange}
-                            currentUserId={currentUserId}
-                          />
-                        </Button>
-                        {selectedKakaoId === place.id && (
-                          <PlacePanel
-                            key={`panel-${place.id}`}
-                            place={place}
-                            poiSummary={poiSummariesByKakaoId[place.id]}
-                            poiFavorite={poiFavoritesByKakaoId[place.id]}
-                            onRatingChange={handleRatingChange}
-                            onFavoriteChange={handleFavoriteChange}
-                            currentUserId={currentUserId}
-                          />
-                        )}
-                      </>
-                    ))}
+                    {poiSummariesLoading ? (
+                      <LoadingOutlined /> // TODO
+                    ) : (
+                      sortedListResults?.map((place) => (
+                        <>
+                          <Button
+                            key={`button-${place.id}`}
+                            onClick={() => {
+                              if (selectedKakaoId === place.id) {
+                                setSelectedKakaoId(undefined);
+                              } else {
+                                setSelectedKakaoId(place.id);
+                              }
+                            }}
+                            className="h-fit w-full border-none bg-transparent p-0 !shadow-none"
+                          >
+                            <PlaceItem
+                              key={place.id}
+                              place={place}
+                              rating={poiSummariesByKakaoId[place.id]?.rating}
+                              poiFavorite={poiFavoritesByKakaoId[place.id]}
+                              onRatingOrReviewChange={
+                                handleRatingOrReviewChange
+                              }
+                              onFavoriteChange={handleFavoriteChange}
+                              currentUserId={currentUserId}
+                            />
+                          </Button>
+                          {selectedKakaoId === place.id && (
+                            <PlacePanel
+                              key={`panel-${place.id}`}
+                              place={place}
+                              poiSummary={poiSummariesByKakaoId[place.id]}
+                              poiFavorite={poiFavoritesByKakaoId[place.id]}
+                              onRatingOrReviewChange={
+                                handleRatingOrReviewChange
+                              }
+                              onFavoriteChange={handleFavoriteChange}
+                              currentUserId={currentUserId}
+                            />
+                          )}
+                        </>
+                      ))
+                    )}
                   </Tabs.Content>
                   <Tabs.Content key={Tab.FAVORITES} value={Tab.FAVORITES}>
                     Favorites
