@@ -941,7 +941,7 @@ const Maps: NextPage = () => {
                   key={Tab.FAVORITES}
                   value={Tab.FAVORITES}
                   style={{
-                    display: "flex",
+                    display: "none",
                     position: "fixed",
                     top: "calc(6rem + 45px + min(53px, 2rem + 1vw))",
                     left: "18px",
