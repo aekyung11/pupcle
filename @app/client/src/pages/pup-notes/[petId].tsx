@@ -1180,7 +1180,7 @@ const PupNotesPageExamsInner: FC<PupNotesPageExamsInnerProps> = ({
                       </span>
                       {/* <div className="bg-pupcleLightLightGray h-[106px] w-[106px] rounded-[20px]"></div> */}
                       <div className="mx-12 flex flex-col">
-                        <div className="bg-pupcleLightLightGray flex h-[25px] w-[fit] items-center justify-center rounded-full px-6">
+                        <div className="bg-pupcleLightLightGray flex h-[25px] w-fit items-center justify-center rounded-full px-6">
                           <span className="font-poppins text-pupcleGray text-[15px] font-semibold">
                             {examCategory?.name}
                           </span>

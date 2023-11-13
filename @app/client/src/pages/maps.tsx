@@ -431,7 +431,13 @@ const PlacePanel = ({
                       <Rate
                         allowHalf
                         allowClear
-                        value={rating != null ? rating / 2 : undefined}
+                        value={
+                          !isRatedByMe
+                            ? undefined
+                            : rating != null
+                            ? rating / 2
+                            : undefined
+                        }
                         onChange={async (value) => {
                           await upsertPoiReview({
                             variables: {
@@ -449,7 +455,12 @@ const PlacePanel = ({
                         }}
                       />
                       <span className="map-list-details">
-                        {rating != null ? rating / 2 : "(N/A)"}/5.0
+                        {!isRatedByMe
+                          ? "0"
+                          : rating != null
+                          ? rating / 2
+                          : "(N/A)"}
+                        /5.0
                       </span>
                     </div>
                   )}
