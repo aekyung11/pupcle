@@ -148,7 +148,18 @@ function StatusTab({
             fontWeight: 500,
           }}
         >
-          Did {pet.gender === PetGender.F ? "she" : "he"} {tab} well?
+          {/* {tab === Tab.SLEEP ? `Did ${pet.gender === PetGender.F ? "she" : "he"} sleep well?` : tab===Tab.DIET ? `Did ${pet.gender === PetGender.F ? "she" : "he"} eat well?` : tab === Tab.WALKING ? `Did ${pet.gender === PetGender.F ? "she" : "he"} take a good walk today?` : tab === Tab.PLAY ? `Did ${pet.gender === PetGender.F ? "she" : "he"} play well?` : tab === Tab. } */}
+          {tab === Tab.SLEEP
+            ? `잠을 잘 잤나요?`
+            : tab === Tab.DIET
+            ? "밥을 잘 먹었나요?"
+            : tab === Tab.WALKING
+            ? "오늘 산책을 했나요?"
+            : tab === Tab.PLAY
+            ? "오늘 잘 놀았나요?"
+            : tab === Tab.BATHROOM
+            ? "화장실을 잘 갔나요?"
+            : "오늘의 건강은 어떤가요?"}
         </span>
       </Row>
       <Row

@@ -97,6 +97,8 @@ const NotificationsPageUserInner: React.FC<NotificationsPageUserInnerProps> = ({
                       <br />
                       <br />
                       아래 버튼을 눌러 친구 신청을 수락 또는 거절해주세요.
+                      <br />
+                      <br />
                       <span className="!text-pupcleOrange">
                         내가 수락/거절해도 친구에게는 알림이 가지 않습니다.
                       </span>
