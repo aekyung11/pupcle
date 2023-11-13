@@ -546,7 +546,7 @@ const PlacePanel = ({
             >
               <div className="flex flex-row items-center">
                 <img
-                  className="h-[38px] w-[38px]"
+                  className="h-[38px] w-[38px] rounded-full"
                   src={review.user?.avatarUrl || "/avatar_white_border.png"}
                 />
                 <span className="font-poppins text-pupcleGray ml-4 text-[15px] font-semibold">
