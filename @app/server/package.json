@@ -31,6 +31,7 @@
     "connect-redis": "^7.0.0",
     "csurf": "^1.11.0",
     "date-fns": "^2.30.0",
+    "discourse-sso": "1.0.5",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
     "express-session": "^1.17.3",

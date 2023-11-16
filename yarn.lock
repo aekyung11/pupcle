@@ -492,6 +492,7 @@ __metadata:
     connect-redis: ^7.0.0
     csurf: ^1.11.0
     date-fns: ^2.30.0
+    discourse-sso: 1.0.5
     express: ^4.18.2
     express-jwt: ^8.4.1
     express-session: ^1.17.3
@@ -13532,6 +13533,13 @@ __metadata:
   dependencies:
     path-type: ^4.0.0
   checksum: fa05e18324510d7283f55862f3161c6759a3f2f8dbce491a2fc14c8324c498286c54282c1f0e933cb930da8419b30679389499b919122952a4f8592362ef4615
+  languageName: node
+  linkType: hard
+
+"discourse-sso@npm:1.0.5":
+  version: 1.0.5
+  resolution: "discourse-sso@npm:1.0.5"
+  checksum: 60aef8bafea893773dc5d355d288bcbfd1a52f399bf168fd2b50030e95208a0e2ab42462ed432c37b5d9298e3b63ff668987ae14da9d66dc7d0da099cb432c82
   languageName: node
   linkType: hard
 

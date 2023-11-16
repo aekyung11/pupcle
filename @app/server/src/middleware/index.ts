@@ -1,6 +1,7 @@
 import installCSRFProtection from "./installCSRFProtection";
 import installCypressServerCommand from "./installCypressServerCommand";
 import installDatabasePools from "./installDatabasePools";
+import installDiscourseConnect from "./installDiscourseConnect";
 import installErrorHandler from "./installErrorHandler";
 import installExpressJwt from "./installExpressJwt";
 import installForceSSL from "./installForceSSL";
@@ -18,6 +19,7 @@ export {
   installCSRFProtection,
   installCypressServerCommand,
   installDatabasePools,
+  installDiscourseConnect,
   installErrorHandler,
   installExpressJwt,
   installForceSSL,
