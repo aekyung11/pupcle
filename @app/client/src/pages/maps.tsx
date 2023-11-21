@@ -54,6 +54,7 @@ type Place = {
 type PlaceItemProps = {
   place: Place;
   rating: number | undefined;
+  reviewCount: number | undefined;
   poiFavorite: PoiFavorites_PoiFavoriteFragment | undefined;
   currentUserId: string | undefined;
   onRatingOrReviewChange: () => Promise<void>;
@@ -63,6 +64,7 @@ type PlaceItemProps = {
 const PlaceItem = ({
   place,
   rating,
+  reviewCount,
   currentUserId,
   poiFavorite,
   onFavoriteChange: handleFavoriteChange,
@@ -145,10 +147,7 @@ const PlaceItem = ({
               </Paragraph>
             )}
           </div>
-          {/* TODO: database */}
-          <span className="map-list-details">
-            리뷰 {Number(place.id) % 10}개
-          </span>
+          <span className="map-list-details">리뷰 {reviewCount ?? 0}개</span>
         </div>
       </Col>
       <Col
@@ -431,13 +430,6 @@ const PlacePanel = ({
                       <Rate
                         allowHalf
                         allowClear
-                        value={
-                          !isRatedByMe
-                            ? undefined
-                            : rating != null
-                            ? rating / 2
-                            : undefined
-                        }
                         onChange={async (value) => {
                           await upsertPoiReview({
                             variables: {
@@ -455,12 +447,9 @@ const PlacePanel = ({
                         }}
                       />
                       <span className="map-list-details">
-                        {!isRatedByMe
-                          ? "0"
-                          : rating != null
-                          ? rating / 2
-                          : "(N/A)"}
-                        /5.0
+                        {isRatedByMe &&
+                          myReview?.rating != null &&
+                          `${myReview?.rating / 2} /5.0`}
                       </span>
                     </div>
                   )}
@@ -736,7 +725,7 @@ const Maps: NextPage = () => {
         imageSize = new kakaoMapApi.Size(36, 37), // 마커 이미지의 크기
         imgOptions = {
           spriteSize: new kakaoMapApi.Size(36, 691), // 스프라이트 이미지의 크기
-          spriteOrigin: new kakaoMapApi.Point(0, idx * 46 + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+          spriteOrigin: new kakaoMapApi.Point(0, 0 * 46 + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
           offset: new kakaoMapApi.Point(13, 37), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
         },
         markerImage = new kakaoMapApi.MarkerImage(
@@ -762,6 +751,9 @@ const Maps: NextPage = () => {
         return false;
       }
 
+      const mapCenter = map.getCenter();
+      console.log({ mapCenter });
+
       const { data, pagination }: { data: Place[]; pagination: unknown } =
         await new Promise((resolve, reject) => {
           placesApi.keywordSearch(
@@ -777,8 +769,10 @@ const Maps: NextPage = () => {
               }
             },
             {
-              useMapCenter: true,
+              // useMapCenter: true,
               useMapBounds: true,
+              sort: kakao.maps.services.SortBy.DISTANCE,
+              location: mapCenter,
             }
           );
         });
@@ -1070,6 +1064,9 @@ const Maps: NextPage = () => {
                               key={place.id}
                               place={place}
                               rating={poiSummariesByKakaoId[place.id]?.rating}
+                              reviewCount={
+                                poiSummariesByKakaoId[place.id]?.reviewCount
+                              }
                               poiFavorite={poiFavoritesByKakaoId[place.id]}
                               onRatingOrReviewChange={
                                 handleRatingOrReviewChange
