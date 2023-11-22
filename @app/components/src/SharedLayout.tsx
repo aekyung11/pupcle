@@ -261,7 +261,7 @@ export function SharedLayout({
               MAPS
             </Link>
             <Link
-              href={`${process.env.DISCOURSE_URL}/login`}
+              href={`${process.env.DISCOURSE_URL}`}
               style={{
                 fontWeight: title === "circle" ? 600 : 400,
               }}
