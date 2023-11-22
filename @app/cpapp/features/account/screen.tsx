@@ -77,7 +77,8 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
     // };
     // Router.events.on("routeChangeComplete", reset);
     // Router.push("/");
-  }, [client, signOut]);
+    router.push("/");
+  }, [client, router, signOut]);
   const code = getCodeFromError(error);
   const _theme = useTheme();
 
