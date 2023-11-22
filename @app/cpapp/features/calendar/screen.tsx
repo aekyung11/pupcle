@@ -288,12 +288,12 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
               }}
             />
           </View>
-          <View className="bg-pupcleBlue mb-5 flex h-12 w-full flex-row items-center rounded-[10px] px-[10px]">
+          <View className="bg-pupcleBlue mb-5 flex h-[60px] w-full flex-row items-center rounded-[10px] px-[10px]">
             <ScrollView horizontal>
-              <View className="flex h-12 w-12 items-center justify-center">
+              <View className="h-15 w-15 flex items-center justify-center">
                 <Button
                   className={clsx(
-                    "flex h-7 w-7 rounded-full border-none bg-transparent p-0",
+                    "flex h-10 w-10 rounded-full border-none bg-transparent p-0",
                     { active: selectedPetId === currentUserFirstPet?.id }
                   )}
                   onPress={() => {
@@ -305,7 +305,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
                 >
                   <StyledComponent
                     component={SolitoImage}
-                    className="h-7 w-7"
+                    className="h-10 w-10"
                     src={
                       selectedPetId === currentUserFirstPet.id
                         ? homeSelected
@@ -319,12 +319,12 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
               {friendEdges?.map((edge) => (
                 <View
                   key={edge.toUser?.id}
-                  className="flex h-12 w-12 items-center justify-center"
+                  className="h-15 w-15 flex items-center justify-center pl-[10px]"
                 >
                   {/* <Tabs.Tab value="friend1" unstyled asChild> */}
                   <Button
                     className={clsx(
-                      "flex h-7 w-7 rounded-full border-none bg-transparent p-0",
+                      "flex h-10 w-10 rounded-full border-none bg-transparent p-0",
                       { active: selectedPetId === currentUserFirstPet?.id }
                     )}
                     onPress={() => {
@@ -334,7 +334,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
                       }
                     }}
                   >
-                    <Avatar circular size={28}>
+                    <Avatar circular size={40}>
                       <Avatar.Image
                         src={edge.toUser?.avatarUrl || defaultAvatar}
                       />
