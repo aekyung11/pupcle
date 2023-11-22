@@ -195,12 +195,12 @@ const CreateUploadUrlPlugin = makeExtendSchemaPlugin(() => ({
         }
 
         // TODO: enable this later about verifying users
-        if (!isDev && !user.isVerified) {
-          const err = new Error("Only verified users may upload files");
-          // @ts-ignore
-          err.code = "DNIED";
-          throw err;
-        }
+        // if (!isDev && !user.isVerified) {
+        //   const err = new Error("Only verified users may upload files");
+        //   // @ts-ignore
+        //   err.code = "DNIED";
+        //   throw err;
+        // }
 
         const { input } = args;
         const contentType: string =
