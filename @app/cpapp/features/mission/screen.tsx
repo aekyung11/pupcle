@@ -22,6 +22,9 @@ import paw from "@app/server/public/paw_white.png";
 import back from "@app/server/public/pup_notes_caret_icon.png";
 import c from "@app/server/public/pupcle_count.png";
 import stamp from "@app/server/public/stamp.png";
+import * as tf from "@tensorflow/tfjs";
+import { decodeJpeg, fetch } from "@tensorflow/tfjs-react-native";
+import * as mobilenet from "@tensorflow-models/mobilenet";
 import { format } from "date-fns";
 import { useFonts } from "expo-font";
 import { Field, Formik, useFormikContext } from "formik";
@@ -65,43 +68,85 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
   const { values, setFieldValue } =
     useFormikContext<CompleteMissionFormInput>();
 
+  let tryTf = 1;
+
   useEffect(() => {
-    const getPredictions = async (proofImageUrl: string) => {
-      if (proofImageUrl) {
-        let unverifiedObjects = new Set<string>(requiredObjects);
-
-        // const img = document.getElementsByClassName("framed-uploaded-image")[0];
-        // if (img) {
-        //   // Load the model.
-        //   const model = await cocoSsd.load();
-        //   // Classify the image.
-        //   // @ts-ignore
-        //   const predictions = await model.detect(img);
-        //   predictions.forEach((prediction) => {
-        //     if (prediction.score > 0.3) {
-        //       unverifiedObjects.delete(prediction.class);
-        //     }
-        //   });
-        // }
-
-        // TODO: do with promise or hook
-        if (proofImageUrl === values.proofImageUrl) {
-          setFieldValue("verifiedImage", unverifiedObjects.size === 0);
-        }
-
-        // TODO: for testing
-        setFieldValue("verifiedImage", true);
-      }
-    };
-
-    if (typeof window !== "undefined") {
+    if (tryTf > 0) {
       setFieldValue("verifiedImage", null);
-      getPredictions(values.proofImageUrl);
-    }
 
-    // TODO: for testing
-    setFieldValue("verifiedImage", true);
-  }, [requiredObjects, setFieldValue, values.proofImageUrl]);
+      const load = async (proofImageUrl: string) => {
+        try {
+          // Load mobilenet.
+          await tf.ready();
+          const model = await mobilenet.load();
+
+          // Start inference and show result.
+          const response = await fetch(proofImageUrl, {}, { isBinary: true });
+          const imageDataArrayBuffer = await response.arrayBuffer();
+          const imageData = new Uint8Array(imageDataArrayBuffer);
+          const imageTensor = decodeJpeg(imageData);
+          const predictions = await model.classify(imageTensor);
+          let unverifiedObjects = new Set<string>(requiredObjects);
+          if (predictions && predictions.length > 0) {
+            predictions.forEach((prediction) => {
+              if (prediction.probability > 0.3) {
+                unverifiedObjects.delete(prediction.className);
+              }
+            });
+
+            // TODO: do with promise or hook
+            if (proofImageUrl === values.proofImageUrl) {
+              setFieldValue("verifiedImage", unverifiedObjects.size === 0);
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      load(values.proofImageUrl);
+    } else {
+      setFieldValue("verifiedImage", true);
+    }
+  }, [setFieldValue, values.proofImageUrl, requiredObjects, tryTf]);
+
+  // useEffect(() => {
+  //   const getPredictions = async (proofImageUrl: string) => {
+  //     if (proofImageUrl) {
+  //       let unverifiedObjects = new Set<string>(requiredObjects);
+
+  //       const img = document.getElementsByClassName("framed-uploaded-image")[0];
+  //       if (img) {
+  //         // Load the model.
+  //         const model = await cocoSsd.load();
+  //         // Classify the image.
+  //         // @ts-ignore
+  //         const predictions = await model.detect(img);
+  //         predictions.forEach((prediction) => {
+  //           if (prediction.score > 0.3) {
+  //             unverifiedObjects.delete(prediction.class);
+  //           }
+  //         });
+  //       }
+
+  //       // TODO: do with promise or hook
+  //       if (proofImageUrl === values.proofImageUrl) {
+  //         setFieldValue("verifiedImage", unverifiedObjects.size === 0);
+  //       }
+
+  //       // TODO: for testing
+  //       setFieldValue("verifiedImage", true);
+  //     }
+  //   };
+
+  //   if (typeof window !== "undefined") {
+  //     setFieldValue("verifiedImage", null);
+  //     getPredictions(values.proofImageUrl);
+  //   }
+
+  //   // TODO: for testing
+  //   setFieldValue("verifiedImage", true);
+  // }, [requiredObjects, setFieldValue, values.proofImageUrl]);
 
   return <></>;
 };

@@ -423,19 +423,27 @@ __metadata:
     "@app/cpapp": 0.0.0
     "@babel/core": ^7.21.3
     "@babel/preset-typescript": ^7.21.0
+    "@react-native-async-storage/async-storage": 1.18.2
     "@react-native-community/datetimepicker": 7.2.0
     "@react-native-menu/menu": ^0.9.1
     "@tamagui/babel-plugin": ^1.72.3
     "@tamagui/config": ^1.72.3
+    "@tensorflow-models/mobilenet": ^2.1.1
+    "@tensorflow/tfjs": ^4.13.0
+    "@tensorflow/tfjs-data": ^4.13.0
+    "@tensorflow/tfjs-layers": ^4.13.0
+    "@tensorflow/tfjs-react-native": ^0.8.0
     babel-plugin-inline-dotenv: ^1.7.0
     babel-plugin-transform-inline-environment-variables: ^0.4.4
     babel-preset-expo: ^9.5.0
     dotenv: ^16.0.3
     expo: ^49.0.0
     expo-blur: ~12.4.1
+    expo-camera: ~13.4.4
     expo-constants: ~14.4.2
     expo-dev-client: ~2.4.11
     expo-file-system: ~15.4.4
+    expo-gl: ~13.0.1
     expo-image: ~1.3.4
     expo-image-picker: ~14.3.2
     expo-linking: ~5.0.2
@@ -447,6 +455,7 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     react-native: 0.72.5
+    react-native-fs: ^2.20.0
     react-native-gesture-handler: ~2.12.0
     react-native-ios-context-menu: ^1.15.3
     react-native-modal-datetime-picker: ^17.1.0
@@ -6581,6 +6590,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:1.18.2":
+  version: 1.18.2
+  resolution: "@react-native-async-storage/async-storage@npm:1.18.2"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
+  checksum: bdbcd2e4785a1348657302fa48f4073d980d3b3626fc2ea1e8ec3013825d0013a49d0805a3fd1e98c0b8b12eb1273ef03fb842686ce740d25331398deb2691c4
+  languageName: node
+  linkType: hard
+
 "@react-native-community/cli-clean@npm:11.3.7":
   version: 11.3.7
   resolution: "@react-native-community/cli-clean@npm:11.3.7"
@@ -8520,6 +8540,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tensorflow-models/mobilenet@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@tensorflow-models/mobilenet@npm:2.1.1"
+  peerDependencies:
+    "@tensorflow/tfjs-converter": ^4.9.0
+    "@tensorflow/tfjs-core": ^4.9.0
+  checksum: cf2fb42aafacc8feaa4cd4603233ace6e56f76af1da7b044d4c1571488142278abb4eb4fca83c03fafc409be0e007c17a3afc25421e06e35679ff0d5625e1239
+  languageName: node
+  linkType: hard
+
 "@tensorflow/tfjs-backend-cpu@npm:4.11.0, @tensorflow/tfjs-backend-cpu@npm:~4.11.0":
   version: 4.11.0
   resolution: "@tensorflow/tfjs-backend-cpu@npm:4.11.0"
@@ -8529,6 +8559,32 @@ __metadata:
   peerDependencies:
     "@tensorflow/tfjs-core": 4.11.0
   checksum: 69d8ac525a2550349938c24b920c7e1f33591b940d830cb4ea53b553a2622780ac69ebaf9cc44d6a7d6a355094c5f1f9153b2513cd11f5295ef675390e979102
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-backend-cpu@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-backend-cpu@npm:4.13.0"
+  dependencies:
+    "@types/seedrandom": ^2.4.28
+    seedrandom: ^3.0.5
+  peerDependencies:
+    "@tensorflow/tfjs-core": 4.13.0
+  checksum: 23943042d6f360b649e2871ed9d990241b25ef5a5d4c933263cae0ee3d37a0008832fffb0dcd75b4db051362bb56fb413d29506637c1f93be03aff2ff1d3b269
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-backend-webgl@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-backend-webgl@npm:4.13.0"
+  dependencies:
+    "@tensorflow/tfjs-backend-cpu": 4.13.0
+    "@types/offscreencanvas": ~2019.3.0
+    "@types/seedrandom": ^2.4.28
+    seedrandom: ^3.0.5
+  peerDependencies:
+    "@tensorflow/tfjs-core": 4.13.0
+  checksum: 71c490caf47e17a6d9893097479552cc0fd53bf98a4ff43d8b95ef5fa9fd3d3635afd0c4078354807795b6c7866f386d55f1b7d76f1334c871a561e62fcd04a8
   languageName: node
   linkType: hard
 
@@ -8546,12 +8602,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tensorflow/tfjs-converter@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-converter@npm:4.13.0"
+  peerDependencies:
+    "@tensorflow/tfjs-core": 4.13.0
+  checksum: 3346aed0ff693999eda4be13d110ceebf9a3e963247542c0fd1e0ad66e574e697abbf6410513b10d3f9fe2ef29a31b2b85ca8bc416a45690be9edbfd020c6a0f
+  languageName: node
+  linkType: hard
+
 "@tensorflow/tfjs-converter@npm:~4.11.0":
   version: 4.11.0
   resolution: "@tensorflow/tfjs-converter@npm:4.11.0"
   peerDependencies:
     "@tensorflow/tfjs-core": 4.11.0
   checksum: 82c2129c3c293cb5cf17d93de7a3aca584b6804fb912f649b55bfa0f0466ac0f9c415b949f301e9cacfa607f10f7a0e607793884df973de2af5eddedaa22ebce
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-core@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-core@npm:4.13.0"
+  dependencies:
+    "@types/long": ^4.0.1
+    "@types/offscreencanvas": ~2019.7.0
+    "@types/seedrandom": ^2.4.28
+    "@webgpu/types": 0.1.30
+    long: 4.0.0
+    node-fetch: ~2.6.1
+    seedrandom: ^3.0.5
+  checksum: 650134fa1b4213f62649768217275f1176bbc94fb59383a1f0e9b0eb04bce81cba3a8961ebb630c2c2e255e11787aa874b70452cfa7e3ffcae0328a345bfea03
   languageName: node
   linkType: hard
 
@@ -8567,6 +8647,72 @@ __metadata:
     node-fetch: ~2.6.1
     seedrandom: ^3.0.5
   checksum: 681337b106af8218df4b12fe962e4e42685c42ac6f5d8175c2d89a9e0b572ac253bd08ae70b089611bd949ed61d9a092ca2865d5f91b2e925c1e20deef597756
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-data@npm:4.13.0, @tensorflow/tfjs-data@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-data@npm:4.13.0"
+  dependencies:
+    "@types/node-fetch": ^2.1.2
+    node-fetch: ~2.6.1
+    string_decoder: ^1.3.0
+  peerDependencies:
+    "@tensorflow/tfjs-core": 4.13.0
+    seedrandom: ^3.0.5
+  checksum: 07e96802e8c092ee6196cd0eb2556c44be70acd56b78a1fb7c5f77ca52392ee684fb58a4a8074c5e094c084aa777ea9c3abdba3b856e84c2f4b5bbefbd8dac74
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-layers@npm:4.13.0, @tensorflow/tfjs-layers@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs-layers@npm:4.13.0"
+  peerDependencies:
+    "@tensorflow/tfjs-core": 4.13.0
+  checksum: b43f915005a620176e118370a36a3b31c4ad8b155f2382229dd60e1820a042b28eecc51ba9d1eea79c5dd1bf4e7e36f8378c84be39e125203a3cc9b0031d78d4
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs-react-native@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@tensorflow/tfjs-react-native@npm:0.8.0"
+  dependencies:
+    base64-js: ^1.3.0
+    buffer: ^5.2.1
+    jpeg-js: ^0.4.3
+  peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.13.0
+    "@tensorflow/tfjs-backend-cpu": ~3.11.0
+    "@tensorflow/tfjs-backend-webgl": ~3.11.0
+    "@tensorflow/tfjs-core": ~3.11.0
+    expo-asset: ^7.0.0
+    expo-camera: ^7.0.0
+    expo-gl: ^7.0.0
+    react: ^16.12.0
+    react-native: ">= 0.58.0"
+    react-native-fs: ^2.14.1
+  checksum: 95cfa73fcb3776e8c553b2ad9651e789846a750f2053fceb8059f3d50afe40f2dc2bea67675f34b0780e5af40e51477c374b54970c589ef3af7150a96976921d
+  languageName: node
+  linkType: hard
+
+"@tensorflow/tfjs@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "@tensorflow/tfjs@npm:4.13.0"
+  dependencies:
+    "@tensorflow/tfjs-backend-cpu": 4.13.0
+    "@tensorflow/tfjs-backend-webgl": 4.13.0
+    "@tensorflow/tfjs-converter": 4.13.0
+    "@tensorflow/tfjs-core": 4.13.0
+    "@tensorflow/tfjs-data": 4.13.0
+    "@tensorflow/tfjs-layers": 4.13.0
+    argparse: ^1.0.10
+    chalk: ^4.1.0
+    core-js: 3.29.1
+    regenerator-runtime: ^0.13.5
+    yargs: ^16.0.3
+  bin:
+    tfjs-custom-module: dist/tools/custom_module/cli.js
+  checksum: 1603c990d688277488b92706863fcba75d7279c519a1ebe3aa8947dca794c577e3ee75c86449ac5cd558fd91f72a364e1140b23cde51b203c134199599261bb0
   languageName: node
   linkType: hard
 
@@ -9036,6 +9182,16 @@ __metadata:
   version: 0.7.31
   resolution: "@types/ms@npm:0.7.31"
   checksum: daadd354aedde024cce6f5aa873fefe7b71b22cd0e28632a69e8b677aeb48ae8caa1c60e5919bb781df040d116b01cb4316335167a3fc0ef6a63fa3614c0f6da
+  languageName: node
+  linkType: hard
+
+"@types/node-fetch@npm:^2.1.2":
+  version: 2.6.9
+  resolution: "@types/node-fetch@npm:2.6.9"
+  dependencies:
+    "@types/node": "*"
+    form-data: ^4.0.0
+  checksum: 212269aff4b251477c13c33cee6cea23e4fd630be6c0bfa3714968cce7efd7055b52f2f82aab3394596d8c758335cc802e7c5fa3f775e7f2a472fa914c90dc15
   languageName: node
   linkType: hard
 
@@ -10599,7 +10755,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"argparse@npm:^1.0.7":
+"argparse@npm:^1.0.10, argparse@npm:^1.0.7":
   version: 1.0.10
   resolution: "argparse@npm:1.0.10"
   dependencies:
@@ -11236,7 +11392,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.0.2, base64-js@npm:^1.1.2, base64-js@npm:^1.2.3, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
+"base-64@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "base-64@npm:0.1.0"
+  checksum: 5a42938f82372ab5392cbacc85a5a78115cbbd9dbef9f7540fa47d78763a3a8bd7d598475f0d92341f66285afd377509851a9bb5c67bbecb89686e9255d5b3eb
+  languageName: node
+  linkType: hard
+
+"base64-js@npm:^1.0.2, base64-js@npm:^1.1.2, base64-js@npm:^1.2.3, base64-js@npm:^1.3.0, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
@@ -11536,7 +11699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer@npm:^5.5.0, buffer@npm:^5.6.0, buffer@npm:^5.7.0":
+"buffer@npm:^5.2.1, buffer@npm:^5.5.0, buffer@npm:^5.6.0, buffer@npm:^5.7.0":
   version: 5.7.1
   resolution: "buffer@npm:5.7.1"
   dependencies:
@@ -12569,6 +12732,13 @@ __metadata:
   dependencies:
     browserslist: ^4.21.5
   checksum: ca5d370296c15ebd5f961dae6b6a24a153a84937bff58543099b7f1c407e8d5bbafafa7ca27e65baad522ece762d6356e1d6ea9efa99815f6fefd150fac7e8a5
+  languageName: node
+  linkType: hard
+
+"core-js@npm:3.29.1":
+  version: 3.29.1
+  resolution: "core-js@npm:3.29.1"
+  checksum: b38446dbfcfd3887b3d4922990da487e2c95044cb4c5717aaf95e786a4c6b218f05c056c7ed6c699169b9794a49fec890e402659d54661fc56965a0eb717e7bd
   languageName: node
   linkType: hard
 
@@ -14872,6 +15042,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-camera@npm:~13.4.4":
+  version: 13.4.4
+  resolution: "expo-camera@npm:13.4.4"
+  dependencies:
+    invariant: ^2.2.4
+  peerDependencies:
+    expo: "*"
+  checksum: d2730038029e770de2f5106c24d6b5ec58131ac77bb06efc7892fd2dde9e813fd0141950d15ea3a2a997f0271916bc33a659341660b3ad357354630ed56adbbf
+  languageName: node
+  linkType: hard
+
 "expo-constants@npm:~14.4.2":
   version: 14.4.2
   resolution: "expo-constants@npm:14.4.2"
@@ -14959,6 +15140,17 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 3eff92ba5c62de5f37cfdfd86a5daf1d448e4f3e82a9ff401b4c4da1c4e5a7241da26edf32fb049763147e442d74ae8b4575b7e5a4ae0d935750c6d3f70f4355
+  languageName: node
+  linkType: hard
+
+"expo-gl@npm:~13.0.1":
+  version: 13.0.1
+  resolution: "expo-gl@npm:13.0.1"
+  dependencies:
+    invariant: ^2.2.4
+  peerDependencies:
+    expo: "*"
+  checksum: e6b5cc95a3df941e1d1d5424be08803144ca8491164c21ff971d0257ab3a862e582f4ca623efffb37aa866600811d2a9bbf7e800addd6bb30ee26be7203bc575
   languageName: node
   linkType: hard
 
@@ -17610,6 +17802,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-plain-obj@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "is-plain-obj@npm:2.1.0"
+  checksum: cec9100678b0a9fe0248a81743041ed990c2d4c99f893d935545cfbc42876cbe86d207f3b895700c690ad2fa520e568c44afc1605044b535a7820c1d40e38daa
+  languageName: node
+  linkType: hard
+
 "is-plain-object@npm:^2.0.4":
   version: 2.0.4
   resolution: "is-plain-object@npm:2.0.4"
@@ -18558,6 +18757,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jpeg-js@npm:^0.4.3":
+  version: 0.4.4
+  resolution: "jpeg-js@npm:0.4.4"
+  checksum: bd7cb61aa8df40a9ee2c2106839c3df6054891e56cfc22c0ac581402e06c6295f962a4754b0b2ac50a401789131b1c6dc9df8d24400f1352168be1894833c590
+  languageName: node
+  linkType: hard
+
 "js-beautify@npm:^1.6.14":
   version: 1.14.7
   resolution: "js-beautify@npm:1.14.7"
@@ -19501,6 +19707,15 @@ __metadata:
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
   checksum: 5abc259d2ae25bb06d19ce2b94a21632583c74e2a9109ee1ba7fd147aa7362b380d971e0251069f8b3eb7d48c21ac839e21fa177b335e82c76ec172e30c31a26
+  languageName: node
+  linkType: hard
+
+"merge-options@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "merge-options@npm:3.0.4"
+  dependencies:
+    is-plain-obj: ^2.1.0
+  checksum: d86ddb3dd6e85d558dbf25dc944f3527b6bacb944db3fdda6e84a3f59c4e4b85231095f58b835758b9a57708342dee0f8de0dffa352974a48221487fe9f4584f
   languageName: node
   linkType: hard
 
@@ -23864,6 +24079,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-fs@npm:^2.20.0":
+  version: 2.20.0
+  resolution: "react-native-fs@npm:2.20.0"
+  dependencies:
+    base-64: ^0.1.0
+    utf8: ^3.0.0
+  peerDependencies:
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 0be9bb9a5c13b501d0a3006efc3aa5c0b5b211456ee04718297f4e522532f3527f1daa220bd67d3b82d819ed8fdab8f64b7d6e0d7b768c1fd1d8ec9122d94316
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:~2.12.0":
   version: 2.12.1
   resolution: "react-native-gesture-handler@npm:2.12.1"
@@ -24351,7 +24582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.2":
+"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.5":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
@@ -25737,7 +25968,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string_decoder@npm:^1.1.1":
+"string_decoder@npm:^1.1.1, string_decoder@npm:^1.3.0":
   version: 1.3.0
   resolution: "string_decoder@npm:1.3.0"
   dependencies:
@@ -27378,6 +27609,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"utf8@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "utf8@npm:3.0.0"
+  checksum: cb89a69ad9ab393e3eae9b25305b3ff08bebca9adc839191a34f90777eb2942f86a96369d2839925fea58f8f722f7e27031d697f10f5f39690f8c5047303e62d
+  languageName: node
+  linkType: hard
+
 "util-deprecate@npm:^1.0.1, util-deprecate@npm:^1.0.2, util-deprecate@npm:~1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -28560,7 +28798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^16.1.0, yargs@npm:^16.2.0":
+"yargs@npm:^16.0.3, yargs@npm:^16.1.0, yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
