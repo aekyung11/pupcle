@@ -125,7 +125,9 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
         >
           <Text className="font-poppins text-[16px]">현재 보유 펍클</Text>
           <View className="flex flex-row items-center">
-            <Text className="font-poppins text-[16px]">1024</Text>
+            <Text className="font-poppins text-[16px]">
+              {currentUser.userEntry?.pupcleBalance}
+            </Text>
             <View className="ml-1 h-[23px] w-[22px]">
               <StyledComponent
                 component={SolitoImage}
