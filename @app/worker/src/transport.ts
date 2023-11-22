@@ -55,6 +55,24 @@ export default function getTransport(): Promise<nodemailer.Transporter> {
           },
         });
       } else {
+        if (
+          process.env.SMTP_HOST &&
+          process.env.SMTP_PORT &&
+          process.env.SMTP_USERNAME &&
+          process.env.SMTP_PASSWORD
+        ) {
+          return nodemailer.createTransport({
+            pool: true,
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT),
+            secure: true, // use TLS
+            auth: {
+              user: process.env.SMTP_USERNAME,
+              pass: process.env.SMTP_PASSWORD,
+            },
+          });
+        }
+
         if (!process.env.AWS_ACCESS_KEY_ID) {
           throw new Error("Misconfiguration: no AWS_ACCESS_KEY_ID");
         }
