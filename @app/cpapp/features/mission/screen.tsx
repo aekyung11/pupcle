@@ -1,4 +1,9 @@
+import {
+  CompleteMissionFormInput,
+  useCompleteMissionForm,
+} from "@app/componentlib";
 import { FourOhFour } from "@app/cpapp/components/FourOhFour";
+import { FramedAvatarUpload } from "@app/cpapp/components/FramedAvatarUpload";
 import { Row } from "@app/cpapp/design/layout";
 import { Text } from "@app/cpapp/design/typography";
 import { View } from "@app/cpapp/design/view";
@@ -17,6 +22,7 @@ import c from "@app/server/public/pupcle_count.png";
 import stamp from "@app/server/public/stamp.png";
 import { format } from "date-fns";
 import { useFonts } from "expo-font";
+import { Field, Formik, useFormikContext } from "formik";
 import { ScrollView } from "moti";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback, useEffect, useState } from "react";
@@ -30,34 +36,178 @@ type MissionTabContentProps = {
   currentUser: SharedLayout_UserFragment;
 };
 
-const MissionTabContent: FC<MissionTabContentProps> = ({
-  mission,
-  currentUser,
-}) => {
-  const missionComplete = !!mission.missionParticipants.nodes.find(
-    (mp) => mp.user?.id === currentUser.id
+const VerifiedImageUploadFormInner: FC<CompleteMissionDialogProps> = ({}) => {
+  const { values, setFieldValue } =
+    useFormikContext<CompleteMissionFormInput>();
+
+  const onUpload = useCallback(
+    async (proofImageUrl: string | null | undefined) =>
+      setFieldValue("proofImageUrl", proofImageUrl),
+    [setFieldValue]
   );
-  const otherParticipants = mission.missionParticipants.nodes.filter(
-    (mp) => mp.user?.id !== currentUser.id
-  );
+
   return (
-    <Tabs.Content key={mission.id} value={mission.id}>
-      {missionComplete && (
-        <>
-          <View className="absolute top-0 right-0 z-30 flex h-full w-full items-center justify-center">
-            <StyledComponent
-              component={SolitoImage}
-              className="h-[200px] w-[200px]"
-              src={stamp}
-              alt=""
-              // fill
-            />
-            <img src="/stamp.png" className="h-fit w-[90%]" />
+    <FramedAvatarUpload
+      size="xsmall"
+      avatarUrl={values.proofImageUrl}
+      disabled={false}
+      onUpload={onUpload}
+    />
+  );
+};
+
+const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
+  requiredObjects,
+}) => {
+  const { values, setFieldValue } =
+    useFormikContext<CompleteMissionFormInput>();
+
+  useEffect(() => {
+    const getPredictions = async (proofImageUrl: string) => {
+      if (proofImageUrl) {
+        let unverifiedObjects = new Set<string>(requiredObjects);
+
+        // const img = document.getElementsByClassName("framed-uploaded-image")[0];
+        // if (img) {
+        //   // Load the model.
+        //   const model = await cocoSsd.load();
+        //   // Classify the image.
+        //   // @ts-ignore
+        //   const predictions = await model.detect(img);
+        //   predictions.forEach((prediction) => {
+        //     if (prediction.score > 0.3) {
+        //       unverifiedObjects.delete(prediction.class);
+        //     }
+        //   });
+        // }
+
+        // TODO: do with promise or hook
+        if (proofImageUrl === values.proofImageUrl) {
+          setFieldValue("verifiedImage", unverifiedObjects.size === 0);
+        }
+
+        // TODO: for testing
+        setFieldValue("verifiedImage", true);
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      setFieldValue("verifiedImage", null);
+      getPredictions(values.proofImageUrl);
+    }
+
+    // TODO: for testing
+    setFieldValue("verifiedImage", true);
+  }, [requiredObjects, setFieldValue, values.proofImageUrl]);
+
+  return <></>;
+};
+
+type CompleteMissionDialogProps = {
+  currentUserId: string;
+  missionId: string;
+  missionComplete: boolean;
+  requiredObjects: string[];
+  setDialogOpen: (open: boolean) => void;
+};
+
+const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
+  currentUserId,
+  missionId,
+  missionComplete,
+  requiredObjects,
+  setDialogOpen,
+}) => {
+  const {
+    submitLabel,
+    validationSchema,
+    initialValues,
+    handleSubmit,
+    error: _error,
+  } = useCompleteMissionForm(
+    currentUserId,
+    missionId,
+    () => setDialogOpen(false),
+    undefined
+  );
+
+  return (
+    <View className="bg-pupcleMiddleBlue fixed top-[calc(6rem+60px)] left-[50%] z-0 ml-10 h-[calc(100vh-6rem-120px)] w-[calc(50vw-80px)] w-1/2 max-w-[640px] rounded-[30px] px-[60px] pt-[60px] pb-[30px]">
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        {({ values, setFieldValue, errors, dirty, handleSubmit }) => (
+          <View className="flex h-full w-full flex-col">
+            {/* <div className="flex h-[50%] w-full items-end justify-center">
+                <Button className="flex h-[166px] w-[166px] items-center justify-center rounded-[30px] border-none bg-white">
+                  <img src="/camera_icon.png" className="h-[76px] w-fit" />
+                </Button>
+              </div> */}
+
+            <View className="relative flex h-[50%] w-full flex-col items-center justify-end">
+              <VerifiedImageUploadFormInner
+                currentUserId={currentUserId}
+                missionComplete={missionComplete}
+                missionId={missionId}
+                requiredObjects={requiredObjects}
+                setDialogOpen={setDialogOpen}
+              />
+
+              {dirty && errors.proofImageUrl && (
+                <Text className="font-poppins absolute text-[16px]">
+                  {errors.proofImageUrl}
+                </Text>
+              )}
+
+              <VerifiedImageFormInner
+                currentUserId={currentUserId}
+                missionComplete={missionComplete}
+                missionId={missionId}
+                requiredObjects={requiredObjects}
+                setDialogOpen={setDialogOpen}
+              />
+            </View>
+
+            <View className="flex h-[50%] w-full flex-col justify-between">
+              <View className="flex flex-col items-center">
+                {/* <Button className="bg-pupcleBlue mt-6 h-11 w-[166px] rounded-full border-none">
+                    <span className="font-poppins text-[20px] font-semibold text-white">
+                      재촬영하기
+                    </span>
+                  </Button> */}
+                <Text className="font-poppins text-pupcleOrange mt-4 font-[15px]">
+                  *제출한 사진은 수정이 불가능합니다.
+                </Text>
+              </View>
+              <Button
+                className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none"
+                // @ts-ignore
+                onPress={handleSubmit}
+              >
+                {/* <img
+                      src="/paw_white.png"
+                      className="h-fit w-[58px]"
+                      alt=""
+                    />
+                    <span className="font-poppins text-[40px] font-semibold text-white">
+                      &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
+                    </span>
+                    <img
+                      src="/paw_white.png"
+                      className="h-fit w-[58px]"
+                      alt=""
+                    /> */}
+                <Text className="font-poppins text-[16px] font-bold text-white">
+                  {submitLabel}
+                </Text>
+              </Button>
+            </View>
           </View>
-          <View className="absolute top-0 right-0 z-20 h-full w-full rounded-[30px] bg-black opacity-10"></View>
-        </>
-      )}
-    </Tabs.Content>
+        )}
+      </Formik>
+    </View>
   );
 };
 
@@ -100,6 +250,9 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
       (mp) => mp.user?.id !== currentUser.id
     );
 
+  const [completeMissionDialogOpen, setCompleteMissionDialogOpen] =
+    useState(false);
+
   return (
     <View className="flex h-full items-center bg-[#F2F7FD] px-5">
       <View className="flex h-[14%] w-full flex-row items-end">
@@ -132,138 +285,165 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
               <ScrollView className="h-full w-full">
                 {selectedMissionId ? (
                   <>
-                    <View className="h-[540px] w-full rounded-[20px] bg-[#D9E8F8] py-[25px] px-[30px]">
-                      <ScrollView>
-                        <View className="flex h-full w-full flex-col">
-                          <View className="flex w-full flex-row items-center justify-between">
-                            <View className="flex flex-row items-center">
-                              <Button
-                                onPress={() => setSelectedMissionId("")}
-                                className="mr-2 h-[14px] w-[14px] border-none bg-none p-0"
-                                unstyled
-                              >
+                    {completeMissionDialogOpen ? (
+                      <View>
+                        <CompleteMissionDialog
+                          currentUserId={currentUser.id}
+                          missionComplete={selectedMissionComplete}
+                          missionId={selectedMissionId}
+                          requiredObjects={
+                            (selectedMission?.requiredObjects ??
+                              []) as unknown as any
+                          }
+                          setDialogOpen={setCompleteMissionDialogOpen}
+                        />
+                      </View>
+                    ) : (
+                      <View className="h-[540px] w-full rounded-[20px] bg-[#D9E8F8] py-[25px] px-[30px]">
+                        <ScrollView>
+                          <View className="flex h-full w-full flex-col">
+                            <View className="flex w-full flex-row items-center justify-between">
+                              <View className="flex flex-row items-center">
+                                <Button
+                                  onPress={() => setSelectedMissionId("")}
+                                  className="mr-2 h-[14px] w-[14px] border-none bg-none p-0"
+                                  unstyled
+                                >
+                                  <StyledComponent
+                                    component={SolitoImage}
+                                    // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
+                                    className="h-[14px] w-[14px] rotate-90"
+                                    src={back}
+                                    alt=""
+                                    // fill
+                                  />
+                                </Button>
+                                <Text className="font-poppins text-[24px] font-semibold">
+                                  {selectedMission?.name}
+                                </Text>
+                              </View>
+
+                              <View className="flex flex-row items-center">
+                                <Text className="font-poppins text-[20px] font-medium">
+                                  {selectedMission?.reward}&nbsp;
+                                </Text>
                                 <StyledComponent
                                   component={SolitoImage}
-                                  // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
-                                  className="h-[14px] w-[14px] rotate-90"
-                                  src={back}
+                                  className="h-[20px] w-[20px]"
+                                  src={c}
                                   alt=""
                                   // fill
                                 />
-                              </Button>
-                              <Text className="font-poppins text-[24px] font-semibold">
-                                {selectedMission?.name}
+                              </View>
+                            </View>
+                            <Text className="font-poppins mt-2 text-[14px] text-[#8F9092]">
+                              {selectedMission?.participantCount}명이 참여 중
+                            </Text>
+                            {selectedMissionOtherParticipants &&
+                              selectedMissionOtherParticipants.length > 0 && (
+                                <Text className="font-poppins text-[14px] text-[#8F9092]">
+                                  참여중인 펍친:&nbsp;
+                                  <View className="flex h-5 w-[68px] flex-row items-center justify-between">
+                                    {selectedMissionOtherParticipants
+                                      .slice(0, 3)
+                                      .map((mp) => (
+                                        <StyledComponent
+                                          component={SolitoImage}
+                                          key={mp.id}
+                                          className="h-[20px] w-[20px]"
+                                          src={
+                                            mp.user?.avatarUrl ?? defaultAvatar
+                                          }
+                                          alt=""
+                                          // fill
+                                        />
+                                      ))}
+                                  </View>
+                                  {selectedMissionOtherParticipants.length >
+                                    3 &&
+                                    `&nbsp;외 ${
+                                      selectedMissionOtherParticipants.length -
+                                      3
+                                    }명`}
+                                </Text>
+                              )}
+                            <View className="border-pupcleBlue my-5 h-fit w-full rounded-[20px] border-[3px] p-4">
+                              <Text className="font-poppins whitespace-pre-line text-[14px]">
+                                {selectedMission?.description}
                               </Text>
                             </View>
-
-                            <View className="flex flex-row items-center">
-                              <Text className="font-poppins text-[20px] font-medium">
-                                {selectedMission?.reward}&nbsp;
+                            <Text className="font-poppins text-pupcleBlue mb-1 text-[16px] font-semibold">
+                              키워드
+                            </Text>
+                            <Text className="font-poppins mb-5 text-[14px]">
+                              {selectedMission?.keywords?.join(", ")}
+                            </Text>
+                            <Text className="font-poppins text-pupcleBlue mb-2 text-[16px] font-semibold">
+                              인증방법
+                            </Text>
+                            <View className="mb-2 flex flex-row items-center">
+                              <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                                <Text className="font-poppinstext-[14px]">
+                                  1
+                                </Text>
+                              </View>
+                              <Text className="font-poppins text-[14px]">
+                                &nbsp;하단의 인증하기 버튼을 눌러주세요.
                               </Text>
+                            </View>
+                            <View className="mb-2 flex flex-row items-center">
+                              <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                                <Text className="font-poppinstext-[14px]">
+                                  2
+                                </Text>
+                              </View>
+                              <Text className="font-poppins text-[14px]">
+                                &nbsp;키워드가 포함된 인증 사진을 찍어주세요.
+                              </Text>
+                            </View>
+                            <View className="mb-5 flex flex-row items-center">
+                              <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                                <Text className="font-poppinstext-[14px]">
+                                  3
+                                </Text>
+                              </View>
+                              <Text className="font-poppins text-[14px]">
+                                &nbsp;제출하기를 눌러 인증 완료를 해주세요.
+                              </Text>
+                            </View>
+                            <Text className="font-poppins text-[12px] text-[#FF9C06]">
+                              *리워드 지급은 최대 일주일정도 소요될 수 있습니다.
+                            </Text>
+                            <Button
+                              className="bg-pupcleBlue mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
+                              onPress={() => setCompleteMissionDialogOpen(true)}
+                              unstyled
+                            >
                               <StyledComponent
                                 component={SolitoImage}
-                                className="h-[20px] w-[20px]"
-                                src={c}
+                                className="h-[36px] w-[36px]"
+                                src={paw}
                                 alt=""
                                 // fill
                               />
-                            </View>
-                          </View>
-                          <Text className="font-poppins mt-2 text-[14px] text-[#8F9092]">
-                            {selectedMission?.participantCount}명이 참여 중
-                          </Text>
-                          {selectedMissionOtherParticipants &&
-                            selectedMissionOtherParticipants.length > 0 && (
-                              <Text className="font-poppins text-[14px] text-[#8F9092]">
-                                참여중인 펍친:&nbsp;
-                                <View className="flex h-5 w-[68px] flex-row items-center justify-between">
-                                  {selectedMissionOtherParticipants
-                                    .slice(0, 3)
-                                    .map((mp) => (
-                                      <StyledComponent
-                                        component={SolitoImage}
-                                        key={mp.id}
-                                        className="h-[20px] w-[20px]"
-                                        src={
-                                          mp.user?.avatarUrl ?? defaultAvatar
-                                        }
-                                        alt=""
-                                        // fill
-                                      />
-                                    ))}
-                                </View>
-                                {selectedMissionOtherParticipants.length > 3 &&
-                                  `&nbsp;외 ${
-                                    selectedMissionOtherParticipants.length - 3
-                                  }명`}
+                              <Text className="font-poppins text-[24px] font-bold text-white">
+                                &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
+                                {selectedMissionComplete
+                                  ? "completed"
+                                  : "non-completed"}
                               </Text>
-                            )}
-                          <View className="border-pupcleBlue my-5 h-fit w-full rounded-[20px] border-[3px] p-4">
-                            <Text className="font-poppins whitespace-pre-line text-[14px]">
-                              {selectedMission?.description}
-                            </Text>
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[36px] w-[36px]"
+                                src={paw}
+                                alt=""
+                                // fill
+                              />
+                            </Button>
                           </View>
-                          <Text className="font-poppins text-pupcleBlue mb-1 text-[16px] font-semibold">
-                            키워드
-                          </Text>
-                          <Text className="font-poppins mb-5 text-[14px]">
-                            {selectedMission?.keywords?.join(", ")}
-                          </Text>
-                          <Text className="font-poppins text-pupcleBlue mb-2 text-[16px] font-semibold">
-                            인증방법
-                          </Text>
-                          <View className="mb-2 flex flex-row items-center">
-                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
-                              <Text className="font-poppinstext-[14px]">1</Text>
-                            </View>
-                            <Text className="font-poppins text-[14px]">
-                              &nbsp;하단의 인증하기 버튼을 눌러주세요.
-                            </Text>
-                          </View>
-                          <View className="mb-2 flex flex-row items-center">
-                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
-                              <Text className="font-poppinstext-[14px]">2</Text>
-                            </View>
-                            <Text className="font-poppins text-[14px]">
-                              &nbsp;키워드가 포함된 인증 사진을 찍어주세요.
-                            </Text>
-                          </View>
-                          <View className="mb-5 flex flex-row items-center">
-                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
-                              <Text className="font-poppinstext-[14px]">3</Text>
-                            </View>
-                            <Text className="font-poppins text-[14px]">
-                              &nbsp;제출하기를 눌러 인증 완료를 해주세요.
-                            </Text>
-                          </View>
-                          <Text className="font-poppins text-[12px] text-[#FF9C06]">
-                            *리워드 지급은 최대 일주일정도 소요될 수 있습니다.
-                          </Text>
-                          <Button
-                            className="bg-pupcleBlue mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
-                            unstyled
-                          >
-                            <StyledComponent
-                              component={SolitoImage}
-                              className="h-[36px] w-[36px]"
-                              src={paw}
-                              alt=""
-                              // fill
-                            />
-                            <Text className="font-poppins text-[24px] font-bold text-white">
-                              &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
-                            </Text>
-                            <StyledComponent
-                              component={SolitoImage}
-                              className="h-[36px] w-[36px]"
-                              src={paw}
-                              alt=""
-                              // fill
-                            />
-                          </Button>
-                        </View>
-                      </ScrollView>
-                    </View>
+                        </ScrollView>
+                      </View>
+                    )}
                   </>
                 ) : (
                   <>
@@ -333,13 +513,6 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
                 )}
               </ScrollView>
             </Tabs.List>
-            {missions.map((mission) => (
-              <MissionTabContent
-                key={mission.id}
-                mission={mission}
-                currentUser={currentUser}
-              />
-            ))}
           </View>
         </StyledComponent>
       </View>

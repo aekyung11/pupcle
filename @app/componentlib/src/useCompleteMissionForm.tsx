@@ -58,6 +58,7 @@ export function useCompleteMissionForm(
       async (values) => {
         setError(null);
         try {
+          console.log("proofImageUrl in form", values.proofImageUrl);
           const result = await completeMission({
             variables: {
               missionId,
