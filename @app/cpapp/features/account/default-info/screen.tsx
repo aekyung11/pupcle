@@ -156,9 +156,9 @@ const DefaultInfoScreenInner: FC<DefaultInfoScreenInnerProps> = ({
   const _theme = useTheme();
 
   return (
-    <View className="h-full w-full bg-[#F2F7FD] px-10">
-      <View className="flex h-[15%] w-full flex-row items-end">
-        <View className="absolute left-0">
+    <View className="h-full w-full bg-[#F2F7FD] px-5">
+      <View className="flex h-[14%] w-full flex-row items-end">
+        <View className="absolute left-5">
           <StyledComponent
             component={SolitoImage}
             className="h-[46px] w-[44px]"
@@ -177,7 +177,7 @@ const DefaultInfoScreenInner: FC<DefaultInfoScreenInnerProps> = ({
           </Text>
         </View>
       </View>
-      <View className="h-[85%] w-full">
+      <View className="h-[86%] w-full">
         <View className="mt-[30px] h-[540px] w-full rounded-[30px] bg-white">
           <DefaultInfoScreenInnerInner
             currentUser={currentUser}

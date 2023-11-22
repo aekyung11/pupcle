@@ -48,9 +48,9 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
   const _theme = useTheme();
 
   return (
-    <View className="h-full w-full bg-[#F2F7FD] px-10">
-      <View className="flex h-[15%] w-full flex-row items-end">
-        <View className="absolute left-0">
+    <View className="h-full w-full bg-[#F2F7FD] px-5">
+      <View className="flex h-[14%] w-full flex-row items-end">
+        <View className="absolute left-5">
           <StyledComponent
             component={SolitoImage}
             className="h-[46px] w-[44px]"
@@ -69,7 +69,7 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
           </Text>
         </View>
       </View>
-      <View className="h-[85%] w-full pt-[50px]">
+      <View className="h-[86%] w-full pt-[50px]">
         <Link href="/account/default-info">
           <View
             style={{

@@ -214,7 +214,7 @@ export function CalendarPetDayScreen() {
         <FourOhFour />
       ) : (
         <View className="flex h-full w-full flex-col bg-[#F2F7FD] px-5">
-          <View className="flex h-[15%] w-full flex-row items-end justify-start">
+          <View className="flex h-[14%] w-full flex-row items-end justify-start">
             <View className="flex h-[45px] flex-row items-center">
               <Link href="/calendar">
                 <StyledComponent
@@ -243,7 +243,7 @@ export function CalendarPetDayScreen() {
               </View>
             </View>
           </View>
-          <View className="flex h-[85%] w-full flex-col justify-start px-5 pb-[140px] pt-5">
+          <View className="flex h-[86%] w-full flex-col justify-start pb-[140px] pt-5">
             <ScrollView>
               <View className="h-fit w-full rounded-[30px] bg-white p-5">
                 <Text className="font-poppins text-[24px] font-semibold uppercase text-[#FF9C06]">

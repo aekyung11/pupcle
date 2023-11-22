@@ -45,6 +45,7 @@ import walking from "@app/server/public/walking.png";
 import clsx from "clsx";
 import { format } from "date-fns";
 import { Field, Formik } from "formik";
+import { ScrollView } from "moti";
 import { StyledComponent } from "nativewind";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";
@@ -98,7 +99,7 @@ function StatusTab({
     );
 
   return (
-    <View className="relative">
+    <ScrollView className="relative py-[50px]">
       <Button
         onPress={() => setSelectedTab("")}
         unstyled
@@ -213,7 +214,7 @@ function StatusTab({
           </>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -242,8 +243,8 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
   const [val, setVal] = useState(currentUserFirstPet.name);
 
   return (
-    <View className="bg-pupcleBlue flex h-full items-center px-10">
-      <View className="flex h-[15%] w-full flex-row items-end justify-between">
+    <View className="bg-pupcleBlue flex h-full items-center px-5">
+      <View className="flex h-[14%] w-full flex-row items-end justify-between px-5">
         <View>
           <StyledComponent
             component={SolitoImage}
@@ -273,7 +274,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
         component={Tabs}
         value={selectedTab}
         onValueChange={(value) => setSelectedTab(value as Tab)}
-        className="mt-[30px] flex h-[540px] w-full flex-col items-center justify-between rounded-[30px] bg-white px-5 py-[50px]"
+        className="mt-[30px] flex h-[540px] w-full flex-col items-center justify-between rounded-[30px] bg-white px-5"
       >
         {selectedTab ? (
           <>
@@ -293,7 +294,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
             ))}
           </>
         ) : (
-          <>
+          <View className="flex h-full w-full flex-col justify-between py-[50px]">
             <View className="w-full items-center justify-center">
               <Select value={val} onValueChange={setVal}>
                 <View className="relative flex w-full flex-row items-center justify-center">
@@ -322,7 +323,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
                     />
                   </View>
                 </View>
-                <View className="absolute right-7 top-[10px]">
+                {/* <View className="absolute right-7 top-[60px]">
                   <Select.Trigger unstyled asChild>
                     <StyledComponent
                       component={SolitoImage}
@@ -333,7 +334,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
                     />
                   </Select.Trigger>
                 </View>
-                <Select.Content></Select.Content>
+                <Select.Content></Select.Content> */}
               </Select>
               <View className="mt-[6px] flex h-[21px] flex-row items-center">
                 <StyledComponent
@@ -365,7 +366,7 @@ const HomeScreenInner: FC<HomeScreenInnerProps> = ({
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
             />
-          </>
+          </View>
         )}
       </StyledComponent>
     </View>

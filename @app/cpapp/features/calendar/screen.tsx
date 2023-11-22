@@ -118,7 +118,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
 
   return (
     <View className="h-full bg-[#F2F7FD] px-5">
-      <View className="flex h-[15%] w-full flex-row items-end">
+      <View className="flex h-[14%] w-full flex-row items-end">
         <View className="absolute left-5">
           <StyledComponent
             component={SolitoImage}
@@ -149,7 +149,7 @@ const CalendarScreenInner: FC<CalendarScreenInnerProps> = ({
           </View> */}
         </View>
       </View>
-      <View className="h-[85%] w-full px-5 pb-[120px]">
+      <View className="h-[86%] w-full pb-[120px]">
         <ScrollView>
           <View className="flex flex-row items-center justify-end py-5">
             <View className="flex flex-row items-center">

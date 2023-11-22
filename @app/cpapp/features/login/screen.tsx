@@ -44,7 +44,7 @@ function LoginTest() {
 
   return (
     <View className="h-full">
-      <View className="flex h-[15%] justify-end bg-white">
+      <View className="flex h-[14%] justify-end bg-white">
         <Link href="/">
           <StyledComponent
             component={SolitoImage}
@@ -55,7 +55,7 @@ function LoginTest() {
           />
         </Link>
       </View>
-      <View className="flex h-[85%] flex-col justify-center pb-10">
+      <View className="flex h-[86%] flex-col justify-center pb-10">
         <View className="flex flex-row">
           <Text style={styles.pageTitle}>로그인</Text>
           <View className="-top-[2px] ml-1">
