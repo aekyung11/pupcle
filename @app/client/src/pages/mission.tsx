@@ -36,6 +36,18 @@ import { FC, useEffect, useState } from "react";
 //   return String(petId);
 // }
 
+// async function loadImage(imageUrl: string) {
+//   let img: HTMLImageElement | undefined;
+//   const imageLoadPromise = new Promise((resolve) => {
+//     img = new Image();
+//     img.onload = resolve;
+//     img.src = imageUrl;
+//   });
+
+//   await imageLoadPromise;
+//   return img;
+// }
+
 const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
   requiredObjects,
 }) => {
@@ -47,24 +59,29 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
       if (proofImageUrl) {
         let unverifiedObjects = new Set<string>(requiredObjects);
 
+        // const img = await loadImage(proofImageUrl);
         const img = document.getElementsByClassName("framed-uploaded-image")[0];
         if (img) {
-          // Load the model.
-          const model = await cocoSsd.load();
+          img.addEventListener("load", async () => {
+            console.log("testing predictions");
 
-          // Classify the image.
-          // @ts-ignore
-          const predictions = await model.detect(img);
-          predictions.forEach((prediction) => {
-            if (prediction.score > 0.3) {
-              unverifiedObjects.delete(prediction.class);
+            // Load the model.
+            const model = await cocoSsd.load();
+
+            // Classify the image.
+            // @ts-ignore
+            const predictions = await model.detect(img);
+            predictions.forEach((prediction) => {
+              if (prediction.score > 0.3) {
+                unverifiedObjects.delete(prediction.class);
+              }
+            });
+
+            // TODO: do with promise or hook
+            if (proofImageUrl === values.proofImageUrl) {
+              setFieldValue("verifiedImage", unverifiedObjects.size === 0);
             }
           });
-        }
-
-        // TODO: do with promise or hook
-        if (proofImageUrl === values.proofImageUrl) {
-          setFieldValue("verifiedImage", unverifiedObjects.size === 0);
         }
       }
     };
