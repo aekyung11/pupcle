@@ -11,6 +11,8 @@ import {
 } from "@app/graphql";
 import defaultAvatar from "@app/server/public/default_avatar.png";
 import hamburger from "@app/server/public/hamburger_blue.png";
+import paw from "@app/server/public/paw_white.png";
+import back from "@app/server/public/pup_notes_caret_icon.png";
 import c from "@app/server/public/pupcle_count.png";
 import stamp from "@app/server/public/stamp.png";
 import { format } from "date-fns";
@@ -76,8 +78,9 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
     string | undefined
   >(undefined);
 
-  const handleTabChange = (value: string) => {
+  const _handleTabChange = (value: string) => {
     setSelectedMissionId(value);
+    // TODO: make mission id url work in mobile
     router.push(value);
   };
 
@@ -86,6 +89,16 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
   //     router.query.mission === undefined ? undefined : "" + router.query.mission
   //   );
   // }, [router.query.mission]);
+
+  const selectedMission = missions.find((m) => m.id === selectedMissionId);
+  const selectedMissionComplete =
+    !!selectedMission?.missionParticipants.nodes.find(
+      (mp) => mp.user?.id === currentUser.id
+    );
+  const selectedMissionOtherParticipants =
+    selectedMission?.missionParticipants.nodes.filter(
+      (mp) => mp.user?.id !== currentUser.id
+    );
 
   return (
     <View className="flex h-full items-center bg-[#F2F7FD] px-5">
@@ -106,77 +119,217 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
         </View>
       </View>
       <View className="h-[86%] w-full">
-        <Tabs>
+        <StyledComponent
+          component={Tabs}
+          value={selectedMissionId}
+          onValueChange={(value) => setSelectedMissionId(value)}
+        >
           <View className="mt-[30px] h-[540px] w-full bg-transparent">
             <Tabs.List
               unstyled
               className="flex h-[540px] w-full flex-col justify-between"
             >
-              <ScrollView>
-                {missions.map((mission) => (
-                  <Tabs.Tab
-                    paddingHorizontal={30}
-                    paddingVertical={20}
-                    height={100}
-                    borderRadius={20}
-                    marginBottom={10}
-                    unstyled
-                    key={mission.id}
-                    value={mission.id}
-                    asChild
-                  >
-                    <Button
-                      unstyled
-                      className="flex h-full w-full flex-row items-center justify-between border-none bg-[#D9E8F8]"
-                    >
-                      <View className="flex h-full w-[50%] flex-col items-start justify-around">
-                        <Text className="font-poppins text-[24px] font-semibold text-black">
-                          {mission.name}
-                        </Text>
-                        <Text className="font-poppins text-[12px] text-black">
-                          {mission.participantCount}명이 참여중
-                        </Text>
-                      </View>
-                      <View className="flex h-full w-[50%] flex-col items-end justify-around">
-                        <View className="flex flex-row">
-                          <Text className="font-poppins text-[20px] font-semibold text-black">
-                            {mission.reward}&nbsp;
+              <ScrollView className="h-full w-full">
+                {selectedMissionId ? (
+                  <>
+                    <View className="h-[540px] w-full rounded-[20px] bg-[#D9E8F8] py-[25px] px-[30px]">
+                      <ScrollView>
+                        <View className="flex h-full w-full flex-col">
+                          <View className="flex w-full flex-row items-center justify-between">
+                            <View className="flex flex-row">
+                              <Button
+                                className="h-[14px] w-[14px] border-none bg-none p-0"
+                                unstyled
+                              >
+                                <StyledComponent
+                                  component={SolitoImage}
+                                  // className="absolute top-[29px] right-[27px] h-[14px] w-[14px]"
+                                  className="h-[14px] w-[14px] rotate-90"
+                                  src={back}
+                                  alt=""
+                                  // fill
+                                />
+                              </Button>
+                              <Text className="font-poppins text-[24px] font-semibold">
+                                {selectedMission?.name}
+                              </Text>
+                            </View>
+
+                            <View className="flex flex-row items-center">
+                              <Text className="font-poppins text-[20px] font-medium">
+                                {selectedMission?.reward}&nbsp;
+                              </Text>
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[20px] w-[20px]"
+                                src={c}
+                                alt=""
+                                // fill
+                              />
+                            </View>
+                          </View>
+                          <Text className="font-poppins mt-2 text-[14px] text-[#8F9092]">
+                            {selectedMission?.participantCount}명이 참여 중
                           </Text>
-                          <StyledComponent
-                            component={SolitoImage}
-                            className="h-[23px] w-[22px]"
-                            src={c}
-                            alt=""
-                            // fill
-                          />
+                          {selectedMissionOtherParticipants &&
+                            selectedMissionOtherParticipants.length > 0 && (
+                              <Text className="font-poppins text-[14px] text-[#8F9092]">
+                                참여중인 펍친:&nbsp;
+                                <View className="flex h-5 w-[68px] flex-row items-center justify-between">
+                                  {selectedMissionOtherParticipants
+                                    .slice(0, 3)
+                                    .map((mp) => (
+                                      <StyledComponent
+                                        component={SolitoImage}
+                                        key={mp.id}
+                                        className="h-[20px] w-[20px]"
+                                        src={
+                                          mp.user?.avatarUrl ?? defaultAvatar
+                                        }
+                                        alt=""
+                                        // fill
+                                      />
+                                    ))}
+                                </View>
+                                {selectedMissionOtherParticipants.length > 3 &&
+                                  `&nbsp;외 ${
+                                    selectedMissionOtherParticipants.length - 3
+                                  }명`}
+                              </Text>
+                            )}
+                          <View className="border-pupcleBlue my-5 h-fit w-full rounded-[20px] border-[3px] p-4">
+                            <Text className="font-poppins whitespace-pre-line text-[14px]">
+                              {selectedMission?.description}
+                            </Text>
+                          </View>
+                          <Text className="font-poppins text-pupcleBlue mb-1 text-[16px] font-semibold">
+                            키워드
+                          </Text>
+                          <Text className="font-poppins mb-5 text-[14px]">
+                            {selectedMission?.keywords?.join(", ")}
+                          </Text>
+                          <Text className="font-poppins text-pupcleBlue mb-2 text-[16px] font-semibold">
+                            인증방법
+                          </Text>
+                          <View className="mb-2 flex flex-row items-center">
+                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                              <Text className="font-poppinstext-[14px]">1</Text>
+                            </View>
+                            <Text className="font-poppins text-[14px]">
+                              &nbsp;하단의 인증하기 버튼을 눌러주세요.
+                            </Text>
+                          </View>
+                          <View className="mb-2 flex flex-row items-center">
+                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                              <Text className="font-poppinstext-[14px]">2</Text>
+                            </View>
+                            <Text className="font-poppins text-[14px]">
+                              &nbsp;키워드가 포함된 인증 사진을 찍어주세요.
+                            </Text>
+                          </View>
+                          <View className="mb-5 flex flex-row items-center">
+                            <View className="flex h-[18px] w-[18px] flex-row items-center justify-center rounded-full border-[1px] border-black">
+                              <Text className="font-poppinstext-[14px]">3</Text>
+                            </View>
+                            <Text className="font-poppins text-[14px]">
+                              &nbsp;제출하기를 눌러 인증 완료를 해주세요.
+                            </Text>
+                          </View>
+                          <Text className="font-poppins text-[12px] text-[#FF9C06]">
+                            *리워드 지급은 최대 일주일정도 소요될 수 있습니다.
+                          </Text>
+                          <Button
+                            className="bg-pupcleBlue mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
+                            unstyled
+                          >
+                            <StyledComponent
+                              component={SolitoImage}
+                              className="h-[36px] w-[36px]"
+                              src={paw}
+                              alt=""
+                              // fill
+                            />
+                            <Text className="font-poppins text-[24px] font-bold text-white">
+                              &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
+                            </Text>
+                            <StyledComponent
+                              component={SolitoImage}
+                              className="h-[36px] w-[36px]"
+                              src={paw}
+                              alt=""
+                              // fill
+                            />
+                          </Button>
                         </View>
-                        <View className="flex h-5 w-[68px] flex-row items-center justify-between">
-                          <StyledComponent
-                            component={SolitoImage}
-                            className="h-[20px] w-[20px]"
-                            src={defaultAvatar}
-                            alt=""
-                            // fill
-                          />
-                          <StyledComponent
-                            component={SolitoImage}
-                            className="h-[20px] w-[20px]"
-                            src={defaultAvatar}
-                            alt=""
-                            // fill
-                          />
-                          <StyledComponent
-                            component={SolitoImage}
-                            className="h-[20px] w-[20px]"
-                            src={defaultAvatar}
-                            alt=""
-                            // fill
-                          />
+                      </ScrollView>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    {missions.map((mission) => (
+                      <Tabs.Tab
+                        // paddingHorizontal={30}
+                        padding={0}
+                        // paddingVertical={20}
+                        height={100}
+                        // borderRadius={20}
+                        marginBottom={10}
+                        unstyled
+                        // asChild
+                        key={mission.id}
+                        value={mission.id}
+                      >
+                        <View className="flex h-[100px] w-full flex-row items-center justify-between rounded-[20px] border-none bg-[#D9E8F8] px-[30px] py-5">
+                          <View className="flex h-full w-[50%] flex-col items-start justify-around">
+                            <Text className="font-poppins text-[24px] font-semibold text-black">
+                              {mission.name}
+                            </Text>
+                            <Text className="font-poppins text-[12px] text-black">
+                              {mission.participantCount}명이 참여중
+                            </Text>
+                          </View>
+                          <View className="flex h-full w-[50%] flex-col items-end justify-around">
+                            <View className="flex flex-row">
+                              <Text className="font-poppins text-[20px] font-semibold text-black">
+                                {mission.reward}&nbsp;
+                              </Text>
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[23px] w-[22px]"
+                                src={c}
+                                alt=""
+                                // fill
+                              />
+                            </View>
+                            <View className="flex h-5 w-[68px] flex-row items-center justify-between">
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[20px] w-[20px]"
+                                src={defaultAvatar}
+                                alt=""
+                                // fill
+                              />
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[20px] w-[20px]"
+                                src={defaultAvatar}
+                                alt=""
+                                // fill
+                              />
+                              <StyledComponent
+                                component={SolitoImage}
+                                className="h-[20px] w-[20px]"
+                                src={defaultAvatar}
+                                alt=""
+                                // fill
+                              />
+                            </View>
+                          </View>
                         </View>
-                      </View>
-                    </Button>
-                  </Tabs.Tab>
-                ))}
+                      </Tabs.Tab>
+                    ))}
+                  </>
+                )}
               </ScrollView>
             </Tabs.List>
             {missions.map((mission) => (
@@ -187,7 +340,7 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
               />
             ))}
           </View>
-        </Tabs>
+        </StyledComponent>
       </View>
     </View>
   );

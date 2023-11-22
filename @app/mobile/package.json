@@ -10,8 +10,8 @@
     "eject": "expo eject",
     "test": "jest --watchAll",
     "eas-build-post-install": "yarn workspaces run build",
-    "expo-run-ios": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 expo run:ios",
-    "expo-start": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 expo start -c --dev-client"
+    "expo-run-ios": "npx cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 expo run:ios",
+    "expo-start": "npx cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 expo start -c --dev-client"
   },
   "jest": {
     "preset": "jest-expo"
