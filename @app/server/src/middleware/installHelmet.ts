@@ -33,6 +33,7 @@ export default async function installHelmet(app: Express) {
           ...contentSecurityPolicy.getDefaultDirectives()["img-src"],
           isDev ? s3Host! : `${uploadBucket}.${s3Host}`!,
           "*.daumcdn.net",
+          "i.imgur.com",
           "blob:",
         ],
         "script-src": [

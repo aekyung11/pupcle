@@ -15,6 +15,7 @@ declare global {
     __GRAPHILE_APP__: {
       ROOT_URL?: string;
       T_AND_C_URL?: string;
+      DISCOURSE_URL?: string;
     };
   }
 }
@@ -32,6 +33,7 @@ if (typeof window !== "undefined") {
   window.__GRAPHILE_APP__ = {
     ROOT_URL: data.query.ROOT_URL,
     T_AND_C_URL: data.query.T_AND_C_URL,
+    DISCOURSE_URL: data.query.DISCOURSE_URL,
   };
 
   Router.events.on("routeChangeStart", () => {

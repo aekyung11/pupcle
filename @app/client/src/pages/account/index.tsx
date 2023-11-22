@@ -65,7 +65,7 @@ const Account: NextPage = () => {
               <div className="flex flex-col items-center">
                 <img
                   src={currentUser.avatarUrl || "/profile_default_avatar.png"}
-                  className="h-[138px] w-[138px] rounded-full"
+                  className="h-[138px] w-[138px] rounded-full object-cover"
                 />
                 <span className="font-poppins mt-4 text-[24px] font-semibold">
                   {currentUser.nickname}

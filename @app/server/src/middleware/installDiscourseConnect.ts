@@ -72,7 +72,7 @@ export default async (app: Express) => {
       username: user.username,
       name: user.nickname,
       ...(user.avatar_url && {
-        avatarUrl: user.avatar_url,
+        avatar_url: user.avatar_url,
       }),
     };
 

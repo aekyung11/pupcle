@@ -261,7 +261,7 @@ export function SharedLayout({
               MAPS
             </Link>
             <Link
-              href="/circle"
+              href="http://localhost:4200/login"
               style={{
                 fontWeight: title === "circle" ? 600 : 400,
               }}
