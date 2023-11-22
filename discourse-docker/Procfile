@@ -1,0 +1,2 @@
+web: /opt/bitnami/scripts/discourse/entrypoint.sh /opt/bitnami/scripts/discourse/run.sh
+sidekiq: /opt/bitnami/scripts/discourse/entrypoint.sh /opt/bitnami/scripts/discourse-sidekiq/run.sh

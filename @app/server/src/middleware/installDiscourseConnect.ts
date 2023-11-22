@@ -9,7 +9,10 @@ export default async (app: Express) => {
     const { sso, sig }: { sso?: string; sig?: string } = req.query;
 
     if (!req.user?.session_id) {
-      throw new Error("not logged in?");
+      res.redirect(
+        `${process.env.ROOT_URL}/login?next=${encodeURIComponent("/circle")}`
+      );
+      return;
     }
 
     const rootPgPool = getRootPgPool(app);
@@ -22,8 +25,10 @@ export default async (app: Express) => {
     );
 
     if (!session?.user_id) {
-      // throw new Error("not logged in")
-      res.redirect(`${process.env.ROOT_URL}/login`);
+      res.redirect(
+        `${process.env.ROOT_URL}/login?next=${encodeURIComponent("/circle")}`
+      );
+      return;
     }
 
     console.log({ sso, sig });
