@@ -48,7 +48,7 @@ function getApolloClient(
     throw new Error("ROOT_URL envvar is not set");
   }
 
-  const onErrorLink = onError(({ graphQLErrors, networkError }) => {
+  const onErrorLink = onError(async ({ graphQLErrors, networkError }) => {
     if (graphQLErrors)
       graphQLErrors.map(({ message, locations, path }) =>
         console.error(
@@ -63,7 +63,7 @@ function getApolloClient(
       networkError?.message?.indexOf("401") != null &&
       networkError?.message?.indexOf("401") > -1
     ) {
-      signOut();
+      await Promise.resolve(signOut());
     }
   });
 
