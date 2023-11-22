@@ -136,9 +136,10 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
                       <ScrollView>
                         <View className="flex h-full w-full flex-col">
                           <View className="flex w-full flex-row items-center justify-between">
-                            <View className="flex flex-row">
+                            <View className="flex flex-row items-center">
                               <Button
-                                className="h-[14px] w-[14px] border-none bg-none p-0"
+                                onPress={() => setSelectedMissionId("")}
+                                className="mr-2 h-[14px] w-[14px] border-none bg-none p-0"
                                 unstyled
                               >
                                 <StyledComponent

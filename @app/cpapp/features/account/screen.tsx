@@ -1,10 +1,20 @@
+import { ApolloError, QueryResult, useApolloClient } from "@apollo/client";
 import { useSocialInfoForm } from "@app/componentlib";
 import CustomInput from "@app/cpapp/components/CustomInput";
 import { View } from "@app/cpapp/design/view";
 import { AuthRestrict, SharedLayout } from "@app/cpapp/layouts/SharedLayout";
+import { useAuth } from "@app/cpapp/utils/auth";
 import { isSafe } from "@app/cpapp/utils/utils";
-import { SharedLayout_UserFragment, useSharedQuery } from "@app/graphql";
-import { extractError, getCodeFromError } from "@app/lib";
+import {
+  SharedLayout_UserFragment,
+  useLogoutMutation,
+  useSharedQuery,
+} from "@app/graphql";
+import {
+  extractError,
+  getCodeFromError,
+  resetWebsocketConnection,
+} from "@app/lib";
 import defaultAvatar from "@app/server/public/avatar_white_border.png";
 import bathroom from "@app/server/public/bathroom.png";
 import hamburger from "@app/server/public/hamburger_blue.png";
@@ -30,11 +40,13 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
   next,
 }) => {
   const router = useRouter();
+  const { signOut } = useAuth();
 
   const postResult = useCallback(async () => {
     router.push(next);
   }, [next, router]);
 
+  const client = useApolloClient();
   const { submitLabel, validationSchema, initialValues, handleSubmit, error } =
     useSocialInfoForm(
       currentUser.id,
@@ -44,6 +56,28 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
       currentUser.avatarUrl
     );
 
+  const handleLogout = useCallback(async () => {
+    console.log("LOGOUT 1");
+    await signOut();
+    console.log("LOGOUT 2");
+    resetWebsocketConnection();
+    console.log("LOGOUT 3");
+    await client.resetStore();
+    console.log("LOGOUT 4");
+    // const reset = async () => {
+    //   Router.events.off("routeChangeComplete", reset);
+    //   try {
+    //     await logout();
+    //     client.resetStore();
+    //   } catch (e: any) {
+    //     console.error(e);
+    //     // Something went wrong; redirect to /logout to force logout.
+    //     window.location.href = "/logout";
+    //   }
+    // };
+    // Router.events.on("routeChangeComplete", reset);
+    // Router.push("/");
+  }, [client, signOut]);
   const code = getCodeFromError(error);
   const _theme = useTheme();
 
@@ -181,19 +215,21 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
             </View>
           </Link>
         </View>
-        <View
-          style={{
-            shadowColor: "black",
-            shadowOpacity: 0.25,
-            shadowOffset: { width: 0, height: 2 },
-            shadowRadius: 2,
-          }}
-          className="mt-5 flex h-[48px] flex-row items-center justify-between rounded-[10px] border-none bg-white px-6"
-        >
-          <Text className="font-poppins text-[16px]">
-            내가 쓴 리뷰 모아보기
-          </Text>
-          <View>
+        <Button unstyled onPress={handleLogout}>
+          <View
+            style={{
+              shadowColor: "black",
+              shadowOpacity: 0.25,
+              shadowOffset: { width: 0, height: 2 },
+              shadowRadius: 2,
+            }}
+            className="mt-5 flex h-[48px] flex-row items-center justify-between rounded-[10px] border-none bg-white px-6"
+          >
+            <Text className="font-poppins text-[16px] text-[#FF9C06]">
+              {/* 내가 쓴 리뷰 모아보기 */}
+              로그아웃하기
+            </Text>
+            {/* <View>
             <StyledComponent
               component={SolitoImage}
               className="h-[17px] w-[11.5px]"
@@ -201,8 +237,9 @@ const AccountScreenInner: FC<AccountScreenInnerProps> = ({
               alt=""
               // fill
             />
+          </View> */}
           </View>
-        </View>
+        </Button>
       </View>
     </View>
   );
