@@ -21,6 +21,10 @@ export default function TabsLayout() {
           height: 120,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
+          shadowColor: "black",
+          shadowOpacity: 0.25,
+          shadowOffset: { width: 0, height: 0 },
+          shadowRadius: 8,
         },
         headerShown: false,
       }}
