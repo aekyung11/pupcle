@@ -14,8 +14,10 @@ import {
   useMissionsPageQuery,
   useSharedQuery,
 } from "@app/graphql";
+import closeIcon from "@app/server/public/close_icon.png";
 import defaultAvatar from "@app/server/public/default_avatar.png";
 import hamburger from "@app/server/public/hamburger_blue.png";
+import pawGray from "@app/server/public/paw_gray.png";
 import paw from "@app/server/public/paw_white.png";
 import back from "@app/server/public/pup_notes_caret_icon.png";
 import c from "@app/server/public/pupcle_count.png";
@@ -49,6 +51,7 @@ const VerifiedImageUploadFormInner: FC<CompleteMissionDialogProps> = ({}) => {
   return (
     <FramedAvatarUpload
       size="xsmall"
+      mode={"gallery"}
       avatarUrl={values.proofImageUrl}
       disabled={false}
       onUpload={onUpload}
@@ -132,7 +135,20 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
   );
 
   return (
-    <View className="bg-pupcleMiddleBlue fixed top-[calc(6rem+60px)] left-[50%] z-0 ml-10 h-[calc(100vh-6rem-120px)] w-[calc(50vw-80px)] w-1/2 max-w-[640px] rounded-[30px] px-[60px] pt-[60px] pb-[30px]">
+    <View className="relative h-[540px] w-full rounded-[20px] bg-[#D9E8F8] py-[25px] px-[30px]">
+      <Button
+        className="absolute right-6 top-6 h-[14px] w-[14px] border-none bg-none p-0"
+        unstyled
+        onPress={() => setDialogOpen(false)}
+      >
+        <StyledComponent
+          component={SolitoImage}
+          className="h-[14px] w-[14px]"
+          src={closeIcon}
+          alt=""
+          // fill
+        />
+      </Button>
       <Formik
         validationSchema={validationSchema}
         initialValues={initialValues}
@@ -156,7 +172,7 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
               />
 
               {dirty && errors.proofImageUrl && (
-                <Text className="font-poppins absolute text-[16px]">
+                <Text className="font-poppins absolute text-[14px]">
                   {errors.proofImageUrl}
                 </Text>
               )}
@@ -177,12 +193,13 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                       재촬영하기
                     </span>
                   </Button> */}
-                <Text className="font-poppins text-pupcleOrange mt-4 font-[15px]">
+                <Text className="font-poppins text-pupcleOrange mt-3 text-[12px]">
                   *제출한 사진은 수정이 불가능합니다.
                 </Text>
               </View>
               <Button
-                className="mission-button bg-pupcleBlue flex h-[92px] w-full items-center justify-center rounded-full border-none"
+                className="bg-pupcleBlue mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
+                unstyled
                 // @ts-ignore
                 onPress={handleSubmit}
               >
@@ -199,9 +216,23 @@ const CompleteMissionDialog: FC<CompleteMissionDialogProps> = ({
                       className="h-fit w-[58px]"
                       alt=""
                     /> */}
-                <Text className="font-poppins text-[16px] font-bold text-white">
-                  {submitLabel}
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[36px] w-[36px]"
+                  src={paw}
+                  alt=""
+                  // fill
+                />
+                <Text className="font-poppins text-[24px] font-bold text-white">
+                  &nbsp;&nbsp;{submitLabel}&nbsp;&nbsp;
                 </Text>
+                <StyledComponent
+                  component={SolitoImage}
+                  className="h-[36px] w-[36px]"
+                  src={paw}
+                  alt=""
+                  // fill
+                />
               </Button>
             </View>
           </View>
@@ -415,27 +446,36 @@ const MissionScreenInner: FC<MissionScreenInnerProps> = ({
                               *리워드 지급은 최대 일주일정도 소요될 수 있습니다.
                             </Text>
                             <Button
-                              className="bg-pupcleBlue mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
+                              disabled={selectedMissionComplete}
+                              className="mt-6 flex h-[60px] w-full flex-row items-center justify-center rounded-full border-none"
+                              style={{
+                                backgroundColor: selectedMissionComplete
+                                  ? "#D9D9D9"
+                                  : "#7FB3E8",
+                              }}
                               onPress={() => setCompleteMissionDialogOpen(true)}
                               unstyled
                             >
                               <StyledComponent
                                 component={SolitoImage}
                                 className="h-[36px] w-[36px]"
-                                src={paw}
+                                src={selectedMissionComplete ? pawGray : paw}
                                 alt=""
                                 // fill
                               />
-                              <Text className="font-poppins text-[24px] font-bold text-white">
-                                &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
-                                {selectedMissionComplete
-                                  ? "completed"
-                                  : "non-completed"}
-                              </Text>
+                              {selectedMissionComplete ? (
+                                <Text className="font-poppins text-[24px] font-bold text-[#8F9092]">
+                                  &nbsp;&nbsp;인 증 완 료&nbsp;&nbsp;
+                                </Text>
+                              ) : (
+                                <Text className="font-poppins text-[24px] font-bold text-white">
+                                  &nbsp;&nbsp;인 증 하 기&nbsp;&nbsp;
+                                </Text>
+                              )}
                               <StyledComponent
                                 component={SolitoImage}
                                 className="h-[36px] w-[36px]"
-                                src={paw}
+                                src={selectedMissionComplete ? pawGray : paw}
                                 alt=""
                                 // fill
                               />

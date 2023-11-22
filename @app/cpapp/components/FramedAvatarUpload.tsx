@@ -248,7 +248,7 @@ export function FramedAvatarUpload({
           />
         )}
       </Button>
-      {!disabled && uppy && (
+      {!disabled && uppy && mode !== "gallery" && (
         <Button unstyled className="" onPress={onSelectImage}>
           <Text className="font-poppins text-pupcleBlue text-[14px]">
             사진 수정
