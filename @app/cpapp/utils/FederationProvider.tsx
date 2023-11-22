@@ -38,7 +38,11 @@ function makeClientSideLink(
   return authLink.concat(httpLink);
 }
 
-function getApolloClient(status: string, userToken: string): ApolloClient<any> {
+function getApolloClient(
+  status: string,
+  userToken: string,
+  signOut: () => void
+): ApolloClient<any> {
   const ROOT_URL = Constants.expoConfig?.extra?.["ROOT_URL"];
   if (!ROOT_URL) {
     throw new Error("ROOT_URL envvar is not set");
@@ -53,7 +57,14 @@ function getApolloClient(status: string, userToken: string): ApolloClient<any> {
           )}, path: ${JSON.stringify(path)}`
         )
       );
-    if (networkError) console.error(`[Network error]: ${networkError}`);
+    if (networkError)
+      console.error(`[Network error]: ${networkError} ${userToken}`);
+    if (
+      networkError?.message?.indexOf("401") != null &&
+      networkError?.message?.indexOf("401") > -1
+    ) {
+      signOut();
+    }
   });
 
   const mainLink = makeClientSideLink(ROOT_URL, "include", status, userToken);
@@ -79,7 +90,7 @@ type Props = {
   children?: React.ReactNode;
 };
 export const FederationProvider: React.FC<Props> = ({ children }) => {
-  const { status, userToken } = useAuth();
-  const client = getApolloClient(status, userToken || "");
+  const { status, userToken, signOut } = useAuth();
+  const client = getApolloClient(status, userToken || "", signOut);
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
