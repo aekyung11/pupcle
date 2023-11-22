@@ -34,7 +34,7 @@ primary_region = "nrt"
   S3_ACCESS_KEY_ID = "AKIAXP474PBJEOOMJUPA"
   AWS_ACCESS_KEY_ID = "AKIAXP474PBJEOOMJUPA"
   SMTP_HOST = "in-v3.mailjet.com"
-  SMTP_PORT = "587"
+  SMTP_PORT = "465"
   SMTP_USERNAME = "2148035174c244d1b7dd80e1c4488d1a"
   DISCOURSE_URL = "https://circle.pupcle.com"
 

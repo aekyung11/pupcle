@@ -7,10 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "es2017"
-    ],
+    "lib": ["dom", "es2017"],
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
@@ -33,15 +30,11 @@
     "declarationMap": true,
     "baseUrl": ".",
     "paths": {
-      "@app/*": [
-        "@app/*"
-      ]
+      "@app/*": ["@app/*"]
     }
   },
   "include": [],
-  "exclude": [
-    "@app/e2e"
-  ],
+  "exclude": ["@app/e2e"],
   "references": [
     {
       "path": "@app/config"
@@ -65,5 +58,5 @@
       "path": "@app/worker"
     }
   ],
-  "extends": "expo/tsconfig.base"
+  "extends": "./expo-tsconfig-base.json"
 }

@@ -17,7 +17,7 @@ ARG NODE_ENV
 ARG ROOT_URL
 
 # Cache node_modules for as long as possible
-COPY package.json yarn.lock .yarnrc.yml /app/
+COPY package.json yarn.lock .yarnrc.yml expo-tsconfig-base.json /app/
 COPY .yarn/ /app/.yarn/
 COPY @app/ /app/@app/
 RUN rm -rf /app/@app/mobile
