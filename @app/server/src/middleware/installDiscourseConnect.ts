@@ -40,9 +40,10 @@ export default async (app: Express) => {
     const {
       rows: [user],
     } = await rootPgPool.query(
-      process.env.NODE_ENV === "production"
-        ? `select * from app_public.users where id = $1 and is_verified = true`
-        : `select * from app_public.users where id = $1`,
+      // process.env.NODE_ENV === "production"
+      //   ? `select * from app_public.users where id = $1 and is_verified = true`
+      //   :
+      `select * from app_public.users where id = $1`,
       [session.user_id]
     );
 
@@ -53,9 +54,10 @@ export default async (app: Express) => {
     const {
       rows: [userEmail],
     } = await rootPgPool.query(
-      process.env.NODE_ENV === "production"
-        ? `select * from app_public.user_emails where user_id = $1 and is_primary = true`
-        : `select * from app_public.user_emails where user_id = $1`,
+      // process.env.NODE_ENV === "production"
+      //   ? `select * from app_public.user_emails where user_id = $1 and is_primary = true`
+      //   :
+      `select * from app_public.user_emails where user_id = $1`,
       [session.user_id]
     );
 
