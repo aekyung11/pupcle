@@ -24,8 +24,13 @@
     "@react-native-menu/menu": "^0.9.1",
     "@tamagui/babel-plugin": "^1.72.3",
     "@tamagui/config": "^1.72.3",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
     "@tensorflow-models/mobilenet": "^2.1.1",
     "@tensorflow/tfjs": "^4.13.0",
+    "@tensorflow/tfjs-backend-cpu": "^4.13.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.13.0",
+    "@tensorflow/tfjs-converter": "^4.13.0",
+    "@tensorflow/tfjs-core": "^4.13.0",
     "@tensorflow/tfjs-data": "^4.13.0",
     "@tensorflow/tfjs-layers": "^4.13.0",
     "@tensorflow/tfjs-react-native": "^0.8.0",
@@ -58,6 +63,7 @@
     "react-native-svg": "13.9.0",
     "react-native-web": "~0.19.6",
     "tamagui": "^1.72.3",
+    "tfjs-react-native-para-patch": "^0.0.4",
     "uuid": "3.4.0"
   },
   "devDependencies": {

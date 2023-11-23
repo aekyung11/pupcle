@@ -1,3 +1,6 @@
+import "@tensorflow/tfjs-converter";
+import "@tensorflow/tfjs-core";
+
 import {
   CompleteMissionFormInput,
   useCompleteMissionForm,
@@ -24,7 +27,7 @@ import c from "@app/server/public/pupcle_count.png";
 import stamp from "@app/server/public/stamp.png";
 import * as tf from "@tensorflow/tfjs";
 import { decodeJpeg, fetch } from "@tensorflow/tfjs-react-native";
-import * as mobilenet from "@tensorflow-models/mobilenet";
+import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import { format } from "date-fns";
 import { useFonts } from "expo-font";
 import { Field, Formik, useFormikContext } from "formik";
@@ -68,7 +71,7 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
   const { values, setFieldValue } =
     useFormikContext<CompleteMissionFormInput>();
 
-  let tryTf = 0;
+  let tryTf = 1;
 
   useEffect(() => {
     if (tryTf > 0) {
@@ -78,19 +81,26 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
         try {
           // Load mobilenet.
           await tf.ready();
-          const model = await mobilenet.load();
+          console.log("tf ready");
+          const model = await cocoSsd.load();
+          console.log("mobilenet loaded");
 
           // Start inference and show result.
           const response = await fetch(proofImageUrl, {}, { isBinary: true });
+          console.log("fetched image data");
           const imageDataArrayBuffer = await response.arrayBuffer();
+          console.log("got imageDataArrayBuffer");
           const imageData = new Uint8Array(imageDataArrayBuffer);
+          console.log("got imageData");
           const imageTensor = decodeJpeg(imageData);
-          const predictions = await model.classify(imageTensor);
+          console.log("got imageTensor");
+          const predictions = await model.detect(imageTensor);
+          console.log("got predictions", JSON.stringify(predictions));
           let unverifiedObjects = new Set<string>(requiredObjects);
           if (predictions && predictions.length > 0) {
             predictions.forEach((prediction) => {
-              if (prediction.probability > 0.3) {
-                unverifiedObjects.delete(prediction.className);
+              if (prediction.score > 0.3) {
+                unverifiedObjects.delete(prediction.class);
               }
             });
 
