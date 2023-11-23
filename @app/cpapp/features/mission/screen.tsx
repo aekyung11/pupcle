@@ -68,7 +68,7 @@ const VerifiedImageFormInner: FC<CompleteMissionDialogProps> = ({
   const { values, setFieldValue } =
     useFormikContext<CompleteMissionFormInput>();
 
-  let tryTf = 1;
+  let tryTf = 0;
 
   useEffect(() => {
     if (tryTf > 0) {
